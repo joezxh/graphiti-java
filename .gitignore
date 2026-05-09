@@ -1,0 +1,4 @@
+/graphiti-web/node_modules/
+/graphiti-web/dist/
+target
+/.idea/

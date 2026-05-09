@@ -1,0 +1,38 @@
+# 开发环境配置
+spring:
+  ai:
+    openai:
+      api-key: sk-lm-sbY78sMA:Nzdd8WQMcbOzuuufmvLy
+      base-url: http://127.0.0.1:1234/v1
+  # 数据源配置
+  datasource:
+    dynamic:
+      primary: master
+      strict: false
+      datasource:
+        master:
+          url: jdbc:postgresql://localhost:5432/graphiti?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+          username: postgres
+          password: postgres@2026!
+          driver-class-name: org.postgresql.Driver
+          hikari:
+            maximum-pool-size: 10
+            minimum-idle: 5
+            connection-timeout: 30000
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+# Neo4j 配置
+neo4j:
+  uri: bolt://localhost:7687
+  username: neo4j
+  password: password123
+
+# 日志配置
+logging:
+  level:
+    com.graphiti: DEBUG
+    org.springframework.security: DEBUG

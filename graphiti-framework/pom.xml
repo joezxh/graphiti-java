@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.graphiti</groupId>
+        <artifactId>graphiti-java</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>graphiti-framework</artifactId>
+    <packaging>pom</packaging>
+    <name>Graphiti Framework</name>
+    <description>
+        框架层聚合模块，每个子模块代表一个技术组件，包含 core + config 两部分。
+        命名规范：graphiti-spring-boot-starter-*。
+    </description>
+
+    <modules>
+        <module>graphiti-common</module>
+        <module>graphiti-spring-boot-starter-security</module>
+        <module>graphiti-spring-boot-starter-mybatis</module>
+        <module>graphiti-spring-boot-starter-redis</module>
+    </modules>
+</project>

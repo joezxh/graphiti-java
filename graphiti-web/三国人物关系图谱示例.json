@@ -1,0 +1,477 @@
+{
+  "nodes": [
+    {
+      "id": "node_001",
+      "name": "刘备",
+      "type": "人物",
+      "properties": {
+        "title": "蜀汉昭烈帝",
+        "era": "三国时期",
+        "description": "蜀汉开国皇帝，字玄德"
+      }
+    },
+    {
+      "id": "node_002",
+      "name": "关羽",
+      "type": "人物",
+      "properties": {
+        "title": "汉寿亭侯",
+        "era": "三国时期",
+        "description": "蜀汉名将，字云长"
+      }
+    },
+    {
+      "id": "node_003",
+      "name": "张飞",
+      "type": "人物",
+      "properties": {
+        "title": "车骑将军",
+        "era": "三国时期",
+        "description": "蜀汉名将，字翼德"
+      }
+    },
+    {
+      "id": "node_004",
+      "name": "诸葛亮",
+      "type": "人物",
+      "properties": {
+        "title": "武乡侯",
+        "era": "三国时期",
+        "description": "蜀汉丞相，字孔明，号卧龙"
+      }
+    },
+    {
+      "id": "node_005",
+      "name": "赵云",
+      "type": "人物",
+      "properties": {
+        "title": "顺平侯",
+        "era": "三国时期",
+        "description": "蜀汉名将，字子龙"
+      }
+    },
+    {
+      "id": "node_006",
+      "name": "曹操",
+      "type": "人物",
+      "properties": {
+        "title": "魏武帝",
+        "era": "三国时期",
+        "description": "曹魏奠基人，字孟德"
+      }
+    },
+    {
+      "id": "node_007",
+      "name": "孙权",
+      "type": "人物",
+      "properties": {
+        "title": "吴大帝",
+        "era": "三国时期",
+        "description": "东吴开国皇帝，字仲谋"
+      }
+    },
+    {
+      "id": "node_008",
+      "name": "赤壁之战",
+      "type": "事件",
+      "properties": {
+        "year": "208年",
+        "location": "赤壁",
+        "description": "孙刘联军击败曹操的关键战役"
+      }
+    },
+    {
+      "id": "node_009",
+      "name": "三顾茅庐",
+      "type": "事件",
+      "properties": {
+        "year": "207年",
+        "location": "隆中",
+        "description": "刘备三次拜访诸葛亮出山相助"
+      }
+    },
+    {
+      "id": "node_010",
+      "name": "桃园结义",
+      "type": "事件",
+      "properties": {
+        "year": "184年",
+        "location": "涿郡",
+        "description": "刘备、关羽、张飞结为异姓兄弟"
+      }
+    },
+    {
+      "id": "node_011",
+      "name": "蜀汉",
+      "type": "政权",
+      "properties": {
+        "founded": "221年",
+        "capital": "成都",
+        "description": "三国之一，刘备建立"
+      }
+    },
+    {
+      "id": "node_012",
+      "name": "曹魏",
+      "type": "政权",
+      "properties": {
+        "founded": "220年",
+        "capital": "洛阳",
+        "description": "三国之一，曹丕建立"
+      }
+    },
+    {
+      "id": "node_013",
+      "name": "东吴",
+      "type": "政权",
+      "properties": {
+        "founded": "229年",
+        "capital": "建业",
+        "description": "三国之一，孙权建立"
+      }
+    },
+    {
+      "id": "node_014",
+      "name": "隆中对",
+      "type": "策略",
+      "properties": {
+        "year": "207年",
+        "author": "诸葛亮",
+        "description": "诸葛亮为刘备制定的战略规划"
+      }
+    },
+    {
+      "id": "node_015",
+      "name": "荆州",
+      "type": "地点",
+      "properties": {
+        "region": "华中",
+        "description": "三国时期的战略要地"
+      }
+    },
+    {
+      "id": "node_016",
+      "name": "益州",
+      "type": "地点",
+      "properties": {
+        "region": "西南",
+        "description": "今四川地区，蜀汉根据地"
+      }
+    },
+    {
+      "id": "node_017",
+      "name": "黄忠",
+      "type": "人物",
+      "properties": {
+        "title": "后将军",
+        "era": "三国时期",
+        "description": "蜀汉名将，字汉升"
+      }
+    },
+    {
+      "id": "node_018",
+      "name": "马超",
+      "type": "人物",
+      "properties": {
+        "title": "骠骑将军",
+        "era": "三国时期",
+        "description": "蜀汉名将，字孟起"
+      }
+    },
+    {
+      "id": "node_019",
+      "name": "周瑜",
+      "type": "人物",
+      "properties": {
+        "title": "大都督",
+        "era": "三国时期",
+        "description": "东吴名将，字公瑾"
+      }
+    },
+    {
+      "id": "node_020",
+      "name": "司马懿",
+      "type": "人物",
+      "properties": {
+        "title": "晋宣帝",
+        "era": "三国时期",
+        "description": "曹魏重臣，字仲达"
+      }
+    },
+    {
+      "id": "node_021",
+      "name": "五虎上将",
+      "type": "称号",
+      "properties": {
+        "members": "关羽、张飞、赵云、马超、黄忠",
+        "description": "蜀汉五位最杰出的将领"
+      }
+    },
+    {
+      "id": "node_022",
+      "name": "空城计",
+      "type": "策略",
+      "properties": {
+        "year": "228年",
+        "author": "诸葛亮",
+        "description": "诸葛亮智退司马懿的计谋"
+      }
+    },
+    {
+      "id": "node_023",
+      "name": "草船借箭",
+      "type": "事件",
+      "properties": {
+        "year": "208年",
+        "location": "赤壁",
+        "description": "诸葛亮巧妙从曹军借得十万支箭"
+      }
+    },
+    {
+      "id": "node_024",
+      "name": "七擒孟获",
+      "type": "事件",
+      "properties": {
+        "year": "225年",
+        "location": "南中",
+        "description": "诸葛亮七次擒获并释放孟获"
+      }
+    },
+    {
+      "id": "node_025",
+      "name": "出师表",
+      "type": "文献",
+      "properties": {
+        "year": "227年",
+        "author": "诸葛亮",
+        "description": "诸葛亮北伐前写给刘禅的奏表"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_001",
+      "target": "node_002",
+      "type": "结义兄弟",
+      "properties": {
+        "description": "刘备与关羽结为兄弟"
+      }
+    },
+    {
+      "source": "node_001",
+      "target": "node_003",
+      "type": "结义兄弟",
+      "properties": {
+        "description": "刘备与张飞结为兄弟"
+      }
+    },
+    {
+      "source": "node_002",
+      "target": "node_003",
+      "type": "结义兄弟",
+      "properties": {
+        "description": "关羽与张飞结为兄弟"
+      }
+    },
+    {
+      "source": "node_001",
+      "target": "node_004",
+      "type": "君臣",
+      "properties": {
+        "description": "刘备三顾茅庐请诸葛亮出山"
+      }
+    },
+    {
+      "source": "node_001",
+      "target": "node_005",
+      "type": "君臣",
+      "properties": {
+        "description": "赵云效忠刘备"
+      }
+    },
+    {
+      "source": "node_001",
+      "target": "node_011",
+      "type": "建立",
+      "properties": {
+        "description": "刘备建立蜀汉"
+      }
+    },
+    {
+      "source": "node_006",
+      "target": "node_012",
+      "type": "奠基",
+      "properties": {
+        "description": "曹操奠定曹魏基础"
+      }
+    },
+    {
+      "source": "node_007",
+      "target": "node_013",
+      "type": "建立",
+      "properties": {
+        "description": "孙权建立东吴"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_008",
+      "type": "参与",
+      "properties": {
+        "description": "诸葛亮参与赤壁之战"
+      }
+    },
+    {
+      "source": "node_007",
+      "target": "node_008",
+      "type": "主导",
+      "properties": {
+        "description": "孙权主导赤壁之战"
+      }
+    },
+    {
+      "source": "node_006",
+      "target": "node_008",
+      "type": "战败",
+      "properties": {
+        "description": "曹操在赤壁之战中战败"
+      }
+    },
+    {
+      "source": "node_019",
+      "target": "node_008",
+      "type": "指挥",
+      "properties": {
+        "description": "周瑜指挥赤壁之战"
+      }
+    },
+    {
+      "source": "node_001",
+      "target": "node_009",
+      "type": "主导",
+      "properties": {
+        "description": "刘备三顾茅庐"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_009",
+      "type": "参与",
+      "properties": {
+        "description": "诸葛亮被三顾茅庐"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_014",
+      "type": "提出",
+      "properties": {
+        "description": "诸葛亮提出隆中对"
+      }
+    },
+    {
+      "source": "node_001",
+      "target": "node_010",
+      "type": "参与",
+      "properties": {
+        "description": "刘备参与桃园结义"
+      }
+    },
+    {
+      "source": "node_002",
+      "target": "node_021",
+      "type": "属于",
+      "properties": {
+        "description": "关羽是五虎上将之一"
+      }
+    },
+    {
+      "source": "node_003",
+      "target": "node_021",
+      "type": "属于",
+      "properties": {
+        "description": "张飞是五虎上将之一"
+      }
+    },
+    {
+      "source": "node_005",
+      "target": "node_021",
+      "type": "属于",
+      "properties": {
+        "description": "赵云是五虎上将之一"
+      }
+    },
+    {
+      "source": "node_017",
+      "target": "node_021",
+      "type": "属于",
+      "properties": {
+        "description": "黄忠是五虎上将之一"
+      }
+    },
+    {
+      "source": "node_018",
+      "target": "node_021",
+      "type": "属于",
+      "properties": {
+        "description": "马超是五虎上将之一"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_022",
+      "type": "实施",
+      "properties": {
+        "description": "诸葛亮实施空城计"
+      }
+    },
+    {
+      "source": "node_020",
+      "target": "node_022",
+      "type": "中计",
+      "properties": {
+        "description": "司马懿中空城计"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_023",
+      "type": "实施",
+      "properties": {
+        "description": "诸葛亮实施草船借箭"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_024",
+      "type": "主导",
+      "properties": {
+        "description": "诸葛亮七擒孟获"
+      }
+    },
+    {
+      "source": "node_004",
+      "target": "node_025",
+      "type": "撰写",
+      "properties": {
+        "description": "诸葛亮撰写出师表"
+      }
+    },
+    {
+      "source": "node_011",
+      "target": "node_016",
+      "type": "定都",
+      "properties": {
+        "description": "蜀汉定都益州成都"
+      }
+    },
+    {
+      "source": "node_015",
+      "target": "node_008",
+      "type": "战场",
+      "properties": {
+        "description": "赤壁位于荆州"
+      }
+    }
+  ]
+}

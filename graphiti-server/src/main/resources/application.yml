@@ -1,0 +1,44 @@
+# Graphiti 知识图谱后端服务配置文件
+# 应用配置
+spring:
+  application:
+    name: graphiti-java
+  profiles:
+    active: dev
+
+
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+# JWT 配置
+graphiti:
+  security:
+    jwt:
+      secret: mySecretKeyForJWTTokenGenerationWhichShouldBeAtLeast512BitsLong
+      expiration: 86400  # 24 hours
+
+# 日志配置
+logging:
+  level:
+    com.graphiti: debug
+    org.springframework.security: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# SpringDoc OpenAPI 配置
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha

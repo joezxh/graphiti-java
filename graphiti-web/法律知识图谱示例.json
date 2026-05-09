@@ -1,0 +1,495 @@
+{
+  "nodes": [
+    {
+      "id": "law_001",
+      "name": "中华人民共和国刑法",
+      "type": "法律",
+      "properties": {
+        "code": "刑法",
+        "effective_date": "1997-10-01",
+        "description": "规定犯罪和刑罚的基本法律"
+      }
+    },
+    {
+      "id": "law_002",
+      "name": "中华人民共和国民法典",
+      "type": "法律",
+      "properties": {
+        "code": "民法典",
+        "effective_date": "2021-01-01",
+        "description": "调整平等主体之间的民事关系"
+      }
+    },
+    {
+      "id": "law_003",
+      "name": "中华人民共和国劳动合同法",
+      "type": "法律",
+      "properties": {
+        "code": "劳动合同法",
+        "effective_date": "2008-01-01",
+        "description": "规范劳动合同关系的法律"
+      }
+    },
+    {
+      "id": "crime_001",
+      "name": "故意杀人罪",
+      "type": "罪名",
+      "properties": {
+        "article": "刑法第232条",
+        "description": "故意非法剥夺他人生命的行为"
+      }
+    },
+    {
+      "id": "crime_002",
+      "name": "盗窃罪",
+      "type": "罪名",
+      "properties": {
+        "article": "刑法第264条",
+        "description": "以非法占有为目的，秘密窃取公私财物"
+      }
+    },
+    {
+      "id": "crime_003",
+      "name": "诈骗罪",
+      "type": "罪名",
+      "properties": {
+        "article": "刑法第266条",
+        "description": "以非法占有为目的，用虚构事实或隐瞒真相的方法骗取财物"
+      }
+    },
+    {
+      "id": "crime_004",
+      "name": "抢劫罪",
+      "type": "罪名",
+      "properties": {
+        "article": "刑法第263条",
+        "description": "以暴力、胁迫或其他方法抢劫公私财物"
+      }
+    },
+    {
+      "id": "crime_005",
+      "name": "贪污罪",
+      "type": "罪名",
+      "properties": {
+        "article": "刑法第382条",
+        "description": "国家工作人员利用职务上的便利，侵吞公共财物"
+      }
+    },
+    {
+      "id": "punishment_001",
+      "name": "死刑",
+      "type": "刑罚",
+      "properties": {
+        "severity": "最重",
+        "description": "剥夺犯罪分子生命的刑罚"
+      }
+    },
+    {
+      "id": "punishment_002",
+      "name": "有期徒刑",
+      "type": "刑罚",
+      "properties": {
+        "severity": "中等",
+        "range": "6个月-15年",
+        "description": "在一定期限内剥夺犯罪分子人身自由"
+      }
+    },
+    {
+      "id": "punishment_003",
+      "name": "无期徒刑",
+      "type": "刑罚",
+      "properties": {
+        "severity": "极重",
+        "description": "终身剥夺犯罪分子人身自由"
+      }
+    },
+    {
+      "id": "punishment_004",
+      "name": "拘役",
+      "type": "刑罚",
+      "properties": {
+        "severity": "较轻",
+        "range": "1-6个月",
+        "description": "短期剥夺犯罪分子人身自由"
+      }
+    },
+    {
+      "id": "punishment_005",
+      "name": "罚金",
+      "type": "刑罚",
+      "properties": {
+        "severity": "轻",
+        "description": "强制犯罪分子缴纳一定数额金钱"
+      }
+    },
+    {
+      "id": "right_001",
+      "name": "生命权",
+      "type": "权利",
+      "properties": {
+        "category": "人格权",
+        "description": "自然人享有的生命安全和生命尊严不受侵犯的权利"
+      }
+    },
+    {
+      "id": "right_002",
+      "name": "财产权",
+      "type": "权利",
+      "properties": {
+        "category": "民事权利",
+        "description": "公民合法的私有财产不受侵犯"
+      }
+    },
+    {
+      "id": "right_003",
+      "name": "劳动权",
+      "type": "权利",
+      "properties": {
+        "category": "社会权利",
+        "description": "公民有劳动的权利和义务"
+      }
+    },
+    {
+      "id": "principle_001",
+      "name": "罪刑法定原则",
+      "type": "法律原则",
+      "properties": {
+        "source": "刑法第3条",
+        "description": "法无明文规定不为罪，法无明文规定不处罚"
+      }
+    },
+    {
+      "id": "principle_002",
+      "name": "罪责刑相适应原则",
+      "type": "法律原则",
+      "properties": {
+        "source": "刑法第5条",
+        "description": "刑罚的轻重应当与犯罪分子所犯罪行和承担的刑事责任相适应"
+      }
+    },
+    {
+      "id": "principle_003",
+      "name": "平等自愿原则",
+      "type": "法律原则",
+      "properties": {
+        "source": "民法典第4条",
+        "description": "民事主体在民事活动中的法律地位一律平等"
+      }
+    },
+    {
+      "id": "concept_001",
+      "name": "正当防卫",
+      "type": "法律概念",
+      "properties": {
+        "article": "刑法第20条",
+        "description": "为了使国家、公共利益、本人或他人的人身、财产和其他权利免受正在进行的不法侵害"
+      }
+    },
+    {
+      "id": "concept_002",
+      "name": "紧急避险",
+      "type": "法律概念",
+      "properties": {
+        "article": "刑法第21条",
+        "description": "为了使国家、公共利益、本人或他人的人身、财产和其他权利免受正在发生的危险"
+      }
+    },
+    {
+      "id": "concept_003",
+      "name": "共同犯罪",
+      "type": "法律概念",
+      "properties": {
+        "article": "刑法第25条",
+        "description": "二人以上共同故意犯罪"
+      }
+    },
+    {
+      "id": "institution_001",
+      "name": "最高人民法院",
+      "type": "机构",
+      "properties": {
+        "level": "最高",
+        "description": "国家最高审判机关"
+      }
+    },
+    {
+      "id": "institution_002",
+      "name": "最高人民检察院",
+      "type": "机构",
+      "properties": {
+        "level": "最高",
+        "description": "国家最高法律监督机关"
+      }
+    },
+    {
+      "id": "case_001",
+      "name": "指导性案例24号",
+      "type": "案例",
+      "properties": {
+        "year": "2014",
+        "topic": "正当防卫认定",
+        "description": "关于正当防卫界限的指导性案例"
+      }
+    },
+    {
+      "id": "contract_001",
+      "name": "劳动合同",
+      "type": "合同",
+      "properties": {
+        "law": "劳动合同法",
+        "description": "劳动者与用人单位确立劳动关系的协议"
+      }
+    },
+    {
+      "id": "contract_002",
+      "name": "买卖合同",
+      "type": "合同",
+      "properties": {
+        "law": "民法典",
+        "description": "出卖人转移标的物所有权于买受人，买受人支付价款的合同"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "crime_001",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "故意杀人罪规定于刑法"
+      }
+    },
+    {
+      "source": "crime_002",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "盗窃罪规定于刑法"
+      }
+    },
+    {
+      "source": "crime_003",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "诈骗罪规定于刑法"
+      }
+    },
+    {
+      "source": "crime_004",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "抢劫罪规定于刑法"
+      }
+    },
+    {
+      "source": "crime_005",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "贪污罪规定于刑法"
+      }
+    },
+    {
+      "source": "crime_001",
+      "target": "punishment_001",
+      "type": "可判处",
+      "properties": {
+        "description": "故意杀人罪可判处死刑"
+      }
+    },
+    {
+      "source": "crime_001",
+      "target": "punishment_003",
+      "type": "可判处",
+      "properties": {
+        "description": "故意杀人罪可判处无期徒刑"
+      }
+    },
+    {
+      "source": "crime_002",
+      "target": "punishment_002",
+      "type": "可判处",
+      "properties": {
+        "description": "盗窃罪可判处有期徒刑"
+      }
+    },
+    {
+      "source": "crime_002",
+      "target": "punishment_005",
+      "type": "可判处",
+      "properties": {
+        "description": "盗窃罪可判处罚金"
+      }
+    },
+    {
+      "source": "crime_003",
+      "target": "punishment_002",
+      "type": "可判处",
+      "properties": {
+        "description": "诈骗罪可判处有期徒刑"
+      }
+    },
+    {
+      "source": "crime_004",
+      "target": "punishment_002",
+      "type": "可判处",
+      "properties": {
+        "description": "抢劫罪可判处有期徒刑"
+      }
+    },
+    {
+      "source": "crime_004",
+      "target": "punishment_003",
+      "type": "可判处",
+      "properties": {
+        "description": "抢劫罪可判处无期徒刑"
+      }
+    },
+    {
+      "source": "crime_001",
+      "target": "right_001",
+      "type": "侵犯",
+      "properties": {
+        "description": "故意杀人罪侵犯生命权"
+      }
+    },
+    {
+      "source": "crime_002",
+      "target": "right_002",
+      "type": "侵犯",
+      "properties": {
+        "description": "盗窃罪侵犯财产权"
+      }
+    },
+    {
+      "source": "crime_003",
+      "target": "right_002",
+      "type": "侵犯",
+      "properties": {
+        "description": "诈骗罪侵犯财产权"
+      }
+    },
+    {
+      "source": "crime_004",
+      "target": "right_002",
+      "type": "侵犯",
+      "properties": {
+        "description": "抢劫罪侵犯财产权"
+      }
+    },
+    {
+      "source": "crime_005",
+      "target": "right_002",
+      "type": "侵犯",
+      "properties": {
+        "description": "贪污罪侵犯财产权"
+      }
+    },
+    {
+      "source": "law_001",
+      "target": "principle_001",
+      "type": "确立",
+      "properties": {
+        "description": "刑法确立罪刑法定原则"
+      }
+    },
+    {
+      "source": "law_001",
+      "target": "principle_002",
+      "type": "确立",
+      "properties": {
+        "description": "刑法确立罪责刑相适应原则"
+      }
+    },
+    {
+      "source": "law_002",
+      "target": "principle_003",
+      "type": "确立",
+      "properties": {
+        "description": "民法典确立平等自愿原则"
+      }
+    },
+    {
+      "source": "concept_001",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "正当防卫规定于刑法"
+      }
+    },
+    {
+      "source": "concept_002",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "紧急避险规定于刑法"
+      }
+    },
+    {
+      "source": "concept_003",
+      "target": "law_001",
+      "type": "规定于",
+      "properties": {
+        "description": "共同犯罪规定于刑法"
+      }
+    },
+    {
+      "source": "institution_001",
+      "target": "law_001",
+      "type": "解释",
+      "properties": {
+        "description": "最高人民法院解释刑法"
+      }
+    },
+    {
+      "source": "institution_002",
+      "target": "law_001",
+      "type": "监督实施",
+      "properties": {
+        "description": "最高人民检察院监督刑法实施"
+      }
+    },
+    {
+      "source": "case_001",
+      "target": "concept_001",
+      "type": "阐释",
+      "properties": {
+        "description": "指导性案例24号阐释正当防卫"
+      }
+    },
+    {
+      "source": "contract_001",
+      "target": "law_003",
+      "type": "规范于",
+      "properties": {
+        "description": "劳动合同由劳动合同法规范"
+      }
+    },
+    {
+      "source": "contract_001",
+      "target": "right_003",
+      "type": "保障",
+      "properties": {
+        "description": "劳动合同保障劳动权"
+      }
+    },
+    {
+      "source": "contract_002",
+      "target": "law_002",
+      "type": "规范于",
+      "properties": {
+        "description": "买卖合同由民法典规范"
+      }
+    },
+    {
+      "source": "contract_002",
+      "target": "right_002",
+      "type": "保障",
+      "properties": {
+        "description": "买卖合同保障财产权"
+      }
+    }
+  ]
+}

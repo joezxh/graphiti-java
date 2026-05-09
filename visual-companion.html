@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Graphiti-Java 控制台设计</title>
+    <style>
+        :root { --bg: #0a0a0f; --surface: #12121a; --border: #1e1e2e; --text: #e0e0f0; --dim: #6a6a8a; --accent: #7c5cff; --cyan: #00d4ff; --green: #30d158; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; min-height:100vh; }
+        .container { max-width:1400px; margin:0 auto; padding:40px 24px; }
+        h1 { font-size:42px; font-weight:700; letter-spacing:-1.5px; margin-bottom:8px; background:linear-gradient(135deg, var(--text), var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .subtitle { color:var(--dim); font-size:16px; margin-bottom:48px; }
+        .section { margin-bottom:64px; }
+        .section-title { font-size:24px; font-weight:600; letter-spacing:-0.5px; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+
+        /* Layout */
+        .layout { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+        .header { height:52px; background:var(--bg); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 20px; gap:28px; }
+        .logo { font-size:17px; font-weight:700; color:var(--accent); display:flex; align-items:center; gap:8px; }
+        .logo-box { width:28px; height:28px; background:linear-gradient(135deg, var(--accent), var(--cyan)); border-radius:6px; }
+        .nav { display:flex; gap:20px; flex:1; }
+        .nav a { color:var(--dim); text-decoration:none; font-size:13px; transition:color 0.2s; }
+        .nav a:hover, .nav a.active { color:var(--text); }
+        .header-right { display:flex; gap:8px; }
+        .icon-btn { width:32px; height:32px; background:var(--surface); border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; transition:all 0.2s; }
+        .icon-btn:hover { border-color:var(--accent); }
+
+        .body { display:flex; height:520px; }
+        .sidebar { width:220px; background:var(--bg); border-right:1px solid var(--border); padding:12px; overflow-y:auto; }
+        .sidebar-label { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--dim); margin:16px 0 6px; font-weight:600; }
+        .sidebar-item { padding:7px 10px; border-radius:6px; font-size:13px; color:var(--dim); cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:8px; }
+        .sidebar-item:hover { background:var(--surface); color:var(--text); }
+        .sidebar-item.active { background:var(--surface); color:var(--accent); }
+        .main { flex:1; padding:20px; overflow-y:auto; }
+
+        /* Stats */
+        .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+        .stat { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
+        .stat-label { font-size:12px; color:var(--dim); margin-bottom:6px; }
+        .stat-value { font-size:28px; font-weight:700; letter-spacing:-1px; }
+        .stat-delta { font-size:11px; margin-top:4px; }
+
+        /* Graph Viz */
+        .graph-area { background:var(--surface); border:1px solid var(--border); border-radius:10px; height:320px; position:relative; overflow:hidden; margin-bottom:20px; }
+        .graph-svg { width:100%; height:100%; }
+        .node-circle { cursor:pointer; transition:all 0.2s; }
+        .node-circle:hover { r:22; }
+        .node-label { font-size:11px; fill:var(--text); pointer-events:none; }
+
+        /* Ontology */
+        .onto-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+        .onto-panel { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; }
+        .onto-title { font-size:13px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+        .tag { display:inline-block; padding:4px 10px; background:var(--bg); border:1px solid var(--border); border-radius:5px; font-size:12px; color:var(--dim); margin:3px; cursor:pointer; transition:all 0.15s; }
+        .tag:hover { border-color:var(--accent); color:var(--text); }
+        .tag.entity { border-left:2px solid var(--accent); }
+        .tag.rel { border-left:2px solid var(--cyan); }
+
+        /* Search */
+        .search-box { display:flex; gap:10px; margin-bottom:16px; }
+        .search-input { flex:1; padding:9px 14px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:13px; outline:none; transition:all 0.2s; }
+        .search-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,92,255,0.15); }
+        .btn { padding:7px 14px; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; border:none; transition:all 0.15s; }
+        .btn-primary { background:var(--accent); color:white; }
+        .btn-primary:hover { background:#8d6fff; }
+        .result { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:8px; cursor:pointer; transition:all 0.15s; }
+        .result:hover { border-color:var(--accent); }
+        .result-title { font-size:14px; font-weight:500; margin-bottom:4px; }
+        .result-meta { font-size:12px; color:var(--dim); }
+
+        .tabs { display:flex; gap:2px; margin-bottom:16px; background:var(--bg); padding:3px; border-radius:8px; width:fit-content; }
+        .tab { padding:5px 14px; font-size:12px; color:var(--dim); border-radius:6px; cursor:pointer; border:none; background:none; transition:all 0.15s; }
+        .tab.active { background:var(--surface); color:var(--text); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Graphiti‑Java 控制台</h1>
+    <p class="subtitle">Ontology 本体论图谱关系管理系统 · 深色科技风设计</p>
+
+    <div class="section">
+        <div class="section-title">整体布局</div>
+        <div class="layout">
+            <div class="header">
+                <div class="logo"><div class="logo-box"></div> Graphiti</div>
+                <div class="nav">
+                    <a class="active" href="#">仪表盘</a>
+                    <a href="#">图谱</a>
+                    <a href="#">本体</a>
+                    <a href="#">数据</a>
+                    <a href="#">推理</a>
+                </div>
+                <div class="header-right">
+                    <div class="icon-btn">⌕</div>
+                    <div class="icon-btn">⚙</div>
+                    <div class="icon-btn">◉</div>
+                </div>
+            </div>
+            <div class="body">
+                <div class="sidebar">
+                    <div class="sidebar-label">导航</div>
+                    <div class="sidebar-item active">◉ 概览</div>
+                    <div class="sidebar-item">⬡ 图谱视图</div>
+                    <div class="sidebar-item">◧ 实体</div>
+                    <div class="sidebar-item">⤴ 关系</div>
+                    <div class="sidebar-label">本体论</div>
+                    <div class="sidebar-item">◇ 本体编辑</div>
+                    <div class="sidebar-item">◈ 实体类型</div>
+                    <div class="sidebar-item">⌘ 关系类型</div>
+                    <div class="sidebar-label">高级</div>
+                    <div class="sidebar-item">⌕ 搜索</div>
+                    <div class="sidebar-item">⚡ 推理</div>
+                    <div class="sidebar-item">◫ 社区</div>
+                </div>
+                <div class="main">
+                    <div class="stats">
+                        <div class="stat"><div class="stat-label">图谱总数</div><div class="stat-value" style="color:var(--accent)">12</div><div class="stat-delta" style="color:var(--green)">↑ 2 个新图谱</div></div>
+                        <div class="stat"><div class="stat-label">实体节点</div><div class="stat-value" style="color:var(--cyan)">84.5K</div><div class="stat-delta" style="color:var(--green)">↑ 12% 本周</div></div>
+                        <div class="stat"><div class="stat-label">关系边</div><div class="stat-value" style="color:var(--green)">156.2K</div><div class="stat-delta" style="color:var(--green)">↑ 8% 本周</div></div>
+                        <div class="stat"><div class="stat-label">推理事件</div><div class="stat-value" style="color:#ff9f43">1,024</div><div class="stat-delta" style="color:var(--dim)">24h 内</div></div>
+                    </div>
+
+                    <div class="graph-area">
+                        <svg class="graph-svg" viewBox="0 0 800 300">
+                            <!-- Edges -->
+                            <line x1="150" y1="80" x2="400" y2="60" stroke="#7c5cff" stroke-width="1.2" opacity="0.35"/>
+                            <line x1="150" y1="80" x2="250" y2="220" stroke="#7c5cff" stroke-width="1.2" opacity="0.35"/>
+                            <line x1="400" y1="60" x2="650" y2="90" stroke="#00d4ff" stroke-width="1.2" opacity="0.35"/>
+                            <line x1="250" y1="220" x2="500" y2="200" stroke="#30d158" stroke-width="1.2" opacity="0.35"/>
+                            <line x1="400" y1="60" x2="500" y2="200" stroke="#7c5cff" stroke-width="1.2" opacity="0.35"/>
+                            <line x1="650" y1="90" x2="600" y2="250" stroke="#00d4ff" stroke-width="1.2" opacity="0.35"/>
+                            <!-- Nodes -->
+                            <circle cx="150" cy="80" r="18" fill="#12121a" stroke="#7c5cff" stroke-width="2" class="node-circle"/>
+                            <text x="150" y="130" text-anchor="middle" class="node-label">Person</text>
+                            <circle cx="400" cy="60" r="20" fill="#12121a" stroke="#7c5cff" stroke-width="2" class="node-circle"/>
+                            <text x="400" y="110" text-anchor="middle" class="node-label">Company</text>
+                            <circle cx="650" cy="90" r="16" fill="#12121a" stroke="#00d4ff" stroke-width="2" class="node-circle"/>
+                            <text x="650" y="140" text-anchor="middle" class="node-label">Product</text>
+                            <circle cx="250" cy="220" r="16" fill="#12121a" stroke="#30d158" stroke-width="2" class="node-circle"/>
+                            <text x="250" y="270" text-anchor="middle" class="node-label">Location</text>
+                            <circle cx="500" cy="200" r="18" fill="#12121a" stroke="#7c5cff" stroke-width="2" class="node-circle"/>
+                            <text x="500" y="250" text-anchor="middle" class="node-label">Concept</text>
+                            <circle cx="600" cy="250" r="14" fill="#12121a" stroke="#00d4ff" stroke-width="2" class="node-circle"/>
+                            <text x="600" y="290" text-anchor="middle" class="node-label">Event</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">本体论编辑器</div>
+        <div class="onto-grid">
+            <div class="onto-panel">
+                <div class="onto-title">◇ 实体类型</div>
+                <span class="tag entity">Person</span>
+                <span class="tag entity">Company</span>
+                <span class="tag entity">Organization</span>
+                <span class="tag entity">Location</span>
+                <span class="tag entity">Product</span>
+                <span class="tag entity">Event</span>
+                <span class="tag entity">Concept</span>
+            </div>
+            <div class="onto-panel">
+                <div class="onto-title">⌘ 关系类型</div>
+                <span class="tag rel">WORKS_FOR</span>
+                <span class="tag rel">LOCATED_IN</span>
+                <span class="tag rel">OWNS</span>
+                <span class="tag rel">PART_OF</span>
+                <span class="tag rel">RELATED_TO</span>
+                <span class="tag rel">MENTIONS</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">混合检索界面</div>
+        <div class="search-box">
+            <input class="search-input" placeholder="搜索实体、关系、事件...（全文 / 向量 / 图遍历）"/>
+            <button class="btn btn-primary">搜索</button>
+        </div>
+        <div class="tabs">
+            <button class="tab active">全部</button>
+            <button class="tab">实体</button>
+            <button class="tab">关系</button>
+            <button class="tab">事件</button>
+        </div>
+        <div class="result">
+            <div class="result-title">张三 <span style="font-size:11px;color:var(--accent)">Person</span></div>
+            <div class="result-meta">某公司CEO · 关联 5 个实体 · 相似度 0.92</div>
+        </div>
+        <div class="result">
+            <div class="result-title">ABC科技公司 <span style="font-size:11px;color:var(--cyan)">Company</span></div>
+            <div class="result-meta">人工智能领域 · 位于北京 · 关联 12 个实体 · 相似度 0.87</div>
+        </div>
+        <div class="result">
+            <div class="result-title">WORKS_FOR <span style="font-size:11px;color:var(--green)">关系</span></div>
+            <div class="result-meta">张三 → ABC科技公司 · 事实: "张三在ABC公司担任CEO" · 关联度 0.81</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
