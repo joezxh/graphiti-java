@@ -1,9 +1,11 @@
 package com.graphiti.module.graphiti.controller.admin;
 
 import com.graphiti.common.response.CommonResult;
+import com.graphiti.module.graphiti.service.CommunityService;
 import com.graphiti.module.graphiti.service.EdgeService;
 import com.graphiti.module.graphiti.service.GraphitiService;
 import com.graphiti.module.graphiti.service.NodeService;
+import com.graphiti.module.graphiti.service.TemporalService;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
 import com.graphiti.module.graphiti.vo.graph.CreateGraphReqVO;
@@ -20,7 +22,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 图谱管理控制器
@@ -34,6 +39,8 @@ public class GraphitiController {
     private final GraphitiService graphitiService;
     private final NodeService nodeService;
     private final EdgeService edgeService;
+    private final CommunityService communityService;
+    private final TemporalService temporalService;
     /**
      * 创建图谱
      * @param reqVO CreateGraphReqVO
@@ -145,5 +152,50 @@ public class GraphitiController {
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
         EdgeFilterReqVO filterReqVO = new EdgeFilterReqVO();
         return CommonResult.success(edgeService.listEdges(graphId, filterReqVO));
+    }
+
+    @Operation(summary = "构建社区", description = "对指定图谱执行社区发现算法",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/communities/build")
+    public CommonResult<Map<String, Object>> buildCommunities(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(communityService.buildCommunities(graphId));
+    }
+
+    @Operation(summary = "获取社区列表", description = "获取指定图谱的社区列表",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/communities")
+    public CommonResult<List<Map<String, Object>>> listCommunities(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(communityService.listCommunities(graphId));
+    }
+
+    @Operation(summary = "克隆图谱", description = "克隆指定图谱",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/clone")
+    public CommonResult<GraphInfoRespVO> cloneGraph(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(graphitiService.cloneGraph(graphId));
+    }
+
+    @Operation(summary = "导出图谱", description = "导出指定图谱数据",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/export")
+    public CommonResult<Map<String, Object>> exportGraph(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(graphitiService.exportGraph(graphId));
+    }
+
+    @Operation(summary = "历史状态查询", description = "查询指定时间点的图谱状态",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/history")
+    public CommonResult<Map<String, Object>> getHistory(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestParam("time") @Parameter(description = "查询时间") String time) {
+        LocalDateTime referenceTime = LocalDateTime.parse(time);
+        Map<String, Object> result = new HashMap<>();
+        result.put("nodes", temporalService.getValidNodesAt(graphId, referenceTime));
+        result.put("edges", temporalService.getValidEdgesAt(graphId, referenceTime));
+        return CommonResult.success(result);
     }
 }

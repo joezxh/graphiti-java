@@ -6,6 +6,7 @@ import com.graphiti.module.graphiti.vo.graph.GraphListRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
 import com.graphiti.module.graphiti.vo.graph.UpdateGraphReqVO;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 图谱管理服务接口
@@ -50,4 +51,16 @@ public interface GraphitiService {
      * @return GraphStatsRespVO
      */
     GraphStatsRespVO getGraphStats();
+    /**
+     * 克隆图谱
+     * @param graphId 图谱ID
+     * @return GraphInfoRespVO
+     */
+    GraphInfoRespVO cloneGraph(String graphId);
+    /**
+     * 导出图谱
+     * @param graphId 图谱ID
+     * @return Map
+     */
+    Map<String, Object> exportGraph(String graphId);
 }

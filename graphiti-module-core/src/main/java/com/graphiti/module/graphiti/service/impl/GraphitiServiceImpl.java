@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -187,5 +189,33 @@ public class GraphitiServiceImpl implements GraphitiService {
         respVO.setEdgeCount(entity.getEdgeCount());
         respVO.setCreatedAt(entity.getCreateTime());
         return respVO;
+    }
+
+    @Override
+    public GraphInfoRespVO cloneGraph(String graphId) {
+        GraphMetadataDO source = graphMetadataMapper.selectById(graphId);
+        if (source == null) {
+            throw new BusinessException("图谱不存在");
+        }
+        GraphMetadataDO clone = new GraphMetadataDO();
+        clone.setGraphId(UUID.randomUUID().toString().replace("-", ""));
+        clone.setName(source.getName() + " (克隆)");
+        clone.setDescription(source.getDescription());
+        clone.setNodeCount(source.getNodeCount());
+        clone.setEdgeCount(source.getEdgeCount());
+        clone.setCreateTime(LocalDateTime.now());
+        clone.setUpdateTime(LocalDateTime.now());
+        clone.setDeleted(false);
+        graphMetadataMapper.insert(clone);
+        return convertToGraphInfoRespVO(clone);
+    }
+
+    @Override
+    public Map<String, Object> exportGraph(String graphId) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("graphId", graphId);
+        result.put("nodes", graphNeo4jService.listNodes(graphId, 0, 1000));
+        result.put("edges", graphNeo4jService.listEdges(graphId, null, null, null, 0, 1000));
+        return result;
     }
 }
