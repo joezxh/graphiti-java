@@ -17,12 +17,20 @@ mybatis-plus:
     db-config:
       id-type: auto
 
+# Spring AI 配置（根据 Provider 选择配置）
+# OpenAI: spring.ai.openai.api-key + spring.ai.openai.base-url
+# Qwen:   spring.ai.openai.api-key + spring.ai.openai.base-url (指向 dashscope)
+# Ollama: spring.ai.ollama.base-url
+
 # JWT 配置
 graphiti:
   security:
     jwt:
       secret: mySecretKeyForJWTTokenGenerationWhichShouldBeAtLeast512BitsLong
       expiration: 86400  # 24 hours
+  ai:
+    llm-provider: openai
+    embedding-provider: openai
 
 # 日志配置
 logging:

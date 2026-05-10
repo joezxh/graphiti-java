@@ -2,6 +2,7 @@ package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.service.EdgeService;
+import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeInfoRespVO;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class EdgeServiceImpl implements EdgeService {
     
     private final GraphNeo4jService graphNeo4jService;
+    private final EmbedderService embedderService;
     
     @Override
     public List<EdgeListRespVO> listEdges(String graphId, EdgeFilterReqVO filterReqVO) {
@@ -63,6 +65,7 @@ public class EdgeServiceImpl implements EdgeService {
         String source = (String) edgeData.get("source");
         String target = (String) edgeData.get("target");
         String type = (String) edgeData.get("type");
+        String fact = (String) edgeData.get("fact");
         Map<String, Object> properties = (Map<String, Object>) edgeData.getOrDefault("properties", new HashMap<>());
         
         if (source == null || source.isEmpty()) {
@@ -75,9 +78,13 @@ public class EdgeServiceImpl implements EdgeService {
             throw new BusinessException(1009, "关系类型不能为空");
         }
         
+        // 生成嵌入向量（基于 fact 描述）
+        String embedText = fact != null ? fact : (type + " relationship");
+        float[] embedding = embedderService.embed(embedText);
+        
         // 创建关系
         Map<String, Object> createdEdge = graphNeo4jService.createRelationship(
-            graphId, uuid, source, target, type, properties);
+            graphId, uuid, source, target, type, fact, embedding, properties);
         
         if (createdEdge == null) {
             throw new BusinessException(500, "创建边失败");

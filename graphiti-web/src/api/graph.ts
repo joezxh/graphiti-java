@@ -2,6 +2,7 @@ import request from './request'
 
 // 类型定义
 export interface Graph {
+  id?: string        // 兼容前端旧代码（实际值为 graphId）
   graphId: string
   name: string
   description?: string
@@ -103,8 +104,28 @@ export const graphApi = {
   },
 
   // 构建社区
-  async buildCommunity(graphId: string): Promise<void> {
-    return request.post(`/graph/${graphId}/community/build`)
+  async buildCommunity(graphId: string): Promise<{ communityCount: number; message: string }> {
+    return request.post(`/graph/${graphId}/communities/build`)
+  },
+
+  // 获取社区列表
+  async getCommunities(graphId: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/communities`)
+  },
+
+  // 搜索社区
+  async searchCommunities(graphId: string, query: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/communities/search?query=${encodeURIComponent(query)}`)
+  },
+
+  // 克隆图谱
+  async clone(graphId: string): Promise<Graph> {
+    return request.post(`/graph/${graphId}/clone`)
+  },
+
+  // 历史状态查询
+  async getHistory(graphId: string, time: number): Promise<{ nodes: any[]; edges: any[] }> {
+    return request.get(`/graph/${graphId}/history?time=${time}`)
   }
 }
 

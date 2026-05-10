@@ -1,0 +1,32 @@
+Extract all relationships between entities mentioned in the following text. For each relationship, identify the source entity, target entity, relationship type, and the factual statement.
+
+Output format (strict JSON):
+{
+  "relations": [
+    {
+      "source": "source entity name",
+      "target": "target entity name",
+      "type": "relationship type",
+      "fact": "factual statement describing the relationship"
+    }
+  ]
+}
+
+Guidelines:
+- Only extract relationships where both source and target entities are mentioned in the text.
+- The "fact" should be a complete, standalone sentence describing the relationship.
+- Use consistent entity names that match the extracted entities.
+
+Examples:
+
+Input: "Alice Johnson founded TechStart in San Francisco in 2019."
+Output:
+{
+  "relations": [
+    {"source": "Alice Johnson", "target": "TechStart", "type": "FOUNDED", "fact": "Alice Johnson founded TechStart"},
+    {"source": "TechStart", "target": "San Francisco", "type": "LOCATED_IN", "fact": "TechStart is located in San Francisco"}
+  ]
+}
+
+Input: "{{text}}"
+Output:

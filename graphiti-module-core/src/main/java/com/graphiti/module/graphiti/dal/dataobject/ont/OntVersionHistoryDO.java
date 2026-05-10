@@ -20,11 +20,11 @@ public class OntVersionHistoryDO implements Serializable {
     private String changeType;     // CLASS_ADDED / PROPERTY_MODIFIED / CONSTRAINT_DELETED / ...
     private String entityType;     // CLASS / PROPERTY / CONSTRAINT / DEFINITION
     private Long entityId;
-    private String beforeState;    // JSON string
-    private String afterState;     // JSON string
+    private String beforeState;    // JSON string (TEXT column, serialized via ObjectMapper)
+    private String afterState;     // JSON string (TEXT column, serialized via ObjectMapper)
     private String diffSummary;
     private String changedBy;
 
-    @TableField("changed_at")
+    @TableField(value = "changed_at", fill = FieldFill.INSERT)
     private LocalDateTime changedAt;
 }

@@ -26,4 +26,7 @@ public class SearchQueryReqVO implements Serializable {
 
     @Schema(description = "是否启用重排序")
     private Boolean enableRerank = true;
+
+    @Schema(description = "搜索配置")
+    private SearchConfigVO config;
 }

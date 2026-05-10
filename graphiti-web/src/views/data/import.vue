@@ -150,7 +150,7 @@ const loadGraphs = async () => {
   try {
     graphOptions.value = await graphApi.getList()
     if (graphOptions.value.length > 0 && !form.graphId) {
-      form.graphId = graphOptions.value[0].id
+      form.graphId = graphOptions.value[0].graphId
     }
   } catch (err) {
     console.error('加载图谱列表失败', err)

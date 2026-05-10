@@ -1,6 +1,7 @@
 package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.dal.dataobject.OntologyDO;
 import com.graphiti.module.graphiti.dal.mysql.OntologyMapper;
@@ -12,6 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -23,7 +28,8 @@ import java.util.UUID;
 public class OntologyServiceImpl implements OntologyService {
     
     private final OntologyMapper ontologyMapper;
-    
+    private final ObjectMapper objectMapper;
+
     @Override
     public OntologyRespVO getOntology(String graphId) {
         OntologyDO entity = getOntologyByGraphId(graphId);
@@ -95,5 +101,82 @@ public class OntologyServiceImpl implements OntologyService {
         respVO.setCreatedAt(entity.getCreateTime());
         respVO.setUpdatedAt(entity.getUpdateTime());
         return respVO;
+    }
+
+    @Override
+    public Map<String, Object> validateNode(String graphId, String nodeType, Map<String, Object> properties) {
+        List<Map<String, Object>> fields = getFieldDefinitions(graphId, nodeType);
+        return validateProperties(fields, properties);
+    }
+
+    @Override
+    public Map<String, Object> validateEdge(String graphId, String edgeType, Map<String, Object> properties) {
+        List<Map<String, Object>> fields = getFieldDefinitions(graphId, edgeType);
+        return validateProperties(fields, properties);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getFieldDefinitions(String graphId, String typeName) {
+        try {
+            OntologyDO entity = getOntologyByGraphId(graphId);
+            String entitiesJson = entity.getEntities();
+            if (entitiesJson == null || entitiesJson.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            List<Map<String, Object>> entityDefs = objectMapper.readValue(entitiesJson, List.class);
+            for (Map<String, Object> def : entityDefs) {
+                if (typeName.equals(def.get("name"))) {
+                    Object fields = def.get("fields");
+                    if (fields instanceof List) {
+                        return (List<Map<String, Object>>) fields;
+                    }
+                    return new ArrayList<>();
+                }
+            }
+        } catch (Exception e) {
+            log.warn("获取字段定义失败：graphId={}, typeName={}", graphId, typeName, e);
+        }
+        return new ArrayList<>();
+    }
+
+    private Map<String, Object> validateProperties(List<Map<String, Object>> fields, Map<String, Object> properties) {
+        List<String> errors = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
+
+        for (Map<String, Object> field : fields) {
+            String fieldName = (String) field.get("name");
+            Boolean required = (Boolean) field.get("required");
+            String fieldType = (String) field.get("type");
+
+            Object value = properties != null ? properties.get(fieldName) : null;
+
+            if (Boolean.TRUE.equals(required) && (value == null || value.toString().isEmpty())) {
+                errors.add("字段 '" + fieldName + "' 为必填项");
+            }
+
+            if (value != null && fieldType != null) {
+                if (!checkType(value, fieldType)) {
+                    warnings.add("字段 '" + fieldName + "' 类型应为 " + fieldType);
+                }
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("valid", errors.isEmpty());
+        result.put("errors", errors);
+        result.put("warnings", warnings);
+        return result;
+    }
+
+    private boolean checkType(Object value, String expectedType) {
+        return switch (expectedType.toLowerCase()) {
+            case "string" -> value instanceof String;
+            case "integer", "int" -> value instanceof Integer || value instanceof Long;
+            case "number", "float", "double" -> value instanceof Number;
+            case "boolean" -> value instanceof Boolean;
+            default -> true;
+        };
     }
 }

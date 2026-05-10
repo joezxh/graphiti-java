@@ -38,7 +38,7 @@ public class OntClassDO implements Serializable {
     private String domainHint;    // FINANCIAL / MEDICAL / ECOMMERCE / KNOWLEDGE
 
     @TableField("metadata")
-    private String metadata;      // JSON string
+    private String metadata;      // JSON string (TEXT column, serialized via ObjectMapper)
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;

@@ -3,6 +3,7 @@ package com.graphiti.module.graphiti.service.impl;
 import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.service.DataImportService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
+import com.graphiti.module.graphiti.service.TemporalService;
 import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddMessagesReqVO;
@@ -10,7 +11,9 @@ import com.graphiti.module.graphiti.vo.imports.FactTripleReqVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,6 +28,7 @@ import java.util.UUID;
 public class DataImportServiceImpl implements DataImportService {
 
     private final GraphNeo4jService graphNeo4jService;
+    private final TemporalService temporalService;
 
     @Override
     public void addData(AddDataReqVO reqVO) {
@@ -96,12 +100,18 @@ public class DataImportServiceImpl implements DataImportService {
         String targetUuid = UUID.randomUUID().toString().replace("-", "");
         String edgeUuid = UUID.randomUUID().toString().replace("-", "");
         
+        // 时序管理：如果同名实体已存在，先失效旧实体
+        temporalService.invalidateFacts(reqVO.getGraphId(),
+            List.of(reqVO.getSourceNodeName(), reqVO.getTargetNodeName()));
+        
         // 创建源节点
         graphNeo4jService.createEntityNode(
             reqVO.getGraphId(),
             sourceUuid,
             reqVO.getSourceNodeName(),
             "Entity",
+            "",
+            null,
             new HashMap<>()
         );
         
@@ -111,14 +121,14 @@ public class DataImportServiceImpl implements DataImportService {
             targetUuid,
             reqVO.getTargetNodeName(),
             "Entity",
+            "",
+            null,
             new HashMap<>()
         );
         
         // 创建关系
         Map<String, Object> props = reqVO.getProperties() != null ? reqVO.getProperties() : new HashMap<>();
-        if (reqVO.getFact() != null) {
-            props.put("fact", reqVO.getFact());
-        }
+        String fact = reqVO.getFact() != null ? reqVO.getFact() : "";
         
         graphNeo4jService.createRelationship(
             reqVO.getGraphId(),
@@ -126,6 +136,8 @@ public class DataImportServiceImpl implements DataImportService {
             sourceUuid,
             targetUuid,
             reqVO.getRelationType(),
+            fact,
+            null,
             props
         );
         
@@ -145,7 +157,10 @@ public class DataImportServiceImpl implements DataImportService {
             throw new BusinessException(1006, "节点名称不能为空");
         }
         
-        graphNeo4jService.createEntityNode(graphId, uuid, name, type, properties);
+        // 时序管理：如果同名实体已存在，先失效旧实体
+        temporalService.invalidateFacts(graphId, Collections.singletonList(name));
+        
+        graphNeo4jService.createEntityNode(graphId, uuid, name, type, "", null, properties);
         log.info("实体节点创建成功：graphId={}, uuid={}, name={}", graphId, uuid, name);
     }
 }

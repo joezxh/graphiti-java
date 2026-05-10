@@ -1,6 +1,7 @@
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.common.exception.BusinessException;
+import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.NodeService;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class NodeServiceImpl implements NodeService {
     
     private final GraphNeo4jService graphNeo4jService;
+    private final EmbedderService embedderService;
     
     @Override
     public List<NodeListRespVO> listNodes(String graphId, NodeFilterReqVO filterReqVO) {
@@ -59,15 +61,21 @@ public class NodeServiceImpl implements NodeService {
         // 提取节点属性
         String name = (String) nodeData.get("name");
         String type = (String) nodeData.get("type");
+        String summary = (String) nodeData.get("summary");
         Map<String, Object> properties = (Map<String, Object>) nodeData.getOrDefault("properties", new HashMap<>());
         
         if (name == null || name.isEmpty()) {
             throw new BusinessException(1006, "节点名称不能为空");
         }
         
+        // 生成嵌入向量（name + summary）
+        String embedText = name + (summary != null ? " " + summary : "");
+        float[] embedding = embedderService.embed(embedText);
+        
         // 创建节点
         Map<String, Object> createdNode = graphNeo4jService.createEntityNode(
-            graphId, uuid, name, type != null ? type : "Entity", properties);
+            graphId, uuid, name, type != null ? type : "Entity",
+            summary != null ? summary : "", embedding, properties);
         
         if (createdNode == null) {
             throw new BusinessException(500, "创建节点失败");

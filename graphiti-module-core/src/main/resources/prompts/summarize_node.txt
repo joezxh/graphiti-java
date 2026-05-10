@@ -1,0 +1,18 @@
+Generate a concise summary for the following knowledge graph node based on its associated facts and episodes.
+
+Node Name: {{nodeName}}
+Node Type: {{nodeType}}
+
+Related Facts:
+{{facts}}
+
+Related Episodes:
+{{episodes}}
+
+Requirements:
+1. The summary should be 1-3 sentences long.
+2. Include the most important and recent information.
+3. Maintain factual accuracy - do not invent information.
+4. If facts contradict each other, mention the temporal context.
+
+Output: Provide only the summary text, no JSON or markdown.

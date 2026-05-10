@@ -67,7 +67,7 @@ public class OntPropertyDO implements Serializable {
     private BigDecimal maxValue;
     private String description;
     private String example;
-    private String metadata;
+    private String metadata;      // JSON string (TEXT column, serialized via ObjectMapper)
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;

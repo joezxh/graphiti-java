@@ -25,24 +25,31 @@ public class GraphNeo4jService {
     private final GraphNeo4jConfig neo4jConfig;
     
     /**
-     * 创建实体节点
+     * 创建实体节点（带嵌入向量）
      * @param graphId 图谱ID（用作 group_id）
      * @param uuid 节点UUID
      * @param name 节点名称
      * @param type 节点类型（实体类型）
+     * @param summary 节点摘要
+     * @param embedding 嵌入向量
      * @param properties 属性 Map
      * @return 创建的节点信息
      */
-    public Map<String, Object> createEntityNode(String graphId, String uuid, String name, String type, Map<String, Object> properties) {
-        String cypher = "CREATE (n:Entity {group_id: $group_id, uuid: $uuid, name: $name, type: $type}) SET n += $props RETURN n";
-        
+    public Map<String, Object> createEntityNode(String graphId, String uuid, String name, String type,
+                                                String summary, float[] embedding, Map<String, Object> properties) {
+        String cypher = "CREATE (n:Entity {group_id: $group_id, uuid: $uuid, name: $name, type: $type, " +
+                        "summary: $summary, embedding: $embedding, valid_at: timestamp(), invalid_at: null}) " +
+                        "SET n += $props RETURN n";
+
         Map<String, Object> params = new HashMap<>();
         params.put("group_id", graphId);
         params.put("uuid", uuid);
         params.put("name", name);
         params.put("type", type);
+        params.put("summary", summary != null ? summary : "");
+        params.put("embedding", embedding != null ? toFloatList(embedding) : null);
         params.put("props", properties != null ? properties : new HashMap<>());
-        
+
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher, params);
             if (result.hasNext()) {
@@ -52,22 +59,43 @@ public class GraphNeo4jService {
         }
         return null;
     }
+
+    /**
+     * 更新节点嵌入向量
+     * @param graphId 图谱ID
+     * @param uuid 节点UUID
+     * @param embedding 嵌入向量
+     */
+    public void updateNodeEmbedding(String graphId, String uuid, float[] embedding) {
+        String cypher = "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) " +
+                        "SET n.embedding = $embedding";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cypher, Values.parameters("group_id", graphId, "uuid", uuid,
+                    "embedding", embedding != null ? toFloatList(embedding) : null));
+        }
+    }
     
     /**
-     * 创建关系边
+     * 创建关系边（带嵌入向量）
      * @param graphId 图谱ID
      * @param edgeUuid 关系UUID（可选，为 null 时自动生成）
      * @param sourceUuid 源节点UUID
      * @param targetUuid 目标节点UUID
      * @param type 关系类型
+     * @param fact 事实描述
+     * @param embedding 嵌入向量
      * @param properties 属性 Map
      * @return 创建的关系信息
      */
-    public Map<String, Object> createRelationship(String graphId, String edgeUuid, String sourceUuid, String targetUuid, String type, Map<String, Object> properties) {
+    public Map<String, Object> createRelationship(String graphId, String edgeUuid, String sourceUuid,
+                                                    String targetUuid, String type, String fact,
+                                                    float[] embedding, Map<String, Object> properties) {
         String cypher =
             "MATCH (a:Entity {group_id: $group_id, uuid: $sourceUuid}) " +
             "MATCH (b:Entity {group_id: $group_id, uuid: $targetUuid}) " +
-            "CREATE (a)-[r:RELATES_TO {uuid: $edgeUuid, type: $type}]- SET r += $props RETURN r";
+            "CREATE (a)-[r:RELATES_TO {uuid: $edgeUuid, type: $type, fact: $fact, " +
+            "embedding: $embedding, valid_at: timestamp(), invalid_at: null}]->(b) " +
+            "SET r += $props RETURN r";
 
         Map<String, Object> props = properties != null ? new HashMap<>(properties) : new HashMap<>();
         if (!props.containsKey("uuid")) {
@@ -79,6 +107,8 @@ public class GraphNeo4jService {
         params.put("sourceUuid", sourceUuid);
         params.put("targetUuid", targetUuid);
         params.put("type", type);
+        params.put("fact", fact != null ? fact : "");
+        params.put("embedding", embedding != null ? toFloatList(embedding) : null);
         params.put("edgeUuid", props.get("uuid"));
         params.put("props", props);
 
@@ -90,6 +120,68 @@ public class GraphNeo4jService {
             }
         }
         return null;
+    }
+
+    /**
+     * 创建关系边（支持自定义关系类型）
+     * @param graphId 图谱ID
+     * @param edgeUuid 关系UUID
+     * @param sourceUuid 源节点UUID
+     * @param targetUuid 目标节点UUID
+     * @param relationType Neo4j 关系类型（如 RELATES_TO, HAS_COMMUNITY, NEXT_EPISODE 等）
+     * @param type 业务类型
+     * @param fact 事实描述
+     * @param embedding 嵌入向量
+     * @param properties 属性 Map
+     * @return 创建的关系信息
+     */
+    public Map<String, Object> createRelationship(String graphId, String edgeUuid, String sourceUuid,
+                                                    String targetUuid, String relationType, String type,
+                                                    String fact, float[] embedding, Map<String, Object> properties) {
+        String cypher =
+            "MATCH (a:Entity {group_id: $group_id, uuid: $sourceUuid}) " +
+            "MATCH (b:Entity {group_id: $group_id, uuid: $targetUuid}) " +
+            "CREATE (a)-[r:" + relationType + " {uuid: $edgeUuid, type: $type, fact: $fact, " +
+            "embedding: $embedding, valid_at: timestamp(), invalid_at: null}]->(b) " +
+            "SET r += $props RETURN r";
+
+        Map<String, Object> props = properties != null ? new HashMap<>(properties) : new HashMap<>();
+        if (!props.containsKey("uuid")) {
+            props.put("uuid", edgeUuid != null ? edgeUuid : java.util.UUID.randomUUID().toString().replace("-", ""));
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("group_id", graphId);
+        params.put("sourceUuid", sourceUuid);
+        params.put("targetUuid", targetUuid);
+        params.put("type", type);
+        params.put("fact", fact != null ? fact : "");
+        params.put("embedding", embedding != null ? toFloatList(embedding) : null);
+        params.put("props", props);
+
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, params);
+            if (result.hasNext()) {
+                Record record = result.next();
+                return record.get("r").asRelationship().asMap();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 更新边嵌入向量
+     * @param graphId 图谱ID
+     * @param uuid 边UUID
+     * @param embedding 嵌入向量
+     */
+    public void updateEdgeEmbedding(String graphId, String uuid, float[] embedding) {
+        String cypher = "MATCH ()-[r:RELATES_TO {group_id: $group_id, uuid: $uuid}]->() " +
+                        "SET r.embedding = $embedding";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cypher, Values.parameters("group_id", graphId, "uuid", uuid,
+                    "embedding", embedding != null ? toFloatList(embedding) : null));
+        }
     }
     
     /**
@@ -568,6 +660,123 @@ public class GraphNeo4jService {
         return results;
     }
     
+    // ==================== 向量搜索方法 ====================
+
+    /**
+     * 向量相似度搜索节点
+     * @param graphId 图谱ID
+     * @param embedding 查询向量
+     * @param limit 返回数量限制
+     * @return 节点列表（含 similarity 分数）
+     */
+    public List<Map<String, Object>> searchNodesByVector(String graphId, float[] embedding, int limit) {
+        String cypher =
+            "CALL db.index.vector.queryNodes('node_embedding_index', $k, $embedding) " +
+            "YIELD node, score " +
+            "WHERE node.group_id = $group_id " +
+            "RETURN node.uuid as uuid, node.name as name, node.type as type, " +
+            "node.summary as summary, score " +
+            "LIMIT $limit";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("group_id", graphId, "k", limit,
+                                  "embedding", toFloatList(embedding), "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> node = new HashMap<>();
+                node.put("uuid", record.get("uuid").asString());
+                node.put("name", record.get("name").asString());
+                node.put("type", record.get("type").asString());
+                node.put("summary", record.get("summary").asString());
+                node.put("score", record.get("score").asDouble());
+                results.add(node);
+            }
+        } catch (Exception e) {
+            log.warn("向量搜索节点失败（可能索引未创建）：{}", e.getMessage());
+        }
+        return results;
+    }
+
+    /**
+     * 向量相似度搜索边
+     * @param graphId 图谱ID
+     * @param embedding 查询向量
+     * @param limit 返回数量限制
+     * @return 边列表（含 similarity 分数）
+     */
+    public List<Map<String, Object>> searchEdgesByVector(String graphId, float[] embedding, int limit) {
+        String cypher =
+            "CALL db.index.vector.queryRelationships('edge_embedding_index', $k, $embedding) " +
+            "YIELD relationship, score " +
+            "WHERE relationship.group_id = $group_id " +
+            "RETURN relationship.uuid as uuid, relationship.fact as fact, relationship.type as type, " +
+            "score LIMIT $limit";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("group_id", graphId, "k", limit,
+                                  "embedding", toFloatList(embedding), "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> edge = new HashMap<>();
+                edge.put("uuid", record.get("uuid").asString());
+                edge.put("fact", record.get("fact").asString());
+                edge.put("type", record.get("type").asString());
+                edge.put("score", record.get("score").asDouble());
+                results.add(edge);
+            }
+        } catch (Exception e) {
+            log.warn("向量搜索边失败（可能索引未创建）：{}", e.getMessage());
+        }
+        return results;
+    }
+
+    /**
+     * 初始化向量索引（节点 + 边）
+     * 应在应用启动时调用一次
+     */
+    public void initVectorIndexes(int nodeDimensions, int edgeDimensions) {
+        try (Session session = neo4jDriver.session()) {
+            // 节点向量索引
+            session.run(
+                "CREATE VECTOR INDEX node_embedding_index IF NOT EXISTS " +
+                "FOR (n:Entity) ON (n.embedding) " +
+                "OPTIONS {indexConfig: {`vector.dimensions`: $dim, `vector.similarity_function`: 'cosine'}}",
+                Values.parameters("dim", nodeDimensions)
+            );
+            log.info("节点向量索引创建/确认完成，维度：{}", nodeDimensions);
+
+            // 边向量索引
+            session.run(
+                "CREATE VECTOR INDEX edge_embedding_index IF NOT EXISTS " +
+                "FOR ()-[r:RELATES_TO]-() ON (r.embedding) " +
+                "OPTIONS {indexConfig: {`vector.dimensions`: $dim, `vector.similarity_function`: 'cosine'}}",
+                Values.parameters("dim", edgeDimensions)
+            );
+            log.info("边向量索引创建/确认完成，维度：{}", edgeDimensions);
+        } catch (Exception e) {
+            log.error("向量索引初始化失败：{}", e.getMessage(), e);
+            throw new RuntimeException("向量索引初始化失败", e);
+        }
+    }
+
+    // ==================== 工具方法 ====================
+
+    /**
+     * float[] 转 List<Float>（Neo4j 驱动要求）
+     */
+    private List<Float> toFloatList(float[] arr) {
+        if (arr == null) return null;
+        List<Float> list = new ArrayList<>(arr.length);
+        for (float v : arr) {
+            list.add(v);
+        }
+        return list;
+    }
+
     /**
      * 根据 UUID 查询节点
      * @param uuid 节点UUID
@@ -586,5 +795,202 @@ public class GraphNeo4jService {
             }
         }
         return null;
+    }
+
+    // ==================== 时序管理方法 ====================
+
+    /**
+     * 失效指定名称的实体节点（将 invalid_at 设为当前时间）
+     * @param graphId 图谱ID
+     * @param entityNames 实体名称列表
+     */
+    public void invalidateNodesByName(String graphId, List<String> entityNames) {
+        String cypher =
+            "MATCH (n:Entity {group_id: $group_id}) " +
+            "WHERE n.name IN $names AND n.invalid_at IS NULL " +
+            "SET n.invalid_at = timestamp()";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cypher, Values.parameters("group_id", graphId, "names", entityNames));
+            log.info("失效节点：graphId={}, names={}", graphId, entityNames);
+        }
+    }
+
+    /**
+     * 失效与指定节点相关的边
+     * @param graphId 图谱ID
+     * @param nodeUuids 节点UUID列表
+     */
+    public void invalidateEdgesByNodes(String graphId, List<String> nodeUuids) {
+        String cypher =
+            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "WHERE (a.uuid IN $uuids OR b.uuid IN $uuids) AND r.invalid_at IS NULL " +
+            "SET r.invalid_at = timestamp()";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cypher, Values.parameters("group_id", graphId, "uuids", nodeUuids));
+            log.info("失效边：graphId={}, nodeUuids={}", graphId, nodeUuids);
+        }
+    }
+
+    /**
+     * 查询当前有效的节点
+     * @param graphId 图谱ID
+     * @return 有效节点列表
+     */
+    public List<Map<String, Object>> getValidNodes(String graphId) {
+        String cypher =
+            "MATCH (n:Entity {group_id: $group_id}) " +
+            "WHERE n.invalid_at IS NULL " +
+            "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
+            "n.valid_at as valid_at";
+        return executeNodeQuery(cypher, graphId);
+    }
+
+    /**
+     * 查询指定时间点的有效节点
+     * @param graphId 图谱ID
+     * @param referenceTime 参考时间戳（毫秒）
+     * @return 有效节点列表
+     */
+    public List<Map<String, Object>> getValidNodesAt(String graphId, long referenceTime) {
+        String cypher =
+            "MATCH (n:Entity {group_id: $group_id}) " +
+            "WHERE n.valid_at <= $refTime AND (n.invalid_at IS NULL OR n.invalid_at > $refTime) " +
+            "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
+            "n.valid_at as valid_at, n.invalid_at as invalid_at";
+        return executeNodeQuery(cypher, graphId, referenceTime);
+    }
+
+    /**
+     * 查询指定时间点的有效边
+     * @param graphId 图谱ID
+     * @param referenceTime 参考时间戳（毫秒）
+     * @return 有效边列表
+     */
+    public List<Map<String, Object>> getValidEdgesAt(String graphId, long referenceTime) {
+        String cypher =
+            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "WHERE r.valid_at <= $refTime AND (r.invalid_at IS NULL OR r.invalid_at > $refTime) " +
+            "RETURN r.uuid as uuid, r.fact as fact, r.type as type, " +
+            "a.uuid as source, b.uuid as target, r.valid_at as valid_at";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("group_id", graphId, "refTime", referenceTime));
+            while (result.hasNext()) {
+                results.add(result.next().asMap());
+            }
+        }
+        return results;
+    }
+
+    /**
+     * 查询实体的历史版本（所有时间线）
+     * @param graphId 图谱ID
+     * @param entityName 实体名称
+     * @return 历史版本列表
+     */
+    public List<Map<String, Object>> getFactVersions(String graphId, String entityName) {
+        String cypher =
+            "MATCH (n:Entity {group_id: $group_id, name: $name}) " +
+            "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
+            "n.valid_at as valid_at, n.invalid_at as invalid_at " +
+            "ORDER BY n.valid_at DESC";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("group_id", graphId, "name", entityName));
+            while (result.hasNext()) {
+                results.add(result.next().asMap());
+            }
+        }
+        return results;
+    }
+
+    // ==================== 内部工具方法 ====================
+
+    private List<Map<String, Object>> executeNodeQuery(String cypher, String graphId) {
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            while (result.hasNext()) {
+                results.add(result.next().asMap());
+            }
+        }
+        return results;
+    }
+
+    private List<Map<String, Object>> executeNodeQuery(String cypher, String graphId, long refTime) {
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("group_id", graphId, "refTime", refTime));
+            while (result.hasNext()) {
+                results.add(result.next().asMap());
+            }
+        }
+        return results;
+    }
+
+    // ==================== 克隆与导出方法 ====================
+
+    /**
+     * 克隆图谱数据（将源 group_id 的节点/边复制到目标 group_id）
+     * @param sourceGraphId 源图谱ID
+     * @param targetGraphId 目标图谱ID
+     */
+    public void cloneGraphData(String sourceGraphId, String targetGraphId) {
+        // 1. 克隆节点
+        String cloneNodesCypher =
+            "MATCH (n:Entity {group_id: $source_id}) " +
+            "CREATE (m:Entity) SET m = properties(n), m.group_id = $target_id";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cloneNodesCypher, Values.parameters("source_id", sourceGraphId, "target_id", targetGraphId));
+        }
+
+        // 2. 克隆边
+        String cloneEdgesCypher =
+            "MATCH (a:Entity {group_id: $source_id})-[r:RELATES_TO]->(b:Entity {group_id: $source_id}) " +
+            "MATCH (na:Entity {group_id: $target_id, uuid: a.uuid}) " +
+            "MATCH (nb:Entity {group_id: $target_id, uuid: b.uuid}) " +
+            "CREATE (na)-[nr:RELATES_TO]->(nb) SET nr = properties(r), nr.uuid = apoc.create.uuid()";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cloneEdgesCypher, Values.parameters("source_id", sourceGraphId, "target_id", targetGraphId));
+        }
+
+        log.info("图谱数据克隆完成：source={}, target={}", sourceGraphId, targetGraphId);
+    }
+
+    /**
+     * 获取图谱的所有节点
+     * @param graphId 图谱ID
+     * @return 节点列表
+     */
+    public List<Map<String, Object>> getNodesByGraphId(String graphId) {
+        String cypher =
+            "MATCH (n:Entity {group_id: $group_id}) " +
+            "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary";
+        return executeNodeQuery(cypher, graphId);
+    }
+
+    /**
+     * 获取图谱的所有边
+     * @param graphId 图谱ID
+     * @return 边列表
+     */
+    public List<Map<String, Object>> getEdgesByGraphId(String graphId) {
+        String cypher =
+            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "RETURN r.uuid as uuid, r.fact as fact, r.type as type, " +
+            "a.uuid as source, b.uuid as target";
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            while (result.hasNext()) {
+                results.add(result.next().asMap());
+            }
+        }
+        return results;
     }
 }

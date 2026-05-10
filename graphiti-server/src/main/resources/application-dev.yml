@@ -25,6 +25,32 @@ spring:
       host: localhost
       port: 6379
 
+# Spring AI 配置（OpenAI / Ollama 自动配置读取）
+# spring.ai.openai.api-key: ${OPENAI_API_KEY:}
+# spring.ai.openai.base-url: https://api.openai.com/v1
+# spring.ai.openai.chat.options.model: gpt-4o
+# spring.ai.openai.chat.options.temperature: 0.2
+# spring.ai.ollama.base-url: http://localhost:11434
+# spring.ai.ollama.chat.options.model: llama3
+
+# Graphiti AI Provider 选择配置
+graphiti:
+  ai:
+    llm-provider: openai  # openai | qwen | ollama
+    embedding-provider: openai  # openai | qwen | ollama
+    openai:
+      model: gpt-4o
+      temperature: 0.2
+      max-tokens: 2048
+    qwen:
+      model: qwen-turbo
+      temperature: 0.2
+      max-tokens: 2048
+    ollama:
+      chat-model: llama3
+      embedding-model: nomic-embed-text
+      temperature: 0.2
+
 # Neo4j 配置
 neo4j:
   uri: bolt://localhost:7687

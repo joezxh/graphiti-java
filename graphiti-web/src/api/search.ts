@@ -1,10 +1,13 @@
+import request from './request'
+
 // 搜索参数
 export interface SearchParams {
   query: string
-  mode: 'semantic' | 'structured' | 'hybrid'
+  mode: 'semantic' | 'structured' | 'hybrid' | 'bm25' | 'vector' | 'bfs'
   graphId?: string
   filters?: SearchFilter[]
   limit?: number
+  depth?: number
 }
 
 // 搜索过滤条件
@@ -66,88 +69,49 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 // 混合检索 API
 export const searchApi = {
-  // 执行搜索
+  // 执行搜索（全局/图谱级别）
   async search(params: SearchParams): Promise<SearchResult[]> {
-    await delay(600)
-
-    // 模拟搜索结果
-    const mockResults: SearchResult[] = [
-      {
-        id: 'node-001',
-        type: 'node',
-        name: '张三',
-        entityType: 'Person',
-        properties: { name: '张三', age: 30, email: 'zhangsan@example.com' },
-        score: 0.95,
-        highlight: { name: ['<em>张三</em>'] }
-      },
-      {
-        id: 'node-002',
-        type: 'node',
-        name: '李四',
-        entityType: 'Person',
-        properties: { name: '李四', age: 28, email: 'lisi@example.com' },
-        score: 0.72
-      },
-      {
-        id: 'edge-001',
-        type: 'edge',
-        name: 'WORKS_AT',
-        relationType: 'WORKS_AT',
-        properties: { since: '2020-01-01', position: '工程师' },
-        score: 0.68,
-        source: 'node-001',
-        target: 'node-003'
-      },
-      {
-        id: 'node-003',
-        type: 'node',
-        name: 'ABC科技',
-        entityType: 'Company',
-        properties: { name: 'ABC科技', industry: '互联网', founded: '2018-05-10' },
-        score: 0.55
-      }
-    ]
-
-    // 根据查询词过滤
-    if (params.query) {
-      const kw = params.query.toLowerCase()
-      const filtered = mockResults.filter(r =>
-        r.name.toLowerCase().includes(kw) ||
-        JSON.stringify(r.properties).toLowerCase().includes(kw)
-      )
-
-      // 模拟结构化过滤
-      if (params.filters && params.filters.length > 0) {
-        return filtered.filter(r => {
-          return params.filters!.every(f => {
-            const val = r.properties[f.field]
-            switch (f.operator) {
-              case 'eq': return val === f.value
-              case 'gt': return val > f.value
-              case 'gte': return val >= f.value
-              case 'lt': return val < f.value
-              case 'lte': return val <= f.value
-              case 'contains': return String(val).includes(f.value)
-              default: return true
-            }
-          })
-        })
-      }
-
-      return filtered.slice(0, params.limit || 20)
+    if (!params.graphId) {
+      const resp = await request.post('/admin/graphiti/search/global', {
+        query: params.query,
+        maxFacts: params.limit || 20,
+        config: { mode: params.mode || 'hybrid' }
+      })
+      return resp.data?.edges || []
     }
-
-    return mockResults.slice(0, params.limit || 20)
+    const resp = await request.post(`/admin/graphiti/search/graph/${params.graphId}`, {
+      query: params.query,
+      maxFacts: params.limit || 20,
+      config: { mode: params.mode || 'hybrid' }
+    })
+    return resp.data?.edges || []
   },
 
-  // 获取搜索历史
+  // 混合检索
+  async hybridSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
+    const resp = await request.post(`/admin/graphiti/search/hybrid/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`)
+    return resp.data?.edges || []
+  },
+
+  // 语义搜索
+  async semanticSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
+    const resp = await request.post(`/admin/graphiti/search/semantic/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`)
+    return resp.data?.edges || []
+  },
+
+  // BFS 搜索
+  async bfsSearch(graphId: string, query: string, depth: number = 2, limit: number = 10): Promise<SearchResult[]> {
+    const resp = await request.post(`/admin/graphiti/search/bfs/${graphId}?query=${encodeURIComponent(query)}&depth=${depth}&limit=${limit}`)
+    return resp.data?.edges || []
+  },
+
+  // 获取搜索历史（Mock）
   async getSearchHistory(): Promise<SearchHistory[]> {
     await delay(300)
     return [...mockSearchHistory]
   },
 
-  // 保存搜索历史
+  // 保存搜索历史（Mock）
   async saveSearchHistory(query: string, mode: string, resultCount: number): Promise<SearchHistory> {
     await delay(200)
     const item: SearchHistory = {
@@ -158,14 +122,13 @@ export const searchApi = {
       createdAt: new Date().toISOString()
     }
     mockSearchHistory.unshift(item)
-    // 只保留最近 20 条
     if (mockSearchHistory.length > 20) {
       mockSearchHistory = mockSearchHistory.slice(0, 20)
     }
     return item
   },
 
-  // 清空搜索历史
+  // 清空搜索历史（Mock）
   async clearSearchHistory(): Promise<void> {
     await delay(200)
     mockSearchHistory = []

@@ -26,7 +26,7 @@ public class OntConstraintDO implements Serializable {
     private String constraintType;  // CARDINALITY / PATTERN / RANGE / ENUM / NOT_NULL / CUSTOM_SPARQL
 
     @TableField("value")
-    private String value;          // JSON string: { "min": 1, "max": 5 } or { "pattern": "^[A-Z].*" }
+    private String value;          // JSON string (TEXT column): { "min": 1, "max": 5 } or { "pattern": "^[A-Z].*" }
 
     @TableField("error_message")
     private String errorMessage;
@@ -36,4 +36,7 @@ public class OntConstraintDO implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
 }

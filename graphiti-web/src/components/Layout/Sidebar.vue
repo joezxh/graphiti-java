@@ -128,8 +128,6 @@ import {
   SearchOutlined,
   AppstoreOutlined,
   UnorderedListOutlined,
-  PlusOutlined,
-  EyeOutlined,
   ImportOutlined,
   ExportOutlined,
   NodeIndexOutlined,

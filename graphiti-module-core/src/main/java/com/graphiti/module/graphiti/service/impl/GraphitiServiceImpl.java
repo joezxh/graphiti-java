@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -140,6 +142,54 @@ public class GraphitiServiceImpl implements GraphitiService {
         
         return statsVO;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public GraphInfoRespVO cloneGraph(String graphId) {
+        // 1. 获取原图谱元数据
+        GraphMetadataDO sourceEntity = getGraphMetadataByGraphId(graphId);
+
+        // 2. 创建新图谱元数据
+        GraphMetadataDO newEntity = new GraphMetadataDO();
+        String newGraphId = UUID.randomUUID().toString().replace("-", "");
+        newEntity.setGraphId(newGraphId);
+        newEntity.setName(sourceEntity.getName() + " (副本)");
+        newEntity.setDescription(sourceEntity.getDescription());
+        newEntity.setNodeCount(sourceEntity.getNodeCount());
+        newEntity.setEdgeCount(sourceEntity.getEdgeCount());
+        newEntity.setCreateTime(LocalDateTime.now());
+        newEntity.setUpdateTime(LocalDateTime.now());
+        newEntity.setDeleted(false);
+        graphMetadataMapper.insert(newEntity);
+
+        // 3. 克隆 Neo4j 数据（将原 group_id 的节点/边复制到新 group_id）
+        graphNeo4jService.cloneGraphData(graphId, newGraphId);
+
+        log.info("图谱克隆成功：source={}, target={}", graphId, newGraphId);
+        return convertToGraphInfoRespVO(newEntity);
+    }
+
+    @Override
+    public Map<String, Object> exportGraph(String graphId) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 1. 图谱元数据
+        GraphMetadataDO entity = getGraphMetadataByGraphId(graphId);
+        result.put("graphId", entity.getGraphId());
+        result.put("name", entity.getName());
+        result.put("description", entity.getDescription());
+        result.put("nodeCount", entity.getNodeCount());
+        result.put("edgeCount", entity.getEdgeCount());
+        result.put("createdAt", entity.getCreateTime());
+
+        // 2. Neo4j 数据
+        result.put("nodes", graphNeo4jService.getNodesByGraphId(graphId));
+        result.put("edges", graphNeo4jService.getEdgesByGraphId(graphId));
+        result.put("episodes", graphNeo4jService.getEpisodesByGraphId(graphId, 1000, 0));
+
+        return result;
+    }
+
     // ==================== 私有方法 ====================
     /**
      * 根据 graphId 查询图谱元数据
