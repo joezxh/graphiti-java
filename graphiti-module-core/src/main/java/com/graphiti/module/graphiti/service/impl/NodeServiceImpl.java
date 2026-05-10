@@ -4,6 +4,9 @@ import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.NodeService;
+import com.graphiti.module.graphiti.service.OntologyValidationService;
+import com.graphiti.module.graphiti.exception.OntologyValidationException;
+import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
@@ -26,6 +29,7 @@ public class NodeServiceImpl implements NodeService {
     
     private final GraphNeo4jService graphNeo4jService;
     private final EmbedderService embedderService;
+    private final OntologyValidationService ontologyValidationService;
     
     @Override
     public List<NodeListRespVO> listNodes(String graphId, NodeFilterReqVO filterReqVO) {
@@ -63,7 +67,23 @@ public class NodeServiceImpl implements NodeService {
         String type = (String) nodeData.get("type");
         String summary = (String) nodeData.get("summary");
         Map<String, Object> properties = (Map<String, Object>) nodeData.getOrDefault("properties", new HashMap<>());
-        
+
+        // === 本体校验（L1-L4）===
+        if (ontologyValidationService.hasOntology(graphId)) {
+            ValidationResultVO vr = ontologyValidationService.validateNode(
+                graphId, type != null ? type : "Entity", properties);
+            if (!vr.isPassed()) {
+                throw new OntologyValidationException(vr);
+            }
+            // 合并 enrichedProperties（注入的默认值）
+            if (vr.getEnrichedProperties() != null && !vr.getEnrichedProperties().isEmpty()) {
+                Map<String, Object> merged = new HashMap<>(vr.getEnrichedProperties());
+                properties.forEach(merged::putIfAbsent);
+                properties = merged;
+            }
+        }
+        // === 业务校验 ===
+
         if (name == null || name.isEmpty()) {
             throw new BusinessException(1006, "节点名称不能为空");
         }
