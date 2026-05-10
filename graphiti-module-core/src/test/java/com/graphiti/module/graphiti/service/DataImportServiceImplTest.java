@@ -88,7 +88,7 @@ class DataImportServiceImplTest {
             dataImportService.addEntityNode("graph-3",
                 Map.of("name", "Widget", "type", "Product")));
         verify(graphNeo4jService, never()).createEntityNode(
-            anyString(), anyString(), anyString(), anyString(), anyString(), any(), any());
+            anyString(), anyString(), anyString(), anyString(), anyString(), any(float[].class), any());
         verify(embedderService, never()).embed(anyString());
         verify(temporalService, never()).invalidateFacts(anyString(), anyList());
     }
