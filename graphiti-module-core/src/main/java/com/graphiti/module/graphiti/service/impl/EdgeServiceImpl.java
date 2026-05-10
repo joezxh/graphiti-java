@@ -1,9 +1,12 @@
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.common.exception.BusinessException;
+import com.graphiti.module.graphiti.exception.OntologyValidationException;
 import com.graphiti.module.graphiti.service.EdgeService;
 import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
+import com.graphiti.module.graphiti.service.OntologyValidationService;
+import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeInfoRespVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
@@ -26,6 +29,7 @@ public class EdgeServiceImpl implements EdgeService {
     
     private final GraphNeo4jService graphNeo4jService;
     private final EmbedderService embedderService;
+    private final OntologyValidationService ontologyValidationService;
     
     @Override
     public List<EdgeListRespVO> listEdges(String graphId, EdgeFilterReqVO filterReqVO) {
@@ -67,7 +71,7 @@ public class EdgeServiceImpl implements EdgeService {
         String type = (String) edgeData.get("type");
         String fact = (String) edgeData.get("fact");
         Map<String, Object> properties = (Map<String, Object>) edgeData.getOrDefault("properties", new HashMap<>());
-        
+
         if (source == null || source.isEmpty()) {
             throw new BusinessException(1007, "源节点UUID不能为空");
         }
@@ -77,7 +81,14 @@ public class EdgeServiceImpl implements EdgeService {
         if (type == null || type.isEmpty()) {
             throw new BusinessException(1009, "关系类型不能为空");
         }
-        
+
+        if (ontologyValidationService.hasOntology(graphId)) {
+            ValidationResultVO vr = ontologyValidationService.validateEdge(graphId, type, properties);
+            if (!vr.isPassed()) {
+                throw new OntologyValidationException(vr);
+            }
+        }
+
         // 生成嵌入向量（基于 fact 描述）
         String embedText = fact != null ? fact : (type + " relationship");
         float[] embedding = embedderService.embed(embedText);

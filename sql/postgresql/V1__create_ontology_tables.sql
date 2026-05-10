@@ -108,3 +108,18 @@ CREATE TABLE ont_version_history (
 );
 CREATE INDEX idx_ont_version_def  ON ont_version_history(definition_id);
 CREATE INDEX idx_ont_version_time ON ont_version_history(changed_at DESC);
+
+-- 本体映射表（用于 Schema.org / OBO Foundry 等外部本体对齐）
+CREATE TABLE ont_mapping (
+    id                  BIGSERIAL PRIMARY KEY,
+    definition_id       BIGINT NOT NULL REFERENCES ont_definition(id) ON DELETE CASCADE,
+    source_ontology     VARCHAR(512),
+    source_type         VARCHAR(16),
+    mapped_class_uri    VARCHAR(512),
+    mapping_type        VARCHAR(16),
+    confidence          DECIMAL(3,2),
+    metadata            JSONB,
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_ont_mapping_def     ON ont_mapping(definition_id);
+CREATE INDEX idx_ont_mapping_source ON ont_mapping(source_ontology);

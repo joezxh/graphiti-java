@@ -2,6 +2,9 @@ package com.graphiti.module.graphiti.controller.admin;
 
 import com.graphiti.common.response.CommonResult;
 import com.graphiti.module.graphiti.service.OntologyService;
+import com.graphiti.module.graphiti.service.OntologyValidationService;
+import com.graphiti.module.graphiti.vo.ontology.BatchValidationReqVO;
+import com.graphiti.module.graphiti.vo.ontology.BatchValidationRespVO;
 import com.graphiti.module.graphiti.vo.ontology.OntologyRespVO;
 import com.graphiti.module.graphiti.vo.ontology.SetOntologyReqVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OntologyController {
     private final OntologyService ontologyService;
+    private final OntologyValidationService ontologyValidationService;
     /**
      * 获取指定图谱的本体定义
      * @param graphId 图谱ID
@@ -47,5 +51,14 @@ public class OntologyController {
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "graph-123") String graphId,
             @Valid @RequestBody SetOntologyReqVO reqVO) {
         return CommonResult.success(ontologyService.setOntology(graphId, reqVO));
+    }
+
+    @Operation(summary = "批量本体验证", description = "对请求中的节点与边批量执行本体验证",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/validate/batch")
+    public CommonResult<BatchValidationRespVO> validateBatch(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody BatchValidationReqVO reqVO) {
+        return CommonResult.success(ontologyValidationService.validateBatch(graphId, reqVO));
     }
 }

@@ -1,9 +1,13 @@
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.common.exception.BusinessException;
+import com.graphiti.module.graphiti.exception.OntologyValidationException;
 import com.graphiti.module.graphiti.service.DataImportService;
+import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
+import com.graphiti.module.graphiti.service.OntologyValidationService;
 import com.graphiti.module.graphiti.service.TemporalService;
+import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddMessagesReqVO;
@@ -29,6 +33,8 @@ public class DataImportServiceImpl implements DataImportService {
 
     private final GraphNeo4jService graphNeo4jService;
     private final TemporalService temporalService;
+    private final OntologyValidationService ontologyValidationService;
+    private final EmbedderService embedderService;
 
     @Override
     public void addData(AddDataReqVO reqVO) {
@@ -151,16 +157,32 @@ public class DataImportServiceImpl implements DataImportService {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String name = (String) nodeData.get("name");
         String type = (String) nodeData.getOrDefault("type", "Entity");
+        String summary = (String) nodeData.get("summary");
         Map<String, Object> properties = (Map<String, Object>) nodeData.getOrDefault("properties", new HashMap<>());
-        
+
+        if (ontologyValidationService.hasOntology(graphId)) {
+            ValidationResultVO vr = ontologyValidationService.validateNode(
+                graphId, type != null ? type : "Entity", properties);
+            if (!vr.isPassed()) {
+                throw new OntologyValidationException(vr);
+            }
+            if (vr.getEnrichedProperties() != null) {
+                vr.getEnrichedProperties().forEach(properties::putIfAbsent);
+            }
+        }
+
         if (name == null || name.isEmpty()) {
             throw new BusinessException(1006, "节点名称不能为空");
         }
-        
+
         // 时序管理：如果同名实体已存在，先失效旧实体
         temporalService.invalidateFacts(graphId, Collections.singletonList(name));
-        
-        graphNeo4jService.createEntityNode(graphId, uuid, name, type, "", null, properties);
+
+        String embedText = name + (summary != null ? " " + summary : "");
+        float[] embedding = embedderService.embed(embedText);
+
+        graphNeo4jService.createEntityNode(
+            graphId, uuid, name, type, summary != null ? summary : "", embedding, properties);
         log.info("实体节点创建成功：graphId={}, uuid={}, name={}", graphId, uuid, name);
     }
 }
