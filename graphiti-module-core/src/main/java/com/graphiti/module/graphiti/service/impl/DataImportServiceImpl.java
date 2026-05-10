@@ -166,8 +166,10 @@ public class DataImportServiceImpl implements DataImportService {
             if (!vr.isPassed()) {
                 throw new OntologyValidationException(vr);
             }
-            if (vr.getEnrichedProperties() != null) {
-                vr.getEnrichedProperties().forEach(properties::putIfAbsent);
+            if (vr.getEnrichedProperties() != null && !vr.getEnrichedProperties().isEmpty()) {
+                Map<String, Object> merged = new HashMap<>(vr.getEnrichedProperties());
+                properties.forEach(merged::putIfAbsent);
+                properties = merged;
             }
         }
 

@@ -1,14 +1,18 @@
-package com.graphiti.module.graphiti.service;
+package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.service.impl.NodeServiceImpl;
+import com.graphiti.module.graphiti.service.EmbedderService;
+import com.graphiti.module.graphiti.service.GraphNeo4jService;
+import com.graphiti.module.graphiti.service.OntologyValidationService;
 import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
+import com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO;
 import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -60,9 +64,8 @@ class NodeServiceImplTest {
     @Test
     void createNode_withOntology_failsValidation() {
         when(validationService.hasOntology("graph-3")).thenReturn(true);
-        var errors = java.util.List.of(
-            new com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO(
-                2, "ONT002", "缺少必需属性: age", "age", null));
+        List<ValidationErrorVO> errors = List.of(
+            new ValidationErrorVO(2, "ONT002", "缺少必需属性: age", "age", null));
         when(validationService.validateNode(eq("graph-3"), eq("Person"), any(Map.class)))
             .thenReturn(ValidationResultVO.fail(2, errors));
 

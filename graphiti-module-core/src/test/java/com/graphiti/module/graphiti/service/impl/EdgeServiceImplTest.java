@@ -1,7 +1,9 @@
-package com.graphiti.module.graphiti.service;
+package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.service.impl.EdgeServiceImpl;
+import com.graphiti.module.graphiti.service.EmbedderService;
+import com.graphiti.module.graphiti.service.GraphNeo4jService;
+import com.graphiti.module.graphiti.service.OntologyValidationService;
 import com.graphiti.module.graphiti.vo.edge.EdgeInfoRespVO;
 import com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO;
 import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;

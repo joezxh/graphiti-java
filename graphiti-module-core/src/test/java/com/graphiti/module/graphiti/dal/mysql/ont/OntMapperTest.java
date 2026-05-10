@@ -33,4 +33,10 @@ class OntMapperTest {
         assertDoesNotThrow(() -> Class.forName(
             "com.graphiti.module.graphiti.dal.mysql.ont.OntVersionHistoryMapper"));
     }
+
+    @Test
+    void testOntMappingMapper_interfaceCompiles() {
+        assertDoesNotThrow(() -> Class.forName(
+            "com.graphiti.module.graphiti.dal.mysql.ont.OntMappingMapper"));
+    }
 }
