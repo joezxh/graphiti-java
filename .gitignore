@@ -2,3 +2,4 @@
 /graphiti-web/dist/
 target
 /.idea/
+.worktrees/
