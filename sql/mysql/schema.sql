@@ -49,7 +49,9 @@ CREATE TABLE IF NOT EXISTS `sys_user_role` (
   `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `role_id` BIGINT NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_role` (`user_id`, `role_id`)
+  UNIQUE KEY `uk_user_role` (`user_id`, `role_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联表';
 
 -- ----------------------------
@@ -78,7 +80,9 @@ CREATE TABLE IF NOT EXISTS `sys_role_menu` (
   `role_id` BIGINT NOT NULL COMMENT '角色ID',
   `menu_id` BIGINT NOT NULL COMMENT '菜单ID',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_role_menu` (`role_id`, `menu_id`)
+  UNIQUE KEY `uk_role_menu` (`role_id`, `menu_id`),
+  KEY `idx_role_id` (`role_id`),
+  KEY `idx_menu_id` (`menu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单关联表';
 
 -- ----------------------------
@@ -131,3 +135,61 @@ CREATE TABLE IF NOT EXISTS `graphiti_custom_instruction` (
   PRIMARY KEY (`id`),
   KEY `idx_graph_id` (`graph_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自定义指令表';
+
+-- ----------------------------
+-- 表结构：系统操作日志
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `sys_operation_log` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `user_id` BIGINT COMMENT '用户ID',
+  `username` VARCHAR(50) COMMENT '用户名',
+  `operation` VARCHAR(100) COMMENT '操作名称',
+  `method` VARCHAR(200) COMMENT '请求方法和路径',
+  `params` TEXT COMMENT '请求参数(JSON)',
+  `ip` VARCHAR(50) COMMENT 'IP地址',
+  `location` VARCHAR(100) COMMENT '地理位置',
+  `status` TINYINT COMMENT '0-失败 1-成功',
+  `error_msg` VARCHAR(500) COMMENT '错误信息',
+  `duration` INT COMMENT '耗时(毫秒)',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_username` (`username`),
+  KEY `idx_operation` (`operation`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统操作日志表';
+
+-- ----------------------------
+-- 表结构：系统配置
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `sys_system_config` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `config_key` VARCHAR(100) NOT NULL COMMENT '配置键',
+  `config_value` TEXT COMMENT '配置值',
+  `config_name` VARCHAR(100) COMMENT '配置名称',
+  `config_description` VARCHAR(500) COMMENT '配置描述',
+  `config_type` TINYINT DEFAULT 1 COMMENT '1-文本 2-数字 3-布尔 4-JSON',
+  `group_name` VARCHAR(50) COMMENT '分组名称',
+  `sort_num` INT DEFAULT 0 COMMENT '排序',
+  `status` TINYINT DEFAULT 1 COMMENT '0-禁用 1-启用',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` BIT(1) NOT NULL DEFAULT b'0' COMMENT '删除标志',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_config_key` (`config_key`),
+  KEY `idx_group_name` (`group_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置表';
+
+-- ----------------------------
+-- 表结构：搜索历史
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `sys_search_history` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `user_id` BIGINT COMMENT '用户ID',
+  `query` VARCHAR(500) NOT NULL COMMENT '搜索词',
+  `mode` VARCHAR(20) COMMENT '搜索模式',
+  `result_count` INT DEFAULT 0 COMMENT '结果数量',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='搜索历史记录表';

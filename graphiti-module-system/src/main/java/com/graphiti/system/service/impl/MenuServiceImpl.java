@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 菜单管理服务实现类
@@ -61,10 +62,19 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuDO getMenuByPermission(String permission) {
-        return menuMapper.selectOne(
+        return menuMapper.selectList(
             new LambdaQueryWrapper<MenuDO>()
                 .eq(MenuDO::getPermission, permission)
                 .eq(MenuDO::getDeleted, false)
+        ).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public List<MenuDO> listMenus() {
+        return menuMapper.selectList(
+            new LambdaQueryWrapper<MenuDO>()
+                .eq(MenuDO::getDeleted, false)
+                .orderByAsc(MenuDO::getSort)
         );
     }
 }

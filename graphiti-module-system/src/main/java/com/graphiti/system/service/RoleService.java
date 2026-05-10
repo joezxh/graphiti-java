@@ -39,4 +39,10 @@ public interface RoleService {
      * @return 角色信息
      */
     RoleDO getRoleByCode(String code);
+
+    /**
+     * 获取所有角色列表（不分页）
+     * @return 角色列表
+     */
+    java.util.List<RoleDO> listRoles();
 }

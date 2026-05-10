@@ -1,6 +1,7 @@
 package com.graphiti.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.graphiti.common.exception.BusinessException;
 import com.graphiti.system.dal.dataobject.UserDO;
 import com.graphiti.system.dal.mysql.UserMapper;
@@ -10,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户管理服务实现类
@@ -75,5 +78,35 @@ public class UserServiceImpl implements UserService {
                 .eq(UserDO::getUsername, username)
                 .eq(UserDO::getDeleted, false)
         );
+    }
+
+    @Override
+    public Long getUserIdByUsername(String username) {
+        UserDO user = getUserByUsername(username);
+        return user != null ? user.getId() : null;
+    }
+
+    @Override
+    public Map<String, Object> listUsers(Integer pageNo, Integer pageSize, String username, String nickname, Integer status) {
+        LambdaQueryWrapper<UserDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserDO::getDeleted, false);
+        if (username != null && !username.isBlank()) {
+            wrapper.like(UserDO::getUsername, username);
+        }
+        if (nickname != null && !nickname.isBlank()) {
+            wrapper.like(UserDO::getNickname, nickname);
+        }
+        if (status != null) {
+            wrapper.eq(UserDO::getStatus, status);
+        }
+        wrapper.orderByDesc(UserDO::getCreateTime);
+        Page<UserDO> page = new Page<>(pageNo, pageSize);
+        Page<UserDO> result = userMapper.selectPage(page, wrapper);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("list", result.getRecords());
+        resp.put("total", result.getTotal());
+        resp.put("pageNum", pageNo);
+        resp.put("pageSize", pageSize);
+        return resp;
     }
 }

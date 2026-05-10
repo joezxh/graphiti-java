@@ -96,19 +96,21 @@
             
             <a-tab-pane key="notification" tab="通知设置">
               <div style="margin-top: 24px">
-                <a-list :data-source="notificationSettings" :split="false">
-                  <template #renderItem="{ item }">
-                    <a-list-item>
-                      <a-list-item-meta :title="item.title" :description="item.description" />
-                      <template #extra>
-                        <a-switch v-model:checked="item.enabled" />
-                      </template>
-                    </a-list-item>
-                  </template>
-                </a-list>
-                
+                <a-spin :spinning="settingsLoading">
+                  <a-list :data-source="notificationSettings" :split="false">
+                    <template #renderItem="{ item }">
+                      <a-list-item>
+                        <a-list-item-meta :title="item.title" :description="item.description" />
+                        <template #extra>
+                          <a-switch v-model:checked="item.enabled" @change="onSettingsChange" />
+                        </template>
+                      </a-list-item>
+                    </template>
+                  </a-list>
+                </a-spin>
+
                 <div style="text-align: center; margin-top: 24px">
-                  <a-button type="primary" @click="handleSaveNotification">保存设置</a-button>
+                  <a-button type="primary" :loading="savingSettings" @click="handleSaveNotification">保存设置</a-button>
                 </div>
               </div>
             </a-tab-pane>
@@ -120,9 +122,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import { useUserStore } from '@/store/modules/user'
+import { notificationApi, type NotificationSettings } from '@/api/notification'
 // import { authApi } from '@/api/auth'
 
 // 用户 store
@@ -202,28 +205,48 @@ const passwordRules = {
 }
 
 // 通知设置
-const notificationSettings = ref([
+interface NotificationSetting {
+  key: string
+  title: string
+  description: string
+  enabled: boolean
+  dbField: 'systemEnabled' | 'graphEnabled' | 'searchEnabled' | 'emailEnabled'
+}
+
+const notificationSettings = ref<NotificationSetting[]>([
   {
+    key: 'system',
     title: '系统通知',
     description: '接收系统更新、维护等通知',
-    enabled: true
+    enabled: true,
+    dbField: 'systemEnabled'
   },
   {
+    key: 'graph',
     title: '图谱更新通知',
     description: '当图谱有更新时接收通知',
-    enabled: true
+    enabled: true,
+    dbField: 'graphEnabled'
   },
   {
+    key: 'search',
     title: '检索完成通知',
     description: '当检索任务完成时接收通知',
-    enabled: false
+    enabled: true,
+    dbField: 'searchEnabled'
   },
   {
+    key: 'email',
     title: '邮件通知',
     description: '通过邮件接收通知',
-    enabled: true
+    enabled: false,
+    dbField: 'emailEnabled'
   }
 ])
+
+const settingsLoading = ref(false)
+const savingSettings = ref(false)
+let settingsDirty = false
 
 // 初始化表单数据
 const initFormData = () => {
@@ -234,6 +257,36 @@ const initFormData = () => {
     basicForm.phone = (userInfo.value as any).phone || ''
     basicForm.description = (userInfo.value as any).description || ''
   }
+}
+
+// 加载通知设置
+const loadNotificationSettings = async () => {
+  settingsLoading.value = true
+  try {
+    const settings = await notificationApi.getSettings()
+    const settingMap: Record<string, number> = {
+      systemEnabled: settings.systemEnabled,
+      graphEnabled: settings.graphEnabled,
+      searchEnabled: settings.searchEnabled,
+      emailEnabled: settings.emailEnabled
+    }
+    for (const item of notificationSettings.value) {
+      const val = settingMap[item.dbField]
+      if (val !== undefined) {
+        item.enabled = val === 1
+      }
+    }
+    settingsDirty = false
+  } catch (error) {
+    console.error('加载通知设置失败', error)
+  } finally {
+    settingsLoading.value = false
+  }
+}
+
+// 开关变化时标记为脏
+const onSettingsChange = () => {
+  settingsDirty = true
 }
 
 // 更新基本信息
@@ -270,15 +323,35 @@ const handleUpdatePassword = async () => {
 }
 
 // 保存通知设置
-const handleSaveNotification = () => {
-  // 这里应该调用 API 保存通知设置
-  // 由于是 Mock 数据，我们只是模拟保存
-  
-  message.success('通知设置保存成功')
+const handleSaveNotification = async () => {
+  savingSettings.value = true
+  try {
+    const settings: NotificationSettings = {
+      systemEnabled: notificationSettings.value.find(s => s.key === 'system')!.enabled ? 1 : 0,
+      graphEnabled: notificationSettings.value.find(s => s.key === 'graph')!.enabled ? 1 : 0,
+      searchEnabled: notificationSettings.value.find(s => s.key === 'search')!.enabled ? 1 : 0,
+      emailEnabled: notificationSettings.value.find(s => s.key === 'email')!.enabled ? 1 : 0
+    }
+    await notificationApi.saveSettings(settings)
+    settingsDirty = false
+    message.success('通知设置保存成功')
+  } catch (error) {
+    message.error('保存失败')
+    console.error(error)
+  } finally {
+    savingSettings.value = false
+  }
 }
 
 onMounted(() => {
   initFormData()
+})
+
+// 切换到通知设置 tab 时加载设置
+watch(activeTab, (tab) => {
+  if (tab === 'notification' && !settingsDirty) {
+    loadNotificationSettings()
+  }
 })
 </script>
 
@@ -340,6 +413,21 @@ onMounted(() => {
   
   .info-card {
     min-height: 500px;
+  }
+
+  :deep(.ant-tabs-tab) {
+    color: rgba(247, 248, 248, 0.65);
+    &.ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: #f7f8f8;
+    }
+  }
+
+  :deep(.ant-list-item-meta-title) {
+    color: #ffffff !important;
+  }
+
+  :deep(.ant-list-item-meta-description) {
+    color: rgba(255, 255, 255, 0.65) !important;
   }
 }
 </style>

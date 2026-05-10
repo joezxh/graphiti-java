@@ -16,14 +16,17 @@ INSERT INTO sys_role (name, code, status) VALUES
 -- 注意：PostgreSQL 的 BIGSERIAL 会自动生成 ID
 -- ============================================================
 
-INSERT INTO sys_user (username, password, nickname, email, phone, status) 
+INSERT INTO sys_user (username, password, nickname, email, mobile, status, create_time, update_time, deleted)
 VALUES (
-    'admin', 
-    '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', 
-    '系统管理员', 
-    'admin@graphiti.com', 
-    '13800138000', 
-    1
+    'admin',
+    '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi',
+    '系统管理员',
+    'admin@graphiti.com',
+    NULL,
+    1,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    FALSE
 );
 
 -- ============================================================
@@ -82,8 +85,15 @@ END $$;
 -- 初始化示例图谱
 -- ============================================================
 
-INSERT INTO graphiti_graph_metadata (name, description, config, status) VALUES
-('示例图谱', '这是一个示例知识图谱', '{"version": "1.0", "type": "knowledge_graph"}'::jsonb, 1);
+INSERT INTO graphiti_graph_metadata (graph_id, name, description, node_count, edge_count, deleted)
+VALUES (
+    'example-graph',
+    '示例图谱',
+    '这是一个示例知识图谱',
+    0,
+    0,
+    FALSE
+);
 
 -- 验证数据插入
 SELECT 'Users' as table_name, count(*) as count FROM sys_user
@@ -91,5 +101,9 @@ UNION ALL
 SELECT 'Roles', count(*) FROM sys_role
 UNION ALL
 SELECT 'Menus', count(*) FROM sys_menu
+UNION ALL
+SELECT 'UserRoles', count(*) FROM sys_user_role
+UNION ALL
+SELECT 'RoleMenus', count(*) FROM sys_role_menu
 UNION ALL
 SELECT 'Graphs', count(*) FROM graphiti_graph_metadata;

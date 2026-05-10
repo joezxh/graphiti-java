@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 角色管理服务实现类
@@ -61,10 +62,19 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDO getRoleByCode(String code) {
-        return roleMapper.selectOne(
+        return roleMapper.selectList(
             new LambdaQueryWrapper<RoleDO>()
                 .eq(RoleDO::getCode, code)
                 .eq(RoleDO::getDeleted, false)
+        ).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public List<RoleDO> listRoles() {
+        return roleMapper.selectList(
+            new LambdaQueryWrapper<RoleDO>()
+                .eq(RoleDO::getDeleted, false)
+                .orderByDesc(RoleDO::getCreateTime)
         );
     }
 }

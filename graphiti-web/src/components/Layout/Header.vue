@@ -7,16 +7,7 @@
         </svg>
         <span class="logo-text">Graphiti Console</span>
       </div>
-      
-      <div class="view-switch">
-        <a-switch 
-          :checked="isDevView" 
-          @change="handleViewSwitch"
-          checked-children="开发者"
-          un-checked-children="业务"
-          size="small"
-        />
-      </div>
+
     </div>
 
     <div class="header-right">

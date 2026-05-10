@@ -62,10 +62,9 @@ public class RoleController {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "获取角色列表", description = "获取所有角色列表", 
+    @Operation(summary = "获取角色列表", description = "获取所有角色列表",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<List<RoleDO>> listRoles() {
-        // TODO: 实现查询逻辑
-        return CommonResult.success(List.of());
+        return CommonResult.success(roleService.listRoles());
     }
 }

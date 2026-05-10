@@ -39,4 +39,22 @@ public interface UserService {
      * @return 用户信息
      */
     UserDO getUserByUsername(String username);
+
+    /**
+     * 根据用户名获取用户ID
+     * @param username 用户名
+     * @return 用户ID，不存在返回 null
+     */
+    Long getUserIdByUsername(String username);
+
+    /**
+     * 分页查询用户列表
+     * @param pageNo 页码
+     * @param pageSize 每页数量
+     * @param username 用户名（模糊匹配，可为 null）
+     * @param nickname 昵称（模糊匹配，可为 null）
+     * @param status 状态（可为 null）
+     * @return 分页结果 {list, total}
+     */
+    java.util.Map<String, Object> listUsers(Integer pageNo, Integer pageSize, String username, String nickname, Integer status);
 }

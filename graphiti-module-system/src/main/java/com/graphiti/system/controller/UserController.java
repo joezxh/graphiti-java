@@ -61,12 +61,14 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "获取用户列表", description = "分页获取系统用户列表", 
+    @Operation(summary = "获取用户列表", description = "分页获取系统用户列表",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<?> listUsers(
             @RequestParam(defaultValue = "1") @Parameter(description = "页码", example = "1") Integer pageNo,
-            @RequestParam(defaultValue = "10") @Parameter(description = "每页数量", example = "10") Integer pageSize) {
-        // TODO: 实现分页查询
-        return CommonResult.success("功能待实现");
+            @RequestParam(defaultValue = "10") @Parameter(description = "每页数量", example = "10") Integer pageSize,
+            @RequestParam(required = false) @Parameter(description = "用户名（模糊匹配）") String username,
+            @RequestParam(required = false) @Parameter(description = "昵称（模糊匹配）") String nickname,
+            @RequestParam(required = false) @Parameter(description = "状态") Integer status) {
+        return CommonResult.success(userService.listUsers(pageNo, pageSize, username, nickname, status));
     }
 }

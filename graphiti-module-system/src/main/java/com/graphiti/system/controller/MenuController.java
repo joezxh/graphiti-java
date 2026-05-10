@@ -62,10 +62,17 @@ public class MenuController {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "获取菜单列表", description = "获取所有菜单的树形列表", 
+    @Operation(summary = "获取菜单列表", description = "获取所有菜单的树形列表",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<List<MenuDO>> listMenus() {
-        // TODO: 实现查询逻辑
-        return CommonResult.success(List.of());
+        List<MenuDO> allMenus = menuService.listMenus();
+        return CommonResult.success(buildMenuTree(allMenus, 0L));
+    }
+
+    private List<MenuDO> buildMenuTree(List<MenuDO> allMenus, Long parentId) {
+        return allMenus.stream()
+            .filter(m -> m.getParentId() != null && m.getParentId().equals(parentId))
+            .peek(m -> m.setChildren(buildMenuTree(allMenus, m.getId())))
+            .toList();
     }
 }

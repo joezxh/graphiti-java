@@ -31,107 +31,125 @@ export interface SearchResult {
   highlight?: Record<string, string[]>
 }
 
-// 搜索历史
+// 搜索历史（后端 VO）
 export interface SearchHistory {
-  id: string
+  id: number
   query: string
   mode: string
   resultCount: number
-  createdAt: string
+  createTime: string
 }
 
-// Mock 数据
-let mockSearchHistory: SearchHistory[] = [
-  {
-    id: 'sh-001',
-    query: '张三',
-    mode: 'semantic',
-    resultCount: 3,
-    createdAt: '2024-03-24T10:00:00Z'
-  },
-  {
-    id: 'sh-002',
-    query: 'age > 25',
-    mode: 'structured',
-    resultCount: 5,
-    createdAt: '2024-03-23T14:30:00Z'
-  },
-  {
-    id: 'sh-003',
-    query: '科技公司创始人',
-    mode: 'hybrid',
-    resultCount: 2,
-    createdAt: '2024-03-22T09:15:00Z'
-  }
-]
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
-// 混合检索 API
+// 搜索 API
 export const searchApi = {
-  // 执行搜索（全局/图谱级别）
+  /**
+   * 执行搜索（全局/图谱级别）
+   * 后端: POST /admin/graphiti/search/global 或 /admin/graphiti/search/graph/{graphId}
+   */
   async search(params: SearchParams): Promise<SearchResult[]> {
     if (!params.graphId) {
-      const resp = await request.post('/admin/graphiti/search/global', {
+      const resp = await request.post<{ facts?: any[]; nodes?: any[] }>('/admin/graphiti/search/global', {
         query: params.query,
         maxFacts: params.limit || 20,
         config: { mode: params.mode || 'hybrid' }
       })
-      return resp.data?.edges || []
+      return ((resp as any)?.facts || []).map(mapFactResult)
     }
-    const resp = await request.post(`/admin/graphiti/search/graph/${params.graphId}`, {
-      query: params.query,
-      maxFacts: params.limit || 20,
-      config: { mode: params.mode || 'hybrid' }
-    })
-    return resp.data?.edges || []
+    const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
+      `/admin/graphiti/search/graph/${params.graphId}`,
+      {
+        query: params.query,
+        maxFacts: params.limit || 20,
+        config: { mode: params.mode || 'hybrid' }
+      }
+    )
+    return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
-  // 混合检索
+  /**
+   * 混合检索（语义 + 全文 + 图遍历）
+   * 后端: POST /admin/graphiti/search/hybrid/{graphId}
+   */
   async hybridSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
-    const resp = await request.post(`/admin/graphiti/search/hybrid/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`)
-    return resp.data?.edges || []
+    const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
+      `/admin/graphiti/search/hybrid/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
+    )
+    return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
-  // 语义搜索
+  /**
+   * 语义搜索（向量相似度）
+   * 后端: POST /admin/graphiti/search/semantic/{graphId}
+   */
   async semanticSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
-    const resp = await request.post(`/admin/graphiti/search/semantic/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`)
-    return resp.data?.edges || []
+    const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
+      `/admin/graphiti/search/semantic/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
+    )
+    return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
-  // BFS 搜索
+  /**
+   * BFS 搜索（图遍历）
+   * 后端: POST /admin/graphiti/search/bfs/{graphId}
+   */
   async bfsSearch(graphId: string, query: string, depth: number = 2, limit: number = 10): Promise<SearchResult[]> {
-    const resp = await request.post(`/admin/graphiti/search/bfs/${graphId}?query=${encodeURIComponent(query)}&depth=${depth}&limit=${limit}`)
-    return resp.data?.edges || []
+    const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
+      `/admin/graphiti/search/bfs/${graphId}?query=${encodeURIComponent(query)}&depth=${depth}&limit=${limit}`
+    )
+    return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
-  // 获取搜索历史（Mock）
-  async getSearchHistory(): Promise<SearchHistory[]> {
-    await delay(300)
-    return [...mockSearchHistory]
-  },
-
-  // 保存搜索历史（Mock）
-  async saveSearchHistory(query: string, mode: string, resultCount: number): Promise<SearchHistory> {
-    await delay(200)
-    const item: SearchHistory = {
-      id: `sh-${Date.now()}`,
-      query,
-      mode,
-      resultCount,
-      createdAt: new Date().toISOString()
+  /**
+   * 获取搜索历史
+   * 后端: GET /admin/graphiti/search-history/list
+   */
+  async getSearchHistory(pageNo: number = 1, pageSize: number = 20): Promise<{ list: SearchHistory[]; total: number }> {
+    const resp = await request.get<any>('/admin/graphiti/search-history/list', {
+      params: { pageNo, pageSize }
+    })
+    const data = resp as any
+    return {
+      list: (data?.list || []).map((h: any) => ({
+        id: h.id,
+        query: h.query || '',
+        mode: h.mode || '',
+        resultCount: h.resultCount ?? h.result_count ?? 0,
+        createTime: h.createTime || h.create_time || ''
+      })),
+      total: data?.total || 0
     }
-    mockSearchHistory.unshift(item)
-    if (mockSearchHistory.length > 20) {
-      mockSearchHistory = mockSearchHistory.slice(0, 20)
-    }
-    return item
   },
 
-  // 清空搜索历史（Mock）
+  /**
+   * 保存搜索历史
+   * 后端: POST /admin/graphiti/search-history/save
+   */
+  async saveSearchHistory(query: string, mode: string, resultCount: number): Promise<void> {
+    await request.post('/admin/graphiti/search-history/save', null, {
+      params: { query, mode, resultCount }
+    })
+  },
+
+  /**
+   * 清空搜索历史
+   * 后端: DELETE /admin/graphiti/search-history/clear
+   */
   async clearSearchHistory(): Promise<void> {
-    await delay(200)
-    mockSearchHistory = []
+    await request.delete('/admin/graphiti/search-history/clear')
+  }
+}
+
+// 将后端 FactResultVO 映射为前端 SearchResult
+function mapFactResult(fact: any): SearchResult {
+  return {
+    id: fact.uuid || fact.id || '',
+    type: 'edge',
+    name: fact.name || fact.fact || '',
+    properties: { fact: fact.fact },
+    score: fact.score || 0,
+    source: fact.sourceNodeUuid,
+    target: fact.targetNodeUuid,
+    highlight: undefined
   }
 }
 

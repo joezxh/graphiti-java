@@ -44,7 +44,7 @@ import Sidebar from './Sidebar.vue'
 .content-area {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 20px 20px 40px;
+  padding: 20px 20px 20px 56px;
   background: @bg-base;
 }
 </style>

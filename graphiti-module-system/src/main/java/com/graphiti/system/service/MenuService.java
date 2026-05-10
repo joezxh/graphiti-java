@@ -39,4 +39,10 @@ public interface MenuService {
      * @return 菜单信息
      */
     MenuDO getMenuByPermission(String permission);
+
+    /**
+     * 获取所有菜单列表（不分页）
+     * @return 菜单列表
+     */
+    java.util.List<MenuDO> listMenus();
 }

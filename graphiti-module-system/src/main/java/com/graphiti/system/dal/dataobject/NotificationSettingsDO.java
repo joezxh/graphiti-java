@@ -2,41 +2,34 @@ package com.graphiti.system.dal.dataobject;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
- * 系统菜单 DO
+ * 用户通知设置 DO
  */
 @Data
-@TableName("sys_menu")
-public class MenuDO implements Serializable {
+@TableName("sys_user_notification_settings")
+public class NotificationSettingsDO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId
     private Long id;
 
-    private String name;
+    private Long userId;
 
-    private String permission;
+    private Integer systemEnabled;
 
-    private String url;
+    private Integer graphEnabled;
 
-    private Long parentId;
+    private Integer searchEnabled;
 
-    private Integer sort;
-
-    private Integer status;
+    private Integer emailEnabled;
 
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
 
     private Boolean deleted;
-
-    @JsonIgnore
-    private List<MenuDO> children;
 }
