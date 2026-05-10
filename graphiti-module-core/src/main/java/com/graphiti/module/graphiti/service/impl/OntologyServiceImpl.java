@@ -96,4 +96,13 @@ public class OntologyServiceImpl implements OntologyService {
         respVO.setUpdatedAt(entity.getUpdateTime());
         return respVO;
     }
+
+    @Override
+    public boolean validateEntity(String graphId, String entityType, java.util.Map<String, Object> properties) {
+        OntologyDO entity = getOntologyByGraphId(graphId);
+        if (entity == null || entity.getEntities() == null) {
+            return true;
+        }
+        return entity.getEntities().contains(entityType);
+    }
 }

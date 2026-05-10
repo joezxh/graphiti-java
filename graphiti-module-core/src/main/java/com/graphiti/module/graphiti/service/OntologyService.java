@@ -21,4 +21,13 @@ public interface OntologyService {
      * @return OntologyRespVO
      */
     OntologyRespVO setOntology(String graphId, SetOntologyReqVO reqVO);
+
+    /**
+     * 验证数据是否符合本体定义
+     * @param graphId 图谱ID
+     * @param entityType 实体类型
+     * @param properties 属性
+     * @return 验证结果
+     */
+    boolean validateEntity(String graphId, String entityType, java.util.Map<String, Object> properties);
 }
