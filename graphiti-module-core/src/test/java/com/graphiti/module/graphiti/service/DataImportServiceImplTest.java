@@ -1,22 +1,27 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.service.EmbedderService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.OntologyValidationService;
-import com.graphiti.module.graphiti.service.TemporalService;
+import com.graphiti.module.graphiti.service.impl.DataImportServiceImpl;
 import com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO;
 import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DataImportServiceImplTest {
@@ -26,7 +31,13 @@ class DataImportServiceImplTest {
     @Mock private OntologyValidationService validationService;
     @Mock private EmbedderService embedderService;
 
-    @InjectMocks private DataImportServiceImpl dataImportService;
+    private DataImportServiceImpl dataImportService;
+
+    @BeforeEach
+    void setUp() {
+        dataImportService = new DataImportServiceImpl(
+            graphNeo4jService, temporalService, validationService, embedderService);
+    }
 
     @Test
     void addEntityNode_withNoOntology_bypassesValidation() {
@@ -76,8 +87,9 @@ class DataImportServiceImplTest {
         assertThrows(OntologyValidationException.class, () ->
             dataImportService.addEntityNode("graph-3",
                 Map.of("name", "Widget", "type", "Product")));
-        verify(graphNeo4jService, never()).createEntityNode(anyString(), anyString(), anyString(),
-            anyString(), anyString(), any(float[].class), any());
+        verify(graphNeo4jService, never()).createEntityNode(
+            anyString(), anyString(), anyString(), anyString(), anyString(), any(), any());
+        verify(embedderService, never()).embed(anyString());
         verify(temporalService, never()).invalidateFacts(anyString(), anyList());
     }
 }
