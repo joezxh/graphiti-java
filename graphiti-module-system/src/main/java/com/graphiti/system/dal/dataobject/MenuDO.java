@@ -1,5 +1,6 @@
 package com.graphiti.system.dal.dataobject;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +38,7 @@ public class MenuDO implements Serializable {
 
     private Boolean deleted;
 
+    @TableField(exist = false)
     @JsonIgnore
     private List<MenuDO> children;
 }

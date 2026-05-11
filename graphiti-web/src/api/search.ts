@@ -44,11 +44,11 @@ export interface SearchHistory {
 export const searchApi = {
   /**
    * 执行搜索（全局/图谱级别）
-   * 后端: POST /admin/graphiti/search/global 或 /admin/graphiti/search/graph/{graphId}
+   * 后端: POST /graph/search/global 或 /graph/search/graph/{graphId}
    */
   async search(params: SearchParams): Promise<SearchResult[]> {
     if (!params.graphId) {
-      const resp = await request.post<{ facts?: any[]; nodes?: any[] }>('/admin/graphiti/search/global', {
+      const resp = await request.post<{ facts?: any[]; nodes?: any[] }>('/graph/search/global', {
         query: params.query,
         maxFacts: params.limit || 20,
         config: { mode: params.mode || 'hybrid' }
@@ -56,7 +56,7 @@ export const searchApi = {
       return ((resp as any)?.facts || []).map(mapFactResult)
     }
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/admin/graphiti/search/graph/${params.graphId}`,
+      `/graph/search/graph/${params.graphId}`,
       {
         query: params.query,
         maxFacts: params.limit || 20,
@@ -68,33 +68,33 @@ export const searchApi = {
 
   /**
    * 混合检索（语义 + 全文 + 图遍历）
-   * 后端: POST /admin/graphiti/search/hybrid/{graphId}
+   * 后端: POST /graph/search/hybrid/{graphId}
    */
   async hybridSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/admin/graphiti/search/hybrid/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
+      `/graph/search/hybrid/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
   /**
    * 语义搜索（向量相似度）
-   * 后端: POST /admin/graphiti/search/semantic/{graphId}
+   * 后端: POST /graph/search/semantic/{graphId}
    */
   async semanticSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/admin/graphiti/search/semantic/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
+      `/graph/search/semantic/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
   /**
    * BFS 搜索（图遍历）
-   * 后端: POST /admin/graphiti/search/bfs/{graphId}
+   * 后端: POST /graph/search/bfs/{graphId}
    */
   async bfsSearch(graphId: string, query: string, depth: number = 2, limit: number = 10): Promise<SearchResult[]> {
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/admin/graphiti/search/bfs/${graphId}?query=${encodeURIComponent(query)}&depth=${depth}&limit=${limit}`
+      `/graph/search/bfs/${graphId}?query=${encodeURIComponent(query)}&depth=${depth}&limit=${limit}`
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },

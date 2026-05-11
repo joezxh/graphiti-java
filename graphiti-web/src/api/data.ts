@@ -133,8 +133,8 @@ export const dataApi = {
   /**
    * 执行数据导入
    * 根据 format 路由到不同后端端点：
-   * - json/csv -> /admin/graphiti/data/batch  (批量 Episode 导入)
-   * - triple   -> /admin/graphiti/data/fact-triple  (三元组导入)
+   * - json/csv -> /graph/data/batch  (批量 Episode 导入)
+   * - triple   -> /graph/data/fact-triple  (三元组导入)
    */
   async importData(
     graphId: string,
@@ -156,7 +156,7 @@ export const dataApi = {
       const triples = parseNTriples(data)
       task.totalRows = triples.length
       for (const triple of triples) {
-        await request.post('/admin/graphiti/data/fact-triple', {
+        await request.post('/graph/data/fact-triple', {
           graphId,
           sourceNodeName: triple.subject,
           relationType: triple.predicate,
@@ -171,7 +171,7 @@ export const dataApi = {
       // json / csv 格式：解析后批量导入为 Episode
       const items = format === 'json' ? parseJson(data) : parseCsv(data)
       task.totalRows = items.length
-      await request.post('/admin/graphiti/data/batch', {
+      await request.post('/graph/data/batch', {
         graphId,
         items,
         updateCommunities: false
@@ -237,37 +237,37 @@ export const dataApi = {
    * 添加单条数据（Episode）
    */
   async addData(req: AddDataReq): Promise<void> {
-    await request.post('/admin/graphiti/data/add', req)
+    await request.post('/graph/data/add', req)
   },
 
   /**
    * 批量添加数据
    */
   async addDataBatch(req: AddDataBatchReq): Promise<void> {
-    await request.post('/admin/graphiti/data/batch', req)
+    await request.post('/graph/data/batch', req)
   },
 
   /**
    * 添加事实三元组
    */
   async addFactTriple(req: FactTripleReq): Promise<void> {
-    await request.post('/admin/graphiti/data/fact-triple', req)
+    await request.post('/graph/data/fact-triple', req)
   },
 
   /**
    * 直接添加实体节点（不经 LLM 提取）
    */
   async addEntityNode(graphId: string, nodeData: AddEntityNodeReq): Promise<AddEntityNodeResp> {
-    return request.post(`/admin/graphiti/data/entity-node?graphId=${graphId}`, nodeData)
+    return request.post(`/graph/data/entity-node?graphId=${graphId}`, nodeData)
   },
 
-  // ==================== 导出功能（后端: GET /api/v1/graph/{graphId}/export） ====================
+  // ==================== 导出功能（后端: GET /graph/{graphId}/export） ====================
 
   /**
    * 导出图谱数据
    */
   async exportData(graphId: string, format: 'json' | 'csv' | 'triple'): Promise<ExportTask> {
-    const resp = await request.get(`/api/v1/graph/${graphId}/export`) as any
+    const resp = await request.get(`/graph/${graphId}/export`) as any
     const nodes: any[] = resp?.nodes || []
     const edges: any[] = resp?.edges || []
     let content = ''
@@ -327,7 +327,7 @@ export const dataApi = {
     throw new Error('后端暂无导出文件下载接口，请使用 exportData 直接下载')
   },
 
-  // ==================== 实体管理（后端: /api/v1/nodes） ====================
+  // ==================== 实体管理（后端: /nodes） ====================
 
   /**
    * 获取实体列表
@@ -337,7 +337,7 @@ export const dataApi = {
     const graphId = params.graphId
     const page = params.page || 1
     const pageSize = params.pageSize || 10
-    const resp = await request.get(`/api/v1/nodes/list?graphId=${graphId}&name=${encodeURIComponent(params.keyword || '')}&type=${encodeURIComponent(params.type || '')}&skip=${(page - 1) * pageSize}&limit=${pageSize}`) as any[]
+    const resp = await request.get(`/nodes/list?graphId=${graphId}&name=${encodeURIComponent(params.keyword || '')}&type=${encodeURIComponent(params.type || '')}&skip=${(page - 1) * pageSize}&limit=${pageSize}`) as any[]
     const list: EntityItem[] = (resp || []).map((n: any) => ({
       uuid: n.uuid,
       name: n.name,
@@ -356,7 +356,7 @@ export const dataApi = {
     if (!properties.graphId) throw new Error('缺少 graphId')
     const graphId = properties.graphId
     delete properties.graphId
-    const resp = await request.put(`/api/v1/nodes/${uuid}?graphId=${graphId}`, properties) as any
+    const resp = await request.put(`/nodes/${uuid}?graphId=${graphId}`, properties) as any
     return {
       uuid: resp?.uuid || uuid,
       name: resp?.name || (properties as any).name || '',
@@ -369,7 +369,7 @@ export const dataApi = {
    * 删除实体
    */
   async deleteEntity(uuid: string, graphId: string): Promise<void> {
-    await request.delete(`/api/v1/nodes/${uuid}?graphId=${graphId}`)
+    await request.delete(`/nodes/${uuid}?graphId=${graphId}`)
   },
 
   /**
@@ -377,7 +377,7 @@ export const dataApi = {
    */
   async getEntityTypes(graphId: string): Promise<string[]> {
     try {
-    const resp = await request.get(`/api/v1/nodes/list?graphId=${graphId}&limit=1000`) as any[]
+    const resp = await request.get(`/nodes/list?graphId=${graphId}&limit=1000`) as any[]
     const types = new Set((resp || []).map((n: any) => n.type).filter(Boolean))
     return Array.from(types) as string[]
     } catch {

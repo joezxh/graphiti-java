@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Tag(name = "搜索检索", description = "知识图谱搜索和记忆检索接口")
 @RestController
-@RequestMapping("/admin/graphiti/search")
+@RequestMapping("/api/v1/graph/search")
 @Validated
 @Slf4j
 public class SearchController {

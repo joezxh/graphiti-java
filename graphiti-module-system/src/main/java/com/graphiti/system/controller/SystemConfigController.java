@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Tag(name = "管理后台 - 系统配置")
 @RestController
-@RequestMapping("/admin/system/config")
+@RequestMapping("/api/v1/admin/system/config")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 public class SystemConfigController {

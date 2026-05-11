@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @Tag(name = "边管理", description = "知识图谱关系边的管理接口")
 @RestController
-@RequestMapping("/admin/graphiti/edge")
+@RequestMapping("/api/v1/graph/edge")
 @Validated
 @Slf4j
 public class EdgeController {

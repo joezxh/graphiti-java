@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Tag(name = "管理后台 - 操作日志")
 @RestController
-@RequestMapping("/admin/system/log")
+@RequestMapping("/api/v1/admin/system/log")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 public class OperationLogController {

@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Tag(name = "搜索历史管理")
 @RestController
-@RequestMapping("/admin/graphiti/search-history")
+@RequestMapping("/api/v1/admin/graphiti/search-history")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 public class SearchHistoryController {

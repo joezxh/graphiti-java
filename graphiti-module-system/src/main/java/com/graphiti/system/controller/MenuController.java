@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Tag(name = "管理后台 - 系统菜单管理")
 @RestController
-@RequestMapping("/admin/system/menu")
+@RequestMapping("/api/v1/admin/system/menu")
 @Validated
 @Slf4j
 public class MenuController {

@@ -109,16 +109,16 @@ function mapOntPropertyToPropertyDef(prop: OntPropertyRespVO): PropertyDef {
 export const ontologyApi = {
   /**
    * 获取实体类型列表（从本体类映射）
-   * 后端: GET /api/v1/ontology/{graphId}/classes
+   * 后端: GET /ontology/{graphId}/classes
    */
   async listEntityTypes(graphId: string): Promise<EntityType[]> {
-    const resp = await request.get<OntClassRespVO[]>(`/api/v1/ontology/${graphId}/classes`)
+    const resp = await request.get<OntClassRespVO[]>(`/ontology/${graphId}/classes`)
     return (resp || []).map(cls => mapOntClassToEntityType(cls, graphId))
   },
 
   /**
    * 创建实体类型（创建本体类）
-   * 后端: POST /api/v1/ontology/{graphId}/classes
+   * 后端: POST /ontology/{graphId}/classes
    */
   async createEntityType(
     graphId: string,
@@ -129,7 +129,7 @@ export const ontologyApi = {
       localName: data.name,
       description: data.description
     }
-    const resp = await request.post<{ id: number }>(`/api/v1/ontology/${graphId}/classes`, req)
+    const resp = await request.post<{ id: number }>(`/ontology/${graphId}/classes`, req)
     return {
       id: String(resp.id),
       name: data.name,
@@ -142,7 +142,7 @@ export const ontologyApi = {
 
   /**
    * 更新实体类型（更新本体类）
-   * 后端: PUT /api/v1/ontology/{graphId}/classes/{classId}
+   * 后端: PUT /ontology/{graphId}/classes/{classId}
    */
   async updateEntityType(
     graphId: string,
@@ -152,7 +152,7 @@ export const ontologyApi = {
     const req: Partial<CreateOntClassReq> = {}
     if (data.name !== undefined) req.localName = data.name
     if (data.description !== undefined) req.description = data.description
-    await request.put(`/api/v1/ontology/${graphId}/classes/${id}`, req)
+    await request.put(`/ontology/${graphId}/classes/${id}`, req)
     return {
       id,
       name: data.name || '',
@@ -164,18 +164,18 @@ export const ontologyApi = {
 
   /**
    * 删除实体类型（删除本体类）
-   * 后端: DELETE /api/v1/ontology/{graphId}/classes/{classId}
+   * 后端: DELETE /ontology/{graphId}/classes/{classId}
    */
   async deleteEntityType(graphId: string, id: string): Promise<void> {
-    await request.delete(`/api/v1/ontology/${graphId}/classes/${id}`)
+    await request.delete(`/ontology/${graphId}/classes/${id}`)
   },
 
   /**
    * 获取关系类型列表（从本体属性映射）
-   * 后端: GET /api/v1/ontology/{graphId}/properties
+   * 后端: GET /ontology/{graphId}/properties
    */
   async listRelationTypes(graphId: string): Promise<RelationType[]> {
-    const resp = await request.get<OntPropertyRespVO[]>(`/api/v1/ontology/${graphId}/properties`)
+    const resp = await request.get<OntPropertyRespVO[]>(`/ontology/${graphId}/properties`)
     const props: OntPropertyRespVO[] = resp || []
     // 按 localName 分组，构造关系类型
     const byName = new Map<string, OntPropertyRespVO[]>()
@@ -203,7 +203,7 @@ export const ontologyApi = {
 
   /**
    * 创建关系类型（创建本体属性）
-   * 后端: POST /api/v1/ontology/{graphId}/properties
+   * 后端: POST /ontology/{graphId}/properties
    */
   async createRelationType(
     graphId: string,
@@ -217,7 +217,7 @@ export const ontologyApi = {
       rangeClassId: data.targetType ? Number(data.targetType) : undefined,
       isRequired: false
     }
-    const resp = await request.post<{ id: number }>(`/api/v1/ontology/${graphId}/properties`, req)
+    const resp = await request.post<{ id: number }>(`/ontology/${graphId}/properties`, req)
     return {
       id: String(resp.id),
       ...data,
@@ -228,7 +228,7 @@ export const ontologyApi = {
 
   /**
    * 更新关系类型（更新本体属性）
-   * 后端: PUT /api/v1/ontology/{graphId}/properties/{propertyId}
+   * 后端: PUT /ontology/{graphId}/properties/{propertyId}
    */
   async updateRelationType(
     graphId: string,
@@ -239,7 +239,7 @@ export const ontologyApi = {
     if (data.name !== undefined) req.localName = data.name
     if (data.sourceType !== undefined) req.domainClassId = Number(data.sourceType) || undefined
     if (data.targetType !== undefined) req.rangeClassId = Number(data.targetType) || undefined
-    await request.put(`/api/v1/ontology/${graphId}/properties/${id}`, req)
+    await request.put(`/ontology/${graphId}/properties/${id}`, req)
     return {
       id,
       ...data,
@@ -249,10 +249,10 @@ export const ontologyApi = {
 
   /**
    * 删除关系类型（删除本体属性）
-   * 后端: DELETE /api/v1/ontology/{graphId}/properties/{propertyId}
+   * 后端: DELETE /ontology/{graphId}/properties/{propertyId}
    */
   async deleteRelationType(graphId: string, id: string): Promise<void> {
-    await request.delete(`/api/v1/ontology/${graphId}/properties/${id}`)
+    await request.delete(`/ontology/${graphId}/properties/${id}`)
   }
 }
 

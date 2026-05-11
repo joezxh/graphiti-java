@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "数据导入", description = "知识图谱数据导入相关接口")
 @RestController
-@RequestMapping("/admin/graphiti/data")
+@RequestMapping("/api/v1/graph/data")
 @Validated
 @Slf4j
 public class DataImportController {

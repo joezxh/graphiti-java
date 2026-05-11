@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Tag(name = "事件管理", description = "知识图谱事件（Episode）管理接口")
 @RestController
-@RequestMapping("/admin/graphiti/episode")
+@RequestMapping("/api/v1/graph/episode")
 @Validated
 @Slf4j
 public class EpisodeController {

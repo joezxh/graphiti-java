@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Tag(name = "管理后台 - 系统角色管理")
 @RestController
-@RequestMapping("/admin/system/role")
+@RequestMapping("/api/v1/admin/system/role")
 @Validated
 @Slf4j
 public class RoleController {

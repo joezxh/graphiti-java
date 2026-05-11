@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // 基础 URL：从环境变量读取，默认空（相对路径）
-const ACTUATOR_BASE = import.meta.env.VITE_API_BASE_URL || ''
+const ACTUATOR_BASE = import.meta.env.VITE_ACTUATOR_BASE_URL || ''
 
 const actuator = axios.create({
   baseURL: ACTUATOR_BASE,
