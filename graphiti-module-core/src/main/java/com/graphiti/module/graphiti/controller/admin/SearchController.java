@@ -2,22 +2,16 @@ package com.graphiti.module.graphiti.controller.admin;
 
 import com.graphiti.common.response.CommonResult;
 import com.graphiti.module.graphiti.service.SearchService;
-import com.graphiti.module.graphiti.vo.search.GetMemoryReqVO;
-import com.graphiti.module.graphiti.vo.search.GetMemoryRespVO;
-import com.graphiti.module.graphiti.vo.search.SearchConfigVO;
-import com.graphiti.module.graphiti.vo.search.SearchQueryReqVO;
-import com.graphiti.module.graphiti.vo.search.SearchResultsRespVO;
+import com.graphiti.module.graphiti.vo.search.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 搜索检索控制器

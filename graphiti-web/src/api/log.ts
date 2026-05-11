@@ -127,6 +127,6 @@ export const logApi = {
       },
       responseType: 'blob'
     })
-    return resp as Blob
+    return resp as unknown as Blob
   }
 }

@@ -149,7 +149,7 @@
         <a-descriptions-item label="错误信息" :span="2" v-if="currentLog.status === 0">
           <span style="color: #ff4d4f">{{ currentLog.errorMsg }}</span>
         </a-descriptions-item>
-        <a-descriptions-item label="创建时间" :span="2">{{ currentLog.createdAt }}</a-descriptions-item>
+        <a-descriptions-item label="创建时间" :span="2">{{ currentLog.createTime }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
   </div>
@@ -329,8 +329,12 @@ const handleExport = async () => {
   try {
     const res = await logApi.exportLogs(queryParams)
     message.success('导出成功，正在下载...')
-    // 实际应该下载文件
-    console.log('下载链接:', res.url)
+    const url = window.URL.createObjectURL(res)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = '操作日志.xlsx'
+    link.click()
+    window.URL.revokeObjectURL(url)
   } catch (error) {
     message.error('导出失败')
   }

@@ -162,7 +162,7 @@
         </a-form-item>
         
         <a-form-item label="排序" name="sort">
-          <a-input-number v-model:value="formData.sort" :min="0" style="width: 100%" />
+          <a-input-number v-model:value="formData.sortNum" :min="0" style="width: 100%" />
         </a-form-item>
         
         <a-form-item label="状态" name="status">
@@ -277,7 +277,7 @@ const formData = reactive<SystemConfigForm>({
   configDescription: '',
   configType: 1,
   groupName: '',
-  sort: 0,
+  sortNum: 0,
   status: 1
 })
 
@@ -401,7 +401,7 @@ const handleEdit = async (record: SystemConfig) => {
     formData.configDescription = config.configDescription
     formData.configType = config.configType
     formData.groupName = config.groupName
-    formData.sort = config.sort
+    formData.sortNum = config.sortNum
     formData.status = config.status
     
     modalVisible.value = true
@@ -436,7 +436,7 @@ const handleSubmit = async () => {
         configDescription: formData.configDescription,
         configType: formData.configType,
         groupName: formData.groupName,
-        sort: formData.sort,
+        sortNum: formData.sortNum,
         status: formData.status
       })
       message.success('更新成功')
@@ -469,7 +469,7 @@ const resetForm = () => {
   formData.configDescription = ''
   formData.configType = 1
   formData.groupName = ''
-  formData.sort = 0
+  formData.sortNum = 0
   formData.status = 1
   
   if (formRef.value) {
