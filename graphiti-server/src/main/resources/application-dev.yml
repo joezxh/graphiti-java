@@ -59,7 +59,8 @@ graphiti:
     llm-provider: openai  # openai | qwen | ollama | anthropic
     embedding-provider: openai  # openai | qwen | ollama | anthropic
     openai:
-      model: gpt-4o
+      model: google/gemma-4-e4b
+      base-url: http://127.0.0.1:1234/v1
       temperature: 0.2
       max-tokens: 2048
     qwen:

@@ -53,7 +53,8 @@ export interface ImportDataReq {
 export const graphApi = {
   // 获取图谱列表
   async getList(): Promise<Graph[]> {
-    return request.get('/graph/list')
+    const data = await request.get<{ graphs: Graph[]; totalCount: number; rowCount: number }>('/graph/list')
+    return data?.graphs ?? []
   },
 
   // 获取图谱详情
@@ -81,14 +82,19 @@ export const graphApi = {
     return request.get(`/graph/${graphId}/nodes`)
   },
 
+  // 获取图谱统计信息（按 graphId）
+  async getStats(graphId: string): Promise<{ nodeCount: number; edgeCount: number }> {
+    return request.get(`/graph/${graphId}/stats`)
+  },
+
   // 获取边列表
   async getEdges(graphId: string): Promise<Edge[]> {
     return request.get(`/graph/${graphId}/edges`)
   },
 
-  // 添加数据
+  // 添加数据（调用后端 POST /graph/data/add）
   async addData(graphId: string, data: ImportDataReq): Promise<void> {
-    return request.post(`/graph/${graphId}/data`, data)
+    return request.post('/graph/data/add', { graphId, ...data })
   },
 
   // 导出数据
@@ -126,6 +132,63 @@ export const graphApi = {
   // 历史状态查询
   async getHistory(graphId: string, time: number): Promise<{ nodes: any[]; edges: any[] }> {
     return request.get(`/graph/${graphId}/history?time=${time}`)
+  },
+
+  // ===== Episode 操作 =====
+
+  // 获取 Episode 列表
+  async getEpisodes(graphId: string, skip?: number, limit?: number): Promise<any[]> {
+    const data = await request.get<{ episodes: any[]; totalCount: number; rowCount: number }>(
+      `/graph/episode/list/${graphId}`,
+      { params: { skip: skip || 0, limit: limit || 20 } }
+    )
+    return data?.episodes ?? []
+  },
+
+  // 获取 Episode 详情
+  async getEpisodeDetail(graphId: string, episodeUuid: string): Promise<any> {
+    return request.get(`/graph/episode/${graphId}/${episodeUuid}`)
+  },
+
+  // 获取 Episode 提及的节点和边
+  async getEpisodeMentions(graphId: string, episodeUuid: string): Promise<{ nodes: any[]; edges: any[] }> {
+    return request.get(`/graph/episode/${graphId}/${episodeUuid}/mentions`)
+  },
+
+  // 删除 Episode
+  async deleteEpisode(graphId: string, episodeUuid: string): Promise<void> {
+    return request.delete(`/graph/episode/${graphId}/${episodeUuid}`)
+  },
+
+  // ===== Ontology 操作 =====
+
+  // 获取图谱本体定义
+  async getOntology(graphId: string): Promise<any> {
+    return request.get(`/ontology/${graphId}`)
+  },
+
+  // 设置图谱本体定义
+  async setOntology(graphId: string, ontology: any): Promise<any> {
+    return request.post(`/ontology/${graphId}`, ontology)
+  },
+
+  // ===== Custom Instruction 操作 =====
+
+  // 获取自定义指令列表
+  async getCustomInstructions(graphId?: string): Promise<any[]> {
+    return request.get('/custom-instructions', {
+      params: { graphId: graphId || undefined }
+    })
+  },
+
+  // 创建自定义指令
+  async createCustomInstruction(data: { instruction: string; graphId?: string }): Promise<any> {
+    return request.post('/custom-instructions', data)
+  },
+
+  // 删除自定义指令
+  async deleteCustomInstruction(id: string): Promise<void> {
+    return request.delete(`/custom-instructions/${id}`)
   }
 }
 

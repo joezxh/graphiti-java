@@ -1,6 +1,7 @@
 package com.graphiti.module.graphiti.controller.admin;
 
 import com.graphiti.common.response.CommonResult;
+import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.service.SearchService;
 import com.graphiti.module.graphiti.vo.search.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 搜索检索控制器
@@ -47,6 +51,36 @@ public class SearchController {
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<GetMemoryRespVO> getMemory(@Valid @RequestBody GetMemoryReqVO reqVO) {
         return CommonResult.success(searchService.getMemory(reqVO));
+    }
+
+    // ==================== retrieve 命名空间对齐 ====================
+
+    @PostMapping("/retrieve/search")
+    @Operation(summary = "检索搜索", description = "独立检索入口，返回事实列表",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<SearchResultsRespVO> retrieveSearch(@Valid @RequestBody SearchQueryReqVO reqVO) {
+        return CommonResult.success(searchService.search(reqVO));
+    }
+
+    @GetMapping("/retrieve/entity-edge/{uuid}")
+    @Operation(summary = "获取指定边的事实", description = "检索指定边，返回 fact 格式",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<FactResultVO> getEntityEdge(
+            @PathVariable("uuid") @Parameter(description = "边UUID", required = true) String uuid) {
+        FactResultVO result = searchService.getEntityEdge(uuid);
+        if (result == null) {
+            throw new com.graphiti.common.exception.BusinessException(404, "边不存在");
+        }
+        return CommonResult.success(result);
+    }
+
+    @GetMapping("/retrieve/episodes/{graphId}")
+    @Operation(summary = "获取最近的 Episode", description = "获取指定图谱最近的 N 个 Episode",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<List<Map<String, Object>>> getRecentEpisodes(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestParam(value = "last_n", defaultValue = "10") @Parameter(description = "返回数量") int lastN) {
+        return CommonResult.success(searchService.getRecentEpisodes(graphId, lastN));
     }
 
     // ==================== 便捷检索接口 ====================

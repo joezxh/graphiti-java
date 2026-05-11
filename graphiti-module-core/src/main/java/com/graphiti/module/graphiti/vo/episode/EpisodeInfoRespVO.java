@@ -38,6 +38,9 @@ public class EpisodeInfoRespVO implements Serializable {
     @Schema(description = "有效时间")
     private String validAt;
 
+    @Schema(description = "失效时间")
+    private String invalidAt;
+
     @Schema(description = "关联实体 UUID 列表")
     private List<String> entityEdges;
 

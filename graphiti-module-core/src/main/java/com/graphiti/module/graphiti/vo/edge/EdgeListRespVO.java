@@ -2,6 +2,7 @@ package com.graphiti.module.graphiti.vo.edge;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,4 +36,34 @@ public class EdgeListRespVO implements Serializable {
      * 边属性（简要信息）
      */
     private Map<String, Object> properties;
+
+    /**
+     * 边名称
+     */
+    private String name;
+
+    /**
+     * 创建时间
+     */
+    private Long createdAt;
+
+    /**
+     * 有效时间
+     */
+    private Long validAt;
+
+    /**
+     * 失效时间
+     */
+    private Long invalidAt;
+
+    /**
+     * 过期时间
+     */
+    private Long expiredAt;
+
+    /**
+     * 关联的 Episode UUID 列表
+     */
+    private List<String> episodes;
 }

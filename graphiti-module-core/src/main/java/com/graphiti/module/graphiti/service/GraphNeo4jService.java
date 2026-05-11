@@ -7,7 +7,6 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Value;
 import org.neo4j.driver.Values;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -23,6 +22,10 @@ public class GraphNeo4jService {
     
     private final Driver neo4jDriver;
     private final GraphNeo4jConfig neo4jConfig;
+
+    public Driver getNeo4jDriver() {
+        return neo4jDriver;
+    }
     
     /**
      * 创建实体节点（带嵌入向量）
@@ -90,10 +93,11 @@ public class GraphNeo4jService {
     public Map<String, Object> createRelationship(String graphId, String edgeUuid, String sourceUuid,
                                                     String targetUuid, String type, String fact,
                                                     float[] embedding, Map<String, Object> properties) {
+        String relationType = (type != null && !type.isBlank()) ? type : "RELATES_TO";
         String cypher =
             "MATCH (a:Entity {group_id: $group_id, uuid: $sourceUuid}) " +
             "MATCH (b:Entity {group_id: $group_id, uuid: $targetUuid}) " +
-            "CREATE (a)-[r:RELATES_TO {uuid: $edgeUuid, type: $type, fact: $fact, " +
+            "CREATE (a)-[r:" + relationType + " {uuid: $edgeUuid, type: $type, fact: $fact, " +
             "embedding: $embedding, valid_at: timestamp(), invalid_at: null}]->(b) " +
             "SET r += $props RETURN r";
 
@@ -448,8 +452,27 @@ public class GraphNeo4jService {
             }
         }
         
-        // TODO: 查询提及的边
-        
+        // 查询 Episode 直接提及的边（通过 MENTIONS 关系）
+        String edgeCypher =
+            "MATCH (e:Episode {uuid: $uuid})-[mentions:MENTIONS]->(r) " +
+            "WHERE NOT labels(r)[0] IN ['Entity', 'Episode'] " +
+            "RETURN r.uuid as uuid, type(mentions) as type, r.fact as fact, " +
+            "startNode(mentions).uuid as source_node_uuid, endNode(mentions).uuid as target_node_uuid";
+
+        try (Session session = neo4jDriver.session()) {
+            Result edgeResult = session.run(edgeCypher, Values.parameters("uuid", episodeUuid));
+            while (edgeResult.hasNext()) {
+                Record record = edgeResult.next();
+                Map<String, Object> edge = new HashMap<>();
+                edge.put("uuid", record.get("uuid").asString());
+                edge.put("type", record.get("type").asString());
+                edge.put("fact", record.get("fact").asString());
+                edge.put("source_node_uuid", record.get("source_node_uuid").asString());
+                edge.put("target_node_uuid", record.get("target_node_uuid").asString());
+                edges.add(edge);
+            }
+        }
+
         result.put("nodes", nodes);
         result.put("edges", edges);
         return result;
@@ -937,6 +960,25 @@ public class GraphNeo4jService {
         return results;
     }
 
+    public Map<String, Object> getEdgeByUuidOnly(String uuid) {
+        String cypher =
+            "MATCH (a)-[r {uuid: $uuid}]->(b) " +
+            "RETURN r, a.uuid as source, b.uuid as target, type(r) as edgeType";
+
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, Values.parameters("uuid", uuid));
+            if (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> edge = new HashMap<>(record.get("r").asRelationship().asMap());
+                edge.put("source", record.get("source").asString());
+                edge.put("target", record.get("target").asString());
+                edge.put("edgeType", record.get("edgeType").asString());
+                return edge;
+            }
+        }
+        return null;
+    }
+
     // ==================== 克隆与导出方法 ====================
 
     /**
@@ -996,5 +1038,309 @@ public class GraphNeo4jService {
             }
         }
         return results;
+    }
+
+    // ==================== 过滤查询方法 ====================
+
+    /**
+     * 按图谱ID和过滤条件查询节点（支持 label 过滤 + 时间范围）
+     * @param graphId 图谱ID
+     * @param labels Neo4j 标签列表（如 ["Entity", "Episode"]）
+     * @param createdAfter 创建时间下限（毫秒）
+     * @param createdBefore 创建时间上限（毫秒）
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return 节点列表
+     */
+    public List<Map<String, Object>> findNodes(String graphId, List<String> labels,
+                                                Long createdAfter, Long createdBefore,
+                                                long skip, long limit) {
+        StringBuilder cypher = new StringBuilder();
+        cypher.append("MATCH (n) ");
+        cypher.append("WHERE n.group_id = $group_id ");
+
+        if (labels != null && !labels.isEmpty()) {
+            String labelMatch = labels.stream()
+                .map(l -> "'" + l + "'")
+                .collect(java.util.stream.Collectors.joining(","));
+            cypher.append("AND (labels(n) = [").append(labelMatch).append("]) ");
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("group_id", graphId);
+
+        if (createdAfter != null) {
+            cypher.append("AND n.created_at >= $createdAfter ");
+            params.put("createdAfter", createdAfter);
+        }
+        if (createdBefore != null) {
+            cypher.append("AND n.created_at <= $createdBefore ");
+            params.put("createdBefore", createdBefore);
+        }
+
+        cypher.append("RETURN n, labels(n)[0] as label SKIP $skip LIMIT $limit");
+        params.put("skip", skip);
+        params.put("limit", limit);
+
+        List<Map<String, Object>> nodes = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher.toString(), params);
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> nodeMap = new HashMap<>(record.get("n").asNode().asMap());
+                nodeMap.put("label", record.get("label").asString());
+                nodes.add(nodeMap);
+            }
+        }
+        return nodes;
+    }
+
+    /**
+     * 按图谱ID和过滤条件查询边（支持边类型过滤 + 时间范围）
+     * @param graphId 图谱ID
+     * @param edgeTypes 边类型列表
+     * @param createdAfter 创建时间下限（毫秒）
+     * @param createdBefore 创建时间上限（毫秒）
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return 边列表
+     */
+    public List<Map<String, Object>> findEdges(String graphId, List<String> edgeTypes,
+                                                Long createdAfter, Long createdBefore,
+                                                long skip, long limit) {
+        StringBuilder cypher = new StringBuilder();
+        cypher.append("MATCH (a:Entity {group_id: $group_id})-[r]->(b:Entity {group_id: $group_id}) ");
+
+        List<String> conditions = new ArrayList<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("group_id", graphId);
+
+        if (edgeTypes != null && !edgeTypes.isEmpty()) {
+            conditions.add("type(r) IN $edgeTypes");
+            params.put("edgeTypes", edgeTypes);
+        }
+        if (createdAfter != null) {
+            conditions.add("r.created_at >= $createdAfter");
+            params.put("createdAfter", createdAfter);
+        }
+        if (createdBefore != null) {
+            conditions.add("r.created_at <= $createdBefore");
+            params.put("createdBefore", createdBefore);
+        }
+
+        if (!conditions.isEmpty()) {
+            cypher.append("WHERE ").append(String.join(" AND ", conditions)).append(" ");
+        }
+
+        cypher.append("RETURN r, type(r) as edgeType, a.uuid as source, b.uuid as target SKIP $skip LIMIT $limit");
+        params.put("skip", skip);
+        params.put("limit", limit);
+
+        List<Map<String, Object>> edges = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher.toString(), params);
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> edge = new HashMap<>(record.get("r").asRelationship().asMap());
+                edge.put("source", record.get("source").asString());
+                edge.put("target", record.get("target").asString());
+                edge.put("edgeType", record.get("edgeType").asString());
+                edges.add(edge);
+            }
+        }
+        return edges;
+    }
+
+    /**
+     * 查询两节点间的所有边（双向）
+     * @param sourceUuid 源节点UUID
+     * @param targetUuid 目标节点UUID
+     * @return 边列表
+     */
+    public List<Map<String, Object>> getEdgesBetweenNodes(String sourceUuid, String targetUuid) {
+        String cypher =
+            "MATCH (a:Entity {uuid: $sourceUuid})-[r]->(b:Entity {uuid: $targetUuid}) " +
+            "RETURN r, type(r) as edgeType, a.uuid as source, b.uuid as target " +
+            "UNION ALL " +
+            "MATCH (a:Entity {uuid: $targetUuid})-[r]->(b:Entity {uuid: $sourceUuid}) " +
+            "RETURN r, type(r) as edgeType, a.uuid as source, b.uuid as target";
+
+        List<Map<String, Object>> edges = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("sourceUuid", sourceUuid, "targetUuid", targetUuid));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> edge = new HashMap<>(record.get("r").asRelationship().asMap());
+                edge.put("source", record.get("source").asString());
+                edge.put("target", record.get("target").asString());
+                edge.put("edgeType", record.get("edgeType").asString());
+                edges.add(edge);
+            }
+        }
+        return edges;
+    }
+
+    /**
+     * 获取节点关联的所有边（双向）
+     * @param nodeUuid 节点UUID
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return 边列表
+     */
+    public List<Map<String, Object>> getNodeEdges(String nodeUuid, long skip, long limit) {
+        // 双向查询：节点作为 source 或 target 的所有边
+        String cypher =
+            "MATCH (n:Entity {uuid: $nodeUuid})-[r]->(m:Entity) " +
+            "WITH n, r, m, type(r) as edgeType " +
+            "RETURN r, edgeType, n.uuid as source, m.uuid as target " +
+            "UNION ALL " +
+            "MATCH (n:Entity {uuid: $nodeUuid})<-[r]-(m:Entity) " +
+            "WITH n, r, m, type(r) as edgeType " +
+            "RETURN r, edgeType, m.uuid as source, n.uuid as target " +
+            "SKIP $skip LIMIT $limit";
+
+        List<Map<String, Object>> edges = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("nodeUuid", nodeUuid, "skip", skip, "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> edge = new HashMap<>(record.get("r").asRelationship().asMap());
+                edge.put("source", record.get("source").asString());
+                edge.put("target", record.get("target").asString());
+                edge.put("edgeType", record.get("edgeType").asString());
+                edges.add(edge);
+            }
+        }
+        return edges;
+    }
+
+    /**
+     * 获取节点关联的 Episode 列表（通过 MENTIONS 关系）
+     * @param nodeUuid 节点UUID
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return Episode 列表
+     */
+    public List<Map<String, Object>> getNodeEpisodes(String nodeUuid, long skip, long limit) {
+        String cypher =
+            "MATCH (e:Episode)-[:MENTIONS]->(n:Entity {uuid: $nodeUuid}) " +
+            "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
+            "e.content as content, e.created_at as created_at " +
+            "SKIP $skip LIMIT $limit";
+
+        List<Map<String, Object>> episodes = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("nodeUuid", nodeUuid, "skip", skip, "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> ep = new HashMap<>();
+                ep.put("uuid", record.get("uuid").asString());
+                ep.put("name", record.get("name").asString());
+                ep.put("source", record.get("source").asString());
+                ep.put("content", record.get("content").asString());
+                Object createdAt = record.get("created_at");
+                if (createdAt != null) {
+                    ep.put("created_at", createdAt);
+                }
+                episodes.add(ep);
+            }
+        }
+        return episodes;
+    }
+
+    /**
+     * 获取最近的 Episode 列表（按创建时间倒序）
+     * @param graphId 图谱ID
+     * @param lastN 返回数量
+     * @return Episode 列表
+     */
+    public List<Map<String, Object>> getRecentEpisodes(String graphId, int lastN) {
+        String cypher =
+            "MATCH (e:Episode {group_id: $group_id}) " +
+            "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
+            "e.source_description as source_description, e.content as content, " +
+            "e.created_at as created_at, e.valid_at as valid_at " +
+            "ORDER BY e.created_at DESC " +
+            "LIMIT $lastN";
+
+        List<Map<String, Object>> episodes = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("group_id", graphId, "lastN", lastN));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> ep = new HashMap<>();
+                ep.put("uuid", record.get("uuid").asString());
+                ep.put("name", record.get("name").asString());
+                ep.put("source", record.get("source").asString());
+                ep.put("source_description", record.get("source_description").asString());
+                ep.put("content", record.get("content").asString());
+                Object createdAt = record.get("created_at");
+                if (createdAt != null) ep.put("created_at", createdAt);
+                Object validAt = record.get("valid_at");
+                if (validAt != null) ep.put("valid_at", validAt);
+                episodes.add(ep);
+            }
+        }
+        return episodes;
+    }
+
+    /**
+     * 统计图谱中的节点总数
+     * @param graphId 图谱ID
+     * @param labels 标签列表（可选）
+     * @return 节点数量
+     */
+    public long countNodes(String graphId, List<String> labels) {
+        StringBuilder cypher = new StringBuilder();
+        cypher.append("MATCH (n) WHERE n.group_id = $group_id ");
+        if (labels != null && !labels.isEmpty()) {
+            String labelMatch = labels.stream()
+                .map(l -> "'" + l + "'")
+                .collect(java.util.stream.Collectors.joining(","));
+            cypher.append("AND (labels(n) = [").append(labelMatch).append("]) ");
+        }
+        cypher.append("RETURN count(n) as count");
+
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher.toString(),
+                Values.parameters("group_id", graphId));
+            if (result.hasNext()) {
+                return result.next().get("count").asLong();
+            }
+        }
+        return 0L;
+    }
+
+    /**
+     * 统计图谱中的边总数
+     * @param graphId 图谱ID
+     * @param edgeTypes 边类型列表（可选）
+     * @return 边数量
+     */
+    public long countEdges(String graphId, List<String> edgeTypes) {
+        StringBuilder cypher = new StringBuilder();
+        cypher.append("MATCH ()-[r]->() WHERE r.group_id = $group_id ");
+        if (edgeTypes != null && !edgeTypes.isEmpty()) {
+            cypher.append("AND type(r) IN $edgeTypes ");
+        }
+        cypher.append("RETURN count(r) as count");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("group_id", graphId);
+        if (edgeTypes != null && !edgeTypes.isEmpty()) {
+            params.put("edgeTypes", edgeTypes);
+        }
+
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher.toString(), params);
+            if (result.hasNext()) {
+                return result.next().get("count").asLong();
+            }
+        }
+        return 0L;
     }
 }

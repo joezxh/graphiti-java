@@ -2,6 +2,7 @@ package com.graphiti.module.graphiti.vo.node;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,4 +36,34 @@ public class NodeInfoRespVO implements Serializable {
      * 节点摘要（可选）
      */
     private String summary;
+
+    /**
+     * 所属图谱 ID
+     */
+    private String groupId;
+
+    /**
+     * 创建时间（毫秒时间戳）
+     */
+    private Long createdAt;
+
+    /**
+     * 有效时间
+     */
+    private Long validAt;
+
+    /**
+     * 失效时间
+     */
+    private Long invalidAt;
+
+    /**
+     * Neo4j 标签列表
+     */
+    private List<String> labels;
+
+    /**
+     * 自定义属性
+     */
+    private Map<String, Object> attributes;
 }

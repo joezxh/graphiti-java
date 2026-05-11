@@ -5,6 +5,7 @@ import com.graphiti.module.graphiti.service.NodeService;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
+import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -89,7 +90,7 @@ public class NodeController {
      * @param nodeUuid 节点UUID
      * @return CommonResult<Void>
      */
-    @Operation(summary = "删除节点", description = "删除指定的节点及其关联的边", 
+    @Operation(summary = "删除节点", description = "删除指定的节点及其关联的边",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @DeleteMapping("/{nodeUuid}")
     public CommonResult<Void> delete(
@@ -97,5 +98,43 @@ public class NodeController {
             @PathVariable("nodeUuid") @Parameter(description = "节点UUID", required = true, example = "node-123") String nodeUuid) {
         nodeService.deleteNode(graphId, nodeUuid);
         return CommonResult.success();
+    }
+
+    /**
+     * 获取节点关联的边
+     * @param graphId 图谱ID
+     * @param nodeUuid 节点UUID
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return CommonResult<List<EdgeListRespVO>>
+     */
+    @Operation(summary = "获取节点关联边", description = "获取指定节点关联的所有边（双向）",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{nodeUuid}/edges")
+    public CommonResult<List<EdgeListRespVO>> getNodeEdges(
+            @RequestParam @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("nodeUuid") @Parameter(description = "节点UUID", required = true) String nodeUuid,
+            @RequestParam(defaultValue = "0") @Parameter(description = "跳过数量") Long skip,
+            @RequestParam(defaultValue = "20") @Parameter(description = "限制数量") Long limit) {
+        return CommonResult.success(nodeService.getNodeEdges(graphId, nodeUuid, skip, limit));
+    }
+
+    /**
+     * 获取节点关联的 Episode 列表
+     * @param graphId 图谱ID
+     * @param nodeUuid 节点UUID
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return CommonResult<List<Map>>
+     */
+    @Operation(summary = "获取节点关联 Episode", description = "获取指定节点关联的 Episode 列表",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{nodeUuid}/episodes")
+    public CommonResult<List<Map<String, Object>>> getNodeEpisodes(
+            @RequestParam @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("nodeUuid") @Parameter(description = "节点UUID", required = true) String nodeUuid,
+            @RequestParam(defaultValue = "0") @Parameter(description = "跳过数量") Long skip,
+            @RequestParam(defaultValue = "20") @Parameter(description = "限制数量") Long limit) {
+        return CommonResult.success(nodeService.getNodeEpisodes(graphId, nodeUuid, skip, limit));
     }
 }

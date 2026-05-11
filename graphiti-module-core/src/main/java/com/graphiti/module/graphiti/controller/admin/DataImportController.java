@@ -62,12 +62,50 @@ public class DataImportController {
     }
 
     @PostMapping("/entity-node")
-    @Operation(summary = "添加实体节点", description = "直接写入实体节点，不经过LLM提取", 
+    @Operation(summary = "添加实体节点", description = "直接写入实体节点，不经过LLM提取",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<Boolean> addEntityNode(
             @RequestParam @Parameter(description = "图谱ID", required = true) String graphId,
             @RequestBody @Valid java.util.Map<String, Object> nodeData) {
         dataImportService.addEntityNode(graphId, nodeData);
         return CommonResult.success(true);
+    }
+
+    // ==================== 删除操作（对齐 Python /ingest/ 路由） ====================
+
+    @DeleteMapping("/entity-edge/{uuid}")
+    @Operation(summary = "删除实体边", description = "根据边UUID删除实体边",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<Void> deleteEntityEdge(
+            @PathVariable("uuid") @Parameter(description = "边UUID", required = true) String uuid) {
+        dataImportService.deleteEntityEdge(uuid);
+        return CommonResult.success(null);
+    }
+
+    @DeleteMapping("/group/{graphId}")
+    @Operation(summary = "删除图谱数据", description = "删除图谱中的所有数据（含节点、边、Episode）",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<Void> deleteGroup(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        dataImportService.deleteGroup(graphId);
+        return CommonResult.success(null);
+    }
+
+    @DeleteMapping("/episode/{uuid}")
+    @Operation(summary = "删除 Episode", description = "根据 Episode UUID 删除事件",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<Void> deleteEpisode(
+            @PathVariable("uuid") @Parameter(description = "Episode UUID", required = true) String uuid) {
+        dataImportService.deleteEpisode(uuid);
+        return CommonResult.success(null);
+    }
+
+    @PostMapping("/clear")
+    @Operation(summary = "清空所有图谱数据", description = "清空所有图谱中的数据（全局操作）",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<Void> clearAll() {
+        // 清空操作需要特殊处理，暂时返回不支持
+        throw new com.graphiti.common.exception.BusinessException(
+            501, "请使用 DELETE /graph/{graphId}/clear 清空指定图谱数据");
     }
 }

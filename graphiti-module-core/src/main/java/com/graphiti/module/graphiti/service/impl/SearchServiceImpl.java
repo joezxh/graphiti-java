@@ -3,6 +3,7 @@ package com.graphiti.module.graphiti.service.impl;
 import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.SearchService;
+import com.graphiti.module.graphiti.util.RerankingUtils;
 import com.graphiti.module.graphiti.vo.search.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +73,20 @@ public class SearchServiceImpl implements SearchService {
         respVO.setContext(contextBuilder.toString());
 
         return respVO;
+    }
+
+    @Override
+    public FactResultVO getEntityEdge(String edgeUuid) {
+        Map<String, Object> edge = graphNeo4jService.getEdgeByUuidOnly(edgeUuid);
+        if (edge == null) {
+            return null;
+        }
+        return convertToFactResult(edge);
+    }
+
+    @Override
+    public List<Map<String, Object>> getRecentEpisodes(String graphId, int lastN) {
+        return graphNeo4jService.getRecentEpisodes(graphId, lastN);
     }
 
     // ==================== 核心混合检索 ====================
@@ -268,44 +283,178 @@ public class SearchServiceImpl implements SearchService {
                 .collect(Collectors.toList());
     }
 
-    // ==================== MMR 重排序 ====================
+    // ==================== MMR 重排序（使用 RerankingUtils） ====================
 
     private List<FactResultVO> rerankByMmr(List<FactResultVO> facts, double lambda, int limit) {
         if (facts.size() <= 1) return facts;
 
-        List<FactResultVO> selected = new ArrayList<>();
-        List<FactResultVO> remaining = new ArrayList<>(facts);
+        // 使用 RerankingUtils.mmrByText
+        List<RerankingUtils.RerankedItem<FactResultVO>> reranked = RerankingUtils.mmrByText(
+            "",
+            facts,
+            FactResultVO::getScore,
+            f -> (f.getFact() != null ? f.getFact() : "") + " " + (f.getName() != null ? f.getName() : ""),
+            lambda,
+            limit
+        );
 
-        // 选择第一个：相关性最高
-        remaining.sort((a, b) -> Double.compare(b.getScore() != null ? b.getScore() : 0,
-                                                  a.getScore() != null ? a.getScore() : 0));
-        selected.add(remaining.remove(0));
+        List<FactResultVO> result = new ArrayList<>();
+        for (RerankingUtils.RerankedItem<FactResultVO> item : reranked) {
+            FactResultVO vo = item.item;
+            vo.setScore(item.score);
+            result.add(vo);
+        }
+        return result;
+    }
 
-        while (!remaining.isEmpty() && selected.size() < limit) {
-            FactResultVO best = null;
-            double bestMmrScore = -1;
+    /**
+     * 按节点距离重排序
+     *
+     * <p>参考 Python 实现：search_utils.py:1798-1857
+     *
+     * @param facts 事实列表
+     * @param centerNodeUuid 中心节点 UUID
+     * @param limit 返回数量
+     * @return 重排序后的事实列表
+     */
+    public List<FactResultVO> rerankByNodeDistance(List<FactResultVO> facts, String centerNodeUuid, int limit) {
+        if (facts.isEmpty() || centerNodeUuid == null) {
+            return facts;
+        }
 
-            for (FactResultVO candidate : remaining) {
-                double relevance = candidate.getScore() != null ? candidate.getScore() : 0;
-                double maxSim = selected.stream()
-                        .mapToDouble(s -> cosineSimilarity(candidate, s))
-                        .max().orElse(0);
-                double mmrScore = lambda * relevance - (1 - lambda) * maxSim;
-                if (mmrScore > bestMmrScore) {
-                    bestMmrScore = mmrScore;
-                    best = candidate;
+        // 获取中心节点到所有相关节点的距离
+        Map<String, Integer> nodeDistances = computeNodeDistances(centerNodeUuid, facts);
+
+        return facts.stream()
+                .sorted((a, b) -> {
+                    int distA = nodeDistances.getOrDefault(a.getSourceNodeUuid(), Integer.MAX_VALUE);
+                    int distB = nodeDistances.getOrDefault(b.getSourceNodeUuid(), Integer.MAX_VALUE);
+                    // 距离越小越靠前
+                    return Integer.compare(distA, distB);
+                })
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 按提及次数重排序
+     *
+     * <p>参考 Python 实现：search_utils.py:1860-1898
+     *
+     * @param facts 事实列表
+     * @param limit 返回数量
+     * @return 重排序后的事实列表
+     */
+    public List<FactResultVO> rerankByEpisodeMentions(List<FactResultVO> facts, int limit) {
+        if (facts.isEmpty()) {
+            return facts;
+        }
+
+        // 获取每个事实的提及次数
+        Map<String, Integer> mentionCounts = computeMentionCounts(facts);
+
+        return facts.stream()
+                .sorted((a, b) -> {
+                    int countA = mentionCounts.getOrDefault(a.getUuid(), 0);
+                    int countB = mentionCounts.getOrDefault(b.getUuid(), 0);
+                    // 提及次数越多越靠前
+                    return Integer.compare(countB, countA);
+                })
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 计算节点距离
+     */
+    private Map<String, Integer> computeNodeDistances(String centerNodeUuid, List<FactResultVO> facts) {
+        Map<String, Integer> distances = new HashMap<>();
+
+        for (FactResultVO fact : facts) {
+            String sourceUuid = fact.getSourceNodeUuid();
+            if (sourceUuid == null) continue;
+
+            // BFS 计算距离
+            int distance = bfsDistance(centerNodeUuid, sourceUuid);
+            distances.put(sourceUuid, distance);
+        }
+
+        return distances;
+    }
+
+    /**
+     * BFS 计算两个节点间的距离
+     */
+    private int bfsDistance(String startUuid, String endUuid) {
+        if (startUuid.equals(endUuid)) return 0;
+
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(startUuid);
+        visited.add(startUuid);
+        int distance = 0;
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                String current = queue.poll();
+
+                // 获取邻居
+                List<Map<String, Object>> neighbors = graphNeo4jService.getNodeEdges(current, 0, 10);
+                for (Map<String, Object> edge : neighbors) {
+                    String neighborUuid = (String) edge.get("target");
+                    if (neighborUuid == null) neighborUuid = (String) edge.get("source");
+
+                    if (neighborUuid != null && !visited.contains(neighborUuid)) {
+                        if (neighborUuid.equals(endUuid)) {
+                            return distance + 1;
+                        }
+                        visited.add(neighborUuid);
+                        queue.offer(neighborUuid);
+                    }
                 }
             }
+            distance++;
+        }
 
-            if (best != null) {
-                selected.add(best);
-                remaining.remove(best);
-            } else {
-                break;
+        return Integer.MAX_VALUE;  // 无法到达
+    }
+
+    /**
+     * 计算提及次数
+     */
+    private Map<String, Integer> computeMentionCounts(List<FactResultVO> facts) {
+        Map<String, Integer> counts = new HashMap<>();
+
+        for (FactResultVO fact : facts) {
+            String uuid = fact.getUuid();
+            if (uuid != null) {
+                // 查询该边在 MENTIONS 关系中出现的次数
+                int count = countEdgeMentions(uuid);
+                counts.put(uuid, count);
             }
         }
 
-        return selected;
+        return counts;
+    }
+
+    /**
+     * 统计边的提及次数
+     */
+    private int countEdgeMentions(String edgeUuid) {
+        String cypher =
+            "MATCH (e:Episode)-[:MENTIONS]->(r) " +
+            "WHERE r.uuid = $edgeUuid " +
+            "RETURN count(e) as count";
+
+        try (org.neo4j.driver.Session session = graphNeo4jService.getNeo4jDriver().session()) {
+            org.neo4j.driver.Result result = session.run(cypher,
+                org.neo4j.driver.Values.parameters("edgeUuid", edgeUuid));
+            if (result.hasNext()) {
+                return result.next().get("count").asInt();
+            }
+        }
+        return 0;
     }
 
     private double cosineSimilarity(FactResultVO a, FactResultVO b) {

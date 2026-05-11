@@ -136,14 +136,23 @@ const loadGraphs = async () => {
 }
 
 const loadEntityTypes = async () => {
+  if (!filterGraph.value) {
+    entityTypes.value = []
+    return
+  }
   try {
-    entityTypes.value = await dataApi.getEntityTypes()
+    entityTypes.value = await dataApi.getEntityTypes(filterGraph.value)
   } catch (err) {
     console.error('加载实体类型失败', err)
   }
 }
 
 const loadEntities = async () => {
+  if (!filterGraph.value) {
+    entityList.value = []
+    pagination.total = 0
+    return
+  }
   loading.value = true
   try {
     const params: EntityListParams = {
@@ -173,6 +182,7 @@ const resetFilter = () => {
   filterType.value = undefined
   filterGraph.value = undefined
   pagination.current = 1
+  entityTypes.value = []
   loadEntities()
 }
 
@@ -202,14 +212,23 @@ const openEditModal = (record: EntityItem) => {
   editForm.uuid = record.uuid
   editForm.name = record.name
   editForm.type = record.type
-  editForm.properties = JSON.parse(JSON.stringify(record.properties))
+  editForm.properties = JSON.parse(JSON.stringify(record.properties || {}))
   editVisible.value = true
 }
 
 const saveEntity = async () => {
+  if (!filterGraph.value) {
+    message.error('请先选择图谱')
+    return
+  }
   editSaving.value = true
   try {
-    await dataApi.updateEntity(editForm.uuid, editForm.properties)
+    // 只提交可编辑的属性（排除内部字段）
+    const editableProps: Record<string, any> = {}
+    for (const [k, v] of Object.entries(editForm.properties)) {
+      if (!k.startsWith('_')) editableProps[k] = v
+    }
+    await dataApi.updateEntity(editForm.uuid, { graphId: filterGraph.value, name: editForm.name, ...editableProps })
     message.success('保存成功')
     editVisible.value = false
     loadEntities()
@@ -221,8 +240,12 @@ const saveEntity = async () => {
 }
 
 const deleteEntity = async (uuid: string) => {
+  if (!filterGraph.value) {
+    message.error('请先选择图谱')
+    return
+  }
   try {
-    await dataApi.deleteEntity(uuid)
+    await dataApi.deleteEntity(uuid, filterGraph.value)
     message.success('删除成功')
     loadEntities()
   } catch (err: any) {

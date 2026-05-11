@@ -70,12 +70,21 @@ public class EdgeController {
     }
 
     @DeleteMapping("/{graphId}/{edgeUuid}")
-    @Operation(summary = "删除边", description = "删除指定的关系边", 
+    @Operation(summary = "删除边", description = "删除指定的关系边",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<Boolean> deleteEdge(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
             @PathVariable("edgeUuid") @Parameter(description = "边UUID", required = true) String edgeUuid) {
         edgeService.deleteEdge(graphId, edgeUuid);
         return CommonResult.success(true);
+    }
+
+    @GetMapping("/between/{sourceUuid}/{targetUuid}")
+    @Operation(summary = "查询两节点间边", description = "查询两节点间的所有边（双向）",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<List<EdgeListRespVO>> getEdgesBetweenNodes(
+            @PathVariable("sourceUuid") @Parameter(description = "源节点UUID", required = true) String sourceUuid,
+            @PathVariable("targetUuid") @Parameter(description = "目标节点UUID", required = true) String targetUuid) {
+        return CommonResult.success(edgeService.getEdgesBetweenNodes(sourceUuid, targetUuid));
     }
 }

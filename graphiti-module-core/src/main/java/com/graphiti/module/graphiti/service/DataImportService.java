@@ -51,4 +51,24 @@ public interface DataImportService {
      * @param nodeData 节点数据
      */
     void addEntityNode(String graphId, java.util.Map<String, Object> nodeData);
+
+    // ==================== 删除操作 ====================
+
+    /**
+     * 删除实体边
+     * @param edgeUuid 边UUID
+     */
+    void deleteEntityEdge(String edgeUuid);
+
+    /**
+     * 删除图谱（含 Neo4j 数据）
+     * @param graphId 图谱ID
+     */
+    void deleteGroup(String graphId);
+
+    /**
+     * 删除 Episode
+     * @param episodeUuid Episode UUID
+     */
+    void deleteEpisode(String episodeUuid);
 }

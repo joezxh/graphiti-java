@@ -3,7 +3,7 @@ import request from './request'
 // 搜索参数
 export interface SearchParams {
   query: string
-  mode: 'semantic' | 'structured' | 'hybrid' | 'bm25' | 'vector' | 'bfs'
+  mode: 'semantic' | 'structured' | 'hybrid' | 'bm25' | 'vector' | 'bfs' | 'memory'
   graphId?: string
   filters?: SearchFilter[]
   limit?: number
@@ -51,7 +51,8 @@ export const searchApi = {
       const resp = await request.post<{ facts?: any[]; nodes?: any[] }>('/graph/search/global', {
         query: params.query,
         maxFacts: params.limit || 20,
-        config: { mode: params.mode || 'hybrid' }
+        config: { mode: params.mode || 'hybrid' },
+        filters: params.filters || []
       })
       return ((resp as any)?.facts || []).map(mapFactResult)
     }
@@ -60,41 +61,64 @@ export const searchApi = {
       {
         query: params.query,
         maxFacts: params.limit || 20,
-        config: { mode: params.mode || 'hybrid' }
+        config: { mode: params.mode || 'hybrid' },
+        filters: params.filters || []
       }
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
   /**
+   * Memory 检索（基于对话历史的检索增强）
+   * 后端: POST /graph/search/memory
+   */
+  async memorySearch(req: {
+    graphId: string
+    query: string
+    maxFacts?: number
+    messages?: Array<{ content: string; role: string; name?: string }>
+  }): Promise<SearchResult[]> {
+    const resp = await request.post<{ facts?: any[] }>('/graph/search/memory', {
+      groupId: req.graphId,
+      query: req.query,
+      maxFacts: req.maxFacts || 20,
+      messages: req.messages || []
+    })
+    return ((resp as any)?.facts || []).map(mapFactResult)
+  },
+
+  /**
    * 混合检索（语义 + 全文 + 图遍历）
-   * 后端: POST /graph/search/hybrid/{graphId}
+   * 后端: POST /graph/search/hybrid/{graphId} (body)
    */
   async hybridSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/graph/search/hybrid/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
+      `/graph/search/hybrid/${graphId}`,
+      { query, limit }
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
   /**
    * 语义搜索（向量相似度）
-   * 后端: POST /graph/search/semantic/{graphId}
+   * 后端: POST /graph/search/semantic/{graphId} (body)
    */
   async semanticSearch(graphId: string, query: string, limit: number = 10): Promise<SearchResult[]> {
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/graph/search/semantic/${graphId}?query=${encodeURIComponent(query)}&limit=${limit}`
+      `/graph/search/semantic/${graphId}`,
+      { query, limit }
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },
 
   /**
    * BFS 搜索（图遍历）
-   * 后端: POST /graph/search/bfs/{graphId}
+   * 后端: POST /graph/search/bfs/{graphId} (body)
    */
   async bfsSearch(graphId: string, query: string, depth: number = 2, limit: number = 10): Promise<SearchResult[]> {
     const resp = await request.post<{ facts?: any[]; nodes?: any[] }>(
-      `/graph/search/bfs/${graphId}?query=${encodeURIComponent(query)}&depth=${depth}&limit=${limit}`
+      `/graph/search/bfs/${graphId}`,
+      { query, depth, limit }
     )
     return ((resp as any)?.facts || []).map(mapFactResult)
   },

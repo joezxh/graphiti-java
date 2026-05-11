@@ -30,8 +30,18 @@
           </template>
           图谱列表
         </a-menu-item>
-      
-        
+        <a-menu-item key="/graph/temporal">
+          <template #icon>
+            <HistoryOutlined />
+          </template>
+          时序历史
+        </a-menu-item>
+        <a-menu-item key="/communities">
+          <template #icon>
+            <ClusterOutlined />
+          </template>
+          社区检测
+        </a-menu-item>
         <a-menu-item key="/ontology">
           <template #icon>
             <ApartmentOutlined />
@@ -63,11 +73,48 @@
           </template>
           实体管理
         </a-menu-item>
+        <a-menu-item key="/edges">
+          <template #icon>
+            <LinkOutlined />
+          </template>
+          边管理
+        </a-menu-item>
+        <a-menu-item key="/episodes">
+          <template #icon>
+            <FileTextOutlined />
+          </template>
+          Episode 管理
+        </a-menu-item>
+      </a-sub-menu>
+
+      <a-sub-menu key="tools">
+        <template #icon>
+          <ToolOutlined />
+        </template>
+        <template #title>工具</template>
         <a-menu-item key="/search">
           <template #icon>
             <SearchOutlined />
           </template>
           混合检索
+        </a-menu-item>
+        <a-menu-item key="/custom-instructions">
+          <template #icon>
+            <EditOutlined />
+          </template>
+          自定义指令
+        </a-menu-item>
+        <a-menu-item key="/prompt">
+          <template #icon>
+            <MessageOutlined />
+          </template>
+          提示词管理
+        </a-menu-item>
+        <a-menu-item key="/legal-kg">
+          <template #icon>
+            <AuditOutlined />
+          </template>
+          法律知识图谱
         </a-menu-item>
       </a-sub-menu>
 
@@ -137,14 +184,21 @@ import {
   TeamOutlined,
   MenuOutlined,
   ToolOutlined,
-  FileTextOutlined
+  FileTextOutlined,
+  HistoryOutlined,
+  ClusterOutlined,
+  LinkOutlined,
+  EditOutlined,
+  SafetyOutlined,
+  AuditOutlined,
+  MessageOutlined
 } from '@ant-design/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const selectedKeys = ref<string[]>([])
-const openKeys = ref<string[]>(['graph-management', 'data-management'])
+const openKeys = ref<string[]>(['graph-management', 'data-management', 'tools'])
 
 const updateMenuState = () => {
   const path = route.path
@@ -158,6 +212,11 @@ const updateMenuState = () => {
   }
   if (path.includes('/data') && !openKeys.value.includes('data-management')) {
     openKeys.value = [...openKeys.value, 'data-management']
+  }
+  if (path.includes('/search') || path.includes('/custom-instructions') || path.includes('/prompt')) {
+    if (!openKeys.value.includes('tools')) {
+      openKeys.value = [...openKeys.value, 'tools']
+    }
   }
 }
 

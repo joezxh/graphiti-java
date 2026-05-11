@@ -79,7 +79,7 @@ const handleSubmit = async () => {
   try {
     const result = await graphApi.create(formState)
     message.success('创建成功')
-    router.push(`/graph/detail/${result.id}`)
+    router.push(`/graph/detail/${result.graphId}`)
   } catch (error) {
     message.error('创建失败')
   } finally {

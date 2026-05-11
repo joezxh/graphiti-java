@@ -1,23 +1,21 @@
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.common.exception.BusinessException;
+import com.graphiti.module.graphiti.exception.OntologyValidationException;
 import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.NodeService;
 import com.graphiti.module.graphiti.service.OntologyValidationService;
-import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
+import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 /**
  * 节点管理服务实现类
@@ -175,5 +173,36 @@ public class NodeServiceImpl implements NodeService {
     private void updateGraphNodeCount(String graphId, int delta) {
         // TODO: 调用 GraphitiService 更新节点数量
         log.info("更新图谱节点数量：graphId={}, delta={}", graphId, delta);
+    }
+
+    @Override
+    public List<EdgeListRespVO> getNodeEdges(String graphId, String nodeUuid, long skip, long limit) {
+        List<Map<String, Object>> edges = graphNeo4jService.getNodeEdges(nodeUuid, skip, limit);
+        List<EdgeListRespVO> respList = new ArrayList<>();
+        for (Map<String, Object> edge : edges) {
+            respList.add(convertToEdgeListRespVO(edge));
+        }
+        return respList;
+    }
+
+    @Override
+    public List<Map<String, Object>> getNodeEpisodes(String graphId, String nodeUuid, long skip, long limit) {
+        return graphNeo4jService.getNodeEpisodes(nodeUuid, skip, limit);
+    }
+
+    private EdgeListRespVO convertToEdgeListRespVO(Map<String, Object> edge) {
+        EdgeListRespVO respVO = new EdgeListRespVO();
+        respVO.setUuid((String) edge.get("uuid"));
+        respVO.setSource((String) edge.get("source"));
+        respVO.setTarget((String) edge.get("target"));
+        respVO.setType((String) edge.get("type"));
+        Map<String, Object> props = new HashMap<>(edge);
+        props.remove("uuid");
+        props.remove("source");
+        props.remove("target");
+        props.remove("type");
+        props.remove("group_id");
+        respVO.setProperties(props);
+        return respVO;
     }
 }

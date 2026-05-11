@@ -12,6 +12,11 @@ public class SetOntologyReqVO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     /**
+     * 目标图谱 ID
+     */
+    private String graphId;
+
+    /**
      * 实体类型定义（JSON 数组字符串）
      */
     @NotBlank(message = "实体类型定义不能为空")

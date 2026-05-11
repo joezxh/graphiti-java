@@ -3,7 +3,20 @@
     <!-- 左侧：图谱视图 -->
     <div class="graph-view-section">
       <div class="section-header">
-        <h3 class="section-title">图谱可视化</h3>
+        <div class="header-left">
+          <h3 class="section-title">图谱可视化</h3>
+          <div class="filter-tags">
+            <a-tag
+              v-for="type in nodeTypes"
+              :key="type"
+              :color="activeFilterType === type ? 'blue' : 'default'"
+              class="filter-tag"
+              @click="toggleTypeFilter(type)"
+            >
+              {{ type }}
+            </a-tag>
+          </div>
+        </div>
         <GraphToolbar
           :show-labels="showLabels"
           @update:showLabels="showLabels = $event"
@@ -113,13 +126,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { ImportOutlined, ExportOutlined, ClusterOutlined } from '@ant-design/icons-vue'
 import ForceGraph from '@/components/Graph/ForceGraph.vue'
 import GraphToolbar from '@/components/Graph/GraphToolbar.vue'
 import NodeDetail from '@/components/Graph/NodeDetail.vue'
 import { graphApi, type Graph } from '@/api/graph'
+import { nodeApi } from '@/api/node'
 import type { EChartsNode, EChartsEdge } from '@/utils/graph'
 import { transformGraphData } from '@/utils/graph'
 
@@ -138,6 +152,12 @@ const currentLayout = ref<'force' | 'circular' | 'tree'>('force')
 // 节点详情
 const selectedNode = ref<any>(null)
 const nodeDetailVisible = ref(false)
+
+// 节点类型过滤
+const nodeTypes = ref<string[]>([])
+const activeFilterType = ref<string | null>(null)
+const allNodes = ref<EChartsNode[]>([])
+const allEdges = ref<EChartsEdge[]>([])
 
 // 导入数据
 const importModalVisible = ref(false)
@@ -159,9 +179,18 @@ const loadGraphData = async () => {
     
     // 转换数据格式
     const transformed = transformGraphData(nodesRes || [], edgesRes || [])
+    allNodes.value = transformed.nodes
+    allEdges.value = transformed.edges
     nodes.value = transformed.nodes
     edges.value = transformed.edges
     categories.value = transformed.categories
+    // 提取节点类型
+    const types = new Set<string>()
+    for (const n of (nodesRes || [])) {
+      if (n.type) types.add(n.type)
+      else if (n.label) types.add(n.label)
+    }
+    nodeTypes.value = Array.from(types)
   } catch (error) {
     message.error('加载图谱数据失败')
   }
@@ -203,7 +232,7 @@ const handleImport = async () => {
     } else {
       data = importContent.value
     }
-    
+
     await graphApi.addData(graphId.value, {
       format: importFormat.value,
       data
@@ -245,15 +274,40 @@ const handleBuildCommunity = async () => {
 }
 
 // 查看节点关联边
-const handleViewNodeEdges = (nodeData: any) => {
-  message.info(`查看节点 ${nodeData.name} 的关联边`)
-  // TODO: 实现查看关联边功能
+const handleViewNodeEdges = async (nodeData: any) => {
+  message.loading('正在加载关联边...')
+  try {
+    const edges = await nodeApi.getEdges(graphId.value, nodeData.uuid)
+    message.success(`节点 ${nodeData.name} 共有 ${edges.length} 条关联边`)
+  } catch (err: any) {
+    message.error(err.message || '加载关联边失败')
+  }
 }
 
 // 查看节点事件
-const handleViewNodeEpisodes = (nodeData: any) => {
-  message.info(`查看节点 ${nodeData.name} 的事件`)
-  // TODO: 实现查看事件功能
+const handleViewNodeEpisodes = async (nodeData: any) => {
+  message.loading('正在加载关联 Episode...')
+  try {
+    const episodes = await nodeApi.getEpisodes(graphId.value, nodeData.uuid)
+    message.success(`节点 ${nodeData.name} 关联 ${episodes.length} 个 Episode`)
+  } catch (err: any) {
+    message.error(err.message || '加载 Episode 失败')
+  }
+}
+
+const toggleTypeFilter = (type: string) => {
+  if (activeFilterType.value === type) {
+    activeFilterType.value = null
+    nodes.value = allNodes.value
+    edges.value = allEdges.value
+  } else {
+    activeFilterType.value = type
+    const filteredNodeIds = new Set(
+      allNodes.value.filter(n => (n.type || n.label) === type).map(n => n.id)
+    )
+    nodes.value = allNodes.value.filter(n => filteredNodeIds.has(n.id))
+    edges.value = allEdges.value.filter(e => filteredNodeIds.has(e.source as string) && filteredNodeIds.has(e.target as string))
+  }
 }
 
 onMounted(() => {

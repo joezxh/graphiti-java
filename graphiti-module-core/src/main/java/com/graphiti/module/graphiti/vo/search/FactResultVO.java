@@ -3,6 +3,7 @@ package com.graphiti.module.graphiti.vo.search;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 事实结果 VO（对应边）
@@ -44,4 +45,14 @@ public class FactResultVO implements Serializable {
 
     @Schema(description = "相关性得分（0-1）")
     private Double relevance;
+
+    /**
+     * 过期时间
+     */
+    private String expiredAt;
+
+    /**
+     * 关联的 Episode UUID 列表
+     */
+    private List<String> episodes;
 }

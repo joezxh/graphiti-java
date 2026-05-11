@@ -49,4 +49,12 @@ public interface EdgeService {
      * @param edgeUuid 边UUID
      */
     void deleteEdge(String graphId, String edgeUuid);
+
+    /**
+     * 获取两节点间的所有边（双向）
+     * @param sourceUuid 源节点UUID
+     * @param targetUuid 目标节点UUID
+     * @return 边列表
+     */
+    List<EdgeListRespVO> getEdgesBetweenNodes(String sourceUuid, String targetUuid);
 }

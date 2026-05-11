@@ -3,11 +3,16 @@ package com.graphiti.module.graphiti.service.impl;
 import com.graphiti.module.graphiti.service.OntologyReasoner;
 import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.jena.ontology.*;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.reasoner.*;
-import org.apache.jena.vocabulary.*;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

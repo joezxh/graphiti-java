@@ -6,18 +6,15 @@ import com.graphiti.module.graphiti.service.EdgeService;
 import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.OntologyValidationService;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeInfoRespVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
+import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 /**
  * 边管理服务实现类
@@ -114,6 +111,16 @@ public class EdgeServiceImpl implements EdgeService {
     public void deleteEdge(String graphId, String edgeUuid) {
         graphNeo4jService.deleteEdge(graphId, edgeUuid);
         log.info("删除边：graphId={}, edgeUuid={}", graphId, edgeUuid);
+    }
+
+    @Override
+    public List<EdgeListRespVO> getEdgesBetweenNodes(String sourceUuid, String targetUuid) {
+        List<Map<String, Object>> edges = graphNeo4jService.getEdgesBetweenNodes(sourceUuid, targetUuid);
+        List<EdgeListRespVO> respList = new ArrayList<>();
+        for (Map<String, Object> edge : edges) {
+            respList.add(convertToEdgeListRespVO(edge));
+        }
+        return respList;
     }
     
     // ==================== 私有方法 ====================

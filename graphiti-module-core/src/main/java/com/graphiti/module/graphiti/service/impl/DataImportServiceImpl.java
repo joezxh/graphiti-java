@@ -2,27 +2,19 @@ package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.service.DataImportService;
-import com.graphiti.module.graphiti.service.EmbedderService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.LlmClientService;
-import com.graphiti.module.graphiti.service.OntologyValidationService;
-import com.graphiti.module.graphiti.service.TemporalService;
-import com.graphiti.module.graphiti.vo.llm.ExtractedEntityVO;
-import com.graphiti.module.graphiti.vo.llm.ExtractedRelationVO;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.graphiti.module.graphiti.service.*;
 import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddMessagesReqVO;
 import com.graphiti.module.graphiti.vo.imports.FactTripleReqVO;
+import com.graphiti.module.graphiti.vo.llm.ExtractedEntityVO;
+import com.graphiti.module.graphiti.vo.llm.ExtractedRelationVO;
+import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 /**
  * 数据导入服务实现类
@@ -218,12 +210,13 @@ public class DataImportServiceImpl implements DataImportService {
         // 3. 创建关系
         String edgeUuid = UUID.randomUUID().toString().replace("-", "");
         String fact = reqVO.getFact() != null ? reqVO.getFact() : "";
-        float[] embedding = embedderService.embed(fact.isEmpty() ? reqVO.getRelationType() : fact);
+        String relationType = reqVO.getRelationType() != null ? reqVO.getRelationType() : "RELATES_TO";
+        float[] embedding = embedderService.embed(fact.isEmpty() ? relationType : fact);
+        Map<String, Object> properties = reqVO.getProperties() != null ? reqVO.getProperties() : new HashMap<>();
 
         graphNeo4jService.createRelationship(
             reqVO.getGraphId(), edgeUuid, sourceUuid, targetUuid,
-            reqVO.getRelationType(), fact, embedding,
-            reqVO.getProperties() != null ? reqVO.getProperties() : new HashMap<>()
+            relationType, fact, embedding, properties
         );
 
         log.info("事实三元组创建成功：sourceUuid={}, targetUuid={}, edgeUuid={}",
@@ -284,5 +277,46 @@ public class DataImportServiceImpl implements DataImportService {
         graphNeo4jService.createEntityNode(
             graphId, uuid, name, type, summary != null ? summary : "", embedding, properties);
         log.info("实体节点创建成功：graphId={}, uuid={}, name={}", graphId, uuid, name);
+    }
+
+    @Override
+    public void deleteEntityEdge(String edgeUuid) {
+        log.info("删除实体边：edgeUuid={}", edgeUuid);
+        Map<String, Object> edge = graphNeo4jService.getEdgeByUuidOnly(edgeUuid);
+        if (edge == null) {
+            throw new BusinessException(404, "边不存在");
+        }
+        // getEdgeByUuidOnly 不返回 graphId，需要从 edge 的 group_id 获取
+        Object groupId = edge.get("group_id");
+        if (groupId != null) {
+            graphNeo4jService.deleteEdge(groupId.toString(), edgeUuid);
+        } else {
+            // 兜底：直接删除（通过 edgeUuid 全局匹配）
+            deleteEdgeByUuidOnly(edgeUuid);
+        }
+    }
+
+    @Override
+    public void deleteGroup(String graphId) {
+        log.info("删除图谱数据：graphId={}", graphId);
+        graphNeo4jService.clearGraphData(graphId);
+    }
+
+    @Override
+    public void deleteEpisode(String episodeUuid) {
+        log.info("删除 Episode：episodeUuid={}", episodeUuid);
+        Map<String, Object> episode = graphNeo4jService.getEpisodeByUuid("", episodeUuid);
+        if (episode == null) {
+            throw new BusinessException(404, "Episode 不存在");
+        }
+        String graphId = (String) episode.get("group_id");
+        graphNeo4jService.deleteEpisode(graphId != null ? graphId : "", episodeUuid);
+    }
+
+    private void deleteEdgeByUuidOnly(String edgeUuid) {
+        String cypher = "MATCH ()-[r {uuid: $uuid}]->() DELETE r";
+        try (org.neo4j.driver.Session session = graphNeo4jService.getNeo4jDriver().session()) {
+            session.run(cypher, org.neo4j.driver.Values.parameters("uuid", edgeUuid));
+        }
     }
 }

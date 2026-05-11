@@ -4,11 +4,13 @@ import com.graphiti.module.graphiti.service.SchemaOrgImportService;
 import com.graphiti.module.graphiti.vo.ontology.SchemaOrgImportReqVO;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.model.*;
-import org.eclipse.rdf4j.model.vocabulary.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.stereotype.Service;
+
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;

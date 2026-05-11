@@ -4,6 +4,7 @@ import com.graphiti.common.response.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     /**
      * 处理业务异常
      * @param e BusinessException
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
         log.error("业务异常: code={}, message={}", e.getCode(), e.getMessage());
         return CommonResult.error(e.getCode(), e.getMessage());
     }
-    
+
     /**
      * 处理参数校验异常
      * @param e MethodArgumentNotValidException
@@ -42,7 +43,22 @@ public class GlobalExceptionHandler {
             .collect(Collectors.joining(", "));
         return CommonResult.error(400, message);
     }
-    
+
+    /**
+     * 处理缺少请求参数异常
+     * @param e MissingServletRequestParameterException
+     * @return CommonResult<?>
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult<?> handleMissingServletRequestParameterException(
+            MissingServletRequestParameterException e) {
+        String parameterName = e.getParameterName();
+        String message = String.format("缺少必需参数: %s", parameterName);
+        log.warn("缺少请求参数: parameterName={}", parameterName);
+        return CommonResult.error(400, message);
+    }
+
     /**
      * 处理其他未知异常
      * @param e Exception

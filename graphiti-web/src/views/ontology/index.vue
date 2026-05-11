@@ -1,8 +1,24 @@
 <template>
   <div class="ontology-page">
     <div class="page-header">
-      <h1 class="page-title">本体配置</h1>
-      <p class="page-desc">管理图谱中的实体类型与关系类型定义</p>
+      <div>
+        <h1 class="page-title">本体配置</h1>
+        <p class="page-desc">管理图谱中的实体类型与关系类型定义</p>
+      </div>
+      <div class="header-right">
+        <span class="label">选择图谱：</span>
+        <a-select
+          v-model:value="selectedGraphId"
+          placeholder="请先选择图谱"
+          style="width: 200px"
+          allow-clear
+          @change="onGraphChange"
+        >
+          <a-select-option v-for="g in graphOptions" :key="g.graphId" :value="g.graphId">
+            {{ g.name }}
+          </a-select-option>
+        </a-select>
+      </div>
     </div>
 
     <a-tabs v-model:activeKey="activeTab" class="ontology-tabs">
@@ -168,8 +184,11 @@ import { ref, reactive, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import { ontologyApi, type EntityType, type RelationType, type PropertyDef } from '@/api/ontology'
+import { graphApi, type Graph } from '@/api/graph'
 
 const activeTab = ref('entity')
+const graphOptions = ref<Graph[]>([])
+const selectedGraphId = ref<string | undefined>(undefined)
 
 // 实体类型
 const entityTypes = ref<EntityType[]>([])
@@ -216,6 +235,10 @@ const removeEntityProp = (idx: number) => {
 }
 
 const saveEntityType = async () => {
+  if (!selectedGraphId.value) {
+    message.error('请先选择图谱')
+    return
+  }
   if (!entityForm.name.trim()) {
     message.error('请输入类型名称')
     return
@@ -223,14 +246,14 @@ const saveEntityType = async () => {
   entitySaving.value = true
   try {
     if (entityEditing.value && entityForm.id) {
-      await ontologyApi.updateEntityType(entityForm.id, {
+      await ontologyApi.updateEntityType(selectedGraphId.value, entityForm.id, {
         name: entityForm.name,
         description: entityForm.description,
         properties: entityForm.properties.filter(p => p.name.trim())
       })
       message.success('更新成功')
     } else {
-      await ontologyApi.createEntityType({
+      await ontologyApi.createEntityType(selectedGraphId.value, {
         name: entityForm.name,
         description: entityForm.description,
         properties: entityForm.properties.filter(p => p.name.trim())
@@ -247,8 +270,9 @@ const saveEntityType = async () => {
 }
 
 const deleteEntityType = async (id: string) => {
+  if (!selectedGraphId.value) return
   try {
-    await ontologyApi.deleteEntityType(id)
+    await ontologyApi.deleteEntityType(selectedGraphId.value, id)
     message.success('删除成功')
     loadEntityTypes()
   } catch (err: any) {
@@ -257,9 +281,15 @@ const deleteEntityType = async (id: string) => {
 }
 
 const loadEntityTypes = async () => {
+  if (!selectedGraphId.value) {
+    entityTypes.value = []
+    return
+  }
   entityLoading.value = true
   try {
-    entityTypes.value = await ontologyApi.listEntityTypes()
+    entityTypes.value = await ontologyApi.listEntityTypes(selectedGraphId.value)
+  } catch (err: any) {
+    message.error(err.message || '加载实体类型失败')
   } finally {
     entityLoading.value = false
   }
@@ -321,6 +351,10 @@ const removeRelationProp = (idx: number) => {
 }
 
 const saveRelationType = async () => {
+  if (!selectedGraphId.value) {
+    message.error('请先选择图谱')
+    return
+  }
   if (!relationForm.name.trim() || !relationForm.sourceType || !relationForm.targetType) {
     message.error('请填写完整信息')
     return
@@ -328,7 +362,7 @@ const saveRelationType = async () => {
   relationSaving.value = true
   try {
     if (relationEditing.value && relationForm.id) {
-      await ontologyApi.updateRelationType(relationForm.id, {
+      await ontologyApi.updateRelationType(selectedGraphId.value, relationForm.id, {
         name: relationForm.name,
         description: relationForm.description,
         sourceType: relationForm.sourceType,
@@ -338,7 +372,7 @@ const saveRelationType = async () => {
       })
       message.success('更新成功')
     } else {
-      await ontologyApi.createRelationType({
+      await ontologyApi.createRelationType(selectedGraphId.value, {
         name: relationForm.name,
         description: relationForm.description,
         sourceType: relationForm.sourceType,
@@ -358,8 +392,9 @@ const saveRelationType = async () => {
 }
 
 const deleteRelationType = async (id: string) => {
+  if (!selectedGraphId.value) return
   try {
-    await ontologyApi.deleteRelationType(id)
+    await ontologyApi.deleteRelationType(selectedGraphId.value, id)
     message.success('删除成功')
     loadRelationTypes()
   } catch (err: any) {
@@ -367,18 +402,21 @@ const deleteRelationType = async (id: string) => {
   }
 }
 
-const loadRelationTypes = async () => {
-  relationLoading.value = true
+const loadGraphs = async () => {
   try {
-    relationTypes.value = await ontologyApi.listRelationTypes()
-  } finally {
-    relationLoading.value = false
+    graphOptions.value = await graphApi.getList()
+  } catch (err) {
+    console.error('加载图谱列表失败', err)
   }
 }
 
-onMounted(() => {
+const onGraphChange = () => {
   loadEntityTypes()
   loadRelationTypes()
+}
+
+onMounted(() => {
+  loadGraphs()
 })
 </script>
 

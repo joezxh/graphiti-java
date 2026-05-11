@@ -1,43 +1,24 @@
 package com.graphiti.module.graphiti.vo.graph;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 图谱列表响应 VO
+ * 图谱列表响应 VO（含分页信息，对齐 Python API）
  */
 @Data
+@Schema(description = "图谱列表响应")
 public class GraphListRespVO implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    /**
-     * 图谱ID
-     */
-    private String graphId;
-    
-    /**
-     * 图谱名称
-     */
-    private String name;
-    
-    /**
-     * 图谱描述
-     */
-    private String description;
-    
-    /**
-     * 节点数量
-     */
-    private Integer nodeCount;
-    
-    /**
-     * 边数量
-     */
-    private Integer edgeCount;
-    
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
+
+    @Schema(description = "图谱列表")
+    private List<GraphInfoVO> graphs;
+
+    @Schema(description = "总数量")
+    private long totalCount;
+
+    @Schema(description = "本页数量")
+    private int rowCount;
 }

@@ -26,6 +26,12 @@ public interface OntologyService {
     OntologyRespVO setOntology(String graphId, SetOntologyReqVO reqVO);
 
     /**
+     * 列出所有图谱的本体定义
+     * @return 所有本体定义列表
+     */
+    List<OntologyRespVO> listAllOntologies();
+
+    /**
      * 验证节点是否符合本体定义
      * @param graphId 图谱ID
      * @param nodeType 节点类型

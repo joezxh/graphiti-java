@@ -34,3 +34,16 @@ CREATE TABLE sys_user_notification_settings (
     deleted SMALLINT DEFAULT 0 COMMENT '逻辑删除标记',
     INDEX idx_sys_user_notification_settings_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户通知设置表';
+
+
+CREATE TABLE IF NOT EXISTS `custom_instruction` (
+    `id`           BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `graph_id`     VARCHAR(64)  DEFAULT NULL    COMMENT '图谱ID（null表示全局指令）',
+    `instruction`  TEXT         NOT NULL         COMMENT 'LLM抽取时的额外提示词',
+    `enabled`      TINYINT(1)  DEFAULT 1        COMMENT '是否启用：1=启用，0=禁用',
+    `created_at`   DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`   DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    INDEX `idx_graph_id` (`graph_id`),
+    INDEX `idx_enabled`   (`enabled`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='自定义抽取指令表';

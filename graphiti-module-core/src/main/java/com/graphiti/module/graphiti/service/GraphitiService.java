@@ -19,10 +19,18 @@ public interface GraphitiService {
      */
     GraphInfoRespVO createGraph(CreateGraphReqVO reqVO);
     /**
-     * 获取图谱列表
-     * @return List<GraphListRespVO>
+     * 获取图谱列表（分页）
+     * @param limit 限制数量（默认100）
+     * @param offset 偏移量（默认0）
+     * @return GraphListRespVO（含 graphs[], totalCount, rowCount）
      */
-    List<GraphListRespVO> listGraphs();
+    GraphListRespVO listGraphs(Long limit, Long offset);
+
+    /**
+     * 获取图谱列表（不分页）
+     * @return GraphListRespVO（含 graphs[], totalCount, rowCount）
+     */
+    GraphListRespVO listGraphs();
     /**
      * 获取图谱详情
      * @param graphId 图谱ID

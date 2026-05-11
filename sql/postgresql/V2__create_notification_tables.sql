@@ -77,3 +77,37 @@ COMMENT ON COLUMN sys_user_notification_settings.email_enabled IS '邮件通知�
 COMMENT ON COLUMN sys_user_notification_settings.create_time IS '创建时间';
 COMMENT ON COLUMN sys_user_notification_settings.update_time IS '更新时间';
 COMMENT ON COLUMN sys_user_notification_settings.deleted IS '删除标志';
+
+CREATE TABLE IF NOT EXISTS "public"."custom_instruction" (
+                                                             "id"          BIGSERIAL    PRIMARY KEY,
+                                                             "graph_id"    VARCHAR(64)  DEFAULT NULL,
+    "instruction" TEXT         NOT NULL,
+    "enabled"     BOOLEAN     DEFAULT TRUE,
+    "created_at"  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    );
+
+COMMENT ON TABLE "public"."custom_instruction" IS '自定义抽取指令表';
+COMMENT ON COLUMN "public"."custom_instruction"."id"          IS '主键ID';
+COMMENT ON COLUMN "public"."custom_instruction"."graph_id"    IS '图谱ID（null表示全局指令）';
+COMMENT ON COLUMN "public"."custom_instruction"."instruction" IS 'LLM抽取时的额外提示词';
+COMMENT ON COLUMN "public"."custom_instruction"."enabled"    IS '是否启用';
+COMMENT ON COLUMN "public"."custom_instruction"."created_at"  IS '创建时间';
+COMMENT ON COLUMN "public"."custom_instruction"."updated_at"  IS '更新时间';
+
+CREATE INDEX IF NOT EXISTS "idx_custom_instruction_graph_id" ON "public"."custom_instruction" ("graph_id");
+CREATE INDEX IF NOT EXISTS "idx_custom_instruction_enabled" ON "public"."custom_instruction" ("enabled");
+
+-- 更新时间触发器
+CREATE OR REPLACE FUNCTION "update_updated_at_column"()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW."updated_at" = CURRENT_TIMESTAMP;
+RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+DROP TRIGGER IF EXISTS "trigger_custom_instruction_updated_at" ON "public"."custom_instruction";
+CREATE TRIGGER "trigger_custom_instruction_updated_at"
+    BEFORE UPDATE ON "public"."custom_instruction"
+    FOR EACH ROW EXECUTE FUNCTION "update_updated_at_column"();

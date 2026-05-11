@@ -4,7 +4,10 @@ import com.graphiti.common.response.CommonResult;
 import com.graphiti.module.graphiti.service.CommunityService;
 import com.graphiti.module.graphiti.service.EdgeService;
 import com.graphiti.module.graphiti.service.GraphitiService;
+import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.NodeService;
+import com.graphiti.module.graphiti.service.OntologyService;
+import com.graphiti.module.graphiti.service.SearchService;
 import com.graphiti.module.graphiti.service.TemporalService;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
@@ -15,6 +18,10 @@ import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
 import com.graphiti.module.graphiti.vo.graph.UpdateGraphReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
+import com.graphiti.module.graphiti.vo.ontology.SetOntologyReqVO;
+import com.graphiti.module.graphiti.vo.ontology.OntologyRespVO;
+import com.graphiti.module.graphiti.vo.search.SearchQueryReqVO;
+import com.graphiti.module.graphiti.vo.search.SearchResultsRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +47,9 @@ public class GraphitiController {
     private final EdgeService edgeService;
     private final CommunityService communityService;
     private final TemporalService temporalService;
+    private final OntologyService ontologyService;
+    private final SearchService searchService;
+    private final GraphNeo4jService graphNeo4jService;
     /**
      * 创建图谱
      * @param reqVO CreateGraphReqVO
@@ -53,14 +63,18 @@ public class GraphitiController {
         return CommonResult.success(graphitiService.createGraph(reqVO));
     }
     /**
-     * 获取图谱列表
-     * @return CommonResult<List<GraphListRespVO>>
+     * 获取图谱列表（分页）
+     * @param limit 限制数量
+     * @param offset 偏移量
+     * @return CommonResult<GraphListRespVO>
      */
-    @Operation(summary = "获取图谱列表", description = "获取所有知识图谱的列表", 
+    @Operation(summary = "获取图谱列表", description = "获取所有知识图谱的列表（含分页信息）",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @GetMapping("/list")
-    public CommonResult<List<GraphListRespVO>> list() {
-        return CommonResult.success(graphitiService.listGraphs());
+    public CommonResult<GraphListRespVO> list(
+            @RequestParam(value = "limit", required = false) @Parameter(description = "限制数量", example = "100") Long limit,
+            @RequestParam(value = "offset", required = false) @Parameter(description = "偏移量", example = "0") Long offset) {
+        return CommonResult.success(graphitiService.listGraphs(limit, offset));
     }
     /**
      * 获取图谱详情
@@ -118,11 +132,24 @@ public class GraphitiController {
      * 获取图谱统计信息
      * @return CommonResult<GraphStatsRespVO>
      */
-    @Operation(summary = "获取图谱统计", description = "获取系统的图谱统计信息，包括图谱总数、节点数、边数等", 
+    @Operation(summary = "获取图谱统计", description = "获取系统的图谱统计信息，包括图谱总数、节点数、边数等",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @GetMapping("/stats")
     public CommonResult<GraphStatsRespVO> getStats() {
         return CommonResult.success(graphitiService.getGraphStats());
+    }
+
+    /**
+     * 获取指定图谱的统计信息
+     * @param graphId 图谱ID
+     * @return CommonResult<Map<String, Long>>
+     */
+    @Operation(summary = "获取图谱统计", description = "获取指定图谱的节点数、边数统计",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/stats")
+    public CommonResult<java.util.Map<String, Long>> getGraphStats(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(graphNeo4jService.getGraphStats(graphId));
     }
     
     /**
@@ -196,6 +223,38 @@ public class GraphitiController {
     public CommonResult<Map<String, Object>> exportGraph(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
         return CommonResult.success(graphitiService.exportGraph(graphId));
+    }
+
+    // ==================== 本体论管理（对齐 Python /graph/ontology） ====================
+
+    @Operation(summary = "设置本体定义", description = "设置或更新指定图谱的本体定义",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PutMapping("/ontology")
+    public CommonResult<OntologyRespVO> setOntology(@Valid @RequestBody SetOntologyReqVO reqVO) {
+        // 从请求中获取图谱ID（支持 graphId 或 userId）
+        String graphId = reqVO.getGraphId();
+        if (graphId == null || graphId.isEmpty()) {
+            throw new com.graphiti.common.exception.BusinessException(400, "graphId 不能为空");
+        }
+        return CommonResult.success(ontologyService.setOntology(graphId, reqVO));
+    }
+
+    @Operation(summary = "列出所有本体定义", description = "列出系统中所有图谱的本体定义",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/ontology")
+    public CommonResult<List<OntologyRespVO>> listOntology() {
+        return CommonResult.success(ontologyService.listAllOntologies());
+    }
+
+    // ==================== 图谱搜索 ====================
+
+    @Operation(summary = "图谱搜索", description = "在指定图谱中进行搜索（POST body 形式）",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/search")
+    public CommonResult<SearchResultsRespVO> searchGraph(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @Valid @RequestBody SearchQueryReqVO reqVO) {
+        return CommonResult.success(searchService.searchGraph(graphId, reqVO));
     }
 
     // ==================== 历史状态查询 ====================

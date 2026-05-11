@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** 🔄 **In Progress** - 已确认问题位置，准备执行修复
+
 **Goal:** Fix the bug where `DataImportServiceImpl.addFactTriple()` ignores the `relationType` passed by the caller because it calls the 8-parameter `createRelationship()` overload which hardcodes `RELATES_TO`.
 
 **Architecture:** The first `createRelationship(String, String, String, String, String, String, float[], Map)` overload (8 params) hardcodes `RELATES_TO` in Cypher. The second overload (9 params, `relationType` as explicit param) correctly uses the passed-in type. `addFactTriple()` passes 8 arguments, matching the first overload — the type is silently ignored.
@@ -10,12 +12,23 @@
 
 ---
 
-## File Structure
+## 问题确认
 
-| File | Change |
-|------|--------|
-| `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java` | Fix `createRelationship` overload 1 to use `type` param instead of hardcoding `RELATES_TO` |
-| `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java` | Confirm call-site; add defensive null-check |
+✅ **已确认问题位置:**
+
+| 文件 | 行号 | 问题 |
+|-----|------|------|
+| `GraphNeo4jService.java` | 99 | `r:RELATES_TO` 硬编码 |
+| `DataImportServiceImpl.java` | 223-227 | 调用8参数版本，relationType被忽略 |
+
+---
+
+## 文件结构
+
+| 文件 | 变更 |
+|------|------|
+| `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java` | 修复 `createRelationship` 重载1，将硬编码 `RELATES_TO` 改为使用 `type` 参数 |
+| `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java` | 确认调用点；添加防御性空值检查 |
 
 ---
 

@@ -3,23 +3,19 @@ package com.graphiti.module.graphiti.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntConstraintDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntDefinitionDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntPropertyDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntVersionHistoryDO;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntVersionHistoryMapper;
+import com.graphiti.module.graphiti.dal.dataobject.ont.*;
+import com.graphiti.module.graphiti.dal.mysql.ont.*;
 import com.graphiti.module.graphiti.service.OntologyPropertyService;
 import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j

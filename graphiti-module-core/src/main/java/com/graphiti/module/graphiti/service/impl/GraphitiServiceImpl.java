@@ -5,15 +5,12 @@ import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.dal.dataobject.GraphMetadataDO;
 import com.graphiti.module.graphiti.dal.mysql.GraphMetadataMapper;
 import com.graphiti.module.graphiti.service.GraphitiService;
-import com.graphiti.module.graphiti.vo.graph.CreateGraphReqVO;
-import com.graphiti.module.graphiti.vo.graph.GraphInfoRespVO;
-import com.graphiti.module.graphiti.vo.graph.GraphListRespVO;
-import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
-import com.graphiti.module.graphiti.vo.graph.UpdateGraphReqVO;
+import com.graphiti.module.graphiti.vo.graph.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -49,16 +46,33 @@ public class GraphitiServiceImpl implements GraphitiService {
         return convertToGraphInfoRespVO(entity);
     }
     @Override
-    public List<GraphListRespVO> listGraphs() {
-        // 查询所有未删除的图谱
+    public GraphListRespVO listGraphs(Long limit, Long offset) {
+        if (limit == null) limit = 100L;
+        if (offset == null) offset = 0L;
+        LambdaQueryWrapper<GraphMetadataDO> countWrapper = new LambdaQueryWrapper<>();
+        countWrapper.eq(GraphMetadataDO::getDeleted, false);
+        long total = graphMetadataMapper.selectCount(countWrapper);
+
         LambdaQueryWrapper<GraphMetadataDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(GraphMetadataDO::getDeleted, false);
         wrapper.orderByDesc(GraphMetadataDO::getCreateTime);
+        wrapper.last("LIMIT " + limit + " OFFSET " + offset);
         List<GraphMetadataDO> list = graphMetadataMapper.selectList(wrapper);
-        // 转换为响应 VO
-        return list.stream()
-            .map(this::convertToGraphListRespVO)
+
+        List<GraphInfoVO> graphs = list.stream()
+            .map(this::convertToGraphInfoVO)
             .collect(Collectors.toList());
+
+        GraphListRespVO respVO = new GraphListRespVO();
+        respVO.setGraphs(graphs);
+        respVO.setTotalCount(total);
+        respVO.setRowCount(graphs.size());
+        return respVO;
+    }
+
+    @Override
+    public GraphListRespVO listGraphs() {
+        return listGraphs(null, null);
     }
     @Override
     public GraphInfoRespVO getGraph(String graphId) {
@@ -228,14 +242,14 @@ public class GraphitiServiceImpl implements GraphitiService {
      * @param entity GraphMetadataDO
      * @return GraphListRespVO
      */
-    private GraphListRespVO convertToGraphListRespVO(GraphMetadataDO entity) {
-        GraphListRespVO respVO = new GraphListRespVO();
-        respVO.setGraphId(entity.getGraphId());
-        respVO.setName(entity.getName());
-        respVO.setDescription(entity.getDescription());
-        respVO.setNodeCount(entity.getNodeCount());
-        respVO.setEdgeCount(entity.getEdgeCount());
-        respVO.setCreatedAt(entity.getCreateTime());
-        return respVO;
+    private GraphInfoVO convertToGraphInfoVO(GraphMetadataDO entity) {
+        GraphInfoVO vo = new GraphInfoVO();
+        vo.setGraphId(entity.getGraphId());
+        vo.setName(entity.getName());
+        vo.setDescription(entity.getDescription());
+        vo.setNodeCount(entity.getNodeCount());
+        vo.setEdgeCount(entity.getEdgeCount());
+        vo.setCreatedAt(entity.getCreateTime());
+        return vo;
     }
 }

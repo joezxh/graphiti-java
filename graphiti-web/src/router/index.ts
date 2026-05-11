@@ -104,6 +104,48 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '个人中心', requiresAuth: true }
       },
       {
+        path: 'graph/temporal',
+        name: 'GraphTemporal',
+        component: () => import('@/views/graph/temporal.vue'),
+        meta: { title: '时序历史', requiresAuth: true }
+      },
+      {
+        path: 'episodes',
+        name: 'Episodes',
+        component: () => import('@/views/episodes/index.vue'),
+        meta: { title: 'Episode 管理', requiresAuth: true }
+      },
+      {
+        path: 'edges',
+        name: 'Edges',
+        component: () => import('@/views/edges/index.vue'),
+        meta: { title: '边管理', requiresAuth: true }
+      },
+      {
+        path: 'communities',
+        name: 'Communities',
+        component: () => import('@/views/communities/index.vue'),
+        meta: { title: '社区检测', requiresAuth: true }
+      },
+      {
+        path: 'custom-instructions',
+        name: 'CustomInstructions',
+        component: () => import('@/views/custom-instructions/index.vue'),
+        meta: { title: '自定义指令', requiresAuth: true }
+      },
+      {
+        path: 'prompt',
+        name: 'PromptManagement',
+        component: () => import('@/views/prompt/index.vue'),
+        meta: { title: '提示词管理', requiresAuth: true }
+      },
+      {
+        path: 'legal-kg',
+        name: 'LegalKnowledgeGraph',
+        component: () => import('@/views/legal-kg/index.vue'),
+        meta: { title: '法律知识图谱', requiresAuth: true }
+      },
+      {
         path: 'notification',
         name: 'Notification',
         component: () => import('@/views/notification/index.vue'),

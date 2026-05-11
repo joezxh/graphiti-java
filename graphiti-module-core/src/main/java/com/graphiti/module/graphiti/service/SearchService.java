@@ -1,9 +1,6 @@
 package com.graphiti.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.search.GetMemoryReqVO;
-import com.graphiti.module.graphiti.vo.search.GetMemoryRespVO;
-import com.graphiti.module.graphiti.vo.search.SearchQueryReqVO;
-import com.graphiti.module.graphiti.vo.search.SearchResultsRespVO;
+import com.graphiti.module.graphiti.vo.search.*;
 
 /**
  * 搜索检索服务接口
@@ -38,4 +35,19 @@ public interface SearchService {
      * @return 记忆响应
      */
     GetMemoryRespVO getMemory(GetMemoryReqVO reqVO);
+
+    /**
+     * 检索指定边（fact 格式）
+     * @param edgeUuid 边UUID
+     * @return 边的事实描述
+     */
+    FactResultVO getEntityEdge(String edgeUuid);
+
+    /**
+     * 获取最近的 Episode 列表
+     * @param graphId 图谱ID
+     * @param lastN 返回数量
+     * @return Episode 列表
+     */
+    java.util.List<java.util.Map<String, Object>> getRecentEpisodes(String graphId, int lastN);
 }

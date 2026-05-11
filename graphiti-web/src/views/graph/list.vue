@@ -28,7 +28,7 @@
         :columns="columns"
         :data-source="filteredGraphs"
         :loading="loading"
-        row-key="id"
+        row-key="graphId"
         :pagination="{ pageSize: 10, showSizeChanger: true }"
       >
         <template #bodyCell="{ column, record }">

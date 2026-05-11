@@ -253,6 +253,14 @@ export const ontologyApi = {
    */
   async deleteRelationType(graphId: string, id: string): Promise<void> {
     await request.delete(`/ontology/${graphId}/properties/${id}`)
+  },
+
+  /**
+   * 批量设置本体（实体类型 + 关系类型）
+   * 后端: POST /ontology/{graphId}
+   */
+  async set(graphId: string, data: { entities: string; edges: string }): Promise<void> {
+    await request.post(`/ontology/${graphId}`, data)
   }
 }
 

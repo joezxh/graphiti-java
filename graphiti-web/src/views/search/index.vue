@@ -20,6 +20,8 @@
               <a-select-option value="semantic">语义检索</a-select-option>
               <a-select-option value="structured">结构化</a-select-option>
               <a-select-option value="hybrid">混合模式</a-select-option>
+              <a-select-option value="bfs">图遍历</a-select-option>
+              <a-select-option value="memory">记忆检索</a-select-option>
             </a-select>
           </template>
         </a-input-search>
@@ -126,7 +128,7 @@ import ForceGraph from '@/components/Graph/ForceGraph.vue'
 // import type { EChartsNode, EChartsEdge } from '@/utils/graph'
 
 const searchQuery = ref('')
-const searchMode = ref<'semantic' | 'structured' | 'hybrid'>('hybrid')
+const searchMode = ref<'semantic' | 'structured' | 'hybrid' | 'bfs' | 'memory'>('hybrid')
 const searching = ref(false)
 const searchResults = ref<SearchResult[]>([])
 const selectedResult = ref<SearchResult | null>(null)
@@ -184,18 +186,28 @@ const executeSearch = async () => {
     return
   }
   searching.value = true
+  searchResults.value = []
+  selectedResult.value = null
   try {
-    const params: SearchParams = {
-      query: searchQuery.value,
-      mode: searchMode.value,
-      filters: filters.filter(f => f.field && f.value),
-      limit: 50
+    let results: any[] = []
+
+    if (searchMode.value === 'bfs') {
+      results = await searchApi.bfsSearch('', searchQuery.value, 2, 50)
+    } else if (searchMode.value === 'memory') {
+      results = await searchApi.memorySearch({ graphId: '', query: searchQuery.value, maxFacts: 50 })
+    } else {
+      const params: SearchParams = {
+        query: searchQuery.value,
+        mode: searchMode.value,
+        filters: filters.filter(f => f.field && f.value),
+        limit: 50
+      }
+      results = await searchApi.search(params)
     }
-    const results = await searchApi.search(params)
+
     searchResults.value = results
     selectedResult.value = results.length > 0 ? results[0] : null
 
-    // 保存搜索历史
     await searchApi.saveSearchHistory(searchQuery.value, searchMode.value, results.length)
     loadHistory()
   } catch (err: any) {

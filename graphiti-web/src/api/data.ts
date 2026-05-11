@@ -267,7 +267,9 @@ export const dataApi = {
    * 导出图谱数据
    */
   async exportData(graphId: string, format: 'json' | 'csv' | 'triple'): Promise<ExportTask> {
-    const resp = await request.get(`/graph/${graphId}/export`) as any
+    const resp = await request.get(`/graph/${graphId}/export`, {
+      params: { format }
+    }) as any
     const nodes: any[] = resp?.nodes || []
     const edges: any[] = resp?.edges || []
     let content = ''
@@ -337,7 +339,7 @@ export const dataApi = {
     const graphId = params.graphId
     const page = params.page || 1
     const pageSize = params.pageSize || 10
-    const resp = await request.get(`/nodes/list?graphId=${graphId}&name=${encodeURIComponent(params.keyword || '')}&type=${encodeURIComponent(params.type || '')}&skip=${(page - 1) * pageSize}&limit=${pageSize}`) as any[]
+    const resp = await request.get(`/nodes/list?graphId=${graphId}&name=${encodeURIComponent(params.keyword || '')}&type=${encodeURIComponent(params.type || '')}&skip=${(page - 1) * pageSize}&limit=${pageSize}`) as any
     const list: EntityItem[] = (resp || []).map((n: any) => ({
       uuid: n.uuid,
       name: n.name,
@@ -352,16 +354,14 @@ export const dataApi = {
   /**
    * 更新实体
    */
-  async updateEntity(uuid: string, properties: Record<string, any>): Promise<EntityItem> {
-    if (!properties.graphId) throw new Error('缺少 graphId')
-    const graphId = properties.graphId
-    delete properties.graphId
-    const resp = await request.put(`/nodes/${uuid}?graphId=${graphId}`, properties) as any
+  async updateEntity(uuid: string, params: { graphId: string; name?: string; [key: string]: any }): Promise<EntityItem> {
+    const { graphId, name: _name, ...rest } = params
+    const resp = await request.put(`/nodes/${uuid}?graphId=${graphId}`, rest) as any
     return {
       uuid: resp?.uuid || uuid,
-      name: resp?.name || (properties as any).name || '',
-      type: resp?.type || (properties as any).type || '',
-      properties: resp?.properties || properties
+      name: resp?.name || _name || '',
+      type: resp?.type || '',
+      properties: resp?.properties || rest
     }
   },
 

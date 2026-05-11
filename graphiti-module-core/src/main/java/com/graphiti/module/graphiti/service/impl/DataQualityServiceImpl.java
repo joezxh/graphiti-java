@@ -3,11 +3,8 @@ package com.graphiti.module.graphiti.service.impl;
 import com.graphiti.module.graphiti.service.DataQualityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.neo4j.driver.Driver;
+import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.Values;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

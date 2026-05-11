@@ -2,17 +2,23 @@ package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.dal.dataobject.ont.*;
-import com.graphiti.module.graphiti.dal.mysql.ont.*;
+import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
+import com.graphiti.module.graphiti.dal.dataobject.ont.OntConstraintDO;
+import com.graphiti.module.graphiti.dal.dataobject.ont.OntDefinitionDO;
+import com.graphiti.module.graphiti.dal.dataobject.ont.OntPropertyDO;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
 import com.graphiti.module.graphiti.service.OntologyValidationService;
 import com.graphiti.module.graphiti.vo.ontology.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

@@ -1,5 +1,6 @@
 package com.graphiti.module.graphiti.service;
 
+import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
@@ -45,4 +46,24 @@ public interface NodeService {
      * @param nodeUuid 节点UUID
      */
     void deleteNode(String graphId, String nodeUuid);
+
+    /**
+     * 获取节点关联的所有边（双向）
+     * @param graphId 图谱ID
+     * @param nodeUuid 节点UUID
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return 边列表
+     */
+    List<EdgeListRespVO> getNodeEdges(String graphId, String nodeUuid, long skip, long limit);
+
+    /**
+     * 获取节点关联的 Episode 列表
+     * @param graphId 图谱ID
+     * @param nodeUuid 节点UUID
+     * @param skip 跳过数量
+     * @param limit 限制数量
+     * @return Episode 简要信息列表
+     */
+    List<Map<String, Object>> getNodeEpisodes(String graphId, String nodeUuid, long skip, long limit);
 }
