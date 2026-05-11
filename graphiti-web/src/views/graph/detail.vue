@@ -86,7 +86,7 @@
     
     <!-- 导入数据模态框 -->
     <a-modal
-      v-model:visible="importModalVisible"
+      v-model:open="importModalVisible"
       title="导入数据"
       @ok="handleImport"
     >

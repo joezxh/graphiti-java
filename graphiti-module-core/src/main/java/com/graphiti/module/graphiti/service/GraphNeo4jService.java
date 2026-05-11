@@ -212,15 +212,19 @@ public class GraphNeo4jService {
      * @return 节点列表
      */
     public List<Map<String, Object>> listNodes(String graphId, long skip, long limit) {
-        String cypher = "MATCH (n:Entity {group_id: $group_id}) RETURN n SKIP $skip LIMIT $limit";
-        
+        String cypher =
+            "MATCH (n) WHERE n.group_id = $group_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) " +
+            "RETURN n, labels(n)[0] as label SKIP $skip LIMIT $limit";
+
         List<Map<String, Object>> nodes = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, 
+            Result result = session.run(cypher,
                 Values.parameters("group_id", graphId, "skip", skip, "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
-                nodes.add(record.get("n").asNode().asMap());
+                Map<String, Object> nodeMap = new HashMap<>(record.get("n").asNode().asMap());
+                nodeMap.put("label", record.get("label").asString());
+                nodes.add(nodeMap);
             }
         }
         return nodes;
@@ -545,7 +549,7 @@ public class GraphNeo4jService {
         try (Session session = neo4jDriver.session()) {
             // 查询节点数量
             Result nodeResult = session.run(
-                "MATCH (n:Entity {group_id: $group_id}) RETURN count(n) as nodeCount",
+                "MATCH (n) WHERE n.group_id = $group_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) RETURN count(n) as nodeCount",
                 Values.parameters("group_id", graphId));
             if (nodeResult.hasNext()) {
                 stats.put("nodeCount", nodeResult.next().get("nodeCount").asLong());
@@ -573,7 +577,7 @@ public class GraphNeo4jService {
     public void clearGraphData(String graphId) {
         try (Session session = neo4jDriver.session()) {
             session.run(
-                "MATCH (n:Entity {group_id: $group_id}) DETACH DELETE n",
+                "MATCH (n) WHERE n.group_id = $group_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) DETACH DELETE n",
                 Values.parameters("group_id", graphId));
         }
     }

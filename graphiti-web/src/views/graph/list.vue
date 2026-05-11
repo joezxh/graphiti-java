@@ -70,7 +70,7 @@
     
     <!-- 创建/编辑模态框 -->
     <a-modal
-      v-model:visible="modalVisible"
+      v-model:open="modalVisible"
       :title="modalTitle"
       @ok="handleModalOk"
       @cancel="handleModalCancel"

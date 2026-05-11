@@ -5,8 +5,11 @@ import com.graphiti.module.graphiti.exception.OntologyValidationException;
 import com.graphiti.module.graphiti.service.DataImportService;
 import com.graphiti.module.graphiti.service.EmbedderService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
+import com.graphiti.module.graphiti.service.LlmClientService;
 import com.graphiti.module.graphiti.service.OntologyValidationService;
 import com.graphiti.module.graphiti.service.TemporalService;
+import com.graphiti.module.graphiti.vo.llm.ExtractedEntityVO;
+import com.graphiti.module.graphiti.vo.llm.ExtractedRelationVO;
 import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
 import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
@@ -22,9 +25,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 数据导入服务实现类（简化版）
+ * 数据导入服务实现类
  *
- * <p>注意：LLM 实体提取功能标记为 TODO，当前版本仅实现基础数据写入。
+ * <p>集成 LLM 实体提取能力，支持从文本/对话中自动提取实体和关系。
  */
 @Slf4j
 @Service
@@ -35,13 +38,13 @@ public class DataImportServiceImpl implements DataImportService {
     private final TemporalService temporalService;
     private final OntologyValidationService ontologyValidationService;
     private final EmbedderService embedderService;
+    private final LlmClientService llmClientService;
 
     @Override
     public void addData(AddDataReqVO reqVO) {
-        // TODO: 集成 Spring AI 实现实体提取
         log.info("添加单条数据：graphId={}, content={}", reqVO.getGraphId(), reqVO.getContent());
-        
-        // 简化实现：直接创建 Episode
+
+        // 1. 创建 Episode
         String episodeUuid = UUID.randomUUID().toString().replace("-", "");
         graphNeo4jService.createEpisode(
             reqVO.getGraphId(),
@@ -52,8 +55,65 @@ public class DataImportServiceImpl implements DataImportService {
             reqVO.getContent(),
             new HashMap<>()
         );
-        
-        log.info(" Episode 创建成功：uuid={}", episodeUuid);
+
+        // 2. LLM 提取实体和关系
+        String content = reqVO.getContent();
+        if (content != null && !content.isBlank()) {
+            List<ExtractedEntityVO> entities = llmClientService.extractEntities(content);
+            List<ExtractedRelationVO> relations = llmClientService.extractRelations(content);
+
+            log.info("LLM 提取结果：entities={}, relations={}", entities.size(), relations.size());
+
+            if (!entities.isEmpty()) {
+                // 3. 创建节点
+                Map<String, String> entityNameToUuid = new HashMap<>();
+                for (ExtractedEntityVO entity : entities) {
+                    String nodeUuid = UUID.randomUUID().toString().replace("-", "");
+                    String name = entity.getName();
+                    String type = entity.getType() != null ? entity.getType() : "Entity";
+                    String summary = entity.getSummary() != null ? entity.getSummary() : "";
+                    Map<String, Object> props = entity.getAttributes() != null ? entity.getAttributes() : new HashMap<>();
+
+                    // 时序管理：失效同名旧实体
+                    temporalService.invalidateFacts(reqVO.getGraphId(), Collections.singletonList(name));
+
+                    // 生成嵌入向量
+                    String embedText = name + (summary.isEmpty() ? "" : " " + summary);
+                    float[] embedding = embedderService.embed(embedText);
+
+                    // 创建节点
+                    graphNeo4jService.createEntityNode(
+                        reqVO.getGraphId(), nodeUuid, name, type,
+                        summary, embedding, props
+                    );
+                    entityNameToUuid.put(name, nodeUuid);
+                    log.info("  创建节点：name={}, type={}, uuid={}", name, type, nodeUuid);
+                }
+
+                // 4. 创建关系
+                for (ExtractedRelationVO relation : relations) {
+                    String sourceUuid = entityNameToUuid.get(relation.getSource());
+                    String targetUuid = entityNameToUuid.get(relation.getTarget());
+                    if (sourceUuid != null && targetUuid != null) {
+                        String edgeUuid = UUID.randomUUID().toString().replace("-", "");
+                        String fact = relation.getFact() != null ? relation.getFact() : "";
+
+                        // 生成关系嵌入
+                        float[] embedding = embedderService.embed(fact.isEmpty() ? relation.getType() : fact);
+
+                        graphNeo4jService.createRelationship(
+                            reqVO.getGraphId(), edgeUuid, sourceUuid, targetUuid,
+                            relation.getType(), fact, embedding, new HashMap<>()
+                        );
+                        log.info("  创建关系：{} -[{}]-> {}", relation.getSource(), relation.getType(), relation.getTarget());
+                    } else {
+                        log.warn("  关系节点未找到：source={}, target={}", relation.getSource(), relation.getTarget());
+                    }
+                }
+            }
+        }
+
+        log.info("数据添加完成：graphId={}, episodeUuid={}", reqVO.getGraphId(), episodeUuid);
     }
 
     @Override
@@ -75,80 +135,118 @@ public class DataImportServiceImpl implements DataImportService {
 
     @Override
     public void addMessages(AddMessagesReqVO reqVO) {
-        // TODO: 处理对话历史，提取实体和关系
-        log.info("添加消息：graphId={}, messageCount={}", 
+        log.info("添加消息：graphId={}, messageCount={}",
                  reqVO.getGraphId(), reqVO.getMessages().size());
-        
-        // 简化实现：将每条消息作为单独的 Episode 存储
+
+        // 合并对话内容
+        StringBuilder conversation = new StringBuilder();
         for (var msg : reqVO.getMessages()) {
-            String episodeUuid = UUID.randomUUID().toString().replace("-", "");
-            graphNeo4jService.createEpisode(
-                reqVO.getGraphId(),
-                episodeUuid,
-                "Message-" + msg.getRole(),
-                "message",
-                "role: " + msg.getRole(),
-                msg.getContent(),
-                new HashMap<>()
-            );
+            conversation.append(msg.getRole()).append(": ").append(msg.getContent()).append("\n");
+        }
+        String content = conversation.toString();
+
+        // 创建 Episode（整个对话作为一个 Episode）
+        String episodeUuid = UUID.randomUUID().toString().replace("-", "");
+        graphNeo4jService.createEpisode(
+            reqVO.getGraphId(),
+            episodeUuid,
+            "Conversation",
+            "message",
+            "multi-turn conversation",
+            content,
+            new HashMap<>()
+        );
+
+        // LLM 提取实体和关系
+        if (!content.isBlank()) {
+            List<ExtractedEntityVO> entities = llmClientService.extractEntities(content);
+            List<ExtractedRelationVO> relations = llmClientService.extractRelations(content);
+
+            log.info("消息 LLM 提取结果：entities={}, relations={}", entities.size(), relations.size());
+
+            if (!entities.isEmpty()) {
+                Map<String, String> entityNameToUuid = new HashMap<>();
+                for (ExtractedEntityVO entity : entities) {
+                    String nodeUuid = UUID.randomUUID().toString().replace("-", "");
+                    String name = entity.getName();
+                    String type = entity.getType() != null ? entity.getType() : "Entity";
+                    String summary = entity.getSummary() != null ? entity.getSummary() : "";
+                    Map<String, Object> props = entity.getAttributes() != null ? entity.getAttributes() : new HashMap<>();
+
+                    temporalService.invalidateFacts(reqVO.getGraphId(), Collections.singletonList(name));
+
+                    String embedText = name + (summary.isEmpty() ? "" : " " + summary);
+                    float[] embedding = embedderService.embed(embedText);
+
+                    graphNeo4jService.createEntityNode(
+                        reqVO.getGraphId(), nodeUuid, name, type,
+                        summary, embedding, props
+                    );
+                    entityNameToUuid.put(name, nodeUuid);
+                }
+
+                for (ExtractedRelationVO relation : relations) {
+                    String sourceUuid = entityNameToUuid.get(relation.getSource());
+                    String targetUuid = entityNameToUuid.get(relation.getTarget());
+                    if (sourceUuid != null && targetUuid != null) {
+                        String edgeUuid = UUID.randomUUID().toString().replace("-", "");
+                        String fact = relation.getFact() != null ? relation.getFact() : "";
+                        float[] embedding = embedderService.embed(fact.isEmpty() ? relation.getType() : fact);
+
+                        graphNeo4jService.createRelationship(
+                            reqVO.getGraphId(), edgeUuid, sourceUuid, targetUuid,
+                            relation.getType(), fact, embedding, new HashMap<>()
+                        );
+                    }
+                }
+            }
         }
     }
 
     @Override
     public void addFactTriple(FactTripleReqVO reqVO) {
-        // TODO: 检查源节点和目标节点是否存在，不存在则创建
         log.info("添加事实三元组：graphId={}, source={}, relation={}, target={}",
-                 reqVO.getGraphId(), reqVO.getSourceNodeName(), 
+                 reqVO.getGraphId(), reqVO.getSourceNodeName(),
                  reqVO.getRelationType(), reqVO.getTargetNodeName());
-        
-        // 简化实现：创建源节点、目标节点和关系
-        String sourceUuid = UUID.randomUUID().toString().replace("-", "");
-        String targetUuid = UUID.randomUUID().toString().replace("-", "");
+
+        // 1. 查找或创建源节点
+        String sourceUuid = findOrCreateNode(reqVO.getGraphId(), reqVO.getSourceNodeName());
+
+        // 2. 查找或创建目标节点
+        String targetUuid = findOrCreateNode(reqVO.getGraphId(), reqVO.getTargetNodeName());
+
+        // 3. 创建关系
         String edgeUuid = UUID.randomUUID().toString().replace("-", "");
-        
-        // 时序管理：如果同名实体已存在，先失效旧实体
-        temporalService.invalidateFacts(reqVO.getGraphId(),
-            List.of(reqVO.getSourceNodeName(), reqVO.getTargetNodeName()));
-        
-        // 创建源节点
-        graphNeo4jService.createEntityNode(
-            reqVO.getGraphId(),
-            sourceUuid,
-            reqVO.getSourceNodeName(),
-            "Entity",
-            "",
-            null,
-            new HashMap<>()
-        );
-        
-        // 创建目标节点
-        graphNeo4jService.createEntityNode(
-            reqVO.getGraphId(),
-            targetUuid,
-            reqVO.getTargetNodeName(),
-            "Entity",
-            "",
-            null,
-            new HashMap<>()
-        );
-        
-        // 创建关系
-        Map<String, Object> props = reqVO.getProperties() != null ? reqVO.getProperties() : new HashMap<>();
         String fact = reqVO.getFact() != null ? reqVO.getFact() : "";
-        
+        float[] embedding = embedderService.embed(fact.isEmpty() ? reqVO.getRelationType() : fact);
+
         graphNeo4jService.createRelationship(
-            reqVO.getGraphId(),
-            edgeUuid,
-            sourceUuid,
-            targetUuid,
-            reqVO.getRelationType(),
-            fact,
-            null,
-            props
+            reqVO.getGraphId(), edgeUuid, sourceUuid, targetUuid,
+            reqVO.getRelationType(), fact, embedding,
+            reqVO.getProperties() != null ? reqVO.getProperties() : new HashMap<>()
         );
-        
+
         log.info("事实三元组创建成功：sourceUuid={}, targetUuid={}, edgeUuid={}",
                  sourceUuid, targetUuid, edgeUuid);
+    }
+
+    /**
+     * 查找或创建节点
+     */
+    private String findOrCreateNode(String graphId, String nodeName) {
+        // 使用 listNodes 分页查询，按名称匹配
+        List<Map<String, Object>> nodes = graphNeo4jService.listNodes(graphId, 0, 1000);
+        for (Map<String, Object> node : nodes) {
+            if (nodeName.equals(node.get("name"))) {
+                return (String) node.get("uuid");
+            }
+        }
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        float[] embedding = embedderService.embed(nodeName);
+        graphNeo4jService.createEntityNode(
+            graphId, uuid, nodeName, "Entity", "", embedding, new HashMap<>()
+        );
+        return uuid;
     }
 
     @Override

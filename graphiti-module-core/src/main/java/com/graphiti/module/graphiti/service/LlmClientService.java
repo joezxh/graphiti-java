@@ -1,5 +1,13 @@
 package com.graphiti.module.graphiti.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.graphiti.module.graphiti.vo.llm.ExtractEntitiesResultVO;
+import com.graphiti.module.graphiti.vo.llm.ExtractRelationsResultVO;
+import com.graphiti.module.graphiti.vo.llm.ExtractedEntityVO;
+import com.graphiti.module.graphiti.vo.llm.ExtractedRelationVO;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -90,6 +98,60 @@ public interface LlmClientService {
         } catch (Exception e) {
             return String.join(", ", nodeSummaries)
                 .substring(0, Math.min(200, String.join(", ", nodeSummaries).length()));
+        }
+    }
+
+    /**
+     * 从文本中提取实体
+     *
+     * @param text 输入文本
+     * @return 提取的实体列表
+     */
+    default List<ExtractedEntityVO> extractEntities(String text) {
+        try {
+            String promptTemplate = loadPrompt("prompts/extract_entities.txt");
+            String prompt = promptTemplate.replace("{{text}}", text != null ? text : "");
+            String response = chat(prompt);
+            ObjectMapper mapper = new ObjectMapper();
+            ExtractEntitiesResultVO result = mapper.readValue(response, ExtractEntitiesResultVO.class);
+            return result.getEntities() != null ? result.getEntities() : List.of();
+        } catch (Exception e) {
+            System.err.println("实体提取失败: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
+     * 从文本中提取实体之间的关系
+     *
+     * @param text 输入文本
+     * @return 提取的关系列表
+     */
+    default List<ExtractedRelationVO> extractRelations(String text) {
+        try {
+            String promptTemplate = loadPrompt("prompts/extract_relations.txt");
+            String prompt = promptTemplate.replace("{{text}}", text != null ? text : "");
+            String response = chat(prompt);
+            ObjectMapper mapper = new ObjectMapper();
+            ExtractRelationsResultVO result = mapper.readValue(response, ExtractRelationsResultVO.class);
+            return result.getRelations() != null ? result.getRelations() : List.of();
+        } catch (Exception e) {
+            System.err.println("关系提取失败: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
+     * 加载 classpath 下的 prompt 模板
+     */
+    private static String loadPrompt(String path) {
+        try (var is = LlmClientService.class.getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
+                throw new IOException("Prompt file not found: " + path);
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("加载 prompt 模板失败: " + path, e);
         }
     }
 }

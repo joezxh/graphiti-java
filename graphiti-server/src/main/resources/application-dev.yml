@@ -1,4 +1,24 @@
 # 开发环境配置
+# ============================================================
+# Spring AI 私有化部署接入配置
+# ============================================================
+# 所有 Provider 均支持自定义 base-url 接入私有化部署模型
+#
+# 【OpenAI 兼容模型】vLLM / LM Studio / LocalAI / Xinference
+#   spring.ai.openai.api-key: any-key
+#   spring.ai.openai.base-url: http://localhost:8000/v1
+#
+# 【Anthropic 兼容模型】LiteLLM 代理 / 私有化 Claude 网关
+#   spring.ai.anthropic.api-key: any-key
+#   spring.ai.anthropic.base-url: http://localhost:8080/v1
+#
+# 【Ollama 本地模型】
+#   spring.ai.ollama.base-url: http://localhost:11434
+#
+# 【Qwen 通义千问】OpenAI 兼容 API
+#   spring.ai.openai.api-key: sk-your-dashscope-key
+#   spring.ai.openai.base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+# ============================================================
 spring:
   ai:
     openai:
@@ -36,8 +56,8 @@ spring:
 # Graphiti AI Provider 选择配置
 graphiti:
   ai:
-    llm-provider: openai  # openai | qwen | ollama
-    embedding-provider: openai  # openai | qwen | ollama
+    llm-provider: openai  # openai | qwen | ollama | anthropic
+    embedding-provider: openai  # openai | qwen | ollama | anthropic
     openai:
       model: gpt-4o
       temperature: 0.2
@@ -50,6 +70,10 @@ graphiti:
       chat-model: llama3
       embedding-model: nomic-embed-text
       temperature: 0.2
+    anthropic:
+      model: claude-3-sonnet-20240229
+      temperature: 0.2
+      max-tokens: 2048
 
 # Neo4j 配置
 neo4j:

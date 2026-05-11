@@ -131,15 +131,17 @@ public class NodeServiceImpl implements NodeService {
         respVO.setUuid((String) node.get("uuid"));
         respVO.setName((String) node.get("name"));
         respVO.setType((String) node.get("type"));
-        
+        respVO.setLabel((String) node.get("label"));
+
         // 提取属性（排除系统字段）
         Map<String, Object> props = new HashMap<>(node);
         props.remove("uuid");
         props.remove("name");
         props.remove("type");
         props.remove("group_id");
+        props.remove("label");
         respVO.setProperties(props);
-        
+
         return respVO;
     }
     

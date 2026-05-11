@@ -95,7 +95,8 @@ const handleViewEpisodes = () => {
   }
 }
 
-const getNodeTypeColor = (type: string): string => {
+const getNodeTypeColor = (type: string | null | undefined): string => {
+  if (!type) return '#8a8f98'
   const lowerType = type.toLowerCase()
   if (lowerType.includes('entity')) return '#5e6ad2'
   if (lowerType.includes('episode')) return '#00d4ff'

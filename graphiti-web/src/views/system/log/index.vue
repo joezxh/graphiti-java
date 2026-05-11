@@ -125,7 +125,7 @@
 
     <!-- 日志详情对话框 -->
     <a-modal
-      v-model:visible="detailVisible"
+      v-model:open="detailVisible"
       title="日志详情"
       width="700px"
       :footer="null"

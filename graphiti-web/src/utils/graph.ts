@@ -7,7 +7,8 @@
 export interface BackendNode {
   uuid: string
   name: string
-  type: string
+  type: string | null
+  label?: string
   properties?: Record<string, any>
   [key: string]: any
 }
@@ -122,7 +123,8 @@ export const FORCE_LAYOUT_CONFIG = {
 /**
  * 根据节点类型获取配置
  */
-function getNodeTypeConfig(type: string): NodeTypeConfig {
+function getNodeTypeConfig(type: string | null | undefined): NodeTypeConfig {
+  if (!type) return NODE_TYPE_CONFIG.default
   const lowerType = type.toLowerCase()
   if (lowerType.includes('entity')) return NODE_TYPE_CONFIG.entity
   if (lowerType.includes('episode')) return NODE_TYPE_CONFIG.episode
@@ -285,7 +287,7 @@ export function generateForceGraphOption(
             <div style="padding: 8px;">
               <div style="font-weight: 600; margin-bottom: 4px;">${node.name || node.uuid}</div>
               <div style="color: #8a8f98; font-size: 11px;">UUID: ${node.uuid}</div>
-              <div style="color: #8a8f98; font-size: 11px;">类型: ${node.type}</div>
+              <div style="color: #8a8f98; font-size: 11px;">类型: ${node.type ?? '(无)'}</div>
             </div>
           `
         }

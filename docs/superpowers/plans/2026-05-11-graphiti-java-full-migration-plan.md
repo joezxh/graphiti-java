@@ -10,6 +10,8 @@
 
 **Worktree:** `d:\projects\graphiti-java\.worktrees\feature-full-alignment`
 
+**Status:** ✅ **已完成** - 本体系统（B. 中等约束型）已由 Cursor 实现，包括类继承、Domain/Range 约束、属性校验、默认值注入、批量验证等功能。
+
 ---
 
 ## 文件结构映射
@@ -61,6 +63,72 @@ graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
     ├── summarize_node.txt             # 新增
     └── summarize_community.txt        # 新增
 ```
+
+---
+
+## ✅ 本体系统功能现状（已由 Cursor 实现）
+
+### 已实现能力（B. 中等约束型）
+
+| 功能模块 | 文件 | 状态 |
+|---------|------|------|
+| **本体定义管理** | `OntDefinitionDO` / `OntDefinitionMapper` | ✅ |
+| **类层次结构** | `OntClassDO` / `parentClassId` 继承链 | ✅ |
+| **属性定义** | `OntPropertyDO` (Domain/Range/Cardinality) | ✅ |
+| **约束规则** | `OntConstraintDO` (PATTERN/RANGE/ENUM) | ✅ |
+| **6 层验证引擎** | `OntologyValidationServiceImpl` | ✅ |
+| **类继承推导** | `collectClassAndAncestors()` 方法 | ✅ |
+| **默认值注入** | `injectDefaults()` 方法 | ✅ |
+| **批量验证** | `validateBatch()` 方法 | ✅ |
+| **节点创建校验** | `NodeServiceImpl.createNode()` 集成 | ✅ |
+| **边创建校验** | `EdgeServiceImpl.createEdge()` 集成 | ✅ |
+
+### 本体数据模型
+
+```mermaid
+graph TD
+    A[OntDefinitionDO<br/>本体定义] --> B[OntClassDO<br/>类定义]
+    A --> C[OntPropertyDO<br/>属性定义]
+    A --> D[OntConstraintDO<br/>约束定义]
+    B -->|parentClassId| B
+    C -->|domainClassId| B
+    C -->|rangeClassId| B
+    D -->|propertyId| C
+    D -->|classId| B
+```
+
+### 验证流程（6 层）
+
+1. **Layer 1**: 类型存在性检查
+2. **Layer 2**: 必填属性校验
+3. **Layer 3**: 数据类型校验
+4. **Layer 4**: 约束规则校验（PATTERN/RANGE/ENUM）
+5. **Layer 5**: OWL 约束（预留）
+6. **Layer 6**: 推理扩展（预留）
+
+### 使用方式
+
+在创建节点/边时自动触发验证：
+
+```java
+// NodeServiceImpl.createNode()
+if (ontologyValidationService.hasOntology(graphId)) {
+    ValidationResultVO vr = ontologyValidationService.validateNode(
+        graphId, type, properties);
+    if (!vr.isPassed()) {
+        throw new OntologyValidationException(vr);
+    }
+    // 合并 enrichedProperties（注入的默认值）
+}
+```
+
+### 不需要重复开发的内容
+
+- ❌ `OntologyClassVO` / `OntologyFieldVO`（已有 `OntClassVO` / `OntPropertyVO`）
+- ❌ 类继承推导逻辑（已有 `collectClassAndAncestors()`）
+- ❌ Domain/Range 约束（已有 `domainClassId` / `rangeClassId`）
+- ❌ 属性验证逻辑（已有 `checkRequiredProperties()` / `checkDataTypes()`）
+- ❌ Node/Edge 创建时校验（已集成到 `NodeServiceImpl` / `EdgeServiceImpl`）
 
 ---
 

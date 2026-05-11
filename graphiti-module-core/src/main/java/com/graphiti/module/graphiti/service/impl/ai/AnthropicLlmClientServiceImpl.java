@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graphiti.module.graphiti.service.LlmClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -16,29 +13,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * OpenAI LLM 客户端服务实现
- * 支持私有化部署（通过 spring.ai.openai.base-url 配置自定义地址）
+ * Anthropic Claude LLM 客户端服务实现
+ * 支持私有化部署（通过自定义 base-url 接入兼容 Anthropic API 的私有化模型）
  *
- * <p>私有化部署配置示例：
+ * <p>配置示例（私有化部署）：
  * <pre>
  * spring:
  *   ai:
- *     openai:
- *       api-key: any-key
- *       base-url: http://your-private-deployment:8000/v1  # vLLM / LM Studio / LocalAI
+ *     anthropic:
+ *       api-key: sk-your-api-key
+ *       base-url: http://your-private-deployment:8080/v1  # 私有化部署地址
  *       chat:
  *         options:
- *           model: gpt-4o
+ *           model: claude-3-sonnet-20240229
  *           temperature: 0.2
+ *           max-tokens: 2048
  * </pre>
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "graphiti.ai", name = "llm-provider", havingValue = "openai", matchIfMissing = true)
-public class OpenAiLlmClientServiceImpl implements LlmClientService {
+@ConditionalOnProperty(prefix = "graphiti.ai", name = "llm-provider", havingValue = "anthropic")
+public class AnthropicLlmClientServiceImpl implements LlmClientService {
 
-    private final OpenAiChatModel chatModel;
+    private final AnthropicChatModel chatModel;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -50,8 +48,8 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
                     .call()
                     .content();
         } catch (Exception e) {
-            log.error("OpenAI chat failed: {}", e.getMessage(), e);
-            throw new RuntimeException("OpenAI chat failed: " + e.getMessage(), e);
+            log.error("Anthropic chat failed: {}", e.getMessage(), e);
+            throw new RuntimeException("Anthropic chat failed: " + e.getMessage(), e);
         }
     }
 
@@ -65,8 +63,8 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
                     .call()
                     .content();
         } catch (Exception e) {
-            log.error("OpenAI chat with system prompt failed: {}", e.getMessage(), e);
-            throw new RuntimeException("OpenAI chat failed: " + e.getMessage(), e);
+            log.error("Anthropic chat with system prompt failed: {}", e.getMessage(), e);
+            throw new RuntimeException("Anthropic chat failed: " + e.getMessage(), e);
         }
     }
 
@@ -79,8 +77,8 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
                     .call()
                     .entity(responseType);
         } catch (Exception e) {
-            log.error("OpenAI structured chat failed: {}", e.getMessage(), e);
-            throw new RuntimeException("OpenAI structured chat failed: " + e.getMessage(), e);
+            log.error("Anthropic structured chat failed: {}", e.getMessage(), e);
+            throw new RuntimeException("Anthropic structured chat failed: " + e.getMessage(), e);
         }
     }
 
@@ -94,8 +92,8 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
                     .call()
                     .entity(responseType);
         } catch (Exception e) {
-            log.error("OpenAI structured chat with system prompt failed: {}", e.getMessage(), e);
-            throw new RuntimeException("OpenAI structured chat failed: " + e.getMessage(), e);
+            log.error("Anthropic structured chat with system prompt failed: {}", e.getMessage(), e);
+            throw new RuntimeException("Anthropic structured chat failed: " + e.getMessage(), e);
         }
     }
 
@@ -108,6 +106,6 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
 
     @Override
     public String getProvider() {
-        return "openai";
+        return "anthropic";
     }
 }

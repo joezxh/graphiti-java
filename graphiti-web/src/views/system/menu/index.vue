@@ -103,7 +103,7 @@
 
     <!-- 菜单表单对话框 -->
     <a-modal
-      v-model:visible="modalVisible"
+      v-model:open="modalVisible"
       :title="modalTitle"
       :confirm-loading="submitLoading"
       width="600px"

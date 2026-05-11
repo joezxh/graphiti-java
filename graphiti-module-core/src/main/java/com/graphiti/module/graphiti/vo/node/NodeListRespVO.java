@@ -25,6 +25,11 @@ public class NodeListRespVO implements Serializable {
      * 节点类型（实体类型）
      */
     private String type;
+
+    /**
+     * Neo4j 标签（Entity 或 Episode）
+     */
+    private String label;
     
     /**
      * 节点属性（简要信息）
