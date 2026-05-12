@@ -32,6 +32,15 @@ public interface NodeService {
      * @return NodeInfoRespVO
      */
     NodeInfoRespVO createNode(String graphId, Map<String, Object> nodeData);
+
+    /**
+     * 创建节点（可选跳过本体校验）
+     * @param graphId 图谱ID
+     * @param nodeData 节点数据
+     * @param skipValidation 是否跳过本体校验（用于批量导入场景）
+     * @return NodeInfoRespVO
+     */
+    NodeInfoRespVO createNode(String graphId, Map<String, Object> nodeData, boolean skipValidation);
     /**
      * 更新节点
      * @param graphId 图谱ID

@@ -57,9 +57,14 @@ public class NodeServiceImpl implements NodeService {
     
     @Override
     public NodeInfoRespVO createNode(String graphId, Map<String, Object> nodeData) {
+        return createNode(graphId, nodeData, false);
+    }
+
+    @Override
+    public NodeInfoRespVO createNode(String graphId, Map<String, Object> nodeData, boolean skipValidation) {
         // 生成节点 UUID
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        
+
         // 提取节点属性
         String name = (String) nodeData.get("name");
         String type = (String) nodeData.get("type");
@@ -67,7 +72,7 @@ public class NodeServiceImpl implements NodeService {
         Map<String, Object> properties = (Map<String, Object>) nodeData.getOrDefault("properties", new HashMap<>());
 
         // === 本体校验（L1-L4）===
-        if (ontologyValidationService.hasOntology(graphId)) {
+        if (!skipValidation && ontologyValidationService.hasOntology(graphId)) {
             ValidationResultVO vr = ontologyValidationService.validateNode(
                 graphId, type != null ? type : "Entity", properties);
             if (!vr.isPassed()) {

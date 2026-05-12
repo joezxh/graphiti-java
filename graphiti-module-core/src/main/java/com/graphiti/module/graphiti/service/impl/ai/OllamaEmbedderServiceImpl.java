@@ -31,7 +31,13 @@ public class OllamaEmbedderServiceImpl implements EmbedderService {
             EmbeddingResponse response = embeddingModel.call(
                     new EmbeddingRequest(List.of(text), null)
             );
+            if (response.getResults() == null || response.getResults().isEmpty()) {
+                throw new IllegalStateException("Ollama embedding response returned no results.");
+            }
             return response.getResults().get(0).getOutput();
+        } catch (IllegalStateException e) {
+            log.error("Ollama embedding failed: {}", e.getMessage(), e);
+            throw new RuntimeException("Ollama embedding failed: " + e.getMessage(), e);
         } catch (Exception e) {
             log.error("Ollama embedding failed: {}", e.getMessage(), e);
             throw new RuntimeException("Ollama embedding failed: " + e.getMessage(), e);
@@ -44,9 +50,15 @@ public class OllamaEmbedderServiceImpl implements EmbedderService {
             EmbeddingResponse response = embeddingModel.call(
                     new EmbeddingRequest(texts, null)
             );
+            if (response.getResults() == null || response.getResults().isEmpty()) {
+                throw new IllegalStateException("Ollama batch embedding response returned no results.");
+            }
             return response.getResults().stream()
                     .map(Embedding::getOutput)
                     .collect(Collectors.toList());
+        } catch (IllegalStateException e) {
+            log.error("Ollama batch embedding failed: {}", e.getMessage(), e);
+            throw new RuntimeException("Ollama batch embedding failed: " + e.getMessage(), e);
         } catch (Exception e) {
             log.error("Ollama batch embedding failed: {}", e.getMessage(), e);
             throw new RuntimeException("Ollama batch embedding failed: " + e.getMessage(), e);

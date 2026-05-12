@@ -2,26 +2,33 @@ package com.graphiti.module.graphiti.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.constraints.Positive;
 
 /**
  * Graphiti AI 配置属性
- * 支持多 Provider 切换：OpenAI / 通义千问(Qwen) / Ollama
+ * 读取 application-dev.yml 中 graphiti.ai.* 配置
  */
 @Data
-@Component
+@Validated
 @ConfigurationProperties(prefix = "graphiti.ai")
 public class GraphitiAiProperties {
 
     /**
-     * LLM Provider: openai | qwen | ollama
+     * LLM 提供商: openai | qwen | ollama | anthropic | mistral
      */
     private String llmProvider = "openai";
 
     /**
-     * Embedding Provider: openai | qwen | ollama
+     * Embedding 提供商: openai | qwen | ollama | mistral
      */
     private String embeddingProvider = "openai";
+
+    /**
+     * Rerank 提供商: openai | custom
+     */
+    private String rerankProvider = "custom";
 
     /**
      * OpenAI 配置
@@ -29,29 +36,99 @@ public class GraphitiAiProperties {
     private ProviderConfig openai = new ProviderConfig();
 
     /**
-     * 通义千问(Qwen) 配置
+     * Qwen 通义千问配置
      */
     private ProviderConfig qwen = new ProviderConfig();
 
     /**
      * Ollama 配置
      */
-    private OllamaConfig ollama = new OllamaConfig();
+    private ProviderConfig ollama = new ProviderConfig();
 
+    /**
+     * Anthropic 配置
+     */
+    private ProviderConfig anthropic = new ProviderConfig();
+
+    /**
+     * Mistral 配置
+     */
+    private ProviderConfig mistral = new ProviderConfig();
+
+    /**
+     * DeepSeek 配置
+     */
+    private ProviderConfig deepseek = new ProviderConfig();
+
+    /**
+     * Groq 配置
+     */
+    private ProviderConfig groq = new ProviderConfig();
+
+    /**
+     * Fireworks AI 配置
+     */
+    private ProviderConfig fireworks = new ProviderConfig();
+
+    /**
+     * Nebius AI 配置
+     */
+    private ProviderConfig nebius = new ProviderConfig();
+
+    /**
+     * Hyperbolic 配置
+     */
+    private ProviderConfig hyperbolic = new ProviderConfig();
+
+    /**
+     * Together AI 配置
+     */
+    private ProviderConfig together = new ProviderConfig();
+
+    /**
+     * SiliconFlow 配置
+     */
+    private ProviderConfig siliconflow = new ProviderConfig();
+
+    /**
+     * Voyage AI 配置
+     */
+    private ProviderConfig voyage = new ProviderConfig();
+
+    /**
+     * 通用的 Provider 配置
+     */
     @Data
     public static class ProviderConfig {
-        private String apiKey;
-        private String baseUrl;
+        /**
+         * 模型名称
+         */
         private String model;
-        private Double temperature = 0.2;
-        private Integer maxTokens = 2048;
-    }
 
-    @Data
-    public static class OllamaConfig {
-        private String baseUrl = "http://localhost:11434";
-        private String chatModel = "llama3";
-        private String embeddingModel = "nomic-embed-text";
+        /**
+         * Base URL (用于私有化部署)
+         */
+        private String baseUrl;
+
+        /**
+         * 温度参数
+         */
         private Double temperature = 0.2;
+
+        /**
+         * 最大 token 数
+         */
+        @Positive
+        private Integer maxTokens = 2048;
+
+        /**
+         * Embedding 模型名称
+         */
+        private String embeddingModel;
+
+        /**
+         * Rerank 模型名称
+         */
+        private String rerankModel;
     }
 }

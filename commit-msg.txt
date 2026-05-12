@@ -15,3 +15,13 @@ Frontend:
 - system.ts: call /admin/system/config/* backend API
 - search.ts: call /admin/graphiti/search-history/* backend API
 - Also wire ontology.ts, role.ts, menu.ts, user.ts, data.ts to real endpoints
+AI编程工具使用与规范-产品经理.md
+AI编程工具使用与规范-前端开发工程师.md
+AI编程工具使用与规范-后端开发工程师.md
+AI编程工具使用与规范-客服.md
+AI编程工具使用与规范-手册编写人员.md
+AI编程工具使用与规范-测试工程师.md
+AI编程工具使用与规范-解决方案经理.md
+AI编程工具使用与规范-运维工程师.md
+AI编程工具使用与规范-运营人员.md
+AI编程工具使用与规范-项目经理.md

@@ -58,15 +58,17 @@ public class NodeController {
      * 创建节点
      * @param graphId 图谱ID
      * @param nodeData 节点数据（包含 name, type, properties）
+     * @param skipValidation 是否跳过本体校验（可选，默认 false）
      * @return CommonResult<NodeInfoRespVO>
      */
-    @Operation(summary = "创建节点", description = "在指定图谱中创建新的实体节点", 
+    @Operation(summary = "创建节点", description = "在指定图谱中创建新的实体节点",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @PostMapping("/create")
     public CommonResult<NodeInfoRespVO> create(
             @RequestParam @Parameter(description = "图谱ID", required = true) String graphId,
-            @RequestBody Map<String, Object> nodeData) {
-        return CommonResult.success(nodeService.createNode(graphId, nodeData));
+            @RequestBody Map<String, Object> nodeData,
+            @RequestParam(required = false, defaultValue = "false") @Parameter(description = "是否跳过本体校验") Boolean skipValidation) {
+        return CommonResult.success(nodeService.createNode(graphId, nodeData, skipValidation));
     }
     /**
      * 更新节点

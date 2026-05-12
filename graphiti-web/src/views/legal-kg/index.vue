@@ -26,7 +26,7 @@
               <CloudUploadOutlined /> 导入法律数据
             </a-button>
             <a-button @click="handleImportProvisions">
-              <FileTextOutlined /> 一键导入商事调解条例
+              <FileTextOutlined /> 导入示例法条
             </a-button>
             <a-button @click="handleImportCases">
               <AppstoreOutlined /> 导入示例案例
@@ -832,7 +832,7 @@ async function confirmImport() {
 
     for (const node of nodes) {
       try {
-        await nodeApi.create(currentGraphId.value, node)
+        await nodeApi.create(currentGraphId.value, node, true)
       } catch (e) {
         console.warn('节点导入失败:', node.name, e)
       }
@@ -910,7 +910,7 @@ async function handleImportProvisions() {
     let success = 0
     for (const p of provisions) {
       try {
-        await nodeApi.create(currentGraphId.value, p)
+        await nodeApi.create(currentGraphId.value, p, true)
         success++
       } catch (e) {
         console.warn('导入失败:', p.name, e)
@@ -944,7 +944,7 @@ async function handleImportCases() {
     let success = 0
     for (const c of cases) {
       try {
-        await nodeApi.create(currentGraphId.value, c)
+        await nodeApi.create(currentGraphId.value, c, true)
         success++
       } catch (e) {
         console.warn('导入失败:', c.name, e)

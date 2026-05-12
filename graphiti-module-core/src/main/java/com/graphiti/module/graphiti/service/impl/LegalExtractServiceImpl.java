@@ -412,7 +412,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (c.getUuid() != null) props.put("sourceUuid", c.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception e) {
                 log.warn("导入Case失败: caseName={}, error={}", c.getCaseName(), e.getMessage());
@@ -442,7 +442,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (p.getUuid() != null) props.put("sourceUuid", p.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception e) {
                 log.warn("导入Party失败: name={}, error={}", p.getName(), e.getMessage());
@@ -470,7 +470,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (c.getUuid() != null) props.put("sourceUuid", c.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception e) {
                 log.warn("导入Court失败: name={}, error={}", c.getName(), e.getMessage());
@@ -497,7 +497,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (j.getUuid() != null) props.put("sourceUuid", j.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception e) {
                 log.warn("导入Judge失败: name={}, error={}", j.getName(), e.getMessage());
@@ -529,7 +529,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (p.getUuid() != null) props.put("sourceUuid", p.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception e) {
                 log.warn("导入LegalProvision失败: provisionId={}, error={}", p.getProvisionId(), e.getMessage());
@@ -557,7 +557,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (l.getUuid() != null) props.put("sourceUuid", l.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception e) {
                 log.warn("导入Lawyer失败: name={}, error={}", l.getName(), e.getMessage());
@@ -588,7 +588,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (e.getUuid() != null) props.put("sourceUuid", e.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception ex) {
                 log.warn("导入Evidence失败: evidenceNumber={}, error={}", e.getEvidenceNumber(), ex.getMessage());
@@ -619,7 +619,7 @@ public class LegalExtractServiceImpl implements LegalExtractService {
                 if (j.getUuid() != null) props.put("sourceUuid", j.getUuid());
 
                 nodeData.put("properties", props);
-                nodeService.createNode(graphId, nodeData);
+                nodeService.createNode(graphId, nodeData, true);  // 跳过本体校验
                 count++;
             } catch (Exception ex) {
                 log.warn("导入JudgmentDocument失败: documentNumber={}, error={}", j.getDocumentNumber(), ex.getMessage());

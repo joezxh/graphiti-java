@@ -74,11 +74,11 @@ export const nodeApi = {
 
   /**
    * 创建节点
-   * 后端: POST /nodes/create?graphId=
+   * 后端: POST /nodes/create?graphId=&skipValidation=
    */
-  create(graphId: string, data: CreateNodeReq): Promise<NodeDetailResp> {
+  create(graphId: string, data: CreateNodeReq, skipValidation?: boolean): Promise<NodeDetailResp> {
     return request.post('/nodes/create', data, {
-      params: { graphId }
+      params: { graphId, skipValidation: skipValidation || false }
     })
   },
 
