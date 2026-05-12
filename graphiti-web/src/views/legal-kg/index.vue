@@ -1303,6 +1303,8 @@ function resetExtract() {
 </script>
 
 <style scoped>
+@import '@/assets/styles/dark.less';
+
 .legal-kg-page {
   padding: 24px;
 }
@@ -1314,12 +1316,47 @@ function resetExtract() {
 .page-title {
   font-size: 24px;
   font-weight: 600;
+  color: #ffffff;
   margin-bottom: 8px;
 }
 
 .page-desc {
-  color: #8c8c8c;
+  color: #ffffff;
+  opacity: 0.7;
   font-size: 14px;
+}
+
+/* 统计数字颜色 */
+:deep(.ant-statistic-title) {
+  color: #ffffff;
+}
+
+:deep(.ant-statistic-content-value) {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+:deep(.ant-tabs-nav) {
+  color: #ffffff;
+}
+
+:deep(.ant-tabs-tab) {
+  color: #ffffff;
+  opacity: 0.7;
+}
+
+:deep(.ant-tabs-tab:hover) {
+  color: #ffffff;
+  opacity: 1;
+}
+
+:deep(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #ffffff !important;
+  opacity: 1;
+}
+
+:deep(.ant-tabs-ink-bar) {
+  background: @primary-color;
 }
 
 .action-card {
@@ -1353,7 +1390,7 @@ function resetExtract() {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  color: #595959;
+  color: @text-secondary;
   font-size: 13px;
 }
 
@@ -1368,6 +1405,7 @@ function resetExtract() {
 
 .entity-mapping-card {
   margin-bottom: 12px;
-  background: #fafafa;
+  background: @bg-elevated;
+  border: 1px solid @border-color;
 }
 </style>

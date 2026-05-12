@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  *
  * // 图谱操作
  * factory.getGraphs().getMetadata().create(reqVO);
- * factory.getGraphs().getOntology().set(graphId, reqVO);
+ * factory.getGraphs().getOntology().get(graphId);
  *
  * // 检索
  * factory.getRetrieve().search("query", graphId, 10);
@@ -57,7 +57,7 @@ public class GraphitiNamespaceFactory {
             EdgeService edgeService,
             // Graph services
             GraphitiService graphitiService,
-            OntologyService ontologyService,
+            OntologyClassService ontologyClassService,
             // Search & ingest
             SearchService searchService,
             DataImportService dataImportService,
@@ -75,7 +75,7 @@ public class GraphitiNamespaceFactory {
         this.edges = new EdgeNamespace(edgeService, embedderService, graphNeo4jService);
 
         // 初始化图谱命名空间
-        this.graphs = new GraphNamespace(graphitiService, ontologyService);
+        this.graphs = new GraphNamespace(graphitiService, ontologyClassService);
 
         // 初始化检索命名空间
         this.retrieve = new RetrieveNamespace(searchService);

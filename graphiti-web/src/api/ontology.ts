@@ -1,266 +1,271 @@
 import request from './request'
 
-// 实体类型
-export interface EntityType {
-  id: string
+// ============================================================
+// 类型定义
+// ============================================================
+
+/** 本体定义 */
+export interface OntDefinitionVO {
+  id?: number
+  graphId?: string
+  namespace?: string
   name: string
+  version?: string
+  status?: string
   description?: string
-  properties: PropertyDef[]
+  parentVersionId?: number
+  createdBy?: string
+  createdAt?: string
+  updatedAt?: string
+  classCount?: number
+  propertyCount?: number
+  constraintCount?: number
+}
+
+/** 本体类 */
+export interface OntClassVO {
+  id: number
+  definitionId?: number
+  classUri: string
+  localName: string
+  parentClassId?: number
+  parentClassUri?: string
+  equivalentTo?: any[]
+  disjointWith?: any[]
+  description?: string
+  example?: string
+  domainHint?: string
+  metadata?: string
   createdAt?: string
   updatedAt?: string
 }
 
-// 关系类型
-export interface RelationType {
-  id: string
-  name: string
+/** 类层次树节点 */
+export interface ClassHierarchyVO {
+  id?: number
+  classUri: string
+  localName: string
   description?: string
-  sourceType: string
-  targetType: string
-  properties: PropertyDef[]
-  directed: boolean
+  domainHint?: string
+  children?: ClassHierarchyVO[]
+}
+
+/** 本体属性 */
+export interface OntPropertyVO {
+  id: number
+  definitionId?: number
+  propertyUri: string
+  localName: string
+  propertyType: 'DATATYPE' | 'OBJECT' | 'ANNOTATION' | 'TRANSITIVE' | 'SYMMETRIC' | 'FUNCTIONAL'
+  domainClassId?: number
+  rangeClassId?: number
+  rangeDataType?: string
+  minCardinality?: number
+  maxCardinality?: number
+  defaultValue?: string
+  allowedValues?: any[]
+  parentPropertyId?: number
+  equivalentTo?: any[]
+  inverseOfId?: number
+  isRequired?: boolean
+  isMultiple?: boolean
+  pattern?: string
+  minValue?: number
+  maxValue?: number
+  description?: string
+  example?: string
+  metadata?: string
   createdAt?: string
   updatedAt?: string
 }
 
-// 属性定义
-export interface PropertyDef {
-  name: string
-  type: 'string' | 'int' | 'float' | 'boolean' | 'date' | 'list'
-  required?: boolean
-  description?: string
-}
-
-// 后端本体类 VO 映射
-interface OntClassRespVO {
+/** 本体约束 */
+export interface OntConstraintVO {
   id: number
-  classUri: string
-  localName: string
+  definitionId?: number
+  classId?: number
+  propertyId?: number
+  constraintType: string
+  value: string
+  errorMessage?: string
+  severity?: string
   description?: string
-  parentClassId?: number
-  createdAt: string
+  createdAt?: string
   updatedAt?: string
 }
 
-// 后端本体属性 VO 映射
-interface OntPropertyRespVO {
+/** 版本历史 */
+export interface OntVersionHistoryVO {
   id: number
-  propertyUri: string
-  localName: string
-  propertyType: 'OBJECT' | 'DATATYPE' | 'ANNOTATION'
-  domainClassId?: number
-  rangeClassId?: number
-  rangeDataType?: string
-  isRequired?: boolean
-  createdAt: string
+  definitionId?: number
+  version: string
+  changeType: string
+  entityType: string
+  entityId?: number
+  beforeState?: string
+  afterState?: string
+  diffSummary?: string
+  changedBy?: string
+  changedAt?: string
 }
 
-// 后端创建/更新类请求
-interface CreateOntClassReq {
-  classUri: string
-  localName: string
-  description?: string
-  parentClassId?: number
+/** 完整本体信息 */
+export interface OntologyFullVO {
+  definition: OntDefinitionVO | null
+  classes: OntClassVO[]
+  classHierarchy: ClassHierarchyVO[]
+  properties: OntPropertyVO[]
+  constraints: OntConstraintVO[]
 }
 
-// 后端创建/更新属性请求
-interface CreateOntPropertyReq {
-  propertyUri: string
-  localName: string
-  propertyType?: 'OBJECT' | 'DATATYPE' | 'ANNOTATION'
-  domainClassId?: number
-  rangeClassId?: number
-  rangeDataType?: string
-  isRequired?: boolean
-}
+// ============================================================
+// API 定义
+// ============================================================
 
-// 将后端本体类映射为前端 EntityType
-function mapOntClassToEntityType(cls: OntClassRespVO, _graphId: string): EntityType {
-  return {
-    id: String(cls.id),
-    name: cls.localName,
-    description: cls.description,
-    properties: [],
-    createdAt: cls.createdAt,
-    updatedAt: cls.updatedAt
-  }
-}
-
-// 将后端本体属性映射为前端 PropertyDef
-function mapOntPropertyToPropertyDef(prop: OntPropertyRespVO): PropertyDef {
-  let type: PropertyDef['type'] = 'string'
-  if (prop.propertyType === 'DATATYPE' && prop.rangeDataType) {
-    if (prop.rangeDataType.includes('int') || prop.rangeDataType.includes('Integer')) type = 'int'
-    else if (prop.rangeDataType.includes('float') || prop.rangeDataType.includes('double') || prop.rangeDataType.includes('Decimal')) type = 'float'
-    else if (prop.rangeDataType.includes('boolean') || prop.rangeDataType.includes('Boolean')) type = 'boolean'
-    else if (prop.rangeDataType.includes('date') || prop.rangeDataType.includes('Date')) type = 'date'
-  } else if (prop.propertyType === 'OBJECT') {
-    type = 'string' // 对象类型前端用 string 表示
-  }
-  return {
-    name: prop.localName,
-    type,
-    required: prop.isRequired,
-    description: prop.propertyUri
-  }
-}
-
-// 本体配置 API
 export const ontologyApi = {
+  // ==================== 本体定义 ====================
+
   /**
-   * 获取实体类型列表（从本体类映射）
-   * 后端: GET /ontology/{graphId}/classes
+   * 获取本体定义
    */
-  async listEntityTypes(graphId: string): Promise<EntityType[]> {
-    const resp = await request.get<OntClassRespVO[]>(`/ontology/${graphId}/classes`)
-    return (resp || []).map(cls => mapOntClassToEntityType(cls, graphId))
+  async getDefinition(graphId: string): Promise<OntDefinitionVO | null> {
+    return request.get<OntDefinitionVO>(`/ontology/${graphId}/definition`)
   },
 
   /**
-   * 创建实体类型（创建本体类）
-   * 后端: POST /ontology/{graphId}/classes
+   * 创建本体定义
    */
-  async createEntityType(
-    graphId: string,
-    data: Omit<EntityType, 'id' | 'createdAt' | 'updatedAt'>
-  ): Promise<EntityType> {
-    const req: CreateOntClassReq = {
-      classUri: `http://graphiti.io/ontology/${data.name}`,
-      localName: data.name,
-      description: data.description
-    }
-    const resp = await request.post<{ id: number }>(`/ontology/${graphId}/classes`, req)
-    return {
-      id: String(resp.id),
-      name: data.name,
-      description: data.description,
-      properties: data.properties,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+  async createDefinition(graphId: string, data: Partial<OntDefinitionVO>): Promise<OntDefinitionVO> {
+    return request.post<OntDefinitionVO>(`/ontology/${graphId}/definition`, data)
+  },
+
+  /**
+   * 获取完整本体信息
+   */
+  async getFullOntology(graphId: string): Promise<OntologyFullVO> {
+    const resp = await request.get<any>(`/ontology/${graphId}`)
+    return resp || {
+      definition: null,
+      classes: [],
+      classHierarchy: [],
+      properties: [],
+      constraints: []
     }
   },
 
+  // ==================== 类管理 ====================
+
   /**
-   * 更新实体类型（更新本体类）
-   * 后端: PUT /ontology/{graphId}/classes/{classId}
+   * 获取类列表
    */
-  async updateEntityType(
-    graphId: string,
-    id: string,
-    data: Partial<Omit<EntityType, 'id' | 'createdAt' | 'updatedAt'>>
-  ): Promise<EntityType> {
-    const req: Partial<CreateOntClassReq> = {}
-    if (data.name !== undefined) req.localName = data.name
-    if (data.description !== undefined) req.description = data.description
-    await request.put(`/ontology/${graphId}/classes/${id}`, req)
-    return {
-      id,
-      name: data.name || '',
-      description: data.description,
-      properties: data.properties || [],
-      updatedAt: new Date().toISOString()
-    } as EntityType
+  async listClasses(graphId: string): Promise<OntClassVO[]> {
+    return request.get<OntClassVO[]>(`/ontology/${graphId}/classes`)
   },
 
   /**
-   * 删除实体类型（删除本体类）
-   * 后端: DELETE /ontology/{graphId}/classes/{classId}
+   * 获取类层次树
    */
-  async deleteEntityType(graphId: string, id: string): Promise<void> {
-    await request.delete(`/ontology/${graphId}/classes/${id}`)
+  async getClassHierarchy(graphId: string): Promise<ClassHierarchyVO[]> {
+    return request.get<ClassHierarchyVO[]>(`/ontology/${graphId}/classes/hierarchy`)
   },
 
   /**
-   * 获取关系类型列表（从本体属性映射）
-   * 后端: GET /ontology/{graphId}/properties
+   * 创建类
    */
-  async listRelationTypes(graphId: string): Promise<RelationType[]> {
-    const resp = await request.get<OntPropertyRespVO[]>(`/ontology/${graphId}/properties`)
-    const props: OntPropertyRespVO[] = resp || []
-    // 按 localName 分组，构造关系类型
-    const byName = new Map<string, OntPropertyRespVO[]>()
-    for (const p of props) {
-      if (!byName.has(p.localName)) byName.set(p.localName, [])
-      byName.get(p.localName)!.push(p)
-    }
-    const relationTypes: RelationType[] = []
-    for (const [name, propList] of byName) {
-      const domain = propList.find(p => p.domainClassId)
-      const range = propList.find(p => p.rangeClassId)
-      relationTypes.push({
-        id: String(propList[0].id),
-        name,
-        description: propList[0].propertyUri,
-        sourceType: domain ? String(domain.domainClassId) : '',
-        targetType: range ? String(range.rangeClassId) : '',
-        properties: propList.map(mapOntPropertyToPropertyDef),
-        directed: true,
-        createdAt: propList[0].createdAt
-      })
-    }
-    return relationTypes
+  async createClass(graphId: string, data: Partial<OntClassVO>): Promise<OntClassVO> {
+    return request.post<OntClassVO>(`/ontology/${graphId}/classes`, data)
   },
 
   /**
-   * 创建关系类型（创建本体属性）
-   * 后端: POST /ontology/{graphId}/properties
+   * 更新类
    */
-  async createRelationType(
-    graphId: string,
-    data: Omit<RelationType, 'id' | 'createdAt' | 'updatedAt'>
-  ): Promise<RelationType> {
-    const req: CreateOntPropertyReq = {
-      propertyUri: `http://graphiti.io/property/${data.name}`,
-      localName: data.name,
-      propertyType: 'OBJECT',
-      domainClassId: data.sourceType ? Number(data.sourceType) : undefined,
-      rangeClassId: data.targetType ? Number(data.targetType) : undefined,
-      isRequired: false
-    }
-    const resp = await request.post<{ id: number }>(`/ontology/${graphId}/properties`, req)
-    return {
-      id: String(resp.id),
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
+  async updateClass(graphId: string, classId: number, data: Partial<OntClassVO>): Promise<OntClassVO> {
+    return request.put<OntClassVO>(`/ontology/${graphId}/classes/${classId}`, data)
   },
 
   /**
-   * 更新关系类型（更新本体属性）
-   * 后端: PUT /ontology/{graphId}/properties/{propertyId}
+   * 删除类
    */
-  async updateRelationType(
-    graphId: string,
-    id: string,
-    data: Partial<Omit<RelationType, 'id' | 'createdAt' | 'updatedAt'>>
-  ): Promise<RelationType> {
-    const req: Partial<CreateOntPropertyReq> = {}
-    if (data.name !== undefined) req.localName = data.name
-    if (data.sourceType !== undefined) req.domainClassId = Number(data.sourceType) || undefined
-    if (data.targetType !== undefined) req.rangeClassId = Number(data.targetType) || undefined
-    await request.put(`/ontology/${graphId}/properties/${id}`, req)
-    return {
-      id,
-      ...data,
-      updatedAt: new Date().toISOString()
-    } as RelationType
+  async deleteClass(graphId: string, classId: number): Promise<void> {
+    return request.delete(`/ontology/${graphId}/classes/${classId}`)
+  },
+
+  // ==================== 属性管理 ====================
+
+  /**
+   * 获取属性列表
+   */
+  async listProperties(graphId: string): Promise<OntPropertyVO[]> {
+    return request.get<OntPropertyVO[]>(`/ontology/${graphId}/properties`)
   },
 
   /**
-   * 删除关系类型（删除本体属性）
-   * 后端: DELETE /ontology/{graphId}/properties/{propertyId}
+   * 创建属性
    */
-  async deleteRelationType(graphId: string, id: string): Promise<void> {
-    await request.delete(`/ontology/${graphId}/properties/${id}`)
+  async createProperty(graphId: string, data: Partial<OntPropertyVO>): Promise<OntPropertyVO> {
+    return request.post<OntPropertyVO>(`/ontology/${graphId}/properties`, data)
   },
 
   /**
-   * 批量设置本体（实体类型 + 关系类型）
-   * 后端: POST /ontology/{graphId}
+   * 更新属性
    */
-  async set(graphId: string, data: { entities: string; edges: string }): Promise<void> {
-    await request.post(`/ontology/${graphId}`, data)
+  async updateProperty(graphId: string, propertyId: number, data: Partial<OntPropertyVO>): Promise<OntPropertyVO> {
+    return request.put<OntPropertyVO>(`/ontology/${graphId}/properties/${propertyId}`, data)
+  },
+
+  /**
+   * 删除属性
+   */
+  async deleteProperty(graphId: string, propertyId: number): Promise<void> {
+    return request.delete(`/ontology/${graphId}/properties/${propertyId}`)
+  },
+
+  // ==================== 约束管理 ====================
+
+  /**
+   * 获取约束列表
+   */
+  async listConstraints(graphId: string): Promise<OntConstraintVO[]> {
+    return request.get<OntConstraintVO[]>(`/ontology/${graphId}/constraints`)
+  },
+
+  /**
+   * 创建约束
+   */
+  async createConstraint(graphId: string, data: Partial<OntConstraintVO>): Promise<OntConstraintVO> {
+    return request.post<OntConstraintVO>(`/ontology/${graphId}/constraints`, data)
+  },
+
+  /**
+   * 删除约束
+   */
+  async deleteConstraint(graphId: string, constraintId: number): Promise<void> {
+    return request.delete(`/ontology/${graphId}/constraints/${constraintId}`)
+  },
+
+  // ==================== 版本历史 ====================
+
+  /**
+   * 获取版本历史
+   */
+  async getVersionHistory(graphId: string): Promise<OntVersionHistoryVO[]> {
+    return request.get<OntVersionHistoryVO[]>(`/ontology/${graphId}/history`)
+  },
+
+  // ==================== 其他 ====================
+
+  /**
+   * 批量验证
+   */
+  async validateBatch(graphId: string, data: any): Promise<any> {
+    return request.post(`/ontology/${graphId}/validate/batch`, data)
+  },
+
+  /**
+   * 一致性检查
+   */
+  async checkConsistency(graphId: string): Promise<any> {
+    return request.get(`/ontology/${graphId}/consistency`)
   }
 }
 

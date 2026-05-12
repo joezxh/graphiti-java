@@ -129,6 +129,10 @@ const form = reactive<CreateCustomInstructionReq>({
 const loadGraphs = async () => {
   try {
     graphOptions.value = await graphApi.getList()
+    // 默认选择第一个图谱
+    if (graphOptions.value.length > 0) {
+      filterGraphId.value = graphOptions.value[0].graphId
+    }
   } catch (err) {
     console.error('加载图谱列表失败', err)
   }
@@ -197,8 +201,8 @@ const formatDate = (date: string | undefined): string => {
   return new Date(date).toLocaleString('zh-CN')
 }
 
-onMounted(() => {
-  loadGraphs()
+onMounted(async () => {
+  await loadGraphs()
   loadInstructions()
 })
 </script>

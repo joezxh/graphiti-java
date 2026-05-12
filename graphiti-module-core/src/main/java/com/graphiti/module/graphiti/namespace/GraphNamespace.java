@@ -3,7 +3,7 @@ package com.graphiti.module.graphiti.namespace;
 import com.graphiti.module.graphiti.namespace.graph.GraphMetadataNamespace;
 import com.graphiti.module.graphiti.namespace.graph.OntologyNamespace;
 import com.graphiti.module.graphiti.service.GraphitiService;
-import com.graphiti.module.graphiti.service.OntologyService;
+import com.graphiti.module.graphiti.service.OntologyClassService;
 import lombok.Getter;
 
 /**
@@ -18,8 +18,8 @@ public class GraphNamespace {
     private final GraphMetadataNamespace metadata;
     private final OntologyNamespace ontology;
 
-    public GraphNamespace(GraphitiService graphitiService, OntologyService ontologyService) {
+    public GraphNamespace(GraphitiService graphitiService, OntologyClassService ontologyClassService) {
         this.metadata = new GraphMetadataNamespace(graphitiService);
-        this.ontology = new OntologyNamespace(ontologyService);
+        this.ontology = new OntologyNamespace(ontologyClassService);
     }
 }

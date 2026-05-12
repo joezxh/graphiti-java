@@ -35,15 +35,20 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     const { code, message: msg, data } = response.data
-    
+
     if (code === 200) {
       return data
     } else if (code === 401) {
       // token 过期，尝试刷新
       return handleTokenRefresh(response.config, 0)
     } else {
-      message.error(msg || '请求失败')
-      return Promise.reject(new Error(msg))
+      // 1002 等业务状态码不弹出错误提示，只抛出错误让调用方处理
+      if (code !== 1002) {
+        message.error(msg || '请求失败')
+      }
+      const error = new Error(msg)
+      ;(error as any).code = code
+      return Promise.reject(error)
     }
   },
   (error) => {

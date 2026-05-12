@@ -6,7 +6,9 @@ import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.dal.dataobject.ont.*;
 import com.graphiti.module.graphiti.dal.mysql.ont.*;
 import com.graphiti.module.graphiti.service.OntologyPropertyService;
+import com.graphiti.module.graphiti.vo.ontology.OntConstraintVO;
 import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
+import com.graphiti.module.graphiti.vo.ontology.OntVersionHistoryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
     private final OntConstraintMapper constraintMapper;
     private final OntVersionHistoryMapper versionHistoryMapper;
     private final ObjectMapper objectMapper;
+
+    // ==================== 属性管理 ====================
 
     @Override
     @Transactional
@@ -131,6 +135,63 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         return ancestors;
     }
 
+    // ==================== 约束管理 ====================
+
+    @Override
+    public List<OntConstraintVO> listConstraints(String graphId) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return List.of();
+        return constraintMapper.selectByDefinitionId(defId).stream()
+            .map(this::toConstraintVO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public OntConstraintVO createConstraint(String graphId, OntConstraintVO reqVO) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) throw new BusinessException(2002, "图谱未定义本体");
+
+        OntConstraintDO entity = new OntConstraintDO();
+        entity.setDefinitionId(defId);
+        entity.setClassId(reqVO.getClassId());
+        entity.setPropertyId(reqVO.getPropertyId());
+        entity.setConstraintType(reqVO.getConstraintType());
+        entity.setValue(reqVO.getValue());
+        entity.setErrorMessage(reqVO.getErrorMessage());
+        entity.setSeverity(reqVO.getSeverity() != null ? reqVO.getSeverity() : "ERROR");
+        entity.setDescription(reqVO.getDescription());
+
+        constraintMapper.insert(entity);
+
+        recordHistory(defId, "CONSTRAINT_ADDED", "CONSTRAINT", entity.getId(),
+            null, entity, "新增约束: " + reqVO.getConstraintType(), null);
+
+        return toConstraintVO(entity);
+    }
+
+    @Override
+    @Transactional
+    public void deleteConstraint(String graphId, Long constraintId) {
+        OntConstraintDO existing = constraintMapper.selectById(constraintId);
+        if (existing == null) return;
+
+        recordHistory(existing.getDefinitionId(), "CONSTRAINT_DELETED", "CONSTRAINT", constraintId,
+            existing, null, "删除约束: " + existing.getConstraintType(), null);
+        constraintMapper.deleteById(constraintId);
+    }
+
+    // ==================== 版本历史 ====================
+
+    @Override
+    public List<OntVersionHistoryVO> getVersionHistory(String graphId) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return List.of();
+        return versionHistoryMapper.selectByDefinitionId(defId).stream()
+            .map(this::toVersionHistoryVO).collect(Collectors.toList());
+    }
+
+    // ==================== 私有方法 ====================
+
     private Long resolveDefinitionId(String graphId) {
         LambdaQueryWrapper<OntDefinitionDO> w = new LambdaQueryWrapper<>();
         w.eq(OntDefinitionDO::getGraphId, graphId);
@@ -210,6 +271,37 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
             OntPropertyDO inverse = propertyMapper.selectById(entity.getInverseOfId());
             if (inverse != null) vo.setInverseOfUri(inverse.getPropertyUri());
         }
+        return vo;
+    }
+
+    private OntConstraintVO toConstraintVO(OntConstraintDO entity) {
+        OntConstraintVO vo = new OntConstraintVO();
+        vo.setId(entity.getId());
+        vo.setDefinitionId(entity.getDefinitionId());
+        vo.setClassId(entity.getClassId());
+        vo.setPropertyId(entity.getPropertyId());
+        vo.setConstraintType(entity.getConstraintType());
+        vo.setValue(entity.getValue());
+        vo.setErrorMessage(entity.getErrorMessage());
+        vo.setSeverity(entity.getSeverity());
+        vo.setDescription(entity.getDescription());
+        vo.setCreatedAt(entity.getCreatedAt());
+        return vo;
+    }
+
+    private OntVersionHistoryVO toVersionHistoryVO(OntVersionHistoryDO entity) {
+        OntVersionHistoryVO vo = new OntVersionHistoryVO();
+        vo.setId(entity.getId());
+        vo.setDefinitionId(entity.getDefinitionId());
+        vo.setVersion(entity.getVersion());
+        vo.setChangeType(entity.getChangeType());
+        vo.setEntityType(entity.getEntityType());
+        vo.setEntityId(entity.getEntityId());
+        vo.setBeforeState(entity.getBeforeState());
+        vo.setAfterState(entity.getAfterState());
+        vo.setDiffSummary(entity.getDiffSummary());
+        vo.setChangedBy(entity.getChangedBy());
+        vo.setChangedAt(entity.getChangedAt());
         return vo;
     }
 

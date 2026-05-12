@@ -22,9 +22,11 @@ export const customInstructionApi = {
    * 后端: GET /custom-instructions?graphId=
    */
   list(graphId?: string): Promise<CustomInstruction[]> {
-    return request.get('/custom-instructions', {
-      params: { graphId: graphId || undefined }
-    })
+    const params: Record<string, any> = {}
+    if (graphId) {
+      params.graphId = graphId
+    }
+    return request.get('/custom-instructions', { params })
   },
 
   /**

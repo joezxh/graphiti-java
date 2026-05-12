@@ -1,8 +1,8 @@
 package com.graphiti.module.graphiti.namespace.graph;
 
-import com.graphiti.module.graphiti.service.OntologyService;
-import com.graphiti.module.graphiti.vo.ontology.OntologyRespVO;
-import com.graphiti.module.graphiti.vo.ontology.SetOntologyReqVO;
+import com.graphiti.module.graphiti.service.OntologyClassService;
+import com.graphiti.module.graphiti.vo.ontology.OntDefinitionVO;
+import com.graphiti.module.graphiti.vo.ontology.OntologyFullVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,21 +17,29 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OntologyNamespace {
 
-    private final OntologyService ontologyService;
+    private final OntologyClassService ontologyClassService;
 
     /**
      * 获取本体定义
      */
-    public OntologyRespVO get(String graphId) {
+    public OntDefinitionVO get(String graphId) {
         log.debug("OntologyNamespace.get: graphId={}", graphId);
-        return ontologyService.getOntology(graphId);
+        return ontologyClassService.getDefinition(graphId);
     }
 
     /**
-     * 设置本体定义
+     * 获取完整本体信息
      */
-    public OntologyRespVO set(String graphId, SetOntologyReqVO reqVO) {
-        log.info("OntologyNamespace.set: graphId={}", graphId);
-        return ontologyService.setOntology(graphId, reqVO);
+    public OntologyFullVO getFullOntology(String graphId) {
+        log.debug("OntologyNamespace.getFullOntology: graphId={}", graphId);
+        return ontologyClassService.getFullOntology(graphId);
+    }
+
+    /**
+     * 创建本体定义
+     */
+    public OntDefinitionVO create(String graphId, OntDefinitionVO reqVO) {
+        log.info("OntologyNamespace.create: graphId={}, name={}", graphId, reqVO.getName());
+        return ontologyClassService.createDefinition(graphId, reqVO);
     }
 }

@@ -6,7 +6,6 @@ import com.graphiti.module.graphiti.service.EdgeService;
 import com.graphiti.module.graphiti.service.GraphitiService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.NodeService;
-import com.graphiti.module.graphiti.service.OntologyService;
 import com.graphiti.module.graphiti.service.SearchService;
 import com.graphiti.module.graphiti.service.TemporalService;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
@@ -18,8 +17,6 @@ import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
 import com.graphiti.module.graphiti.vo.graph.UpdateGraphReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
-import com.graphiti.module.graphiti.vo.ontology.SetOntologyReqVO;
-import com.graphiti.module.graphiti.vo.ontology.OntologyRespVO;
 import com.graphiti.module.graphiti.vo.search.SearchQueryReqVO;
 import com.graphiti.module.graphiti.vo.search.SearchResultsRespVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,26 +44,22 @@ public class GraphitiController {
     private final EdgeService edgeService;
     private final CommunityService communityService;
     private final TemporalService temporalService;
-    private final OntologyService ontologyService;
     private final SearchService searchService;
     private final GraphNeo4jService graphNeo4jService;
+
     /**
      * 创建图谱
-     * @param reqVO CreateGraphReqVO
-     * @return CommonResult<GraphInfoRespVO>
      */
-    @Operation(summary = "创建图谱", description = "创建新的知识图谱", 
+    @Operation(summary = "创建图谱", description = "创建新的知识图谱",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @PostMapping("/create")
     public CommonResult<GraphInfoRespVO> create(
             @Valid @RequestBody CreateGraphReqVO reqVO) {
         return CommonResult.success(graphitiService.createGraph(reqVO));
     }
+
     /**
      * 获取图谱列表（分页）
-     * @param limit 限制数量
-     * @param offset 偏移量
-     * @return CommonResult<GraphListRespVO>
      */
     @Operation(summary = "获取图谱列表", description = "获取所有知识图谱的列表（含分页信息）",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
@@ -76,25 +69,22 @@ public class GraphitiController {
             @RequestParam(value = "offset", required = false) @Parameter(description = "偏移量", example = "0") Long offset) {
         return CommonResult.success(graphitiService.listGraphs(limit, offset));
     }
+
     /**
      * 获取图谱详情
-     * @param graphId 图谱ID
-     * @return CommonResult<GraphInfoRespVO>
      */
-    @Operation(summary = "获取图谱详情", description = "根据图谱ID获取图谱详细信息", 
+    @Operation(summary = "获取图谱详情", description = "根据图谱ID获取图谱详细信息",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @GetMapping("/{graphId}")
     public CommonResult<GraphInfoRespVO> getDetail(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "abc123") String graphId) {
         return CommonResult.success(graphitiService.getGraph(graphId));
     }
+
     /**
      * 更新图谱信息
-     * @param graphId 图谱ID
-     * @param reqVO UpdateGraphReqVO
-     * @return CommonResult<GraphInfoRespVO>
      */
-    @Operation(summary = "更新图谱", description = "更新图谱的基本信息", 
+    @Operation(summary = "更新图谱", description = "更新图谱的基本信息",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @PutMapping("/{graphId}")
     public CommonResult<GraphInfoRespVO> update(
@@ -102,12 +92,11 @@ public class GraphitiController {
             @Valid @RequestBody UpdateGraphReqVO reqVO) {
         return CommonResult.success(graphitiService.updateGraph(graphId, reqVO));
     }
+
     /**
      * 删除图谱
-     * @param graphId 图谱ID
-     * @return CommonResult<Void>
      */
-    @Operation(summary = "删除图谱", description = "逻辑删除指定的图谱", 
+    @Operation(summary = "删除图谱", description = "逻辑删除指定的图谱",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @DeleteMapping("/{graphId}")
     public CommonResult<Void> delete(
@@ -115,12 +104,11 @@ public class GraphitiController {
         graphitiService.deleteGraph(graphId);
         return CommonResult.success();
     }
+
     /**
      * 清空图谱数据
-     * @param graphId 图谱ID
-     * @return CommonResult<Void>
      */
-    @Operation(summary = "清空图谱数据", description = "清空图谱中的所有数据，但保留图谱元数据", 
+    @Operation(summary = "清空图谱数据", description = "清空图谱中的所有数据，但保留图谱元数据",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @PostMapping("/{graphId}/clear")
     public CommonResult<Void> clear(
@@ -128,9 +116,9 @@ public class GraphitiController {
         graphitiService.clearGraph(graphId);
         return CommonResult.success();
     }
+
     /**
      * 获取图谱统计信息
-     * @return CommonResult<GraphStatsRespVO>
      */
     @Operation(summary = "获取图谱统计", description = "获取系统的图谱统计信息，包括图谱总数、节点数、边数等",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
@@ -141,23 +129,19 @@ public class GraphitiController {
 
     /**
      * 获取指定图谱的统计信息
-     * @param graphId 图谱ID
-     * @return CommonResult<Map<String, Long>>
      */
     @Operation(summary = "获取图谱统计", description = "获取指定图谱的节点数、边数统计",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @GetMapping("/{graphId}/stats")
-    public CommonResult<java.util.Map<String, Long>> getGraphStats(
+    public CommonResult<Map<String, Long>> getGraphStats(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
         return CommonResult.success(graphNeo4jService.getGraphStats(graphId));
     }
-    
+
     /**
      * 获取图谱的节点列表
-     * @param graphId 图谱ID
-     * @return CommonResult<List<NodeListRespVO>>
      */
-    @Operation(summary = "获取节点列表", description = "获取指定图谱的节点列表", 
+    @Operation(summary = "获取节点列表", description = "获取指定图谱的节点列表",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @GetMapping("/{graphId}/nodes")
     public CommonResult<List<NodeListRespVO>> getNodes(
@@ -165,13 +149,11 @@ public class GraphitiController {
         NodeFilterReqVO filterReqVO = new NodeFilterReqVO();
         return CommonResult.success(nodeService.listNodes(graphId, filterReqVO));
     }
-    
+
     /**
      * 获取图谱的边列表
-     * @param graphId 图谱ID
-     * @return CommonResult<List<EdgeListRespVO>>
      */
-    @Operation(summary = "获取边列表", description = "获取指定图谱的边列表", 
+    @Operation(summary = "获取边列表", description = "获取指定图谱的边列表",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @GetMapping("/{graphId}/edges")
     public CommonResult<List<EdgeListRespVO>> getEdges(
@@ -223,27 +205,6 @@ public class GraphitiController {
     public CommonResult<Map<String, Object>> exportGraph(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
         return CommonResult.success(graphitiService.exportGraph(graphId));
-    }
-
-    // ==================== 本体论管理（对齐 Python /graph/ontology） ====================
-
-    @Operation(summary = "设置本体定义", description = "设置或更新指定图谱的本体定义",
-               security = {@SecurityRequirement(name = "Bearer Authentication")})
-    @PutMapping("/ontology")
-    public CommonResult<OntologyRespVO> setOntology(@Valid @RequestBody SetOntologyReqVO reqVO) {
-        // 从请求中获取图谱ID（支持 graphId 或 userId）
-        String graphId = reqVO.getGraphId();
-        if (graphId == null || graphId.isEmpty()) {
-            throw new com.graphiti.common.exception.BusinessException(400, "graphId 不能为空");
-        }
-        return CommonResult.success(ontologyService.setOntology(graphId, reqVO));
-    }
-
-    @Operation(summary = "列出所有本体定义", description = "列出系统中所有图谱的本体定义",
-               security = {@SecurityRequirement(name = "Bearer Authentication")})
-    @GetMapping("/ontology")
-    public CommonResult<List<OntologyRespVO>> listOntology() {
-        return CommonResult.success(ontologyService.listAllOntologies());
     }
 
     // ==================== 图谱搜索 ====================

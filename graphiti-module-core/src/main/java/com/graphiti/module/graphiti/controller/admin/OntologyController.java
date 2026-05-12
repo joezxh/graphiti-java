@@ -15,43 +15,43 @@ import java.util.Map;
 
 /**
  * 本体管理控制器
+ * 提供完整的本体定义 CRUD 操作，包括类、属性、约束、版本历史管理
  */
 @Tag(name = "本体管理", description = "知识图谱本体定义的查询和设置")
 @RestController
 @RequestMapping("/api/v1/ontology")
 @RequiredArgsConstructor
 public class OntologyController {
-    private final OntologyService ontologyService;
     private final OntologyValidationService ontologyValidationService;
     private final OntologyClassService classService;
     private final OntologyPropertyService propertyService;
     private final OntologyReasoner reasoner;
     private final SchemaOrgImportService schemaOrgImportService;
-    /**
-     * 获取指定图谱的本体定义
-     * @param graphId 图谱ID
-     * @return CommonResult<OntologyRespVO>
-     */
-    @Operation(summary = "获取本体定义", description = "获取指定图谱的本体定义（实体类型和关系类型）", 
-               security = {@SecurityRequirement(name = "Bearer Authentication")})
-    @GetMapping("/{graphId}")
-    public CommonResult<OntologyRespVO> getOntology(
-            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "graph-123") String graphId) {
-        return CommonResult.success(ontologyService.getOntology(graphId));
+    // ==================== 本体定义管理 ====================
+
+    @Operation(summary = "获取本体定义", description = "获取指定图谱的活跃本体定义",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/definition")
+    public CommonResult<OntDefinitionVO> getDefinition(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(classService.getDefinition(graphId));
     }
-    /**
-     * 设置指定图谱的本体定义
-     * @param graphId 图谱ID
-     * @param reqVO SetOntologyReqVO
-     * @return CommonResult<OntologyRespVO>
-     */
-    @Operation(summary = "设置本体定义", description = "设置或更新指定图谱的本体定义", 
-               security = {@SecurityRequirement(name = "Bearer Authentication")})
-    @PostMapping("/{graphId}")
-    public CommonResult<OntologyRespVO> setOntology(
-            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "graph-123") String graphId,
-            @Valid @RequestBody SetOntologyReqVO reqVO) {
-        return CommonResult.success(ontologyService.setOntology(graphId, reqVO));
+
+    @Operation(summary = "创建本体定义", description = "为图谱创建新的本体定义版本",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/definition")
+    public CommonResult<OntDefinitionVO> createDefinition(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody OntDefinitionVO reqVO) {
+        return CommonResult.success(classService.createDefinition(graphId, reqVO));
+    }
+
+    @Operation(summary = "获取本体完整信息", description = "获取图谱本体的完整信息（类、属性、约束）",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}")
+    public CommonResult<OntologyFullVO> getOntology(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(classService.getFullOntology(graphId));
     }
 
     @Operation(summary = "批量本体验证", description = "对请求中的节点与边批量执行本体验证",
@@ -127,6 +127,65 @@ public class OntologyController {
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
             @RequestBody OntPropertyVO reqVO) {
         return CommonResult.success(propertyService.createProperty(graphId, reqVO));
+    }
+
+    @Operation(summary = "更新属性定义", description = "更新指定的本体属性",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PutMapping("/{graphId}/properties/{propertyId}")
+    public CommonResult<OntPropertyVO> updateProperty(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("propertyId") @Parameter(description = "属性ID", required = true) Long propertyId,
+            @RequestBody OntPropertyVO reqVO) {
+        return CommonResult.success(propertyService.updateProperty(graphId, propertyId, reqVO));
+    }
+
+    @Operation(summary = "删除属性定义", description = "删除指定的本体属性",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @DeleteMapping("/{graphId}/properties/{propertyId}")
+    public CommonResult<Void> deleteProperty(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("propertyId") @Parameter(description = "属性ID", required = true) Long propertyId) {
+        propertyService.deleteProperty(graphId, propertyId);
+        return CommonResult.success(null);
+    }
+
+    // ==================== 约束管理 ====================
+
+    @Operation(summary = "列出所有约束", description = "获取图谱下所有本体约束",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/constraints")
+    public CommonResult<List<OntConstraintVO>> listConstraints(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(propertyService.listConstraints(graphId));
+    }
+
+    @Operation(summary = "创建约束", description = "创建新的本体约束",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/constraints")
+    public CommonResult<OntConstraintVO> createConstraint(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody OntConstraintVO reqVO) {
+        return CommonResult.success(propertyService.createConstraint(graphId, reqVO));
+    }
+
+    @Operation(summary = "删除约束", description = "删除指定的本体约束",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @DeleteMapping("/{graphId}/constraints/{constraintId}")
+    public CommonResult<Void> deleteConstraint(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("constraintId") @Parameter(description = "约束ID", required = true) Long constraintId) {
+        propertyService.deleteConstraint(graphId, constraintId);
+        return CommonResult.success(null);
+    }
+
+    // ==================== 版本历史 ====================
+
+    @Operation(summary = "获取版本历史", description = "获取图谱本体的版本变更历史",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/history")
+    public CommonResult<List<OntVersionHistoryVO>> getVersionHistory(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(propertyService.getVersionHistory(graphId));
     }
 
     // ==================== Schema.org 导入导出 ====================

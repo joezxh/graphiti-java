@@ -28,8 +28,10 @@ public class CustomInstructionController {
     @Operation(summary = "获取自定义指令", description = "获取指定图谱的自定义抽取指令（含全局指令）",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     public CommonResult<List<CustomInstructionRespVO>> getInstructions(
-            @RequestParam @Parameter(description = "图谱ID", required = false) String graphId) {
-        return CommonResult.success(customInstructionService.getInstructions(graphId));
+            @RequestParam(name = "graphId", required = false) String graphId) {
+        // 处理空字符串情况
+        String effectiveGraphId = (graphId != null && graphId.isBlank()) ? null : graphId;
+        return CommonResult.success(customInstructionService.getInstructions(effectiveGraphId));
     }
 
     @PostMapping
