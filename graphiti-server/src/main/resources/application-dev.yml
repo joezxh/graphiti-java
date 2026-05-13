@@ -597,8 +597,79 @@ neo4j:
   username: neo4j
   password: password123
 
-# 日志配置
+# ============================================================
+# 【开发环境专用配置】
+# ============================================================
+# 此文件用于本地开发，包含:
+# - 本地数据库连接 (localhost)
+# - 详细日志 (DEBUG)
+# - 开发工具 (Swagger, H2 console 等)
+# ============================================================
+
+spring:
+  # 开发模式详细日志
+  autoconfigure:
+    exclude:
+      # 按需排除不需要的自动配置
+
+# Actuator 开发配置 (允许所有信息)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # 开发时暴露所有端点
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+    db:
+      enabled: true
+    redis:
+      enabled: true
+
+# 日志配置 (开发详细日志)
 logging:
   level:
     com.graphiti: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot: DEBUG
+
+# Web 静态资源配置 (开发时 Vite 代理)
+spring:
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+  mvc:
+    static-path-pattern: /**
+  servlet:
+    # 静态资源映射
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+
+# 数据源配置
+datasource:
+  dynamic:
+    primary: master
+    strict: false
+    datasource:
+      master:
+        url: jdbc:postgresql://localhost:5432/graphiti?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+        username: postgres
+        password: postgres@2026!
+        driver-class-name: org.postgresql.Driver
+        hikari:
+          maximum-pool-size: 10
+          minimum-idle: 5
+          connection-timeout: 30000
+
+data:
+  redis:
+    host: localhost
+    port: 6379

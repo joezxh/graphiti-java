@@ -78,6 +78,54 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <!-- 前端构建插件: 编译 Vue 前端并嵌入 Spring Boot -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.15.0</version>
+                <configuration>
+                    <nodeVersion>v20.18.0</nodeVersion>
+                    <pnpmVersion>v9.15.0</pnpmVersion>
+                    <workingDirectory>${project.basedir}/../graphiti-web</workingDirectory>
+                </configuration>
+                <executions>
+                    <!-- 安装前端依赖 -->
+                    <execution>
+                        <id>pnpm-install</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>pnpm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install --frozen-lockfile</arguments>
+                        </configuration>
+                    </execution>
+                    <!-- 构建前端 -->
+                    <execution>
+                        <id>pnpm-build</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>pnpm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                    <!-- 拷贝前端构建产物到静态资源目录 -->
+                    <execution>
+                        <id>copy-frontend-dist</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <workingDirectory>${project.basedir}/../graphiti-web</workingDirectory>
+                            <arguments>-r dist/* ${project.basedir}/src/main/resources/static/</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
