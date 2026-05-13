@@ -6,12 +6,19 @@
 </p>
 
 <p align="center">
+  <a href="README.md">🇺🇸 English</a> •
+  <a href="README_CN.md">🇨🇳 中文文档</a> •
+  <a href=".qoder/repowiki/zh/content/快速开始.md">📖 使用手册</a>
+</p>
+
+<p align="center">
   <a href="#功能特性">功能特性</a> •
   <a href="#系统架构">系统架构</a> •
   <a href="#技术栈">技术栈</a> •
   <a href="#快速开始">快速开始</a> •
   <a href="#api文档">API文档</a> •
-  <a href="#配置说明">配置说明</a>
+  <a href="#配置说明">配置说明</a> •
+  <a href="#文档索引">文档索引</a>
 </p>
 
 ---
@@ -489,6 +496,53 @@ CREATE VECTOR INDEX edge_embedding_index IF NOT EXISTS
 FOR ()-[r:RELATES_TO]-() ON (r.embedding)
 OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 'cosine'}}
 ```
+
+---
+
+## 文档索引
+
+### 快速入门
+
+- **[使用手册（快速开始）](.qoder/repowiki/zh/content/快速开始.md)** - 完整的安装和配置指南
+
+### 设计与架构
+
+- [项目概述 (docs/01-项目概述.md)](docs/01-项目概述.md)
+- [Java vs Python 对比 (docs/graphiti-java-vs-python-comparison.md)](docs/graphiti-java-vs-python-comparison.md)
+- [实现总结 (docs/implementation-summary.md)](docs/implementation-summary.md)
+- [设计文档 (DESIGN.md)](DESIGN.md)
+
+### AI 与记忆系统
+
+- [AI 会话记忆系统 (docs/ai-chat-memory.md)](docs/ai-chat-memory.md)
+
+### 本体与数据管道
+
+- [本体系统 (docs/ontology.md)](docs/ontology.md)
+- [数据管道 (docs/pipeline.md)](docs/pipeline.md)
+- [法律本体迁移指南 (docs/legal-ontology-migration-guide.md)](docs/legal-ontology-migration-guide.md)
+
+### 数据库
+
+- [数据库迁移指南 (docs/database-migration-guide.md)](docs/database-migration-guide.md)
+
+### 规划与设计规格
+
+- [后端实现规划 (docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)
+- [控制台实现规划 (docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)
+- [MySQL 到 PostgreSQL 迁移 (docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)](docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)
+- [完整对齐规划 (docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)](docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)
+- [完整迁移规划 (docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)](docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)
+- [本体阶段1 (docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)](docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)
+- [本体阶段2-4 (docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)](docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)
+- [法律本体设计 (docs/superpowers/plans/2026-05-11-legal-ontology-design.md)](docs/superpowers/plans/2026-05-11-legal-ontology-design.md)
+- [Neo4j 关系类型一致性 (docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)](docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)
+- [控制台设计规格 (docs/superpowers/specs/2026-05-08-graphiti-console-design.md)](docs/superpowers/specs/2026-05-08-graphiti-console-design.md)
+- [完整对齐设计规格 (docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)](docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)
+- [本体增强设计规格 (docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)](docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)
+- [后端 API 实现设计规格 (docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)](docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)
+- [完整迁移设计规格 (docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)](docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)
+- [AI 会话记忆设计规格 (docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)](docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)
 
 ---
 

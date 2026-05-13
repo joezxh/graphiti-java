@@ -6,12 +6,19 @@
 </p>
 
 <p align="center">
+  <a href="README_CN.md">🇨🇳 中文文档</a> •
+  <a href="README.md">🇺🇸 English</a> •
+  <a href=".qoder/repowiki/zh/content/快速开始.md">📖 User Guide</a>
+</p>
+
+<p align="center">
   <a href="#features">Features</a> •
   <a href="#architecture">Architecture</a> •
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#quick-start">Quick Start</a> •
   <a href="#api-documentation">API</a> •
-  <a href="#configuration">Configuration</a>
+  <a href="#configuration">Configuration</a> •
+  <a href="#documentation">Documentation</a>
 </p>
 
 ---
@@ -489,6 +496,53 @@ CREATE VECTOR INDEX edge_embedding_index IF NOT EXISTS
 FOR ()-[r:RELATES_TO]-() ON (r.embedding)
 OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 'cosine'}}
 ```
+
+---
+
+## Documentation
+
+### Quick Start Guide
+
+- **[User Guide (Quick Start)](.qoder/repowiki/zh/content/快速开始.md)** - Complete installation and setup guide
+
+### Design & Architecture
+
+- [Project Overview (docs/01-项目概述.md)](docs/01-项目概述.md)
+- [Java vs Python Comparison (docs/graphiti-java-vs-python-comparison.md)](docs/graphiti-java-vs-python-comparison.md)
+- [Implementation Summary (docs/implementation-summary.md)](docs/implementation-summary.md)
+- [Design Document (DESIGN.md)](DESIGN.md)
+
+### AI & Memory
+
+- [AI Chat Memory System (docs/ai-chat-memory.md)](docs/ai-chat-memory.md)
+
+### Ontology & Data Pipeline
+
+- [Ontology System (docs/ontology.md)](docs/ontology.md)
+- [Data Pipeline (docs/pipeline.md)](docs/pipeline.md)
+- [Legal Ontology Migration Guide (docs/legal-ontology-migration-guide.md)](docs/legal-ontology-migration-guide.md)
+
+### Database
+
+- [Database Migration Guide (docs/database-migration-guide.md)](docs/database-migration-guide.md)
+
+### Planning & Specs
+
+- [Backend Implementation Plan (docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)
+- [Console Implementation Plan (docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)
+- [MySQL to PostgreSQL Migration (docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)](docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)
+- [Full Alignment Plan (docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)](docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)
+- [Full Migration Plan (docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)](docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)
+- [Ontology Phase 1 (docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)](docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)
+- [Ontology Phase 2-4 (docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)](docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)
+- [Legal Ontology Design (docs/superpowers/plans/2026-05-11-legal-ontology-design.md)](docs/superpowers/plans/2026-05-11-legal-ontology-design.md)
+- [Neo4j Relation Type Consistency (docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)](docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)
+- [Console Design Spec (docs/superpowers/specs/2026-05-08-graphiti-console-design.md)](docs/superpowers/specs/2026-05-08-graphiti-console-design.md)
+- [Full Alignment Design Spec (docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)](docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)
+- [Ontology Enhancement Design Spec (docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)](docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)
+- [Backend API Implementation Design Spec (docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)](docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)
+- [Full Migration Design Spec (docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)](docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)
+- [AI Chat Memory Design Spec (docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)](docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)
 
 ---
 
