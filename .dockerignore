@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Maven (排除所有 target，但保留 graphiti-server/target/ 用于 Docker 打包)
+**/target/
+!graphiti-server/target/
+**/*.jar
+!graphiti-server/target/*.jar
+**/*.class
+.m2
+
+# Node.js (前端依赖在 Docker 内部构建，不需要本地 node_modules)
+graphiti-web/node_modules/
+graphiti-web/dist/
+graphiti-web/.pnpm-store/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Documentation
+docs/
+*.md
+LICENSE
+
+# Scripts
+scripts/
+
+# Worktrees
+.worktrees/
+
+# Config (可选，如果需要外部配置可以保留)
+# config/

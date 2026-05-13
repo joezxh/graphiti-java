@@ -4,3 +4,7 @@ target
 /.idea/
 .worktrees/
 /.qoder/
+/data/
+/graphiti-server/src/main/resources/static/
+/.env
+.qoder
