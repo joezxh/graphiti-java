@@ -14,6 +14,7 @@ export interface EdgeFilter {
 export interface CreateEdgeReq {
   sourceNodeUuid: string
   targetNodeUuid: string
+  type?: string
   name?: string
   fact?: string
   properties?: Record<string, any>

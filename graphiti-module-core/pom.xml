@@ -26,18 +26,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- MyBatis -->
-        <dependency>
-            <groupId>com.graphiti</groupId>
-            <artifactId>graphiti-spring-boot-starter-mybatis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- Redis -->
-        <dependency>
-            <groupId>com.graphiti</groupId>
-            <artifactId>graphiti-spring-boot-starter-redis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- Neo4j Driver -->
         <dependency>
             <groupId>org.neo4j.driver</groupId>

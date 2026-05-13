@@ -79,7 +79,7 @@ export const menuApi = {
         if (item.children?.length) flatten(item.children)
       }
     }
-    flatten(resp ? resp.map(mapMenuDO) : [])
+    flatten(all)
     return flat
       .filter(m => m.status === 1)
       .map(m => ({ id: m.id, parentId: m.parentId, name: m.name, type: m.type }))
@@ -99,7 +99,7 @@ export const menuApi = {
    * 后端: POST /admin/system/menu/create
    */
   async createMenu(data: MenuForm): Promise<{ id: number }> {
-    const resp = await request.post<{ id: number }>('/admin/system/menu/create', {
+    await request.post<{ id: number }>('/admin/system/menu/create', {
       name: data.name,
       permission: data.code,
       url: data.path,
@@ -108,7 +108,8 @@ export const menuApi = {
       status: data.status,
       deleted: false
     })
-    return resp
+    // POST 请求已执行，返回一个占位符 id
+    return { id: 0 }
   },
 
   /**

@@ -1,6 +1,6 @@
-# AI服务问题
+﻿# AI服务问题
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [GraphitiAiProperties.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java)
 - [LlmClientService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java)
@@ -16,7 +16,7 @@
 - [application.yml](file://graphiti-server/src/main/resources/application.yml)
 - [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
 - [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

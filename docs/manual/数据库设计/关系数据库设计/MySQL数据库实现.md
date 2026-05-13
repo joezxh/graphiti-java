@@ -1,6 +1,6 @@
-# MySQL数据库实现
+﻿# MySQL数据库实现
 
-<cite>
+<!--<cite>
 **本文档引用的文件**
 - [schema.sql](file://sql/mysql/schema.sql)
 - [init-data.sql](file://sql/mysql/init-data.sql)
@@ -15,7 +15,7 @@
 - [UserMapper.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java)
 - [NotificationMapper.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java)
 - [GraphMetadataDO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

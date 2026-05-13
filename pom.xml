@@ -160,25 +160,10 @@
                 <version>${druid.version}</version>
             </dependency>
 
-            <!-- Graphiti Framework Modules -->
+            <!-- Graphiti Framework Module (统一模块) -->
             <dependency>
                 <groupId>com.graphiti</groupId>
-                <artifactId>graphiti-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.graphiti</groupId>
-                <artifactId>graphiti-spring-boot-starter-security</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.graphiti</groupId>
-                <artifactId>graphiti-spring-boot-starter-mybatis</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.graphiti</groupId>
-                <artifactId>graphiti-spring-boot-starter-redis</artifactId>
+                <artifactId>graphiti-framework</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

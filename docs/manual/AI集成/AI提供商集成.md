@@ -1,6 +1,6 @@
-# AI提供商集成
+﻿# AI提供商集成
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [LlmClientService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java)
 - [EmbedderService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java)
@@ -16,7 +16,7 @@
 - [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
 - [ExtractEntitiesResultVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/ExtractEntitiesResultVO.java)
 - [ExtractRelationsResultVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/ExtractRelationsResultVO.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

@@ -1,6 +1,6 @@
-# 前端应用模块 (graphiti-web)
+﻿# 前端应用模块 (graphiti-web)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [package.json](file://graphiti-web/package.json)
 - [vite.config.ts](file://graphiti-web/vite.config.ts)
@@ -17,7 +17,7 @@
 - [src/components/Graph/ForceGraph.vue](file://graphiti-web/src/components/Graph/ForceGraph.vue)
 - [src/components/Graph/GraphToolbar.vue](file://graphiti-web/src/components/Graph/GraphToolbar.vue)
 - [src/assets/styles/dark.less](file://graphiti-web/src/assets/styles/dark.less)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

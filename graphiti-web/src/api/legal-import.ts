@@ -5,7 +5,7 @@
 
 import request from '@/api/request';
 import type { AxiosPromise } from 'axios';
-import { LEGAL_NODES, LEGAL_EDGES, LEGAL_GRAPH_ID } from './legal-kg-data';
+import { LEGAL_NODES, LEGAL_GRAPH_ID } from './legal-kg-data';
 
 const BASE_URL = '/api/v1/graph';
 
@@ -119,8 +119,7 @@ export async function createLegalGraph(): Promise<string> {
   // 1. 创建图谱
   const graphId = LEGAL_GRAPH_ID;
   try {
-    await graphApi.createGraph({
-      graphId,
+    await graphApi.create({
       name: '法律知识图谱',
       description: '基于典型案例、商事调解条例的法律领域知识图谱'
     });

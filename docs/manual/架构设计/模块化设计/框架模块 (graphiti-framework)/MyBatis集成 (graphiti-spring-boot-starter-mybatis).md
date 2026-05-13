@@ -1,6 +1,6 @@
-# MyBatis集成 (graphiti-spring-boot-starter-mybatis)
+﻿# MyBatis集成 (graphiti-spring-boot-starter-mybatis)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [graphiti-spring-boot-starter-mybatis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml)
 - [application.yml](file://graphiti-server/src/main/resources/application.yml)
@@ -9,7 +9,7 @@
 - [SystemConfigMapper.java](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java)
 - [SystemConfigDO.java](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java)
 - [SystemConfigServiceImpl.java](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

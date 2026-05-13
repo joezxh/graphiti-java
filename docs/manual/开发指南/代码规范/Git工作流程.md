@@ -1,6 +1,6 @@
-# Git工作流程
+﻿# Git工作流程
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [.gitignore](file://.gitignore)
 - [commit-msg.txt](file://commit-msg.txt)
@@ -10,7 +10,7 @@
 - [graphiti-server/pom.xml](file://graphiti-server/pom.xml)
 - [graphiti-module-core/pom.xml](file://graphiti-module-core/pom.xml)
 - [graphiti-web/package.json](file://graphiti-web/package.json)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

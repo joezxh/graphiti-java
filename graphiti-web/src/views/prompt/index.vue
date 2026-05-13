@@ -680,6 +680,8 @@ const rollbackVersion = async (templateId: number, version: number) => {
 // Variable management
 const addVariable = () => {
   form.variables.push({
+    id: 0,
+    templateId: 0,
     variableName: '',
     variableType: 'string',
     required: true,

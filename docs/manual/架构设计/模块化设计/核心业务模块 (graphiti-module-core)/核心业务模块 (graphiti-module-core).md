@@ -1,6 +1,6 @@
-# 核心业务模块 (graphiti-module-core)
+﻿# 核心业务模块 (graphiti-module-core)
 
-<cite>
+<!--<cite>
 **本文档引用的文件**
 - [GraphitiController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
 - [GraphitiServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java)
@@ -16,7 +16,7 @@
 - [OntologyClassServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java)
 - [OntologyPropertyServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java)
 - [TemporalServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

@@ -1,6 +1,6 @@
-# API集成
+﻿# API集成
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [graphiti-web/src/api/request.ts](file://graphiti-web/src/api/request.ts)
 - [graphiti-web/src/utils/auth.ts](file://graphiti-web/src/utils/auth.ts)
@@ -16,7 +16,7 @@
 - [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
 - [graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
 - [graphiti-server/src/main/resources/application.yml](file://graphiti-server/src/main/resources/application.yml)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

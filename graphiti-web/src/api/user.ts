@@ -65,12 +65,12 @@ export const userApi = {
         status: params.status !== undefined ? params.status : undefined
       }
     })
-    const list: User[] = (resp?.list || []).map(mapUserDO)
+    const list: User[] = ((resp as any)?.list || []).map(mapUserDO)
     return {
       list,
-      total: resp?.total || 0,
-      pageNum: resp?.pageNum || (params.pageNum || 1),
-      pageSize: resp?.pageSize || (params.pageSize || 10)
+      total: (resp as any)?.total || 0,
+      pageNum: (resp as any)?.pageNum || (params.pageNum || 1),
+      pageSize: (resp as any)?.pageSize || (params.pageSize || 10)
     }
   },
 
@@ -88,7 +88,7 @@ export const userApi = {
    * 后端: POST /admin/system/user/create
    */
   async createUser(data: UserForm): Promise<{ id: number }> {
-    const resp = await request.post<{ id: number }>('/admin/system/user/create', {
+    await request.post<{ id: number }>('/admin/system/user/create', {
       username: data.username,
       nickname: data.nickname,
       password: data.password,
@@ -97,7 +97,7 @@ export const userApi = {
       status: data.status,
       deleted: false
     })
-    return resp
+    return { id: 0 }
   },
 
   /**

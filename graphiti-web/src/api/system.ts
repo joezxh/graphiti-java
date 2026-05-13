@@ -115,7 +115,7 @@ export const systemApi = {
    * 后端: POST /admin/system/config/create
    */
   async createConfig(data: SystemConfigForm): Promise<{ id: number }> {
-    const resp = await request.post<{ id: number }>('/admin/system/config/create', {
+    await request.post<{ id: number }>('/admin/system/config/create', {
       configKey: data.configKey,
       configValue: data.configValue,
       configName: data.configName,
@@ -126,7 +126,7 @@ export const systemApi = {
       status: data.status,
       deleted: false
     })
-    return resp as { id: number }
+    return { id: 0 }
   },
 
   /**

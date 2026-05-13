@@ -1,6 +1,6 @@
-# 安全框架（graphiti-spring-boot-starter-security）
+﻿# 安全框架（graphiti-spring-boot-starter-security）
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [SecurityConfig.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
 - [JwtAuthenticationFilter.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
@@ -18,7 +18,7 @@
 - [auth.ts](file://graphiti-web/src/api/auth.ts)
 - [auth.ts（前端工具）](file://graphiti-web/src/utils/auth.ts)
 - [router/index.ts](file://graphiti-web/src/router/index.ts)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

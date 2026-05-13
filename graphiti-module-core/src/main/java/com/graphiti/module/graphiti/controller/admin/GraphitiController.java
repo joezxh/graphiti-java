@@ -1,6 +1,8 @@
 package com.graphiti.module.graphiti.controller.admin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graphiti.common.response.CommonResult;
+import com.graphiti.framework.security.util.UserContext;
 import com.graphiti.module.graphiti.service.CommunityService;
 import com.graphiti.module.graphiti.service.EdgeService;
 import com.graphiti.module.graphiti.service.GraphitiService;
@@ -19,13 +21,18 @@ import com.graphiti.module.graphiti.vo.node.NodeFilterReqVO;
 import com.graphiti.module.graphiti.vo.node.NodeListRespVO;
 import com.graphiti.module.graphiti.vo.search.SearchQueryReqVO;
 import com.graphiti.module.graphiti.vo.search.SearchResultsRespVO;
+import com.graphiti.system.dal.dataobject.OperationLogDO;
+import com.graphiti.system.service.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +45,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/graph")
 @RequiredArgsConstructor
+@Slf4j
 public class GraphitiController {
     private final GraphitiService graphitiService;
     private final NodeService nodeService;
@@ -46,6 +54,38 @@ public class GraphitiController {
     private final TemporalService temporalService;
     private final SearchService searchService;
     private final GraphNeo4jService graphNeo4jService;
+    private final OperationLogService operationLogService;
+    private final UserContext userContext;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * 记录图谱操作日志
+     */
+    private void saveGraphOpLog(String operation, String method, String graphId,
+                                 Object params, int status, String errorMsg, long startTime) {
+        try {
+            OperationLogDO logDO = new OperationLogDO();
+            logDO.setUsername(userContext.getCurrentUsername());
+            logDO.setOperation(operation);
+            logDO.setMethod(method);
+
+            Map<String, Object> paramMap = new HashMap<>();
+            if (graphId != null) {
+                paramMap.put("graphId", graphId);
+            }
+            if (params != null) {
+                paramMap.put("detail", params);
+            }
+            logDO.setParams(objectMapper.writeValueAsString(paramMap));
+            logDO.setStatus(status);
+            logDO.setErrorMsg(errorMsg);
+            logDO.setDuration((int) (System.currentTimeMillis() - startTime));
+            logDO.setCreateTime(LocalDateTime.now());
+            operationLogService.saveLog(logDO);
+        } catch (Exception e) {
+            log.error("记录图谱操作日志失败: operation={}, graphId={}", operation, graphId, e);
+        }
+    }
 
     /**
      * 创建图谱
@@ -55,7 +95,17 @@ public class GraphitiController {
     @PostMapping("/create")
     public CommonResult<GraphInfoRespVO> create(
             @Valid @RequestBody CreateGraphReqVO reqVO) {
-        return CommonResult.success(graphitiService.createGraph(reqVO));
+        long start = System.currentTimeMillis();
+        try {
+            GraphInfoRespVO result = graphitiService.createGraph(reqVO);
+            saveGraphOpLog("创建图谱", "POST /graph/create", result.getGraphId(),
+                           Map.of("graphName", reqVO.getName()), 1, null, start);
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            saveGraphOpLog("创建图谱", "POST /graph/create", null,
+                           Map.of("graphName", reqVO.getName()), 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     /**
@@ -90,7 +140,17 @@ public class GraphitiController {
     public CommonResult<GraphInfoRespVO> update(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "abc123") String graphId,
             @Valid @RequestBody UpdateGraphReqVO reqVO) {
-        return CommonResult.success(graphitiService.updateGraph(graphId, reqVO));
+        long start = System.currentTimeMillis();
+        try {
+            GraphInfoRespVO result = graphitiService.updateGraph(graphId, reqVO);
+            saveGraphOpLog("更新图谱", "PUT /graph/{graphId}", graphId,
+                           Map.of("graphName", reqVO.getName()), 1, null, start);
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            saveGraphOpLog("更新图谱", "PUT /graph/{graphId}", graphId,
+                           Map.of("graphName", reqVO.getName()), 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     /**
@@ -101,8 +161,15 @@ public class GraphitiController {
     @DeleteMapping("/{graphId}")
     public CommonResult<Void> delete(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "abc123") String graphId) {
-        graphitiService.deleteGraph(graphId);
-        return CommonResult.success();
+        long start = System.currentTimeMillis();
+        try {
+            graphitiService.deleteGraph(graphId);
+            saveGraphOpLog("删除图谱", "DELETE /graph/{graphId}", graphId, null, 1, null, start);
+            return CommonResult.success();
+        } catch (Exception e) {
+            saveGraphOpLog("删除图谱", "DELETE /graph/{graphId}", graphId, null, 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     /**
@@ -113,8 +180,15 @@ public class GraphitiController {
     @PostMapping("/{graphId}/clear")
     public CommonResult<Void> clear(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true, example = "abc123") String graphId) {
-        graphitiService.clearGraph(graphId);
-        return CommonResult.success();
+        long start = System.currentTimeMillis();
+        try {
+            graphitiService.clearGraph(graphId);
+            saveGraphOpLog("清空图谱数据", "POST /graph/{graphId}/clear", graphId, null, 1, null, start);
+            return CommonResult.success();
+        } catch (Exception e) {
+            saveGraphOpLog("清空图谱数据", "POST /graph/{graphId}/clear", graphId, null, 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     /**
@@ -169,7 +243,15 @@ public class GraphitiController {
     @PostMapping("/{graphId}/communities/build")
     public CommonResult<Map<String, Object>> buildCommunities(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
-        return CommonResult.success(communityService.buildCommunities(graphId));
+        long start = System.currentTimeMillis();
+        try {
+            Map<String, Object> result = communityService.buildCommunities(graphId);
+            saveGraphOpLog("构建社区", "POST /graph/{graphId}/communities/build", graphId, null, 1, null, start);
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            saveGraphOpLog("构建社区", "POST /graph/{graphId}/communities/build", graphId, null, 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     @Operation(summary = "获取社区列表", description = "获取指定图谱的社区列表",
@@ -196,7 +278,16 @@ public class GraphitiController {
     @PostMapping("/{graphId}/clone")
     public CommonResult<GraphInfoRespVO> cloneGraph(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
-        return CommonResult.success(graphitiService.cloneGraph(graphId));
+        long start = System.currentTimeMillis();
+        try {
+            GraphInfoRespVO result = graphitiService.cloneGraph(graphId);
+            saveGraphOpLog("克隆图谱", "POST /graph/{graphId}/clone", graphId,
+                           Map.of("newGraphId", result.getGraphId()), 1, null, start);
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            saveGraphOpLog("克隆图谱", "POST /graph/{graphId}/clone", graphId, null, 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     @Operation(summary = "导出图谱", description = "导出指定图谱数据",
@@ -204,7 +295,18 @@ public class GraphitiController {
     @GetMapping("/{graphId}/export")
     public CommonResult<Map<String, Object>> exportGraph(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
-        return CommonResult.success(graphitiService.exportGraph(graphId));
+        long start = System.currentTimeMillis();
+        try {
+            Map<String, Object> result = graphitiService.exportGraph(graphId);
+            int nodeCount = result.containsKey("nodes") ? ((List<?>) result.get("nodes")).size() : 0;
+            int edgeCount = result.containsKey("edges") ? ((List<?>) result.get("edges")).size() : 0;
+            saveGraphOpLog("导出图谱", "GET /graph/{graphId}/export", graphId,
+                           Map.of("nodeCount", nodeCount, "edgeCount", edgeCount), 1, null, start);
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            saveGraphOpLog("导出图谱", "GET /graph/{graphId}/export", graphId, null, 0, e.getMessage(), start);
+            throw e;
+        }
     }
 
     // ==================== 图谱搜索 ====================

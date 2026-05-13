@@ -1,6 +1,6 @@
-# 系统管理模块 (graphiti-module-system)
+﻿# 系统管理模块 (graphiti-module-system)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [AuthController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
 - [UserController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java)
@@ -36,7 +36,7 @@
 - [V7__seed_legal_neo4j_data.sql](file://sql/postgresql/V7__seed_legal_neo4j_data.sql)
 - [prompt_template_init.sql](file://docs/sql/prompt_template_init.sql)
 - [prompt_template_postgresql_init.sql](file://docs/sql/prompt_template_postgresql_init.sql)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

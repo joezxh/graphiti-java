@@ -241,7 +241,8 @@ const getDisplayProps = (props: Record<string, any>) => {
 
 const loadHistory = async () => {
   try {
-    searchHistory.value = await searchApi.getSearchHistory()
+    const resp = await searchApi.getSearchHistory()
+    searchHistory.value = resp.list || []
   } catch (err) {
     console.error('加载搜索历史失败', err)
   }

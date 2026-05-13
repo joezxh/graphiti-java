@@ -143,14 +143,7 @@ export const ontologyApi = {
    * 获取完整本体信息
    */
   async getFullOntology(graphId: string): Promise<OntologyFullVO> {
-    const resp = await request.get<any>(`/ontology/${graphId}`)
-    return resp || {
-      definition: null,
-      classes: [],
-      classHierarchy: [],
-      properties: [],
-      constraints: []
-    }
+    return request.get<OntologyFullVO>(`/ontology/${graphId}`)
   },
 
   // ==================== 类管理 ====================

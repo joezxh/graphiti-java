@@ -1,6 +1,6 @@
-# PostgreSQL数据库实现
+﻿# PostgreSQL数据库实现
 
-<cite>
+<!--<cite>
 **本文档引用的文件**
 - [schema.sql](file://sql/postgresql/schema.sql)
 - [init-data.sql](file://sql/postgresql/init-data.sql)
@@ -14,7 +14,7 @@
 - [V5__create_ontology_tables.sql](file://sql/postgresql/V5__create_ontology_tables.sql)
 - [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
 - [application.yml](file://graphiti-server/src/main/resources/application.yml)
-</cite>
+</cite>-->
 
 ## 目录
 1. [项目概述](#项目概述)

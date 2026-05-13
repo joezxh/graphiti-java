@@ -1,6 +1,6 @@
-# UI/UX设计
+﻿# UI/UX设计
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [dark.less](file://graphiti-web/src/assets/styles/dark.less)
 - [global.less](file://graphiti-web/src/assets/styles/global.less)
@@ -15,7 +15,7 @@
 - [dashboard/index.vue](file://graphiti-web/src/views/dashboard/index.vue)
 - [App.vue](file://graphiti-web/src/App.vue)
 - [package.json](file://graphiti-web/package.json)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

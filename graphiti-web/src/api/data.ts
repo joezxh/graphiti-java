@@ -1,4 +1,5 @@
 import request from './request'
+import { logApi } from './log'
 
 // 导入任务
 export interface ImportTask {
@@ -224,13 +225,44 @@ export const dataApi = {
 
   /**
    * 获取导入历史
-   * 注意：后端暂无导入历史记录接口，当前返回 Mock 数据
+   * 从操作日志接口获取数据导入相关记录
    */
   async getImportHistory(graphId?: string): Promise<ImportTask[]> {
-    if (graphId) {
-      return mockImportTasks.filter(t => t.graphId === graphId)
+    try {
+      // 查询数据导入相关的操作日志（批量添加数据、添加单条数据等）
+      const importOperations = ['批量添加数据', '添加单条数据', '添加消息', '添加事实三元组', '添加实体节点']
+      const resp = await logApi.getLogs({
+        pageSize: 50,
+        operation: undefined // 不过滤 operation，前端筛选
+      })
+      const logs = resp.list.filter(log => importOperations.includes(log.operation))
+      const tasks: ImportTask[] = logs.map(log => {
+        let parsedParams: any = {}
+        try {
+          parsedParams = JSON.parse(log.params || '{}')
+        } catch { /* ignore */ }
+        const logGraphId = parsedParams.graphId || parsedParams.detail?.graphId || ''
+        const status: ImportTask['status'] = log.status === 1 ? 'completed' : 'failed'
+        return {
+          id: `imp-${log.id}`,
+          graphId: logGraphId,
+          format: inferImportFormat(log.operation),
+          status,
+          totalRows: parsedParams.detail?.itemCount || 0,
+          processedRows: status === 'completed' ? (parsedParams.detail?.itemCount || 1) : 0,
+          errorMessage: log.errorMsg || undefined,
+          createdAt: log.createTime,
+          completedAt: status === 'completed' ? log.createTime : undefined
+        }
+      })
+      if (graphId) {
+        return tasks.filter(t => t.graphId === graphId)
+      }
+      return tasks
+    } catch (err) {
+      console.error('获取导入历史失败', err)
+      return []
     }
-    return [...mockImportTasks]
   },
 
   /**
@@ -309,15 +341,40 @@ export const dataApi = {
   },
 
   /**
-   * 获取导出历史（本地存储）
+   * 获取导出历史
+   * 从操作日志接口获取导出图谱相关记录
    */
   async getExportHistory(_graphId?: string): Promise<ExportTask[]> {
-    const key = 'graphiti_export_history'
     try {
-      const raw = localStorage.getItem(key)
-      const all: ExportTask[] = raw ? JSON.parse(raw) : []
-      return _graphId ? all.filter(t => t.graphId === _graphId) : all
-    } catch {
+      const resp = await logApi.getLogs({
+        pageSize: 50,
+        operation: '导出图谱'
+      })
+      const tasks: ExportTask[] = resp.list.map(log => {
+        let parsedParams: any = {}
+        try {
+          parsedParams = JSON.parse(log.params || '{}')
+        } catch { /* ignore */ }
+        const graphId = parsedParams.graphId || ''
+        const detail = parsedParams.detail || {}
+        const status: ExportTask['status'] = log.status === 1 ? 'completed' : 'failed'
+        return {
+          id: `exp-${log.id}`,
+          graphId,
+          format: 'json' as const,
+          status,
+          fileName: status === 'completed' ? `${graphId}-export.json` : undefined,
+          fileSize: undefined,
+          createdAt: log.createTime,
+          completedAt: status === 'completed' ? log.createTime : undefined
+        }
+      })
+      if (_graphId) {
+        return tasks.filter(t => t.graphId === _graphId)
+      }
+      return tasks
+    } catch (err) {
+      console.error('获取导出历史失败', err)
       return []
     }
   },
@@ -383,6 +440,17 @@ export const dataApi = {
     } catch {
       return []
     }
+  }
+}
+
+/**
+ * 根据操作名称推断导入格式
+ */
+function inferImportFormat(operation: string): ImportTask['format'] {
+  switch (operation) {
+    case '添加事实三元组': return 'triple'
+    case '批量添加数据': return 'json'
+    default: return 'json'
   }
 }
 

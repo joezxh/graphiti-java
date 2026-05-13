@@ -591,26 +591,27 @@ graphiti:
       max-tokens: 2048
       embedding-model: voyage-3-lite
 
+  # 开发模式详细日志
+  autoconfigure:
+    exclude:
+      # 按需排除不需要的自动配置
+
+  # Web 静态资源配置 (开发时 Vite 代理)
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+  mvc:
+    static-path-pattern: /**
+  servlet:
+    # 静态资源映射
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+
 # Neo4j 配置
 neo4j:
   uri: bolt://localhost:7687
   username: neo4j
   password: password123
-
-# ============================================================
-# 【开发环境专用配置】
-# ============================================================
-# 此文件用于本地开发，包含:
-# - 本地数据库连接 (localhost)
-# - 详细日志 (DEBUG)
-# - 开发工具 (Swagger, H2 console 等)
-# ============================================================
-
-spring:
-  # 开发模式详细日志
-  autoconfigure:
-    exclude:
-      # 按需排除不需要的自动配置
 
 # Actuator 开发配置 (允许所有信息)
 management:
@@ -641,17 +642,7 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.boot: DEBUG
 
-# Web 静态资源配置 (开发时 Vite 代理)
-spring:
-  web:
-    resources:
-      static-locations: classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
-  mvc:
-    static-path-pattern: /**
-  servlet:
-    # 静态资源映射
-    resources:
-      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+# Web 静态资源配置已合并到上面的 spring 块中
 
 # 数据源配置
 datasource:

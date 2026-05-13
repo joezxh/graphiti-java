@@ -1,6 +1,6 @@
-# 框架模块 (graphiti-framework)
+﻿# 框架模块 (graphiti-framework)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [graphiti-framework/pom.xml](file://graphiti-framework/pom.xml)
 - [graphiti-common/pom.xml](file://graphiti-common/pom.xml)
@@ -19,7 +19,7 @@
 - [AuthController.java](file://graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java)
 - [AuthServiceImpl.java](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java)
 - [UserMapper.java](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [引言](#引言)

@@ -28,7 +28,7 @@ export interface BackendEdge {
 export interface EChartsNode {
   id: string
   name: string
-  value: string
+  value: string | null
   category: number
   symbolSize: number
   itemStyle: {

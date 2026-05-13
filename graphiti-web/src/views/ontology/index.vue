@@ -82,7 +82,7 @@
               <span class="tree-node">
                 <span>{{ node.title }}</span>
                 <a-space size="small" class="node-actions" @click.stop>
-                  <a-button type="link" size="small" @click="openPropertyModal(null, node)">
+                  <a-button type="link" size="small" @click="openPropertyModal(undefined, node)">
                     <PlusOutlined />
                   </a-button>
                   <a-button type="link" size="small" danger @click="handleDeleteClass(node)">
@@ -114,7 +114,7 @@
           <div class="detail-section">
             <div class="section-header">
               <h4>属性列表</h4>
-              <a-button type="link" size="small" @click="openPropertyModal(null, selectedClass)">
+              <a-button type="link" size="small" @click="openPropertyModal(undefined, selectedClass)">
                 <PlusOutlined /> 添加属性
               </a-button>
             </div>
@@ -397,7 +397,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import { PlusOutlined, DeleteOutlined, ReloadOutlined, ApiOutlined } from '@ant-design/icons-vue'
-import { ontologyApi, type OntologyFullVO, type OntClassVO, type OntPropertyVO, type OntConstraintVO, type OntDefinitionVO } from '@/api/ontology'
+import { ontologyApi, type OntologyFullVO, type OntClassVO, type OntPropertyVO, type OntConstraintVO } from '@/api/ontology'
 import { graphApi, type Graph } from '@/api/graph'
 import VersionHistory from './VersionHistory.vue'
 

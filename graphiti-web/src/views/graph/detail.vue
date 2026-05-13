@@ -126,7 +126,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { ImportOutlined, ExportOutlined, ClusterOutlined } from '@ant-design/icons-vue'
 import ForceGraph from '@/components/Graph/ForceGraph.vue'
@@ -187,8 +187,8 @@ const loadGraphData = async () => {
     // 提取节点类型
     const types = new Set<string>()
     for (const n of (nodesRes || [])) {
-      if (n.type) types.add(n.type)
-      else if (n.label) types.add(n.label)
+      if ((n as any).type) types.add((n as any).type)
+      else if ((n as any).label) types.add((n as any).label)
     }
     nodeTypes.value = Array.from(types)
   } catch (error) {
@@ -303,7 +303,7 @@ const toggleTypeFilter = (type: string) => {
   } else {
     activeFilterType.value = type
     const filteredNodeIds = new Set(
-      allNodes.value.filter(n => (n.type || n.label) === type).map(n => n.id)
+      allNodes.value.filter(n => ((n as any).type || (n as any).label) === type).map(n => n.id)
     )
     nodes.value = allNodes.value.filter(n => filteredNodeIds.has(n.id))
     edges.value = allEdges.value.filter(e => filteredNodeIds.has(e.source as string) && filteredNodeIds.has(e.target as string))

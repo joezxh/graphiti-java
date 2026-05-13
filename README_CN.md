@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README.md">🇺🇸 English</a> •
   <a href="README_CN.md">🇨🇳 中文文档</a> •
-  <a href=".qoder/repowiki/zh/content/快速开始.md">📖 使用手册</a>
+  <a href="docs/manual/快速开始.md">📖 使用手册</a>
 </p>
 
 <p align="center">
@@ -319,6 +319,217 @@ pnpm dev
 
 ---
 
+## Docker 部署
+
+### 使用 Docker Compose 快速启动
+
+使用 Docker Compose 是运行完整 Graphiti-Java 服务栈最简单的方式：
+
+```bash
+# 1. 克隆代码库
+git clone <repository-url>
+cd graphiti-java
+
+# 2. 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件，填入实际配置值（见下方配置说明）
+
+# 3. 启动所有服务
+docker-compose up -d
+
+# 4. 查看日志
+docker-compose logs -f graphiti-java
+
+# 5. 停止服务
+docker-compose down
+```
+
+启动后，可通过以下地址访问服务：
+- **后端 API**: `http://localhost:8080`
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **PostgreSQL**: `localhost:5432`
+- **Redis**: `localhost:6379`
+
+### Docker Compose 服务栈
+
+`docker-compose.yml` 包含以下服务：
+
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| graphiti-java | 8080 | Spring Boot 应用 |
+| postgres | 5432 | PostgreSQL 16（元数据与系统数据） |
+| redis | 6379 | Redis 7（缓存与会话） |
+
+> **注意**: Neo4j 未包含在 docker-compose.yml 中，因为它通常单独部署。请配置 `NEO4J_URI` 环境变量指向您的 Neo4j 实例。
+
+### 环境变量配置
+
+从模板创建 `.env` 文件：
+
+```bash
+cp .env.example .env
+```
+
+需要配置的关键环境变量：
+
+#### 数据库配置
+```bash
+# PostgreSQL
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_secure_password_here
+
+# Neo4j（外部服务）
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_neo4j_password
+```
+
+#### LLM 提供商配置
+```bash
+# 选择 LLM 提供商：openai | qwen | ollama | anthropic | mistral
+GRAPHTI_AI_LLM_PROVIDER=openai
+GRAPHTI_AI_EMBEDDING_PROVIDER=openai
+
+# OpenAI 配置
+SPRING_AI_OPENAI_API_KEY=your_openai_api_key_here
+SPRING_AI_OPENAI_BASE_URL=  # 官方 API 留空，私有化部署填写地址
+
+# Ollama 本地部署（可选）
+# SPRING_AI_OLLAMA_BASE_URL=http://host.docker.internal:11434
+```
+
+#### JWT 安全配置
+```bash
+JWT_SECRET=your_secure_jwt_secret_here_min_512_bits
+JWT_EXPIRATION=86400
+```
+
+#### 日志配置
+```bash
+LOGGING_LEVEL_ROOT=INFO
+LOGGING_LEVEL_COM_GRAPHTI=DEBUG
+```
+
+### 数据库初始化
+
+启动服务后，需要初始化数据库：
+
+```bash
+# PostgreSQL 初始化
+docker exec -i graphiti-postgres psql -U postgres -d graphiti < sql/postgresql/schema.sql
+docker exec -i graphiti-postgres psql -U postgres -d graphiti < sql/postgresql/init-data.sql
+
+# Neo4j 初始化（连接到您的 Neo4j 实例）
+# 执行：sql/neo4j/init.cypher
+```
+
+### 常见问题与故障排查
+
+#### 1. 端口冲突
+
+如果 8080、5432 或 6379 端口已被占用，可在 `docker-compose.yml` 中修改端口映射：
+
+```yaml
+ports:
+  - "8081:8080"  # 将宿主机端口改为 8081
+```
+
+#### 2. Neo4j 连接问题
+
+确保 Neo4j 可从 Docker 容器访问：
+
+- **本地 Neo4j**: 使用 `NEO4J_URI=bolt://host.docker.internal:7687`（Docker Desktop）
+- **远程 Neo4j**: 使用 `NEO4J_URI=bolt://your-neo4j-host:7687`
+
+#### 3. LLM API 连接问题
+
+- 检查 `.env` 中的 API Key 是否正确
+- 私有化部署时，确保 `BASE_URL` 可从容器访问
+- 宿主机上的服务使用 `host.docker.internal` 而非 `localhost`
+
+#### 4. 容器健康检查失败
+
+```bash
+# 查看容器状态
+docker-compose ps
+
+# 查看详细日志
+docker-compose logs graphiti-java
+
+# 重启特定服务
+docker-compose restart graphiti-java
+```
+
+#### 5. 数据库连接被拒绝
+
+PostgreSQL 可能在应用启动时尚未就绪。docker-compose.yml 已包含健康检查，但如果仍有问题：
+
+```bash
+# 等待 PostgreSQL 就绪
+docker-compose up -d postgres
+sleep 10
+docker-compose up -d graphiti-java
+```
+
+#### 6. 数据持久化
+
+数据持久化到 `./data` 目录：
+- `./data/postgres` - PostgreSQL 数据
+- `./data/redis` - Redis 数据
+
+如需重置所有数据：
+```bash
+docker-compose down
+rm -rf ./data
+```
+
+### 生产环境部署
+
+生产环境部署建议：
+
+1. **使用生产环境配置**：
+   ```bash
+   SPRING_PROFILES_ACTIVE=prod docker-compose up -d
+   ```
+
+2. **配置安全的密钥**：
+   - 为 PostgreSQL 和 Neo4j 使用强密码
+   - 设置安全的 JWT secret（至少 512 位）
+   - 切勿将 `.env` 文件提交到版本控制
+
+3. **资源限制**（在 docker-compose.yml 中添加）：
+   ```yaml
+   services:
+     graphiti-java:
+       deploy:
+         resources:
+           limits:
+             memory: 2G
+             cpus: '2.0'
+   ```
+
+4. **使用 Docker secrets** 管理敏感数据，而非环境变量
+
+5. **启用 HTTPS**：使用反向代理（Nginx/Traefik）
+
+### 自定义 Docker 构建
+
+构建自定义 Docker 镜像：
+
+```bash
+# 构建镜像
+docker build -t graphiti-java:latest -f docker/Dockerfile .
+
+# 运行容器
+docker run -d \
+  --name graphiti-java \
+  -p 8080:8080 \
+  --env-file .env \
+  graphiti-java:latest
+```
+
+---
+
 ## 使用示例
 
 ### 创建图谱
@@ -503,7 +714,7 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 
 ### 快速入门
 
-- **[使用手册（快速开始）](.qoder/repowiki/zh/content/快速开始.md)** - 完整的安装和配置指南
+- **[使用手册（快速开始）](docs/manual/快速开始.md)** - 完整的安装和配置指南
 
 ### 设计与架构
 

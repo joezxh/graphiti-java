@@ -1,13 +1,13 @@
-# Redis集成 (graphiti-spring-boot-starter-redis)
+﻿# Redis集成 (graphiti-spring-boot-starter-redis)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [graphiti-spring-boot-starter-redis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml)
 - [pom.xml](file://pom.xml)
 - [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
 - [application.yml](file://graphiti-server/src/main/resources/application.yml)
 - [docker-compose.yml](file://docker-compose.yml)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

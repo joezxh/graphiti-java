@@ -1,6 +1,6 @@
-# 应用启动模块 (graphiti-server)
+﻿# 应用启动模块 (graphiti-server)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [GraphitiApplication.java](file://graphiti-server/src/main/java/com/graphiti/GraphitiApplication.java)
 - [application.yml](file://graphiti-server/src/main/resources/application.yml)
@@ -13,7 +13,7 @@
 - [docker-compose.yml](file://docker-compose.yml)
 - [docker-compose.prod.yml](file://docker-compose.prod.yml)
 - [README.md](file://README.md)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

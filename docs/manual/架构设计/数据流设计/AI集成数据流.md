@@ -1,6 +1,6 @@
-# AI集成数据流
+﻿# AI集成数据流
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [GraphitiAiProperties.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java)
 - [EmbedderService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java)
@@ -17,7 +17,7 @@
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 - [prompt_template_init.sql](file://docs/sql/prompt_template_init.sql)
 - [prompt_template_postgresql_init.sql](file://docs/sql/prompt_template_postgresql_init.sql)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

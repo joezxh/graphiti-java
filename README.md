@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README_CN.md">🇨🇳 中文文档</a> •
   <a href="README.md">🇺🇸 English</a> •
-  <a href=".qoder/repowiki/zh/content/快速开始.md">📖 User Guide</a>
+  <a href="docs/manual/快速开始.md">📖 User Guide</a>
 </p>
 
 <p align="center">
@@ -319,6 +319,217 @@ The frontend will start at `http://localhost:5173`.
 
 ---
 
+## Docker Deployment
+
+### Quick Start with Docker Compose
+
+The easiest way to run the complete Graphiti-Java service stack is using Docker Compose:
+
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd graphiti-java
+
+# 2. Configure environment variables
+cp .env.example .env
+# Edit .env file and fill in your actual values (see Configuration section below)
+
+# 3. Start all services
+docker-compose up -d
+
+# 4. View logs
+docker-compose logs -f graphiti-java
+
+# 5. Stop services
+docker-compose down
+```
+
+After startup, services will be available at:
+- **Backend API**: `http://localhost:8080`
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **PostgreSQL**: `localhost:5432`
+- **Redis**: `localhost:6379`
+
+### Docker Compose Service Stack
+
+The `docker-compose.yml` includes the following services:
+
+| Service | Port | Description |
+|---------|------|-------------|
+| graphiti-java | 8080 | Spring Boot application |
+| postgres | 5432 | PostgreSQL 16 (metadata & system data) |
+| redis | 6379 | Redis 7 (cache & session) |
+
+> **Note**: Neo4j is not included in docker-compose.yml as it's typically deployed separately. Configure the `NEO4J_URI` environment variable to point to your Neo4j instance.
+
+### Environment Variables Configuration
+
+Create a `.env` file from the template:
+
+```bash
+cp .env.example .env
+```
+
+Key environment variables to configure:
+
+#### Database Configuration
+```bash
+# PostgreSQL
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_secure_password_here
+
+# Neo4j (external service)
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_neo4j_password
+```
+
+#### LLM Provider Configuration
+```bash
+# Select LLM provider: openai | qwen | ollama | anthropic | mistral
+GRAPHTI_AI_LLM_PROVIDER=openai
+GRAPHTI_AI_EMBEDDING_PROVIDER=openai
+
+# OpenAI configuration
+SPRING_AI_OPENAI_API_KEY=your_openai_api_key_here
+SPRING_AI_OPENAI_BASE_URL=  # Leave empty for official API, or set for private deployment
+
+# Ollama local deployment (optional)
+# SPRING_AI_OLLAMA_BASE_URL=http://host.docker.internal:11434
+```
+
+#### JWT Security
+```bash
+JWT_SECRET=your_secure_jwt_secret_here_min_512_bits
+JWT_EXPIRATION=86400
+```
+
+#### Logging
+```bash
+LOGGING_LEVEL_ROOT=INFO
+LOGGING_LEVEL_COM_GRAPHTI=DEBUG
+```
+
+### Database Initialization
+
+After starting the services, initialize the databases:
+
+```bash
+# PostgreSQL initialization
+docker exec -i graphiti-postgres psql -U postgres -d graphiti < sql/postgresql/schema.sql
+docker exec -i graphiti-postgres psql -U postgres -d graphiti < sql/postgresql/init-data.sql
+
+# Neo4j initialization (connect to your Neo4j instance)
+# Execute: sql/neo4j/init.cypher
+```
+
+### Common Issues & Troubleshooting
+
+#### 1. Port Conflicts
+
+If ports 8080, 5432, or 6379 are already in use, modify the port mappings in `docker-compose.yml`:
+
+```yaml
+ports:
+  - "8081:8080"  # Change host port to 8081
+```
+
+#### 2. Neo4j Connection Issues
+
+Ensure Neo4j is accessible from the Docker container:
+
+- **Local Neo4j**: Use `NEO4J_URI=bolt://host.docker.internal:7687` (Docker Desktop)
+- **Remote Neo4j**: Use `NEO4J_URI=bolt://your-neo4j-host:7687`
+
+#### 3. LLM API Connection Issues
+
+- Check that your API key is correct in `.env`
+- For private deployments, ensure the `BASE_URL` is accessible from the container
+- Use `host.docker.internal` instead of `localhost` for services on the host machine
+
+#### 4. Container Health Check Failures
+
+```bash
+# Check container status
+docker-compose ps
+
+# View detailed logs
+docker-compose logs graphiti-java
+
+# Restart specific service
+docker-compose restart graphiti-java
+```
+
+#### 5. Database Connection Refused
+
+PostgreSQL may not be ready when the application starts. The docker-compose.yml includes health checks, but if issues persist:
+
+```bash
+# Wait for PostgreSQL to be ready
+docker-compose up -d postgres
+sleep 10
+docker-compose up -d graphiti-java
+```
+
+#### 6. Data Persistence
+
+Data is persisted to the `./data` directory:
+- `./data/postgres` - PostgreSQL data
+- `./data/redis` - Redis data
+
+To reset all data:
+```bash
+docker-compose down
+rm -rf ./data
+```
+
+### Production Deployment
+
+For production environments:
+
+1. **Use production profile**:
+   ```bash
+   SPRING_PROFILES_ACTIVE=prod docker-compose up -d
+   ```
+
+2. **Configure proper secrets**:
+   - Use strong passwords for PostgreSQL and Neo4j
+   - Set a secure JWT secret (minimum 512 bits)
+   - Never commit `.env` file to version control
+
+3. **Resource limits** (add to docker-compose.yml):
+   ```yaml
+   services:
+     graphiti-java:
+       deploy:
+         resources:
+           limits:
+             memory: 2G
+             cpus: '2.0'
+   ```
+
+4. **Use Docker secrets** for sensitive data instead of environment variables
+
+5. **Enable HTTPS** with a reverse proxy (Nginx/Traefik)
+
+### Custom Docker Build
+
+To build a custom Docker image:
+
+```bash
+# Build image
+docker build -t graphiti-java:latest -f docker/Dockerfile .
+
+# Run container
+docker run -d \
+  --name graphiti-java \
+  -p 8080:8080 \
+  --env-file .env \
+  graphiti-java:latest
+```
+
+---
+
 ## Usage Examples
 
 ### Create a Graph
@@ -503,7 +714,7 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 
 ### Quick Start Guide
 
-- **[User Guide (Quick Start)](.qoder/repowiki/zh/content/快速开始.md)** - Complete installation and setup guide
+- **[User Guide (Quick Start)](docs/manual/快速开始.md)** - Complete installation and setup guide
 
 ### Design & Architecture
 

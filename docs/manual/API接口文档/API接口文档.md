@@ -1,6 +1,6 @@
-# API接口文档
+﻿# API接口文档
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [SwaggerConfig.java](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java)
 - [AuthController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
@@ -20,7 +20,7 @@
 - [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
 - [ResultCode.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
 - [README.md](file://README.md)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

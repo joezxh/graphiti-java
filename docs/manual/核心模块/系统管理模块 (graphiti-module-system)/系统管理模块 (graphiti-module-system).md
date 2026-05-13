@@ -1,6 +1,6 @@
-# 系统管理模块 (graphiti-module-system)
+﻿# 系统管理模块 (graphiti-module-system)
 
-<cite>
+<!--<cite>
 **本文档引用的文件**
 - [UserController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java)
 - [RoleController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java)
@@ -27,7 +27,7 @@
 - [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
 - [schema.sql](file://sql/mysql/schema.sql)
 - [init-data.sql](file://sql/mysql/init-data.sql)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

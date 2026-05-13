@@ -579,10 +579,10 @@ import {
   InboxOutlined,
   RobotOutlined
 } from '@ant-design/icons-vue'
-import { graphApi, getGraphStats } from '@/api/graph'
+import { graphApi } from '@/api/graph'
 import { nodeApi } from '@/api/node'
 import { edgeApi } from '@/api/edge'
-import { searchApi } from '@/api/search'
+// import { searchApi } from '@/api/search' // 未使用
 import request from '@/api/request'
 import { LEGAL_ENTITIES, LEGAL_EDGES, LEGAL_GRAPH_ID } from '@/api/legal-kg-data'
 import {
@@ -870,7 +870,7 @@ async function confirmImport() {
     // 设置本体
     if (importWithOntology.value) {
       try {
-        await ontologyApi.set(currentGraphId.value, {
+        await graphApi.setOntology(currentGraphId.value, {
           entities: JSON.stringify(LEGAL_ENTITIES),
           edges: JSON.stringify(LEGAL_EDGES)
         })
@@ -1089,7 +1089,7 @@ function getEdgeColor(type: string) {
 async function loadOntologyFields() {
   try {
     const resp = await getOntologyFields()
-    ontologyFields.value = resp as OntologyFieldsResp
+    ontologyFields.value = resp
   } catch (e) {
     console.error('加载本体字段失败', e)
     message.error('加载本体字段定义失败')
@@ -1102,7 +1102,7 @@ async function handleExtractFileUpload(file: File) {
 
   try {
     const resp = await previewJsonFile(file)
-    jsonPreview.value = resp as JsonPreviewResp
+    jsonPreview.value = resp
     fieldMappings.value = {}
     extractResult.value = null
 

@@ -1,6 +1,6 @@
-# 框架模块 (graphiti-framework)
+﻿# 框架模块 (graphiti-framework)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [graphiti-framework/pom.xml](file://graphiti-framework/pom.xml)
 - [graphiti-common/CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java)
@@ -14,7 +14,7 @@
 - [graphiti-mybatis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml)
 - [graphiti-redis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml)
 - [system/AuthController.java](file://graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

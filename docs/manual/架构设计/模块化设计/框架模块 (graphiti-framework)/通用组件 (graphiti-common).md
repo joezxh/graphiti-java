@@ -1,6 +1,6 @@
-# 通用组件 (graphiti-common)
+﻿# 通用组件 (graphiti-common)
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
 - [ResultCode.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
@@ -11,7 +11,7 @@
 - [CustomInstructionController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java)
 - [DataImportServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java)
 - [UserContext.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

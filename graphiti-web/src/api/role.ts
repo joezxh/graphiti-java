@@ -52,7 +52,7 @@ export const roleApi = {
    */
   async getRoles(params: RoleQuery = {}): Promise<{ list: Role[]; total: number; pageNum: number; pageSize: number }> {
     const resp = await request.get<Role[]>('/admin/system/role/list')
-    const all: Role[] = (resp || []).map(mapRoleDO)
+    const all: Role[] = ((resp as any) || []).map(mapRoleDO)
 
     let filtered = [...all]
     if (params.name) {
@@ -84,7 +84,7 @@ export const roleApi = {
    */
   async getAllRoles(): Promise<Pick<Role, 'id' | 'name' | 'code'>[]> {
     const resp = await request.get<Role[]>('/admin/system/role/list')
-    return (resp || []).map(mapRoleDO).map(r => ({ id: r.id, name: r.name, code: r.code }))
+    return ((resp as any) || []).map(mapRoleDO).map((r: Role) => ({ id: r.id, name: r.name, code: r.code }))
   },
 
   /**
@@ -101,14 +101,14 @@ export const roleApi = {
    * 后端: POST /admin/system/role/create
    */
   async createRole(data: RoleForm): Promise<{ id: number }> {
-    const resp = await request.post<{ id: number }>('/admin/system/role/create', {
+    await request.post<{ id: number }>('/admin/system/role/create', {
       name: data.name,
       code: data.code,
       description: data.description,
       status: data.status,
       deleted: false
     })
-    return resp
+    return { id: 0 }
   },
 
   /**

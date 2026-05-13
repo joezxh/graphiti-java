@@ -19,7 +19,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       # Profile 激活
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
@@ -71,10 +71,13 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_DB=graphiti
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       # 持久化数据到宿主机
       - ./data/postgres:/var/lib/postgresql/data
+      # 初始化脚本（仅在首次创建数据库时执行）
+      - ./sql/postgresql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./sql/postgresql/init-data.sql:/docker-entrypoint-initdb.d/02-init-data.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d graphiti"]
       interval: 10s
@@ -91,7 +94,7 @@ services:
     image: redis:7-alpine
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       # 持久化数据到宿主机
       - ./data/redis:/data

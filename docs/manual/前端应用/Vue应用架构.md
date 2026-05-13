@@ -1,6 +1,6 @@
-# Vue应用架构
+﻿# Vue应用架构
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [package.json](file://graphiti-web/package.json)
 - [vite.config.ts](file://graphiti-web/vite.config.ts)
@@ -16,7 +16,7 @@
 - [api/request.ts](file://graphiti-web/src/api/request.ts)
 - [components/Layout/BasicLayout.vue](file://graphiti-web/src/components/Layout/BasicLayout.vue)
 - [views/dashboard/index.vue](file://graphiti-web/src/views/dashboard/index.vue)
-</cite>
+</cite>-->
 
 ## 目录
 1. [引言](#引言)

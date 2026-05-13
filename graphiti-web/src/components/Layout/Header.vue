@@ -52,7 +52,7 @@ import { notificationApi } from '@/api/notification'
 
 const router = useRouter()
 const userStore = useUserStore()
-const isDevView = ref(false)
+// const isDevView = ref(false) // 视图切换功能已禁用
 const unreadCount = ref(0)
 
 const userNickInitial = computed(() => {
@@ -86,6 +86,7 @@ const goHome = () => {
   router.push('/dashboard')
 }
 
+/* 视图切换功能已禁用
 const handleViewSwitch = async (checked: boolean) => {
   isDevView.value = checked
   try {
@@ -98,6 +99,7 @@ const handleViewSwitch = async (checked: boolean) => {
     isDevView.value = !checked // 回滚状态
   }
 }
+*/
 
 const handleUserMenuClick = async ({ key }: { key: string }) => {
   if (key === 'logout') {

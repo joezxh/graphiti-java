@@ -104,7 +104,7 @@ const loadGraphs = async () => {
 
 const loadHistory = async () => {
   try {
-    exportHistory.value = await dataApi.getExportHistory()
+    exportHistory.value = await dataApi.getExportHistory(form.graphId || undefined)
   } catch (err) {
     console.error('加载导出历史失败', err)
   }
@@ -120,11 +120,12 @@ const executeExport = async () => {
     } else {
       message.info('导出任务已提交')
     }
-    loadHistory()
   } catch (err: any) {
     message.error(err.message || '导出失败')
   } finally {
     exporting.value = false
+    // 无论成功或失败，都刷新历史记录（操作日志已记录）
+    await loadHistory()
   }
 }
 

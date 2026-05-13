@@ -1,6 +1,6 @@
-# 边CRUD操作
+﻿# 边CRUD操作
 
-<cite>
+<!--<cite>
 **本文引用的文件**
 - [EdgeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
 - [EdgeService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java)
@@ -12,7 +12,7 @@
 - [Neo4jDriverAdapter.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java)
 - [OntologyValidationServiceImpl.java](file://docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)
 - [EdgeServiceImplTest.java](file://graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java)
-</cite>
+</cite>-->
 
 ## 目录
 1. [简介](#简介)

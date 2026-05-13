@@ -4,7 +4,7 @@
  */
 
 import request from '@/api/request'
-import type { AxiosPromise } from 'axios'
+// import type { AxiosPromise } from 'axios' // 未使用
 
 const BASE_URL = '/api/v1/graph/legal/extract'
 
@@ -142,10 +142,10 @@ export interface OntologyFieldsResp {
  * 预览 JSON 文件字段结构
  * POST /api/v1/graph/legal/extract/preview
  */
-export function previewJsonFile(file: File): AxiosPromise<JsonPreviewResp> {
+export async function previewJsonFile(file: File): Promise<JsonPreviewResp> {
   const formData = new FormData()
   formData.append('file', file)
-  return request.post(`${BASE_URL}/preview`, formData, {
+  return request.post<JsonPreviewResp>(`${BASE_URL}/preview`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
@@ -154,16 +154,16 @@ export function previewJsonFile(file: File): AxiosPromise<JsonPreviewResp> {
  * 提取法律知识图谱（仅提取，不保存）
  * POST /api/v1/graph/legal/extract
  */
-export function extractLegalKG(
+export async function extractLegalKG(
   file: File,
   graphId: string,
   fieldMapping: Record<string, string>
-): AxiosPromise<LegalExtractResultVO> {
+): Promise<LegalExtractResultVO> {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('graphId', graphId)
   formData.append('fieldMapping', JSON.stringify(fieldMapping))
-  return request.post(BASE_URL, formData, {
+  return request.post<LegalExtractResultVO>(BASE_URL, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
@@ -172,16 +172,16 @@ export function extractLegalKG(
  * 提取并保存法律知识图谱
  * POST /api/v1/graph/legal/extract/save
  */
-export function extractAndSaveLegalKG(
+export async function extractAndSaveLegalKG(
   file: File,
   graphId: string,
   fieldMapping: Record<string, string>
-): AxiosPromise<LegalExtractResultVO> {
+): Promise<LegalExtractResultVO> {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('graphId', graphId)
   formData.append('fieldMapping', JSON.stringify(fieldMapping))
-  return request.post(`${BASE_URL}/save`, formData, {
+  return request.post<LegalExtractResultVO>(`${BASE_URL}/save`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
@@ -190,6 +190,6 @@ export function extractAndSaveLegalKG(
  * 获取本体字段列表
  * GET /api/v1/graph/legal/extract/ontology-fields
  */
-export function getOntologyFields(): AxiosPromise<OntologyFieldsResp> {
-  return request.get(`${BASE_URL}/ontology-fields`)
+export async function getOntologyFields(): Promise<OntologyFieldsResp> {
+  return request.get<OntologyFieldsResp>(`${BASE_URL}/ontology-fields`)
 }

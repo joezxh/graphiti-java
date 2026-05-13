@@ -159,7 +159,7 @@ const loadGraphs = async () => {
 
 const loadHistory = async () => {
   try {
-    importHistory.value = await dataApi.getImportHistory()
+    importHistory.value = await dataApi.getImportHistory(form.graphId || undefined)
   } catch (err) {
     console.error('加载导入历史失败', err)
   }
@@ -207,11 +207,12 @@ const executeImport = async () => {
     }
     form.data = ''
     uploadedFileName.value = ''
-    loadHistory()
   } catch (err: any) {
     message.error(err.message || '导入失败')
   } finally {
     importLoading.value = false
+    // 无论成功或失败，都刷新历史记录（操作日志已记录）
+    await loadHistory()
   }
 }
 

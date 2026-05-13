@@ -7,6 +7,16 @@ const service: AxiosInstance = axios.create({
   timeout: 10000 // 默认 10 秒超时，数据导入时可覆盖为 60 秒
 })
 
+// 扩展 AxiosInstance 类型，使返回值为解包后的 data
+interface ExtendedAxiosInstance extends AxiosInstance {
+  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>
+  delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
+}
+
+const request = service as ExtendedAxiosInstance
+
 // 是否正在刷新 token
 let isRefreshing = false
 // 刷新 token 的等待队列
@@ -134,4 +144,4 @@ async function handleTokenRefresh(config: AxiosRequestConfig, retryCount: number
   }
 }
 
-export default service
+export default request

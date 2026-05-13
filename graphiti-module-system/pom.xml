@@ -14,19 +14,10 @@
     <description>系统模块：用户认证、权限管理</description>
     
     <dependencies>
+        <!-- 统一框架模块 -->
         <dependency>
             <groupId>com.graphiti</groupId>
-            <artifactId>graphiti-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.graphiti</groupId>
-            <artifactId>graphiti-spring-boot-starter-security</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.graphiti</groupId>
-            <artifactId>graphiti-spring-boot-starter-mybatis</artifactId>
+            <artifactId>graphiti-framework</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
