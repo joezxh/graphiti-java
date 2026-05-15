@@ -26,7 +26,7 @@
         </template>
         <template v-if="column.key === 'action'">
           <a-space>
-            <a-button type="link" size="small" @click="showDetail(record)">详情</a-button>
+            <a-button type="link" size="small" @click="showDetail(record)">{{ $t('ontology.detail') }}</a-button>
           </a-space>
         </template>
       </template>
@@ -35,27 +35,27 @@
     <!-- 详情模态框 -->
     <a-modal
       v-model:open="detailVisible"
-      title="变更详情"
+      :title="$t('ontology.versionDetail')"
       width="800px"
       :footer="null"
     >
       <a-descriptions v-if="currentRecord" :column="1" bordered size="small">
-        <a-descriptions-item label="版本">{{ currentRecord.version }}</a-descriptions-item>
-        <a-descriptions-item label="变更类型">
+        <a-descriptions-item :label="$t('ontology.version')">{{ currentRecord.version }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('ontology.changeType')">
           <a-tag :color="getChangeTypeColor(currentRecord.changeType)">
             {{ getChangeTypeLabel(currentRecord.changeType) }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="实体类型">{{ currentRecord.entityType }}</a-descriptions-item>
-        <a-descriptions-item label="变更摘要">{{ currentRecord.diffSummary }}</a-descriptions-item>
-        <a-descriptions-item label="变更人">{{ currentRecord.changedBy || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="变更时间">{{ formatDate(currentRecord.changedAt) }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('ontology.entityType')">{{ currentRecord.entityType }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('ontology.changeSummary')">{{ currentRecord.diffSummary }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('ontology.changedBy')">{{ currentRecord.changedBy || '-' }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('ontology.changedAt')">{{ formatDate(currentRecord.changedAt) }}</a-descriptions-item>
       </a-descriptions>
 
-      <a-divider>变更前</a-divider>
+      <a-divider>{{ $t('ontology.beforeChange') }}</a-divider>
       <pre class="json-view">{{ formatJson(currentRecord?.beforeState) }}</pre>
 
-      <a-divider>变更后</a-divider>
+      <a-divider>{{ $t('ontology.afterChange') }}</a-divider>
       <pre class="json-view">{{ formatJson(currentRecord?.afterState) }}</pre>
     </a-modal>
   </div>
@@ -63,7 +63,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ontologyApi, type OntVersionHistoryVO } from '@/api/ontology'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   graphId: string | undefined
@@ -75,13 +78,13 @@ const detailVisible = ref(false)
 const currentRecord = ref<OntVersionHistoryVO | null>(null)
 
 const columns = [
-  { title: '版本', dataIndex: 'version', key: 'version', width: 100 },
-  { title: '变更类型', key: 'changeType', width: 120 },
-  { title: '实体类型', key: 'entityType', width: 100 },
-  { title: '变更摘要', dataIndex: 'diffSummary', key: 'diffSummary', ellipsis: true },
-  { title: '变更人', dataIndex: 'changedBy', key: 'changedBy', width: 100 },
-  { title: '时间', key: 'changedAt', width: 180 },
-  { title: '操作', key: 'action', width: 80 }
+  { title: t('ontology.version'), dataIndex: 'version', key: 'version', width: 100 },
+  { title: t('ontology.changeType'), key: 'changeType', width: 120 },
+  { title: t('ontology.entityType'), key: 'entityType', width: 100 },
+  { title: t('ontology.changeSummary'), dataIndex: 'diffSummary', key: 'diffSummary', ellipsis: true },
+  { title: t('ontology.changedBy'), dataIndex: 'changedBy', key: 'changedBy', width: 100 },
+  { title: t('ontology.time'), key: 'changedAt', width: 180 },
+  { title: t('ontology.action'), key: 'action', width: 80 }
 ]
 
 async function loadHistory() {
@@ -91,7 +94,7 @@ async function loadHistory() {
   try {
     historyList.value = await ontologyApi.getVersionHistory(props.graphId)
   } catch (err) {
-    console.error('加载版本历史失败', err)
+    console.error(t('ontology.loadFailed'), err)
     historyList.value = []
   } finally {
     loading.value = false
@@ -121,16 +124,16 @@ function getChangeTypeColor(type: string) {
 
 function getChangeTypeLabel(type: string) {
   switch (type) {
-    case 'CLASS_ADDED': return '新增类'
-    case 'CLASS_MODIFIED': return '修改类'
-    case 'CLASS_DELETED': return '删除类'
-    case 'PROPERTY_ADDED': return '新增属性'
-    case 'PROPERTY_MODIFIED': return '修改属性'
-    case 'PROPERTY_DELETED': return '删除属性'
-    case 'CONSTRAINT_ADDED': return '新增约束'
-    case 'CONSTRAINT_MODIFIED': return '修改约束'
-    case 'CONSTRAINT_DELETED': return '删除约束'
-    case 'DEFINITION_CREATED': return '创建本体'
+    case 'CLASS_ADDED': return t('ontology.classAdded')
+    case 'CLASS_MODIFIED': return t('ontology.classModified')
+    case 'CLASS_DELETED': return t('ontology.classDeleted')
+    case 'PROPERTY_ADDED': return t('ontology.propertyAdded')
+    case 'PROPERTY_MODIFIED': return t('ontology.propertyModified')
+    case 'PROPERTY_DELETED': return t('ontology.propertyDeleted')
+    case 'CONSTRAINT_ADDED': return t('ontology.constraintAdded')
+    case 'CONSTRAINT_MODIFIED': return t('ontology.constraintModified')
+    case 'CONSTRAINT_DELETED': return t('ontology.constraintDeleted')
+    case 'DEFINITION_CREATED': return t('ontology.definitionCreated')
     default: return type
   }
 }
@@ -150,7 +153,7 @@ function formatDate(date: string | undefined) {
 }
 
 function formatJson(str: string | undefined) {
-  if (!str) return '（无）'
+  if (!str) return t('ontology.noData')
   try {
     return JSON.stringify(JSON.parse(str), null, 2)
   } catch {

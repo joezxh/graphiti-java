@@ -1,8 +1,8 @@
 <template>
   <div class="temporal-page">
     <div class="page-header">
-      <h1 class="page-title">时序历史</h1>
-      <p class="page-desc">查看图谱在不同时间点的状态与事实</p>
+      <h1 class="page-title">{{ $t('temporal.title') }}</h1>
+      <p class="page-desc">{{ $t('temporal.titleDesc') }}</p>
     </div>
 
     <a-card class="filter-card">
@@ -10,7 +10,7 @@
         <a-col :span="6">
           <a-select
             v-model:value="selectedGraphId"
-            placeholder="选择图谱"
+            :placeholder="$t('temporal.selectGraph')"
             style="width: 100%"
             allow-clear
             @change="onGraphChange"
@@ -22,9 +22,9 @@
         </a-col>
         <a-col :span="4">
           <a-select v-model:value="viewMode" style="width: 100%">
-            <a-select-option value="current">当前事实</a-select-option>
-            <a-select-option value="time">指定时间</a-select-option>
-            <a-select-option value="history">实体历史</a-select-option>
+            <a-select-option value="current">{{ $t('temporal.currentFacts') }}</a-select-option>
+            <a-select-option value="time">{{ $t('temporal.timeFacts') }}</a-select-option>
+            <a-select-option value="history">{{ $t('temporal.entityHistory') }}</a-select-option>
           </a-select>
         </a-col>
         <a-col v-if="viewMode === 'time'" :span="8">
@@ -32,7 +32,7 @@
             v-model:value="selectedTime"
             show-time
             format="YYYY-MM-DD HH:mm:ss"
-            placeholder="选择时间点"
+            :placeholder="$t('temporal.selectTime')"
             style="width: 100%"
             @change="loadFactsAtTime"
           />
@@ -40,13 +40,13 @@
         <a-col v-if="viewMode === 'history'" :span="6">
           <a-input-search
             v-model:value="historyEntityName"
-            placeholder="输入实体名称"
+            :placeholder="$t('temporal.enterEntity')"
             @search="loadEntityHistory"
           />
         </a-col>
         <a-col :span="4">
           <a-button @click="refresh" :loading="loading">
-            <ReloadOutlined /> 刷新
+            <ReloadOutlined /> {{ $t('common.refresh') }}
           </a-button>
         </a-col>
       </a-row>
@@ -56,7 +56,7 @@
     <div v-if="viewMode === 'current'">
       <a-row :gutter="16" class="result-area">
         <a-col :span="12">
-          <a-card title="当前有效的边" class="result-card">
+          <a-card :title="$t('temporal.currentEdges')" class="result-card">
             <a-table
               :columns="factColumns"
               :data-source="currentFacts"
@@ -83,8 +83,8 @@
           </a-card>
         </a-col>
         <a-col :span="12">
-          <a-card title="图谱时间轴" class="timeline-card">
-            <a-empty v-if="!timelineEvents.length" description="暂无时间事件" />
+          <a-card :title="$t('temporal.events')" class="timeline-card">
+            <a-empty v-if="!timelineEvents.length" :description="$t('common.noData')" />
             <a-timeline v-else>
               <a-timeline-item
                 v-for="event in timelineEvents"
@@ -106,7 +106,7 @@
     <div v-if="viewMode === 'time'">
       <a-row :gutter="16" class="result-area">
         <a-col :span="16">
-          <a-card title="该时间点的事实" class="result-card">
+          <a-card :title="$t('temporal.timeFacts')" class="result-card">
             <a-table
               :columns="factColumns"
               :data-source="factsAtTime"
@@ -133,9 +133,9 @@
           </a-card>
         </a-col>
         <a-col :span="8">
-          <a-card title="时间点" class="time-card">
+          <a-card :title="$t('temporal.selectTime')" class="time-card">
             <div class="time-display">
-              <div class="time-label">查询时间</div>
+              <div class="time-label">{{ $t('temporal.selectTime') }}</div>
               <div class="time-value">{{ selectedTime ? formatDate(selectedTime.valueOf()) : '-' }}</div>
             </div>
           </a-card>
@@ -145,7 +145,7 @@
 
     <!-- 实体历史视图 -->
     <div v-if="viewMode === 'history'">
-      <a-card title="实体版本历史" class="result-card">
+      <a-card :title="$t('temporal.entityHistory')" class="result-card">
         <a-table
           :columns="historyColumns"
           :data-source="entityHistory"
@@ -172,11 +172,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import { graphApi } from '@/api/graph'
 import { temporalApi, type TemporalFact, type EntityHistoryItem } from '@/api/temporal'
+
+const { t } = useI18n()
 
 const graphOptions = ref<any[]>([])
 const selectedGraphId = ref<string | undefined>(undefined)
@@ -191,25 +194,25 @@ const entityHistory = ref<EntityHistoryItem[]>([])
 
 const timelineEvents = reactive<Array<{ time: string; desc: string; type: 'valid' | 'invalid' }>>([])
 
-const factColumns = [
-  { title: '源节点', key: 'source', width: 150, ellipsis: true },
-  { title: '关系/事实', key: 'fact', ellipsis: true },
-  { title: '目标节点', key: 'target', width: 150, ellipsis: true },
-  { title: '有效期', key: 'validAt', width: 200 }
-]
+const factColumns = computed(() => [
+  { title: t('temporal.sourceNode'), key: 'source', width: 150, ellipsis: true },
+  { title: t('temporal.relationFact'), key: 'fact', ellipsis: true },
+  { title: t('temporal.targetNode'), key: 'target', width: 150, ellipsis: true },
+  { title: t('temporal.validPeriod'), key: 'validAt', width: 200 }
+])
 
-const historyColumns = [
-  { title: '名称', key: 'name' },
-  { title: '类型', key: 'type', width: 120 },
-  { title: '有效期', key: 'validPeriod', width: 220 },
-  { title: '创建时间', key: 'createdAt', width: 180 }
-]
+const historyColumns = computed(() => [
+  { title: t('temporal.entityName'), key: 'name' },
+  { title: t('temporal.entityType'), key: 'type', width: 120 },
+  { title: t('temporal.validPeriod'), key: 'validPeriod', width: 220 },
+  { title: t('temporal.createdAt'), key: 'createdAt', width: 180 }
+])
 
 const loadGraphs = async () => {
   try {
     graphOptions.value = await graphApi.getList()
   } catch (err) {
-    console.error('加载图谱列表失败', err)
+    console.error(t('temporal.loadingFailed'), err)
   }
 }
 
@@ -220,7 +223,7 @@ const loadCurrentFacts = async () => {
     currentFacts.value = await temporalApi.getCurrentFacts(selectedGraphId.value)
     buildTimeline(currentFacts.value)
   } catch (err: any) {
-    message.error(err.message || '加载失败')
+    message.error(err.message || t('temporal.loadingFailed'))
   } finally {
     loading.value = false
   }
@@ -233,7 +236,7 @@ const loadFactsAtTime = async () => {
     const ts = selectedTime.value.valueOf()
     factsAtTime.value = await temporalApi.getFactsAt(selectedGraphId.value, ts)
   } catch (err: any) {
-    message.error(err.message || '加载失败')
+    message.error(err.message || t('temporal.loadingFailed'))
   } finally {
     loading.value = false
   }
@@ -248,7 +251,7 @@ const loadEntityHistory = async () => {
       historyEntityName.value.trim()
     )
   } catch (err: any) {
-    message.error(err.message || '加载失败')
+    message.error(err.message || t('temporal.loadingFailed'))
   } finally {
     loading.value = false
   }
@@ -258,8 +261,8 @@ const buildTimeline = (facts: TemporalFact[]) => {
   timelineEvents.length = 0
   const events = new Set<string>()
   for (const f of facts) {
-    if (f.validAt) events.add(`valid|${f.validAt}|${f.edge?.fact || '事实生效'}`)
-    if (f.invalidAt) events.add(`invalid|${f.invalidAt}|${f.edge?.fact || '事实失效'}`)
+    if (f.validAt) events.add(`valid|${f.validAt}|${f.edge?.fact || t('temporal.factValid')}`)
+    if (f.invalidAt) events.add(`invalid|${f.invalidAt}|${f.edge?.fact || t('temporal.factInvalid')}`)
   }
   for (const e of Array.from(events).sort()) {
     const [type, time, desc] = e.split('|')

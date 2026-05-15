@@ -3,25 +3,25 @@
     <!-- 页面标题 -->
     <div class="page-header">
       <div class="header-left">
-        <h2 class="page-title">图谱管理</h2>
-        <span class="page-description">管理和查看所有知识图谱</span>
+        <h2 class="page-title">{{ $t('graph.management') }}</h2>
+        <span class="page-description">{{ $t('graph.managementDesc') }}</span>
       </div>
       <a-button type="primary" @click="showCreateModal">
         <template #icon><PlusOutlined /></template>
-        新建图谱
+        {{ $t('graph.createGraph') }}
       </a-button>
     </div>
-    
+
     <!-- 搜索筛选 -->
     <div class="filter-section">
       <a-input-search
         v-model:value="searchText"
-        placeholder="搜索图谱名称..."
+        :placeholder="$t('graph.searchPlaceholder')"
         style="width: 300px;"
         @search="handleSearch"
       />
     </div>
-    
+
     <!-- 图谱表格 -->
     <div class="table-section">
       <a-table
@@ -35,39 +35,39 @@
           <template v-if="column.key === 'name'">
             <a @click="viewGraphDetail(record)">{{ record.name }}</a>
           </template>
-          
+
           <template v-if="column.key === 'nodeCount'">
             <a-tag color="blue">{{ record.nodeCount || 0 }}</a-tag>
           </template>
-          
+
           <template v-if="column.key === 'edgeCount'">
             <a-tag color="green">{{ record.edgeCount || 0 }}</a-tag>
           </template>
-          
+
           <template v-if="column.key === 'createdAt'">
             {{ formatDate(record.createdAt) }}
           </template>
-          
+
           <template v-if="column.key === 'action'">
             <a-space>
-              <a @click="viewGraphDetail(record)">查看</a>
+              <a @click="viewGraphDetail(record)">{{ $t('common.view') }}</a>
               <a-divider type="vertical" />
-              <a @click="editGraph(record)">编辑</a>
+              <a @click="editGraph(record)">{{ $t('common.edit') }}</a>
               <a-divider type="vertical" />
               <a-popconfirm
-                title="确定要删除此图谱吗？"
-                ok-text="确定"
-                cancel-text="取消"
+                :title="$t('graph.confirmDelete')"
+                :ok-text="$t('common.confirm')"
+                :cancel-text="$t('common.cancel')"
                 @confirm="deleteGraph(record.graphId)"
               >
-                <a class="danger-link">删除</a>
+                <a class="danger-link">{{ $t('common.delete') }}</a>
               </a-popconfirm>
             </a-space>
           </template>
         </template>
       </a-table>
     </div>
-    
+
     <!-- 创建/编辑模态框 -->
     <a-modal
       v-model:open="modalVisible"
@@ -81,14 +81,14 @@
         :rules="formRules"
         layout="vertical"
       >
-        <a-form-item label="图谱名称" name="name">
-          <a-input v-model:value="formState.name" placeholder="请输入图谱名称" />
+        <a-form-item :label="$t('graph.graphName')" name="name">
+          <a-input v-model:value="formState.name" :placeholder="$t('graph.enterGraphName')" />
         </a-form-item>
-        
-        <a-form-item label="图谱描述" name="description">
+
+        <a-form-item :label="$t('graph.graphDesc')" name="description">
           <a-textarea
             v-model:value="formState.description"
-            placeholder="请输入图谱描述"
+            :placeholder="$t('graph.enterGraphName')"
             :rows="4"
           />
         </a-form-item>
@@ -111,7 +111,7 @@ const loading = ref(false)
 const searchText = ref('')
 const graphs = ref<Graph[]>([])
 const modalVisible = ref(false)
-const modalTitle = ref('新建图谱')
+const modalTitle = ref('graph.newGraph')
 const isEdit = ref(false)
 const editingId = ref<string | null>(null)
 const formRef = ref()
@@ -124,45 +124,45 @@ const formState = reactive({
 
 const formRules = {
   name: [
-    { required: true, message: '请输入图谱名称' },
-    { min: 2, max: 50, message: '图谱名称长度为 2-50 个字符' }
+    { required: true, message: 'graph.enterGraphName' },
+    { min: 2, max: 50, message: 'graph.graphNameLength' }
   ]
 }
 
 // 表格列定义
 const columns = [
   {
-    title: '图谱名称',
+    title: 'graph.graphName',
     key: 'name',
     dataIndex: 'name',
     width: '25%'
   },
   {
-    title: '描述',
+    title: 'common.description',
     key: 'description',
     dataIndex: 'description',
     width: '35%',
     ellipsis: true
   },
   {
-    title: '节点数',
+    title: 'graph.nodeCount',
     key: 'nodeCount',
     width: '10%',
     align: 'center'
   },
   {
-    title: '边数',
+    title: 'graph.edgeCount',
     key: 'edgeCount',
     width: '10%',
     align: 'center'
   },
   {
-    title: '创建时间',
+    title: 'graph.createTime',
     key: 'createdAt',
     width: '15%'
   },
   {
-    title: '操作',
+    title: 'common.action',
     key: 'action',
     width: '15%'
   }
@@ -172,7 +172,7 @@ const columns = [
 const filteredGraphs = computed(() => {
   if (!searchText.value) return graphs.value
   const keyword = searchText.value.toLowerCase()
-  return graphs.value.filter(g => 
+  return graphs.value.filter(g =>
     g.name.toLowerCase().includes(keyword) ||
     (g.description && g.description.toLowerCase().includes(keyword))
   )
@@ -185,7 +185,7 @@ const loadGraphs = async () => {
     const res = await graphApi.getList()
     graphs.value = res || []
   } catch (error) {
-    message.error('加载图谱列表失败')
+    message.error('graph.loadFailed')
   } finally {
     loading.value = false
   }
@@ -198,7 +198,7 @@ const handleSearch = () => {
 
 // 显示创建模态框
 const showCreateModal = () => {
-  modalTitle.value = '新建图谱'
+  modalTitle.value = 'graph.newGraph'
   isEdit.value = false
   editingId.value = null
   formState.name = ''
@@ -213,7 +213,7 @@ const viewGraphDetail = (record: Graph) => {
 
 // 编辑图谱
 const editGraph = (record: Graph) => {
-  modalTitle.value = '编辑图谱'
+  modalTitle.value = 'graph.editGraph'
   isEdit.value = true
   editingId.value = record.graphId
   formState.name = record.name
@@ -225,10 +225,10 @@ const editGraph = (record: Graph) => {
 const deleteGraph = async (id: string) => {
   try {
     await graphApi.delete(id)
-    message.success('删除成功')
+    message.success('graph.deleteSuccess')
     loadGraphs()
   } catch (error) {
-    message.error('删除失败')
+    message.error('graph.deleteFailed')
   }
 }
 
@@ -236,15 +236,15 @@ const deleteGraph = async (id: string) => {
 const handleModalOk = async () => {
   try {
     await formRef.value.validate()
-    
+
     if (isEdit.value && editingId.value) {
       await graphApi.update(editingId.value, formState)
-      message.success('更新成功')
+      message.success('graph.updateSuccess')
     } else {
       await graphApi.create(formState)
-      message.success('创建成功')
+      message.success('graph.createSuccess')
     }
-    
+
     modalVisible.value = false
     loadGraphs()
   } catch (error) {

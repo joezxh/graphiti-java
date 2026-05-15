@@ -3,59 +3,57 @@
     <a-card class="page-header" :bordered="false">
       <div class="header-content">
         <div class="header-left">
-          <h2 class="page-title">角色管理</h2>
-          <p class="page-description">管理系统角色，配置菜单权限</p>
+          <h2 class="page-title">{{ $t("system.role.title") }}</h2>
+          <p class="page-description">{{ $t("system.role.titleDesc") }}</p>
         </div>
         <div class="header-actions">
           <a-button type="primary" @click="handleCreate">
             <template #icon><PlusOutlined /></template>
-            新建角色
+            {{ $t("system.role.createRole") }}
           </a-button>
         </div>
       </div>
     </a-card>
 
     <a-card class="content-card" :bordered="false">
-      <!-- 搜索表单 -->
       <div class="table-operations">
         <a-form layout="inline" :model="queryParams" class="search-form">
-          <a-form-item label="角色名称">
+          <a-form-item :label="$t('system.role.roleName')">
             <a-input
               v-model:value="queryParams.name"
-              placeholder="请输入角色名称"
+              :placeholder="$t('system.role.enterRoleName')"
               allow-clear
               style="width: 160px"
             />
           </a-form-item>
-          <a-form-item label="角色编码">
+          <a-form-item :label="$t('system.role.roleCode')">
             <a-input
               v-model:value="queryParams.code"
-              placeholder="请输入角色编码"
+              :placeholder="$t('system.role.enterRoleCode')"
               allow-clear
               style="width: 160px"
             />
           </a-form-item>
-          <a-form-item label="状态">
+          <a-form-item :label="$t('common.status')">
             <a-select
               v-model:value="queryParams.status"
-              placeholder="请选择状态"
+              :placeholder="$t('form.pleaseSelect')"
               allow-clear
               style="width: 120px"
             >
-              <a-select-option :value="1">启用</a-select-option>
-              <a-select-option :value="0">禁用</a-select-option>
+              <a-select-option :value="1">{{ $t("common.enabled") }}</a-select-option>
+              <a-select-option :value="0">{{ $t("common.disabled") }}</a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item>
             <a-space>
-              <a-button type="primary" @click="handleQuery">查询</a-button>
-              <a-button @click="handleReset">重置</a-button>
+              <a-button type="primary" @click="handleQuery">{{ $t("common.query") }}</a-button>
+              <a-button @click="handleReset">{{ $t("common.reset") }}</a-button>
             </a-space>
           </a-form-item>
         </a-form>
       </div>
 
-      <!-- 数据表格 -->
       <a-table
         :columns="columns"
         :data-source="roleList"
@@ -68,25 +66,25 @@
           <template v-if="column.dataIndex === 'status'">
             <a-badge :status="record.status === 1 ? 'success' : 'error'" />
             <span :style="{ color: record.status === 1 ? '#52c41a' : '#ff4d4f' }">
-              {{ record.status === 1 ? '启用' : '禁用' }}
+              {{ record.status === 1 ? $t("common.enabled") : $t("common.disabled") }}
             </span>
           </template>
-          
+
           <template v-if="column.dataIndex === 'action'">
             <a-space>
               <a-button type="link" size="small" @click="handleEdit(record)">
                 <template #icon><EditOutlined /></template>
-                编辑
+                {{ $t("common.edit") }}
               </a-button>
               <a-popconfirm
-                title="确定要删除此角色吗？"
-                ok-text="确定"
-                cancel-text="取消"
+                :title="$t('system.role.confirmDelete')"
+                :ok-text="$t('common.confirm')"
+                :cancel-text="$t('common.cancel')"
                 @confirm="handleDelete(record.id)"
               >
                 <a-button type="link" size="small" danger>
                   <template #icon><DeleteOutlined /></template>
-                  删除
+                  {{ $t("common.delete") }}
                 </a-button>
               </a-popconfirm>
             </a-space>
@@ -95,7 +93,6 @@
       </a-table>
     </a-card>
 
-    <!-- 角色表单对话框 -->
     <a-modal
       v-model:open="modalVisible"
       :title="modalTitle"
@@ -111,26 +108,26 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 16 }"
       >
-        <a-form-item label="角色名称" name="name">
-          <a-input v-model:value="formData.name" placeholder="请输入角色名称" />
+        <a-form-item :label="$t('system.role.roleName')" name="name">
+          <a-input v-model:value="formData.name" :placeholder="$t('system.role.enterRoleName')" />
         </a-form-item>
-        
-        <a-form-item label="角色编码" name="code">
-          <a-input v-model:value="formData.code" placeholder="请输入角色编码" />
+
+        <a-form-item :label="$t('system.role.roleCode')" name="code">
+          <a-input v-model:value="formData.code" :placeholder="$t('system.role.enterRoleCode')" />
         </a-form-item>
-        
-        <a-form-item label="描述" name="description">
-          <a-textarea v-model:value="formData.description" placeholder="请输入描述" :rows="3" />
+
+        <a-form-item :label="$t('common.description')" name="description">
+          <a-textarea v-model:value="formData.description" :placeholder="$t('common.noDescription')" :rows="3" />
         </a-form-item>
-        
-        <a-form-item label="状态" name="status">
+
+        <a-form-item :label="$t('common.status')" name="status">
           <a-radio-group v-model:value="formData.status">
-            <a-radio :value="1">启用</a-radio>
-            <a-radio :value="0">禁用</a-radio>
+            <a-radio :value="1">{{ $t("common.enabled") }}</a-radio>
+            <a-radio :value="0">{{ $t("common.disabled") }}</a-radio>
           </a-radio-group>
         </a-form-item>
-        
-        <a-form-item label="菜单权限" name="menuIds">
+
+        <a-form-item :label="$t('system.menu.permission')" name="menuIds">
           <a-tree
             v-model:checkedKeys="formData.menuIds"
             :tree-data="menuTreeData"
@@ -145,17 +142,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { message } from 'ant-design-vue'
+import { ref, reactive, onMounted } from "vue"
+import { message } from "ant-design-vue"
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined
-} from '@ant-design/icons-vue'
-import { roleApi, type Role, type RoleQuery, type RoleForm } from '@/api/role'
-import { menuApi, type MenuItem } from '@/api/menu'
+} from "@ant-design/icons-vue"
+import { roleApi, type Role, type RoleQuery, type RoleForm } from "@/api/role"
+import { menuApi, type MenuItem } from "@/api/menu"
 
-// 查询参数
 const queryParams = reactive<RoleQuery>({
   name: undefined,
   code: undefined,
@@ -164,47 +160,16 @@ const queryParams = reactive<RoleQuery>({
   pageSize: 10
 })
 
-// 表格列定义
 const columns = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    width: 60
-  },
-  {
-    title: '角色名称',
-    dataIndex: 'name',
-    width: 120
-  },
-  {
-    title: '角色编码',
-    dataIndex: 'code',
-    width: 120
-  },
-  {
-    title: '描述',
-    dataIndex: 'description',
-    width: 200
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    width: 100
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    width: 170
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    width: 150,
-    fixed: 'right'
-  }
+  { title: "common.id", dataIndex: "id", width: 60 },
+  { title: "system.role.roleName", dataIndex: "name", width: 120 },
+  { title: "system.role.roleCode", dataIndex: "code", width: 120 },
+  { title: "common.description", dataIndex: "description", width: 200 },
+  { title: "common.status", dataIndex: "status", width: 100 },
+  { title: "common.createdAt", dataIndex: "createdAt", width: 170 },
+  { title: "common.action", dataIndex: "action", width: 150, fixed: "right" }
 ]
 
-// 数据列表
 const roleList = ref<Role[]>([])
 const loading = ref(false)
 const pagination = reactive({
@@ -215,39 +180,28 @@ const pagination = reactive({
   showQuickJumper: true
 })
 
-// 菜单树数据
 const menuTreeData = ref<MenuItem[]>([])
 
-// 模态框状态
 const modalVisible = ref(false)
-const modalTitle = ref('新建角色')
+const modalTitle = ref("")
 const isEdit = ref(false)
 const submitLoading = ref(false)
 const formRef = ref()
 
-// 表单数据
 const formData = reactive<RoleForm>({
-  name: '',
-  code: '',
-  description: '',
+  name: "",
+  code: "",
+  description: "",
   status: 1,
   menuIds: []
 })
 
-// 表单校验规则
 const formRules = {
-  name: [
-    { required: true, message: '请输入角色名称', trigger: 'blur' }
-  ],
-  code: [
-    { required: true, message: '请输入角色编码', trigger: 'blur' }
-  ],
-  menuIds: [
-    { required: true, message: '请选择菜单权限', trigger: 'change' }
-  ]
+  name: [{ required: true, message: "system.role.enterRoleName", trigger: "blur" }],
+  code: [{ required: true, message: "system.role.enterRoleCode", trigger: "blur" }],
+  menuIds: [{ required: true, message: "system.role.selectMenuPermission", trigger: "change" }]
 }
 
-// 获取角色列表
 const fetchRoles = async () => {
   loading.value = true
   try {
@@ -257,29 +211,26 @@ const fetchRoles = async () => {
     pagination.pageSize = res.pageSize
     pagination.total = res.total
   } catch (error) {
-    message.error('获取角色列表失败')
+    message.error("system.role.loadFailed")
   } finally {
     loading.value = false
   }
 }
 
-// 获取菜单树
 const fetchMenuTree = async () => {
   try {
     const res = await menuApi.getMenus()
     menuTreeData.value = res
   } catch (error) {
-    console.error('获取菜单树失败', error)
+    console.error("system.role.loadMenuFailed", error)
   }
 }
 
-// 查询
 const handleQuery = () => {
   queryParams.pageNum = 1
   fetchRoles()
 }
 
-// 重置
 const handleReset = () => {
   queryParams.name = undefined
   queryParams.code = undefined
@@ -288,27 +239,24 @@ const handleReset = () => {
   fetchRoles()
 }
 
-// 表格变化
 const handleTableChange = (pag: any) => {
   queryParams.pageNum = pag.current
   queryParams.pageSize = pag.pageSize
   fetchRoles()
 }
 
-// 新建角色
 const handleCreate = () => {
   isEdit.value = false
-  modalTitle.value = '新建角色'
+  modalTitle.value = "system.role.newRole"
   resetForm()
   modalVisible.value = true
 }
 
-// 编辑角色
 const handleEdit = async (record: Role) => {
   isEdit.value = true
-  modalTitle.value = '编辑角色'
+  modalTitle.value = "system.role.editRole"
   resetForm()
-  
+
   try {
     const role = await roleApi.getRole(record.id)
     formData.name = role.name
@@ -316,31 +264,29 @@ const handleEdit = async (record: Role) => {
     formData.description = role.description
     formData.status = role.status
     formData.menuIds = role.menuIds
-    
+
     modalVisible.value = true
   } catch (error) {
-    message.error('获取角色详情失败')
+    message.error("system.role.getDetailFailed")
   }
 }
 
-// 删除角色
 const handleDelete = async (id: number) => {
   try {
     await roleApi.deleteRole(id)
-    message.success('删除成功')
+    message.success("system.role.deleteSuccess")
     fetchRoles()
   } catch (error) {
-    message.error('删除失败')
+    message.error("system.role.deleteSuccess")
   }
 }
 
-// 提交表单
 const handleSubmit = async () => {
   try {
     await formRef.value.validate()
-    
+
     submitLoading.value = true
-    
+
     if (isEdit.value) {
       await roleApi.updateRole(formData.id!, {
         name: formData.name,
@@ -349,36 +295,34 @@ const handleSubmit = async () => {
         status: formData.status,
         menuIds: formData.menuIds
       })
-      message.success('更新成功')
+      message.success("system.role.updateSuccess")
     } else {
       await roleApi.createRole(formData)
-      message.success('创建成功')
+      message.success("system.role.createSuccess")
     }
-    
+
     modalVisible.value = false
     fetchRoles()
   } catch (error) {
-    console.error('提交失败', error)
+    console.error("common.submitFailed", error)
   } finally {
     submitLoading.value = false
   }
 }
 
-// 取消表单
 const handleCancel = () => {
   modalVisible.value = false
   resetForm()
 }
 
-// 重置表单
 const resetForm = () => {
   formData.id = undefined
-  formData.name = ''
-  formData.code = ''
-  formData.description = ''
+  formData.name = ""
+  formData.code = ""
+  formData.description = ""
   formData.status = 1
   formData.menuIds = []
-  
+
   if (formRef.value) {
     formRef.value.resetFields()
   }
@@ -394,31 +338,31 @@ onMounted(() => {
 .role-management {
   .page-header {
     margin-bottom: 16px;
-    
+
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .page-title {
       font-size: 20px;
       font-weight: 600;
       color: #f7f8f8;
       margin: 0 0 4px 0;
     }
-    
+
     .page-description {
       font-size: 14px;
       color: #8a8f98;
       margin: 0;
     }
   }
-  
+
   .content-card {
     .table-operations {
       margin-bottom: 16px;
-      
+
       .search-form {
         .ant-form-item {
           margin-bottom: 16px;

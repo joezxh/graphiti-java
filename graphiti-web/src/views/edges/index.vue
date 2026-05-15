@@ -1,8 +1,8 @@
 <template>
   <div class="edges-page">
     <div class="page-header">
-      <h1 class="page-title">边管理</h1>
-      <p class="page-desc">浏览、创建和删除图谱中的关系边</p>
+      <h1 class="page-title">{{ $t('edges.title') }}</h1>
+      <p class="page-desc">{{ $t('edges.titleDesc') }}</p>
     </div>
 
     <a-card class="filter-card">
@@ -10,7 +10,7 @@
         <a-col :span="6">
           <a-select
             v-model:value="selectedGraphId"
-            placeholder="选择图谱"
+            :placeholder="$t('edges.selectGraph')"
             style="width: 100%"
             allow-clear
             @change="onGraphChange"
@@ -22,12 +22,12 @@
         </a-col>
         <a-col :span="4">
           <a-button type="primary" @click="showCreateModal">
-            <PlusOutlined /> 新建边
+            <PlusOutlined /> {{ $t('edges.createEdge') }}
           </a-button>
         </a-col>
         <a-col :span="6">
           <a-button @click="loadEdges">
-            <ReloadOutlined /> 刷新
+            <ReloadOutlined /> {{ $t('common.refresh') }}
           </a-button>
         </a-col>
       </a-row>
@@ -53,16 +53,16 @@
             <a-tag color="purple">{{ truncate(record.targetNodeUuid, 8) }}</a-tag>
           </template>
           <template v-if="column.key === 'episodes'">
-            <span class="episode-count">{{ record.episodes?.length || 0 }} 个</span>
+            <span class="episode-count">{{ record.episodes?.length || 0 }} {{ t('edges.episodes') }}</span>
           </template>
           <template v-if="column.key === 'createdAt'">
             {{ formatDate(record.createdAt) }}
           </template>
           <template v-if="column.key === 'action'">
             <a-space>
-              <a-button type="link" size="small" @click="viewDetail(record)">详情</a-button>
-              <a-popconfirm title="确定删除该边？" @confirm="deleteEdge(record.uuid)">
-                <a-button type="link" size="small" danger>删除</a-button>
+              <a-button type="link" size="small" @click="viewDetail(record)">{{ $t('common.view') }}</a-button>
+                <a-popconfirm :title="t('edges.confirmDelete')" @confirm="deleteEdge(record.uuid)">
+                <a-button type="link" size="small" danger>{{ $t('common.delete') }}</a-button>
               </a-popconfirm>
             </a-space>
           </template>
@@ -73,24 +73,24 @@
     <!-- 创建边模态框 -->
     <a-modal
       v-model:open="createVisible"
-      title="创建边"
+      :title="$t('edges.createEdge')"
       @ok="handleCreate"
       :confirm-loading="creating"
     >
       <a-form :model="createForm" layout="vertical">
-        <a-form-item label="源节点 UUID" required>
-          <a-input v-model:value="createForm.sourceNodeUuid" placeholder="请输入源节点 UUID" />
+        <a-form-item :label="$t('edges.sourceNode')" required>
+          <a-input v-model:value="createForm.sourceNodeUuid" :placeholder="t('edges.pleaseInputSource')" />
         </a-form-item>
-        <a-form-item label="目标节点 UUID" required>
-          <a-input v-model:value="createForm.targetNodeUuid" placeholder="请输入目标节点 UUID" />
+        <a-form-item :label="$t('edges.targetNode')" required>
+          <a-input v-model:value="createForm.targetNodeUuid" :placeholder="t('edges.pleaseInputTarget')" />
         </a-form-item>
-        <a-form-item label="关系名称">
-          <a-input v-model:value="createForm.name" placeholder="如：WORKS_AT、朋友" />
+        <a-form-item :label="$t('edges.name')">
+          <a-input v-model:value="createForm.name" :placeholder="t('edges.pleaseInputFact')" />
         </a-form-item>
-        <a-form-item label="事实描述">
+        <a-form-item :label="$t('edges.fact')">
           <a-textarea
             v-model:value="createForm.fact"
-            placeholder="描述这条关系的具体内容"
+            :placeholder="t('edges.pleaseInputFact')"
             :rows="3"
           />
         </a-form-item>
@@ -100,19 +100,19 @@
     <!-- 边详情模态框 -->
     <a-modal
       v-model:open="detailVisible"
-      title="边详情"
+      :title="$t('edges.edgeDetails')"
       :footer="null"
     >
       <a-descriptions :column="2" bordered size="small" v-if="detailData">
-        <a-descriptions-item label="UUID" :span="2">{{ detailData.uuid }}</a-descriptions-item>
-        <a-descriptions-item label="关系名称">{{ detailData.name || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="源节点">{{ detailData.sourceNodeUuid }}</a-descriptions-item>
-        <a-descriptions-item label="目标节点">{{ detailData.targetNodeUuid }}</a-descriptions-item>
-        <a-descriptions-item label="事实" :span="2">{{ detailData.fact }}</a-descriptions-item>
-        <a-descriptions-item label="创建时间">{{ formatDate(detailData.createdAt) }}</a-descriptions-item>
-        <a-descriptions-item label="Episode 数">{{ detailData.episodes?.length || 0 }}</a-descriptions-item>
-        <a-descriptions-item label="有效期起" :span="2">{{ formatDate(detailData.validAt) }}</a-descriptions-item>
-        <a-descriptions-item label="有效期止" :span="2">{{ formatDate(detailData.invalidAt) }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.uuid')" :span="2">{{ detailData.uuid }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.name')">{{ detailData.name || '-' }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.sourceNode')">{{ detailData.sourceNodeUuid }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.targetNode')">{{ detailData.targetNodeUuid }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.fact')" :span="2">{{ detailData.fact }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.createdAt')">{{ formatDate(detailData.createdAt) }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.episodeCount')">{{ detailData.episodes?.length || 0 }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.validFrom')" :span="2">{{ formatDate(detailData.validAt) }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('edges.validTo')" :span="2">{{ formatDate(detailData.invalidAt) }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
   </div>
@@ -120,10 +120,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { graphApi } from '@/api/graph'
 import { edgeApi, type EdgeListItem, type EdgeDetailResp, type CreateEdgeReq } from '@/api/edge'
+
+const { t } = useI18n()
 
 const graphOptions = ref<any[]>([])
 const selectedGraphId = ref<string | undefined>(undefined)
@@ -134,18 +137,18 @@ const pagination = reactive({
   pageSize: 20,
   total: 0,
   showSizeChanger: true,
-  showTotal: (total: number) => `共 ${total} 条`
+  showTotal: (total: number) => t('common.total', { total })
 })
 
 const columns = [
-  { title: 'UUID', dataIndex: 'uuid', key: 'uuid', width: 200, ellipsis: true },
-  { title: '关系名称', dataIndex: 'name', key: 'name', width: 120 },
-  { title: '事实', key: 'fact' },
-  { title: '源节点', key: 'source', width: 100 },
-  { title: '目标节点', key: 'target', width: 100 },
-  { title: 'Episode', key: 'episodes', width: 80, align: 'center' },
-  { title: '创建时间', key: 'createdAt', width: 160 },
-  { title: '操作', key: 'action', width: 150 }
+  { title: t('edges.uuid'), dataIndex: 'uuid', key: 'uuid', width: 200, ellipsis: true },
+  { title: t('edges.name'), dataIndex: 'name', key: 'name', width: 120 },
+  { title: t('edges.fact'), key: 'fact' },
+  { title: t('edges.sourceNode'), key: 'source', width: 100 },
+  { title: t('edges.targetNode'), key: 'target', width: 100 },
+  { title: t('edges.episodes'), key: 'episodes', width: 80, align: 'center' },
+  { title: t('edges.createdAt'), key: 'createdAt', width: 160 },
+  { title: t('common.actions'), key: 'action', width: 150 }
 ]
 
 // 创建边
@@ -166,7 +169,7 @@ const loadGraphs = async () => {
   try {
     graphOptions.value = await graphApi.getList()
   } catch (err) {
-    console.error('加载图谱列表失败', err)
+    console.error(t('edges.loadGraphFailed'), err)
   }
 }
 
@@ -178,7 +181,7 @@ const loadEdges = async () => {
     edgeList.value = resp || []
     pagination.total = resp?.length || 0
   } catch (err: any) {
-    message.error(err.message || '加载失败')
+    message.error(err.message || t('common.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -205,21 +208,21 @@ const showCreateModal = () => {
 
 const handleCreate = async () => {
   if (!selectedGraphId.value) {
-    message.error('请先选择图谱')
+    message.error(t('edges.selectGraph'))
     return
   }
   if (!createForm.sourceNodeUuid || !createForm.targetNodeUuid) {
-    message.error('请填写源节点和目标节点')
+    message.error(t('edges.pleaseInputSource') + ' ' + t('edges.pleaseInputTarget'))
     return
   }
   creating.value = true
   try {
     await edgeApi.create(selectedGraphId.value, createForm)
-    message.success('创建成功')
+    message.success(t('common.createSuccess'))
     createVisible.value = false
     loadEdges()
   } catch (err: any) {
-    message.error(err.message || '创建失败')
+    message.error(err.message || t('common.createFailed'))
   } finally {
     creating.value = false
   }
@@ -231,7 +234,7 @@ const viewDetail = async (record: EdgeListItem) => {
     detailData.value = await edgeApi.get(selectedGraphId.value, record.uuid)
     detailVisible.value = true
   } catch (err: any) {
-    message.error(err.message || '加载详情失败')
+    message.error(err.message || t('edges.loadDetailFailed'))
   }
 }
 
@@ -239,10 +242,10 @@ const deleteEdge = async (uuid: string) => {
   if (!selectedGraphId.value) return
   try {
     await edgeApi.delete(selectedGraphId.value, uuid)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     loadEdges()
   } catch (err: any) {
-    message.error(err.message || '删除失败')
+    message.error(err.message || t('common.deleteFailed'))
   }
 }
 

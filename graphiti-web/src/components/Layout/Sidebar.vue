@@ -2,7 +2,7 @@
   <aside class="graphiti-sidebar">
     <div class="sidebar-header">
       <AppstoreOutlined class="sidebar-icon" />
-      <span class="sidebar-title">导航菜单</span>
+      <span class="sidebar-title">{{ $t('nav.navigation') }}</span>
     </div>
 
     <a-menu
@@ -16,37 +16,37 @@
         <template #icon>
           <DashboardOutlined />
         </template>
-        仪表盘
+        {{ $t('nav.dashboard') }}
       </a-menu-item>
 
       <a-sub-menu key="graph-management">
         <template #icon>
           <ShareAltOutlined />
         </template>
-        <template #title>图谱管理</template>
+        <template #title>{{ $t('nav.graphManagement') }}</template>
         <a-menu-item key="/graph/list">
           <template #icon>
             <UnorderedListOutlined />
           </template>
-          图谱列表
+          {{ $t('nav.graphList') }}
         </a-menu-item>
         <a-menu-item key="/graph/temporal">
           <template #icon>
             <HistoryOutlined />
           </template>
-          时序历史
+          {{ $t('nav.temporalHistory') }}
         </a-menu-item>
         <a-menu-item key="/communities">
           <template #icon>
             <ClusterOutlined />
           </template>
-          社区检测
+          {{ $t('nav.communityDetection') }}
         </a-menu-item>
         <a-menu-item key="/ontology">
           <template #icon>
             <ApartmentOutlined />
           </template>
-          本体配置
+          {{ $t('nav.ontologyConfig') }}
         </a-menu-item>
       </a-sub-menu>
 
@@ -54,36 +54,36 @@
         <template #icon>
           <DatabaseOutlined />
         </template>
-        <template #title>数据管理</template>
+        <template #title>{{ $t('nav.dataManagement') }}</template>
         <a-menu-item key="/data/import">
           <template #icon>
             <ImportOutlined />
           </template>
-          数据导入
+          {{ $t('nav.dataImport') }}
         </a-menu-item>
         <a-menu-item key="/data/export">
           <template #icon>
             <ExportOutlined />
           </template>
-          数据导出
+          {{ $t('nav.dataExport') }}
         </a-menu-item>
         <a-menu-item key="/data/entities">
           <template #icon>
             <NodeIndexOutlined />
           </template>
-          实体管理
+          {{ $t('nav.entityManagement') }}
         </a-menu-item>
         <a-menu-item key="/edges">
           <template #icon>
             <LinkOutlined />
           </template>
-          边管理
+          {{ $t('nav.edgeManagement') }}
         </a-menu-item>
         <a-menu-item key="/episodes">
           <template #icon>
             <FileTextOutlined />
           </template>
-          Episode 管理
+          {{ $t('nav.episodeManagement') }}
         </a-menu-item>
       </a-sub-menu>
 
@@ -91,30 +91,30 @@
         <template #icon>
           <ToolOutlined />
         </template>
-        <template #title>工具</template>
+        <template #title>{{ $t('nav.tools') }}</template>
         <a-menu-item key="/search">
           <template #icon>
             <SearchOutlined />
           </template>
-          混合检索
+          {{ $t('nav.hybridSearch') }}
         </a-menu-item>
         <a-menu-item key="/custom-instructions">
           <template #icon>
             <EditOutlined />
           </template>
-          自定义指令
+          {{ $t('nav.customInstructions') }}
         </a-menu-item>
         <a-menu-item key="/prompt">
           <template #icon>
             <MessageOutlined />
           </template>
-          提示词管理
+          {{ $t('nav.promptManagement') }}
         </a-menu-item>
         <a-menu-item key="/legal-kg">
           <template #icon>
             <AuditOutlined />
           </template>
-          法律知识图谱
+          {{ $t('nav.legalKnowledgeGraph') }}
         </a-menu-item>
       </a-sub-menu>
 
@@ -122,42 +122,42 @@
         <template #icon>
           <SettingOutlined />
         </template>
-        <template #title>系统管理</template>
+        <template #title>{{ $t('nav.systemManagement') }}</template>
         <a-menu-item key="/system/user">
           <template #icon>
             <UserOutlined />
           </template>
-          用户管理
+          {{ $t('nav.userManagement') }}
         </a-menu-item>
         <a-menu-item key="/system/role">
           <template #icon>
             <TeamOutlined />
           </template>
-          角色管理
+          {{ $t('nav.roleManagement') }}
         </a-menu-item>
         <a-menu-item key="/system/menu">
           <template #icon>
             <MenuOutlined />
           </template>
-          菜单管理
+          {{ $t('nav.menuManagement') }}
         </a-menu-item>
         <a-menu-item key="/system/config">
           <template #icon>
             <ToolOutlined />
           </template>
-          系统配置
+          {{ $t('nav.systemConfig') }}
         </a-menu-item>
         <a-menu-item key="/system/log">
           <template #icon>
             <FileTextOutlined />
           </template>
-          操作日志
+          {{ $t('nav.operationLog') }}
         </a-menu-item>
         <a-menu-item key="/monitor">
           <template #icon>
             <MonitorOutlined />
           </template>
-          系统监控
+          {{ $t('nav.systemMonitor') }}
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
@@ -202,10 +202,10 @@ const openKeys = ref<string[]>(['graph-management', 'data-management', 'tools'])
 
 const updateMenuState = () => {
   const path = route.path
-  
+
   // 直接根据路径设置 selectedKeys
   selectedKeys.value = [path]
-  
+
   // 根据路径展开对应的子菜单
   if (path.includes('/graph') && !openKeys.value.includes('graph-management')) {
     openKeys.value = [...openKeys.value, 'graph-management']

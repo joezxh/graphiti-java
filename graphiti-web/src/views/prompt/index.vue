@@ -2,8 +2,8 @@
   <div class="prompt-page">
     <!-- Page Header -->
     <div class="page-header">
-      <h1 class="page-title">提示词管理</h1>
-      <p class="page-desc">管理实体抽取、关系抽取等提示词模板，支持版本管理和在线测试</p>
+      <h1 class="page-title">{{ $t('prompt.title') }}</h1>
+      <p class="page-desc">{{ $t('prompt.titleDesc') }}</p>
     </div>
 
     <!-- Filter Bar -->
@@ -12,7 +12,7 @@
         <a-col :span="6">
           <a-select
             v-model:value="filterType"
-            placeholder="模板类型"
+            :placeholder="$t('prompt.templateType')"
             style="width: 100%"
             allow-clear
             @change="loadTemplates"
@@ -25,7 +25,7 @@
         <a-col :span="6">
           <a-input-search
             v-model:value="searchKeyword"
-            placeholder="搜索模板名称/编码"
+            :placeholder="($t('prompt.searchPlaceholder') as string) || 'Search template name/code'"
             style="width: 100%"
             @search="loadTemplates"
           />
@@ -33,10 +33,10 @@
         <a-col :span="12">
           <a-space>
             <a-button type="primary" @click="showCreateModal">
-              <PlusOutlined /> 新建模板
+              <PlusOutlined /> {{ $t('prompt.createPrompt') }}
             </a-button>
             <a-button @click="loadTemplates">
-              <ReloadOutlined /> 刷新
+              <ReloadOutlined /> {{ $t('common.refresh') }}
             </a-button>
           </a-space>
         </a-col>
@@ -73,20 +73,20 @@
           </template>
           <template v-if="column.key === 'action'">
             <a-space>
-              <a-button type="link" size="small" @click="editTemplate(record)">编辑</a-button>
-              <a-button type="link" size="small" @click="testTemplate(record)">测试</a-button>
+              <a-button type="link" size="small" @click="editTemplate(record)">{{ $t('common.edit') }}</a-button>
+              <a-button type="link" size="small" @click="testTemplate(record)">{{ $t('prompt.testPrompt') }}</a-button>
               <a-dropdown>
                 <a-button type="link" size="small">
                   <MoreOutlined />
                 </a-button>
                 <template #overlay>
                   <a-menu>
-                    <a-menu-item key="view" @click="viewDetail(record)">查看详情</a-menu-item>
-                    <a-menu-item key="versions" @click="viewVersions(record)">版本历史</a-menu-item>
-                    <a-menu-item key="copy" @click="copyTemplate(record)">复制</a-menu-item>
+                    <a-menu-item key="view" @click="viewDetail(record)">{{ $t('prompt.viewDetail') }}</a-menu-item>
+                    <a-menu-item key="versions" @click="viewVersions(record)">{{ $t('prompt.versionHistory') }}</a-menu-item>
+                    <a-menu-item key="copy" @click="copyTemplate(record)">{{ $t('prompt.copyTemplate') }}</a-menu-item>
                     <a-menu-divider />
                     <a-menu-item key="delete" @click="deleteTemplate(record.id)">
-                      <span style="color: #ff4d4f">删除</span>
+                      <span style="color: #ff4d4f">{{ $t('common.delete') }}</span>
                     </a-menu-item>
                   </a-menu>
                 </template>
@@ -100,7 +100,7 @@
     <!-- Create/Edit Modal -->
     <a-modal
       v-model:open="modalVisible"
-      :title="isEditing ? '编辑提示词模板' : '新建提示词模板'"
+      :title="isEditing ? $t('prompt.editPrompt') : $t('prompt.createPrompt')"
       @ok="handleSave"
       :confirm-loading="saving"
       width="800px"
@@ -113,88 +113,88 @@
         :label-col="{ span: 3 }"
         layout="horizontal"
       >
-        <a-form-item label="模板编码" name="code">
+        <a-form-item :label="$t('prompt.templateCode')" name="code">
           <a-input
             v-model:value="form.code"
-            placeholder="如：LEGAL_ENTITY_EXTRACT"
+            :placeholder="$t('prompt.pleaseInputCode')"
             :disabled="isEditing"
           />
         </a-form-item>
-        <a-form-item label="模板名称" name="name">
-          <a-input v-model:value="form.name" placeholder="如：法律案件实体提取" />
+        <a-form-item :label="$t('prompt.templateName')" name="name">
+          <a-input v-model:value="form.name" :placeholder="$t('prompt.pleaseInputName')" />
         </a-form-item>
-        <a-form-item label="模板描述" name="description">
-          <a-textarea v-model:value="form.description" :rows="2" placeholder="简要描述模板用途" />
+        <a-form-item :label="$t('prompt.templateDesc')" name="description">
+          <a-textarea v-model:value="form.description" :rows="2" :placeholder="$t('prompt.templateDesc')" />
         </a-form-item>
-        <a-form-item label="模板类型" name="type">
-          <a-select v-model:value="form.type" placeholder="选择模板类型">
+        <a-form-item :label="$t('prompt.templateType')" name="type">
+          <a-select v-model:value="form.type" :placeholder="$t('prompt.pleaseSelectType')">
             <a-select-option v-for="t in templateTypes" :key="t.value" :value="t.value">
               {{ t.label }}
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="所属模型" name="model">
-          <a-input v-model:value="form.model" placeholder="如：gpt-4o-mini（留空使用默认）" />
+        <a-form-item :label="$t('prompt.model')" name="model">
+          <a-input v-model:value="form.model" :placeholder="$t('prompt.model')" />
         </a-form-item>
 
-        <a-divider>提示词内容</a-divider>
+        <a-divider>{{ $t('prompt.systemPrompt') }}</a-divider>
 
-        <a-form-item label="系统提示词" name="systemPrompt">
+        <a-form-item :label="$t('prompt.systemPrompt')" name="systemPrompt">
           <a-textarea
             v-model:value="form.systemPrompt"
             :rows="6"
-            placeholder="输入系统提示词内容，支持变量占位符 {variable}"
+            :placeholder="$t('prompt.inputPrompt')"
           />
         </a-form-item>
-        <a-form-item label="用户提示词" name="userPromptTemplate">
+        <a-form-item :label="$t('prompt.userPrompt')" name="userPromptTemplate">
           <a-textarea
             v-model:value="form.userPromptTemplate"
             :rows="6"
-            placeholder="输入用户提示词模板，使用 {episode_content}, {nodes} 等变量"
+            :placeholder="$t('prompt.inputUserPrompt')"
           />
         </a-form-item>
-        <a-form-item label="响应格式" name="responseFormat">
+        <a-form-item :label="$t('prompt.responseFormat')" name="responseFormat">
           <a-textarea
             v-model:value="form.responseFormat"
             :rows="4"
-            placeholder='JSON Schema 格式，如：{"type":"object","properties":{"entities":...}}'
+            :placeholder="$t('prompt.inputResponseFormat')"
           />
         </a-form-item>
 
-        <a-divider>变量配置</a-divider>
+        <a-divider>{{ $t('prompt.variables') }}</a-divider>
 
         <div class="variables-section">
           <a-button type="dashed" block @click="addVariable" style="margin-bottom: 12px">
-            <PlusOutlined /> 添加变量
+            <PlusOutlined /> {{ $t('prompt.addVariable') }}
           </a-button>
           <div v-for="(v, idx) in form.variables" :key="idx" class="variable-item">
             <a-row :gutter="8" align="middle">
               <a-col :span="3">
-                <a-input v-model:value="v.variableName" placeholder="变量名" />
+                <a-input v-model:value="v.variableName" :placeholder="$t('prompt.variableName')" />
               </a-col>
               <a-col :span="3">
                 <a-select v-model:value="v.variableType" style="width: 100%">
-                  <a-select-option value="string">字符串</a-select-option>
-                  <a-select-option value="text">长文本</a-select-option>
-                  <a-select-option value="list">列表</a-select-option>
+                  <a-select-option value="string">{{ $t('prompt.string') }}</a-select-option>
+                  <a-select-option value="text">{{ $t('prompt.text') }}</a-select-option>
+                  <a-select-option value="list">{{ $t('prompt.list') }}</a-select-option>
                   <a-select-option value="json">JSON</a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="4">
-                <a-input v-model:value="v.description" placeholder="描述" />
+                <a-input v-model:value="v.description" :placeholder="$t('prompt.variableDesc')" />
               </a-col>
               <a-col :span="3">
                 <a-select v-model:value="v.source" style="width: 100%">
-                  <a-select-option value="context">上下文</a-select-option>
-                  <a-select-option value="static">静态值</a-select-option>
-                  <a-select-option value="llm">动态生成</a-select-option>
+                  <a-select-option value="context">{{ $t('prompt.context') }}</a-select-option>
+                  <a-select-option value="static">{{ $t('prompt.static') }}</a-select-option>
+                  <a-select-option value="llm">{{ $t('prompt.dynamic') }}</a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="4">
-                <a-input v-model:value="v.defaultValue" placeholder="默认值" />
+                <a-input v-model:value="v.defaultValue" :placeholder="$t('prompt.defaultValue')" />
               </a-col>
               <a-col :span="2">
-                <a-checkbox v-model:checked="v.required">必需</a-checkbox>
+                <a-checkbox v-model:checked="v.required">{{ $t('prompt.required') }}</a-checkbox>
               </a-col>
               <a-col :span="4">
                 <a-button type="text" danger size="small" @click="removeVariable(idx)">
@@ -210,28 +210,28 @@
     <!-- Detail Modal -->
     <a-modal
       v-model:open="detailVisible"
-      title="模板详情"
+      :title="$t('prompt.viewDetail')"
       :footer="null"
       width="700px"
     >
       <a-descriptions :column="1" bordered v-if="currentTemplate">
-        <a-descriptions-item label="模板编码">{{ currentTemplate.code }}</a-descriptions-item>
-        <a-descriptions-item label="模板名称">{{ currentTemplate.name }}</a-descriptions-item>
-        <a-descriptions-item label="模板描述">{{ currentTemplate.description || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="模板类型">{{ getTypeLabel(currentTemplate.type) }}</a-descriptions-item>
-        <a-descriptions-item label="所属模型">{{ currentTemplate.model || '默认' }}</a-descriptions-item>
-        <a-descriptions-item label="启用状态">
+        <a-descriptions-item :label="$t('prompt.templateCode')">{{ currentTemplate.code }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('prompt.templateName')">{{ currentTemplate.name }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('prompt.templateDesc')">{{ currentTemplate.description || '-' }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('prompt.templateType')">{{ getTypeLabel(currentTemplate.type) }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('prompt.model')">{{ currentTemplate.model || '-' }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('prompt.enabled')">
           <a-tag :color="currentTemplate.enabled ? 'green' : 'red'">
-            {{ currentTemplate.enabled ? '已启用' : '已禁用' }}
+            {{ currentTemplate.enabled ? $t('prompt.enabled') : $t('prompt.disabled') }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="系统提示词">
+        <a-descriptions-item :label="$t('prompt.systemPrompt')">
           <pre class="prompt-content">{{ currentTemplate.systemPrompt }}</pre>
         </a-descriptions-item>
-        <a-descriptions-item label="用户提示词">
+        <a-descriptions-item :label="$t('prompt.userPrompt')">
           <pre class="prompt-content">{{ currentTemplate.userPromptTemplate }}</pre>
         </a-descriptions-item>
-        <a-descriptions-item label="响应格式">
+        <a-descriptions-item :label="$t('prompt.responseFormat')">
           <pre class="prompt-content">{{ currentTemplate.responseFormat || '-' }}</pre>
         </a-descriptions-item>
       </a-descriptions>
@@ -240,7 +240,7 @@
     <!-- Version History Modal -->
     <a-modal
       v-model:open="versionsVisible"
-      title="版本历史"
+      :title="$t('prompt.versionHistory')"
       :footer="null"
       width="700px"
     >
@@ -252,10 +252,10 @@
         >
           <div class="version-item">
             <div class="version-header">
-              <strong>版本 {{ v.version }}</strong>
-              <a-tag v-if="v.active" color="green">当前版本</a-tag>
+              <strong>{{ $t('prompt.version') || 'Version' }} {{ v.version }}</strong>
+              <a-tag v-if="v.active" color="green">{{ $t('prompt.currentVersion') }}</a-tag>
             </div>
-            <div class="version-desc">{{ v.description || '无描述' }}</div>
+            <div class="version-desc">{{ v.description || $t('prompt.noDescription') }}</div>
             <div class="version-time">{{ formatDate(v.createdAt) }}</div>
             <a-button
               v-if="!v.active"
@@ -263,18 +263,18 @@
               size="small"
               @click="rollbackVersion(v.templateId, v.version)"
             >
-              回滚到此版本
+              {{ $t('prompt.rollbackToVersion') }}
             </a-button>
           </div>
         </a-timeline-item>
       </a-timeline>
-      <a-empty v-else description="暂无版本历史" />
+      <a-empty v-else :description="$t('prompt.noDescription')" />
     </a-modal>
 
     <!-- Test Modal -->
     <a-modal
       v-model:open="testVisible"
-      title="测试提示词"
+      :title="$t('prompt.testPrompt')"
       @ok="handleTest"
       :confirm-loading="testing"
       width="1000px"
@@ -284,30 +284,30 @@
         <!-- Left: Test Config & Input -->
         <a-col :span="12">
           <a-form layout="vertical">
-            <a-form-item label="测试模板">
+            <a-form-item :label="$t('prompt.testPrompt')">
               <a-input :value="currentTemplate?.name" disabled />
             </a-form-item>
-            <a-form-item label="输入内容">
+            <a-form-item :label="$t('prompt.inputContent')">
               <a-textarea
                 v-model:value="testInput"
                 :rows="10"
-                placeholder="输入待测试的文本内容或JSON数据"
+                :placeholder="$t('prompt.inputContent')"
               />
             </a-form-item>
-            <a-form-item label="额外变量 (JSON格式)">
+            <a-form-item :label="$t('prompt.extraVariables')">
               <a-textarea
                 v-model:value="testVariables"
                 :rows="3"
-                placeholder='{"extras": "", "entity_types": ""}'
+                placeholder="{}"
               />
             </a-form-item>
             <a-form-item>
               <a-space>
                 <a-button type="primary" @click="handleTest" :loading="testing">
-                  执行测试
+                  {{ $t('prompt.executeTest') }}
                 </a-button>
                 <a-button @click="generateSampleData" :loading="generating">
-                  生成测试数据
+                  {{ $t('prompt.generateTestData') }}
                 </a-button>
               </a-space>
             </a-form-item>
@@ -318,10 +318,10 @@
         <a-col :span="12">
           <div class="test-result">
             <div class="result-header">
-              <span>测试结果</span>
+              <span>{{ $t('prompt.testResult') }}</span>
               <a-space v-if="testResult">
-                <a-tag v-if="testResult.success" color="green">成功</a-tag>
-                <a-tag v-else color="red">失败</a-tag>
+                <a-tag v-if="testResult.success" color="green">{{ $t('prompt.success') }}</a-tag>
+                <a-tag v-else color="red">{{ $t('prompt.failed') }}</a-tag>
                 <span class="elapsed">{{ testResult.elapsedMs }}ms</span>
               </a-space>
             </div>
@@ -330,15 +330,15 @@
                 <template v-if="testResult">
                   <div v-if="testResult.success" class="result-success">
                     <div v-if="testResult.entityCount !== undefined || testResult.edgeCount !== undefined" class="stats">
-                      <span>实体: {{ testResult.entityCount || 0 }}</span>
-                      <span>关系: {{ testResult.edgeCount || 0 }}</span>
+                      <span>{{ $t('data.entities') }}: {{ testResult.entityCount || 0 }}</span>
+                      <span>{{ $t('data.edges') }}: {{ testResult.edgeCount || 0 }}</span>
                     </div>
                     <div v-if="testResult.rawResponse" class="raw-response">
-                      <div class="section-title">原始响应:</div>
+                      <div class="section-title">{{ $t('prompt.rawResponse') }}:</div>
                       <pre>{{ testResult.rawResponse }}</pre>
                     </div>
                     <div v-if="testResult.parsedData" class="parsed-data">
-                      <div class="section-title">解析结果:</div>
+                      <div class="section-title">{{ $t('prompt.parsedResult') }}:</div>
                       <pre>{{ testResult.parsedData }}</pre>
                     </div>
                   </div>
@@ -346,7 +346,7 @@
                     <a-alert type="error" :message="testResult.errorMessage" />
                   </div>
                 </template>
-                  <a-empty v-else description='点击"执行测试"开始' />
+                  <a-empty v-else :description="$t('prompt.clickExecuteTest')" />
               </a-spin>
             </div>
           </div>
@@ -357,33 +357,33 @@
     <!-- Generate Sample Modal -->
     <a-modal
       v-model:open="sampleModalVisible"
-      title="生成测试数据"
+      :title="$t('prompt.generateTestData')"
       @ok="handleUseSample"
       width="600px"
     >
       <a-form layout="vertical">
-        <a-form-item label="数据类型">
+        <a-form-item :label="$t('prompt.dataType')">
           <a-select v-model:value="sampleConfig.dataType">
-            <a-select-option value="legal">法律案件</a-select-option>
-            <a-select-option value="medical">医疗记录</a-select-option>
-            <a-select-option value="financial">金融资讯</a-select-option>
-            <a-select-option value="general">通用文本</a-select-option>
+            <a-select-option value="legal">{{ $t('prompt.legalCase') }}</a-select-option>
+            <a-select-option value="medical">{{ $t('prompt.medicalRecord') }}</a-select-option>
+            <a-select-option value="financial">{{ $t('prompt.financial') }}</a-select-option>
+            <a-select-option value="general">{{ $t('prompt.general') }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="生成数量">
+        <a-form-item :label="$t('prompt.generateCount')">
           <a-input-number v-model:value="sampleConfig.count" :min="1" :max="10" />
         </a-form-item>
-        <a-form-item label="具体场景">
-          <a-input v-model:value="sampleConfig.scenario" placeholder="如：民事合同纠纷案件" />
+        <a-form-item :label="$t('prompt.scenario')">
+          <a-input v-model:value="sampleConfig.scenario" :placeholder="$t('prompt.scenario')" />
         </a-form-item>
         <a-form-item>
           <a-button type="primary" @click="doGenerateSample" :loading="generating">
-            生成
+            {{ $t('prompt.executeTest') }}
           </a-button>
         </a-form-item>
       </a-form>
 
-      <a-divider>生成的样本</a-divider>
+      <a-divider>{{ $t('prompt.generatedSamples') }}</a-divider>
 
       <div v-if="generatedSamples.length > 0" class="sample-list">
         <div
@@ -393,17 +393,18 @@
           :class="{ selected: selectedSampleIdx === idx }"
           @click="selectedSampleIdx = idx"
         >
-          <div class="sample-index">样本 {{ idx + 1 }}</div>
+          <div class="sample-index">{{ $t('prompt.generatedSamples') }} {{ idx + 1 }}</div>
           <div class="sample-content">{{ sample.content?.substring(0, 200) }}...</div>
         </div>
       </div>
-      <a-empty v-else description="点击生成创建样本数据" />
+      <a-empty v-else :description="$t('prompt.clickExecuteTest')" />
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message, Modal } from 'ant-design-vue'
 import {
   PlusOutlined,
@@ -412,6 +413,8 @@ import {
   MoreOutlined
 } from '@ant-design/icons-vue'
 import { promptApi, type PromptTemplate, type PromptVariable, type PromptVersion, type PromptTestResp, type SampleData } from '@/api/prompt'
+
+const { t } = useI18n()
 
 // State
 const templateList = ref<PromptTemplate[]>([])
@@ -449,11 +452,11 @@ const form = reactive({
 })
 
 const formRules = {
-  code: [{ required: true, message: '请输入模板编码' }],
-  name: [{ required: true, message: '请输入模板名称' }],
-  type: [{ required: true, message: '请选择模板类型' }],
-  systemPrompt: [{ required: true, message: '请输入系统提示词' }],
-  userPromptTemplate: [{ required: true, message: '请输入用户提示词模板' }]
+  code: [{ required: true, message: t('prompt.pleaseInputCode') }],
+  name: [{ required: true, message: t('prompt.pleaseInputName') }],
+  type: [{ required: true, message: t('prompt.pleaseSelectType') }],
+  systemPrompt: [{ required: true, message: t('prompt.pleaseInputSystemPrompt') }],
+  userPromptTemplate: [{ required: true, message: t('prompt.pleaseInputUserPrompt') }]
 }
 
 // Test state
@@ -474,13 +477,13 @@ const selectedSampleIdx = ref(0)
 
 // Columns
 const columns = [
-  { title: '模板名称', key: 'name', width: 250 },
-  { title: '模板编码', key: 'code', width: 200 },
-  { title: '类型', key: 'type', width: 120 },
-  { title: '模型', dataIndex: 'model', width: 120 },
-  { title: '启用', key: 'enabled', width: 80 },
-  { title: '更新时间', dataIndex: 'updatedAt', width: 160 },
-  { title: '操作', key: 'action', width: 180 }
+  { title: t('prompt.templateName'), key: 'name', width: 250 },
+  { title: t('prompt.templateCode'), key: 'code', width: 200 },
+  { title: t('prompt.templateType'), key: 'type', width: 120 },
+  { title: t('prompt.model'), dataIndex: 'model', width: 120 },
+  { title: t('prompt.enabled'), key: 'enabled', width: 80 },
+  { title: t('common.updatedAt'), dataIndex: 'updatedAt', width: 160 },
+  { title: t('common.action'), key: 'action', width: 180 }
 ]
 
 // Methods
@@ -500,7 +503,7 @@ const loadTemplates = async () => {
       )
     }
   } catch (err: any) {
-    message.error(err.message || '加载失败')
+    message.error(err.message || t('notification.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -512,10 +515,10 @@ const loadTemplateTypes = async () => {
   } catch (err) {
     // Fallback types
     templateTypes.value = [
-      { value: 'entity_extract', label: '实体抽取' },
-      { value: 'edge_extract', label: '关系抽取' },
-      { value: 'dedupe', label: '去重处理' },
-      { value: 'summary', label: '摘要生成' }
+      { value: 'entity_extract', label: t('prompt.entityExtract') },
+      { value: 'edge_extract', label: t('prompt.edgeExtract') },
+      { value: 'dedupe', label: t('prompt.dedupe') },
+      { value: 'summary', label: t('prompt.summary') }
     ]
   }
 }
@@ -574,7 +577,7 @@ const viewVersions = async (record: PromptTemplate) => {
     currentTemplate.value = record
     versionsVisible.value = true
   } catch (err: any) {
-    message.error(err.message || '加载版本历史失败')
+    message.error(err.message || t('prompt.testResult') + ' failed')
   }
 }
 
@@ -582,7 +585,7 @@ const copyTemplate = (record: PromptTemplate) => {
   isEditing.value = false
   Object.assign(form, {
     code: record.code + '_copy',
-    name: record.name + ' (复制)',
+    name: record.name + ' - ' + t('prompt.copyTemplate'),
     description: record.description || '',
     type: record.type,
     systemPrompt: record.systemPrompt,
@@ -626,15 +629,15 @@ const handleSave = async () => {
   try {
     if (isEditing.value) {
       await promptApi.update(form.id!, form)
-      message.success('更新成功')
+      message.success(t('common.success'))
     } else {
       await promptApi.create(form)
-      message.success('创建成功')
+      message.success(t('common.create') + ' ' + t('common.success'))
     }
     modalVisible.value = false
     loadTemplates()
   } catch (err: any) {
-    message.error(err.message || '保存失败')
+    message.error(err.message || t('common.error'))
   } finally {
     saving.value = false
   }
@@ -642,15 +645,15 @@ const handleSave = async () => {
 
 const deleteTemplate = (id: number) => {
   Modal.confirm({
-    title: '确认删除',
-    content: '确定要删除该提示词模板吗？此操作不可恢复。',
+    title: t('common.confirm') + ' ' + t('common.delete'),
+    content: t('prompt.confirmDeletePrompt'),
     onOk: async () => {
       try {
         await promptApi.delete(id)
-        message.success('删除成功')
+        message.success(t('common.delete') + ' ' + t('common.success'))
         loadTemplates()
       } catch (err: any) {
-        message.error(err.message || '删除失败')
+        message.error(err.message || t('common.error'))
       }
     }
   })
@@ -659,21 +662,21 @@ const deleteTemplate = (id: number) => {
 const toggleEnabled = async (id: number, enabled: boolean) => {
   try {
     await promptApi.toggle(id, enabled)
-    message.success(enabled ? '已启用' : '已禁用')
+    message.success(enabled ? t('prompt.enabled') : t('prompt.disabled'))
     loadTemplates()
   } catch (err: any) {
-    message.error(err.message || '操作失败')
+    message.error(err.message || t('common.error'))
   }
 }
 
 const rollbackVersion = async (templateId: number, version: number) => {
   try {
     await promptApi.rollback(templateId, version)
-    message.success('回滚成功')
+    message.success(t('prompt.rollbackToVersion') + ' ' + t('common.success'))
     versionsVisible.value = false
     loadTemplates()
   } catch (err: any) {
-    message.error(err.message || '回滚失败')
+    message.error(err.message || t('common.error'))
   }
 }
 
@@ -705,7 +708,7 @@ const testTemplate = (record: PromptTemplate) => {
 
 const handleTest = async () => {
   if (!testInput.value.trim()) {
-    message.error('请输入测试内容')
+    message.error(t('prompt.inputContent') + ': ' + t('common.required'))
     return
   }
 
@@ -723,7 +726,7 @@ const handleTest = async () => {
   } catch (err: any) {
     testResult.value = {
       success: false,
-      errorMessage: err.message || '测试失败'
+      errorMessage: err.message || t('prompt.failed')
     }
   } finally {
     testing.value = false
@@ -750,12 +753,12 @@ const doGenerateSample = async () => {
     })
     if (resp.success && resp.samples) {
       generatedSamples.value = resp.samples
-      message.success(`生成 ${resp.samples.length} 条样本数据`)
+      message.success(t('prompt.generateTestData') + ' ' + t('common.success') + ': ' + resp.samples.length + ' samples')
     } else {
-      message.error(resp.errorMessage || '生成失败')
+      message.error(resp.errorMessage || t('prompt.failed'))
     }
   } catch (err: any) {
-    message.error(err.message || '生成失败')
+    message.error(err.message || t('prompt.failed'))
   } finally {
     generating.value = false
   }
@@ -765,7 +768,7 @@ const handleUseSample = () => {
   if (generatedSamples.value.length > 0) {
     testInput.value = generatedSamples.value[selectedSampleIdx.value].content
     sampleModalVisible.value = false
-    message.success('已使用选中的样本数据')
+    message.success(t('prompt.useSampleData') + ' ' + t('common.success'))
   }
 }
 

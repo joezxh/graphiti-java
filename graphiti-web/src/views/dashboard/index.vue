@@ -5,14 +5,14 @@
       <div class="header-left">
         <h2 class="page-title">
           <ThunderboltOutlined class="title-icon" />
-          图谱控制台
+          {{ $t('dashboard.title') }}
         </h2>
-        <span class="page-subtitle">Knowledge Graph Management Console</span>
+        <span class="page-subtitle">{{ $t('dashboard.subtitle') }}</span>
       </div>
       <div class="header-actions">
         <a-button @click="refresh" :loading="loading">
           <template #icon><ReloadOutlined /></template>
-          刷新
+          {{ $t('common.refresh') }}
         </a-button>
       </div>
     </div>
@@ -21,46 +21,46 @@
     <div class="stats-grid">
       <StatsCard
         :icon="ShareAltOutlined"
-        label="图谱总数"
+        :label="$t('dashboard.totalGraphs')"
         :value="stats.totalGraphs"
         icon-bg="rgba(94, 106, 210, 0.12)"
         icon-color="#5e6ad2"
         value-color="#5e6ad2"
         :trend="stats.graphTrend"
-        trend-period="本周"
+        :trend-period="$t('dashboard.thisWeek')"
         @click="goToGraphList"
       />
       <StatsCard
         :icon="EnvironmentOutlined"
-        label="实体节点数"
+        :label="$t('dashboard.totalNodes')"
         :value="stats.totalNodes"
         icon-bg="rgba(0, 212, 255, 0.12)"
         icon-color="#00d4ff"
         value-color="#00d4ff"
         :trend="stats.nodeTrend"
-        trend-period="本周"
+        :trend-period="$t('dashboard.thisWeek')"
         @click="goToGraphDetail"
       />
       <StatsCard
         :icon="ApiOutlined"
-        label="关系边数"
+        :label="$t('dashboard.totalEdges')"
         :value="stats.totalEdges"
         icon-bg="rgba(39, 166, 68, 0.12)"
         icon-color="#27a644"
         value-color="#27a644"
         :trend="stats.edgeTrend"
-        trend-period="本周"
+        :trend-period="$t('dashboard.thisWeek')"
         @click="goToGraphDetail"
       />
       <StatsCard
         :icon="FileTextOutlined"
-        label="推理事件数"
+        :label="$t('dashboard.totalEpisodes')"
         :value="stats.totalEpisodes"
         icon-bg="rgba(255, 140, 0, 0.12)"
         icon-color="#ff8c00"
         value-color="#ff8c00"
         :trend="stats.episodeTrend"
-        trend-period="本周"
+        :trend-period="$t('dashboard.thisWeek')"
         @click="goToInferenceLog"
       />
     </div>
@@ -69,7 +69,7 @@
     <div class="quick-actions-section">
       <h3 class="section-title">
         <BulbOutlined class="section-icon" />
-        快捷操作
+        {{ $t('dashboard.quickActions') }}
       </h3>
       <div class="action-grid">
         <div class="action-card" @click="handleCreateGraph">
@@ -77,8 +77,8 @@
             <PlusOutlined />
           </div>
           <div class="action-text">
-            <span class="action-title">创建新图谱</span>
-            <span class="action-desc">新建一个知识图谱实例</span>
+            <span class="action-title">{{ $t('dashboard.createGraph') }}</span>
+            <span class="action-desc">{{ $t('dashboard.createGraphDesc') }}</span>
           </div>
           <RightOutlined class="action-arrow" />
         </div>
@@ -88,8 +88,8 @@
             <UploadOutlined />
           </div>
           <div class="action-text">
-            <span class="action-title">导入数据</span>
-            <span class="action-desc">从文件或文本导入知识数据</span>
+            <span class="action-title">{{ $t('dashboard.importData') }}</span>
+            <span class="action-desc">{{ $t('dashboard.importDataDesc') }}</span>
           </div>
           <RightOutlined class="action-arrow" />
         </div>
@@ -99,8 +99,8 @@
             <UnorderedListOutlined />
           </div>
           <div class="action-text">
-            <span class="action-title">查看推理日志</span>
-            <span class="action-desc">查看图谱推理执行记录</span>
+            <span class="action-title">{{ $t('dashboard.viewInferenceLog') }}</span>
+            <span class="action-desc">{{ $t('dashboard.viewInferenceLogDesc') }}</span>
           </div>
           <RightOutlined class="action-arrow" />
         </div>
@@ -110,8 +110,8 @@
             <SettingOutlined />
           </div>
           <div class="action-text">
-            <span class="action-title">本体论管理</span>
-            <span class="action-desc">配置实体类型和关系类型</span>
+            <span class="action-title">{{ $t('dashboard.ontologyManagement') }}</span>
+            <span class="action-desc">{{ $t('dashboard.ontologyManagementDesc') }}</span>
           </div>
           <RightOutlined class="action-arrow" />
         </div>
@@ -123,10 +123,10 @@
       <div class="section-header">
         <h3 class="section-title">
           <ClockCircleOutlined class="section-icon" />
-          最近图谱
+          {{ $t('dashboard.recentGraphs') }}
         </h3>
         <a-button type="link" @click="goToGraphList">
-          查看全部 <RightOutlined />
+          {{ $t('common.viewAll') }} <RightOutlined />
         </a-button>
       </div>
 
@@ -142,7 +142,7 @@
           </div>
           <div class="graph-info">
             <span class="graph-name">{{ graph.name }}</span>
-            <span class="graph-desc">{{ graph.description || '暂无描述' }}</span>
+            <span class="graph-desc">{{ graph.description || $t('common.noDescription') }}</span>
           </div>
           <div class="graph-stats">
             <div class="graph-stat">
@@ -160,7 +160,7 @@
         </div>
       </div>
 
-      <a-empty v-else description="暂无图谱，点击上方「创建新图谱」开始">
+      <a-empty v-else :description="$t('dashboard.noGraphs')">
         <template #image>
           <div style="font-size: 48px; color: #5e6ad2;">
             <InboxOutlined />
@@ -242,7 +242,7 @@ const loadData = async () => {
     }
   } catch (err) {
     console.warn('Dashboard data load failed', err)
-    message.warning('部分数据加载失败，请稍后重试')
+    message.warning('dashboard.partialLoadFailed')
   } finally {
     loading.value = false
   }
@@ -260,7 +260,7 @@ const goToGraphDetail = (graphId?: string) => {
   if (id) {
     router.push({ path: '/graph/detail', query: { graphId } })
   } else {
-    message.info('请先创建一个图谱')
+    message.info('dashboard.pleaseCreateFirst')
   }
 }
 

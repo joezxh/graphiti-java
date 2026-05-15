@@ -20,8 +20,8 @@
             <circle cx="20" cy="20" r="6" fill="url(#logoGradient)" />
           </svg>
         </div>
-        <h1 class="title">Graphiti-Java</h1>
-        <p class="subtitle">知识图谱管理系统</p>
+        <h1 class="title">{{ $t('login.title') }}</h1>
+        <p class="subtitle">{{ $t('login.subtitle') }}</p>
       </div>
 
       <!-- 登录表单 -->
@@ -32,11 +32,11 @@
         layout="vertical"
         @finish="handleLogin"
       >
-        <a-form-item name="username" label="用户名">
+        <a-form-item name="username" :label="$t('login.username')">
           <a-input
             v-model:value="form.username"
             size="large"
-            placeholder="请输入用户名"
+            :placeholder="$t('login.enterUsername')"
           >
             <template #prefix>
               <UserOutlined />
@@ -44,11 +44,11 @@
           </a-input>
         </a-form-item>
 
-        <a-form-item name="password" label="密码">
+        <a-form-item name="password" :label="$t('login.password')">
           <a-input-password
             v-model:value="form.password"
             size="large"
-            placeholder="请输入密码"
+            :placeholder="$t('login.enterPassword')"
           >
             <template #prefix>
               <LockOutlined />
@@ -57,7 +57,7 @@
         </a-form-item>
 
         <a-form-item>
-          <a-checkbox v-model:checked="rememberMe">记住我</a-checkbox>
+          <a-checkbox v-model:checked="rememberMe">{{ $t('login.rememberMe') }}</a-checkbox>
         </a-form-item>
 
         <a-form-item>
@@ -69,7 +69,7 @@
             block
             class="login-btn"
           >
-            登录
+            {{ $t('login.login') }}
           </a-button>
         </a-form-item>
       </a-form>
@@ -104,13 +104,13 @@ const form = reactive({
 
 const rules = {
   username: [
-    { required: true, message: '请输入用户名' },
-    { min: 3, max: 20, message: '用户名长度为 3-20 个字符' },
-    { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字和下划线' }
+    { required: true, message: 'login.enterUsername' },
+    { min: 3, max: 20, message: 'login.usernameLength' },
+    { pattern: /^[a-zA-Z0-9_]+$/, message: 'login.usernamePattern' }
   ],
   password: [
-    { required: true, message: '请输入密码' },
-    { min: 6, message: '密码长度不能小于 6 个字符' }
+    { required: true, message: 'login.enterPassword' },
+    { min: 6, message: 'login.passwordMin' }
   ]
 }
 

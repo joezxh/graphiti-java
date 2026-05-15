@@ -1,21 +1,21 @@
 <template>
   <div class="data-import-page">
     <div class="page-header">
-      <h1 class="page-title">数据导入</h1>
-      <p class="page-desc">将外部数据导入到指定图谱中，支持 JSON、CSV、Triple 三种格式</p>
+      <h1 class="page-title">{{ $t("data.import") }}</h1>
+      <p class="page-desc">{{ $t("data.importDesc") }}</p>
     </div>
 
     <a-row :gutter="24">
       <a-col :span="16">
-        <a-card title="导入配置" class="import-card">
+        <a-card :title="$t('data.importConfig')" class="import-card">
           <a-form :model="form" layout="vertical">
-            <a-form-item label="目标图谱" required>
-              <a-select v-model:value="form.graphId" placeholder="选择目标图谱">
+            <a-form-item :label="$t('data.targetGraph')" required>
+              <a-select v-model:value="form.graphId" :placeholder="$t('data.selectTargetGraph')">
                 <a-select-option v-for="g in graphOptions" :key="g.id" :value="g.id">{{ g.name }}</a-select-option>
               </a-select>
             </a-form-item>
 
-            <a-form-item label="数据格式" required>
+            <a-form-item :label="$t('data.dataFormat')" required>
               <a-radio-group v-model:value="form.format">
                 <a-radio-button value="json">JSON</a-radio-button>
                 <a-radio-button value="csv">CSV</a-radio-button>
@@ -23,9 +23,9 @@
               </a-radio-group>
             </a-form-item>
 
-            <a-form-item label="数据内容" required>
+            <a-form-item :label="$t('data.dataContent')" required>
               <a-tabs v-model:activeKey="inputMode">
-                <a-tab-pane key="text" tab="文本输入">
+                <a-tab-pane key="text" :tab="$t('data.textInput')">
                   <a-textarea
                     v-model:value="form.data"
                     :rows="12"
@@ -33,7 +33,7 @@
                     class="data-textarea"
                   />
                 </a-tab-pane>
-                <a-tab-pane key="file" tab="文件上传">
+                <a-tab-pane key="file" :tab="$t('data.fileUpload')">
                   <a-upload-dragger
                     :show-upload-list="false"
                     :before-upload="handleFileUpload"
@@ -42,12 +42,12 @@
                     <p class="ant-upload-drag-icon">
                       <InboxOutlined />
                     </p>
-                    <p class="ant-upload-text">点击或拖拽文件到此区域上传</p>
-                    <p class="ant-upload-hint">支持 .json、.csv、.nt 格式文件</p>
+                    <p class="ant-upload-text">{{ $t("data.clickOrDrag") }}</p>
+                    <p class="ant-upload-hint">{{ $t("data.supportedFormats") }}</p>
                   </a-upload-dragger>
                   <div v-if="uploadedFileName" class="file-info">
                     <FileOutlined /> {{ uploadedFileName }}
-                    <a-button type="link" size="small" @click="clearFile">清除</a-button>
+                    <a-button type="link" size="small" @click="clearFile">{{ $t("data.clear") }}</a-button>
                   </div>
                 </a-tab-pane>
               </a-tabs>
@@ -56,10 +56,10 @@
             <a-form-item>
               <a-space>
                 <a-button type="primary" :loading="previewLoading" @click="previewData" :disabled="!canPreview">
-                  <EyeOutlined /> 预览数据
+                  <EyeOutlined /> {{ $t("data.previewData") }}
                 </a-button>
                 <a-button type="primary" :loading="importLoading" @click="executeImport" :disabled="!canImport">
-                  <ImportOutlined /> 执行导入
+                  <ImportOutlined /> {{ $t("data.executeImport") }}
                 </a-button>
               </a-space>
             </a-form-item>
@@ -68,7 +68,7 @@
       </a-col>
 
       <a-col :span="8">
-        <a-card title="导入历史" class="history-card">
+        <a-card :title="$t('data.importHistory')" class="history-card">
           <a-timeline>
             <a-timeline-item
               v-for="task in importHistory"
@@ -76,13 +76,13 @@
               :color="task.status === 'completed' ? 'green' : task.status === 'failed' ? 'red' : 'blue'"
             >
               <div class="history-item">
-                <div class="history-title">{{ formatLabel(task.format) }} 导入</div>
+                <div class="history-title">{{ formatLabel(task.format) }} {{ $t("data.import") }}</div>
                 <div class="history-meta">
                   <a-tag :color="statusColor(task.status)">{{ statusText(task.status) }}</a-tag>
                   <span class="history-time">{{ formatTime(task.createdAt) }}</span>
                 </div>
                 <div v-if="task.status === 'completed'" class="history-detail">
-                  成功导入 {{ task.processedRows }} / {{ task.totalRows }} 条
+                  {{ $t("data.rowsImported", { processed: task.processedRows, total: task.totalRows }) }}
                 </div>
                 <div v-if="task.status === 'failed' && task.errorMessage" class="history-error">
                   {{ task.errorMessage }}
@@ -90,13 +90,12 @@
               </div>
             </a-timeline-item>
           </a-timeline>
-          <a-empty v-if="!importHistory.length" description="暂无导入记录" />
+          <a-empty v-if="!importHistory.length" :description="$t('data.noHistory')" />
         </a-card>
       </a-col>
     </a-row>
 
-    <!-- 预览模态框 -->
-    <a-modal v-model:open="previewVisible" title="数据预览" width="900px" :footer="null">
+    <a-modal v-model:open="previewVisible" :title="$t('data.previewData')" width="900px" :footer="null">
       <a-table
         :columns="previewColumns"
         :data-source="previewDataList"
@@ -108,20 +107,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { message } from 'ant-design-vue'
-import { InboxOutlined, FileOutlined, EyeOutlined, ImportOutlined } from '@ant-design/icons-vue'
-import { dataApi, type ImportTask, type EntityItem } from '@/api/data'
-import { graphApi, type Graph } from '@/api/graph'
+import { ref, reactive, computed, onMounted } from "vue"
+import { message } from "ant-design-vue"
+import { InboxOutlined, FileOutlined, EyeOutlined, ImportOutlined } from "@ant-design/icons-vue"
+import { dataApi, type ImportTask, type EntityItem } from "@/api/data"
+import { graphApi, type Graph } from "@/api/graph"
 
 const form = reactive({
-  graphId: '',
-  format: 'json' as 'json' | 'csv' | 'triple',
-  data: ''
+  graphId: "",
+  format: "json" as "json" | "csv" | "triple",
+  data: ""
 })
 
-const inputMode = ref('text')
-const uploadedFileName = ref('')
+const inputMode = ref("text")
+const uploadedFileName = ref("")
 const graphOptions = ref<Graph[]>([])
 
 const previewLoading = ref(false)
@@ -132,14 +131,14 @@ const importHistory = ref<ImportTask[]>([])
 
 const placeholderText = computed(() => {
   switch (form.format) {
-    case 'json':
-      return '{\n  "nodes": [\n    { "name": "张三", "type": "Person", "properties": { "age": 30 } }\n  ],\n  "edges": []\n}'
-    case 'csv':
-      return 'name,type,age,email\n张三,Person,30,zhangsan@example.com\n李四,Person,28,lisi@example.com'
-    case 'triple':
-      return '<http://example.org/person/1> <http://example.org/name> "张三" .\n<http://example.org/person/1> <http://example.org/age> "30"^^<http://www.w3.org/2001/XMLSchema#integer> .'
+    case "json":
+      return '{\n  "nodes": [\n    { "name": "Zhang San", "type": "Person", "properties": { "age": 30 } }\n  ],\n  "edges": []\n}'
+    case "csv":
+      return "name,type,age,email\nZhang San,Person,30,zhangsan@example.com\nLi Si,Person,28,lisi@example.com"
+    case "triple":
+      return '<http://example.org/person/1> <http://example.org/name> "Zhang San" .\n<http://example.org/person/1> <http://example.org/age> "30"^^<http://www.w3.org/2001/XMLSchema#integer> .'
     default:
-      return ''
+      return ""
   }
 })
 
@@ -153,7 +152,7 @@ const loadGraphs = async () => {
       form.graphId = graphOptions.value[0].graphId
     }
   } catch (err) {
-    console.error('加载图谱列表失败', err)
+    console.error("data.loadFailed", err)
   }
 }
 
@@ -161,7 +160,7 @@ const loadHistory = async () => {
   try {
     importHistory.value = await dataApi.getImportHistory(form.graphId || undefined)
   } catch (err) {
-    console.error('加载导入历史失败', err)
+    console.error("data.loadHistoryFailed", err)
   }
 }
 
@@ -170,16 +169,16 @@ const handleFileUpload = (file: File) => {
   reader.onload = (e) => {
     form.data = e.target?.result as string
     uploadedFileName.value = file.name
-    inputMode.value = 'text'
-    message.success(`文件 ${file.name} 已读取`)
+    inputMode.value = "text"
+    message.success("data.fileRead: " + file.name)
   }
   reader.readAsText(file)
   return false
 }
 
 const clearFile = () => {
-  uploadedFileName.value = ''
-  form.data = ''
+  uploadedFileName.value = ""
+  form.data = ""
 }
 
 const previewData = async () => {
@@ -189,7 +188,7 @@ const previewData = async () => {
     previewDataList.value = await dataApi.previewImport(form.graphId, form.format, form.data)
     previewVisible.value = true
   } catch (err: any) {
-    message.error(err.message || '预览失败')
+    message.error(err.message || "data.previewFailed")
   } finally {
     previewLoading.value = false
   }
@@ -200,47 +199,46 @@ const executeImport = async () => {
   importLoading.value = true
   try {
     const task = await dataApi.importData(form.graphId, form.format, form.data)
-    if (task.status === 'completed') {
-      message.success(`导入成功！共导入 ${task.processedRows} 条数据`)
+    if (task.status === "completed") {
+      message.success("data.importSuccess: " + task.processedRows)
     } else {
-      message.warning(`导入处理中，共 ${task.totalRows} 条`)
+      message.warning("data.importProcessing: " + task.totalRows)
     }
-    form.data = ''
-    uploadedFileName.value = ''
+    form.data = ""
+    uploadedFileName.value = ""
   } catch (err: any) {
-    message.error(err.message || '导入失败')
+    message.error(err.message || "data.importFailed")
   } finally {
     importLoading.value = false
-    // 无论成功或失败，都刷新历史记录（操作日志已记录）
     await loadHistory()
   }
 }
 
 const formatLabel = (fmt: string) => {
-  const map: Record<string, string> = { json: 'JSON', csv: 'CSV', triple: 'Triple' }
+  const map: Record<string, string> = { json: "JSON", csv: "CSV", triple: "Triple" }
   return map[fmt] || fmt
 }
 
 const statusColor = (status: string) => {
-  const map: Record<string, string> = { completed: 'success', failed: 'error', pending: 'default', processing: 'processing' }
-  return map[status] || 'default'
+  const map: Record<string, string> = { completed: "success", failed: "error", pending: "default", processing: "processing" }
+  return map[status] || "default"
 }
 
 const statusText = (status: string) => {
-  const map: Record<string, string> = { completed: '完成', failed: '失败', pending: '待处理', processing: '处理中' }
+  const map: Record<string, string> = { completed: "data.completed", failed: "data.failed", pending: "data.pending", processing: "data.processing" }
   return map[status] || status
 }
 
 const formatTime = (time?: string) => {
-  if (!time) return ''
-  return new Date(time).toLocaleString('zh-CN')
+  if (!time) return ""
+  return new Date(time).toLocaleString()
 }
 
 const previewColumns = [
-  { title: 'UUID', dataIndex: 'uuid', key: 'uuid' },
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: '类型', dataIndex: 'type', key: 'type' },
-  { title: '属性', key: 'properties', customRender: ({ text }: any) => JSON.stringify(text).slice(0, 80) }
+  { title: "data.uuid", dataIndex: "uuid", key: "uuid" },
+  { title: "common.name", dataIndex: "name", key: "name" },
+  { title: "common.type", dataIndex: "type", key: "type" },
+  { title: "data.properties", key: "properties", customRender: ({ text }: any) => JSON.stringify(text).slice(0, 80) }
 ]
 
 onMounted(() => {
@@ -250,7 +248,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-@import '@/assets/styles/dark.less';
+@import "@/assets/styles/dark.less";
 
 .data-import-page {
   padding: 24px;
@@ -278,7 +276,7 @@ onMounted(() => {
 }
 
 .data-textarea {
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 13px;
 }
 

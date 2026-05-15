@@ -11,29 +11,31 @@
     </div>
 
     <div class="header-right">
+      <LanguageSwitcher />
+
       <div class="notification-bell" @click="goToNotification">
         <a-badge :count="unreadCount" :offset="[-2, 2]">
           <BellOutlined class="bell-icon" />
         </a-badge>
       </div>
-      
+
       <a-dropdown>
         <div class="user-info">
           <a-avatar size="small" :style="{ backgroundColor: '#5e6ad2' }">
             {{ userNickInitial }}
           </a-avatar>
-          <span class="username">{{ userStore.userInfo?.nickname || userStore.userInfo?.username || '用户' }}</span>
+          <span class="username">{{ userStore.userInfo?.nickname || userStore.userInfo?.username || $t('common.unknown') }}</span>
         </div>
         <template #overlay>
           <a-menu class="user-menu" @click="handleUserMenuClick">
             <a-menu-item key="profile">
               <UserOutlined />
-              个人中心
+              {{ $t('app.personalCenter') }}
             </a-menu-item>
             <a-menu-divider />
             <a-menu-item key="logout">
               <LogoutOutlined />
-              退出登录
+              {{ $t('app.logout') }}
             </a-menu-item>
           </a-menu>
         </template>
@@ -45,11 +47,14 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { UserOutlined, LogoutOutlined, BellOutlined } from '@ant-design/icons-vue'
 import { useUserStore } from '@/store/modules/user'
 import { notificationApi } from '@/api/notification'
+import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
 
+const { t } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 // const isDevView = ref(false) // 视图切换功能已禁用
@@ -77,7 +82,7 @@ const goToNotification = () => {
 
 onMounted(() => {
   fetchUnreadCount()
-  
+
   // 每60秒刷新一次未读通知数量
   setInterval(fetchUnreadCount, 60000)
 })
@@ -104,7 +109,7 @@ const handleViewSwitch = async (checked: boolean) => {
 const handleUserMenuClick = async ({ key }: { key: string }) => {
   if (key === 'logout') {
     await userStore.logout()
-    message.success('已退出登录')
+    message.success(t('messages.logoutSuccess'))
     router.push('/login')
     return
   }

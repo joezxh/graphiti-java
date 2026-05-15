@@ -3,18 +3,18 @@
     <a-card class="page-header" :bordered="false">
       <div class="header-content">
         <div class="header-left">
-          <h2 class="page-title">通知中心</h2>
-          <p class="page-description">查看系统通知和消息</p>
+          <h2 class="page-title">{{ $t('notification.title') }}</h2>
+          <p class="page-description">{{ $t('notification.titleDesc') }}</p>
         </div>
         <div class="header-actions">
           <a-space>
             <a-button @click="handleMarkAllAsRead" :disabled="unreadCount === 0">
               <template #icon><CheckCircleOutlined /></template>
-              全部已读
+              {{ $t('app.markAllRead') }}
             </a-button>
             <a-button danger @click="handleClearAll" :disabled="notificationList.length === 0">
               <template #icon><DeleteOutlined /></template>
-              清空通知
+              {{ $t('app.clearAll') }}
             </a-button>
           </a-space>
         </div>
@@ -25,16 +25,16 @@
       <!-- 通知类型筛选 -->
       <div class="notification-filter">
         <a-radio-group v-model:value="filterType" button-style="solid" @change="handleFilterChange">
-          <a-radio-button :value="0">全部</a-radio-button>
-          <a-radio-button :value="1">系统通知</a-radio-button>
-          <a-radio-button :value="2">图谱通知</a-radio-button>
-          <a-radio-button :value="3">检索通知</a-radio-button>
+          <a-radio-button :value="0">{{ $t('notification.all') }}</a-radio-button>
+          <a-radio-button :value="1">{{ $t('notification.systemNotification') }}</a-radio-button>
+          <a-radio-button :value="2">{{ $t('notification.graphNotification') }}</a-radio-button>
+          <a-radio-button :value="3">{{ $t('notification.searchNotification') }}</a-radio-button>
         </a-radio-group>
-        
+
         <a-radio-group v-model:value="filterRead" button-style="solid" @change="handleFilterChange" style="margin-left: 16px">
-          <a-radio-button :value="-1">全部</a-radio-button>
-          <a-radio-button :value="0">未读</a-radio-button>
-          <a-radio-button :value="1">已读</a-radio-button>
+          <a-radio-button :value="-1">{{ $t('notification.all') }}</a-radio-button>
+          <a-radio-button :value="0">{{ $t('notification.unread') }}</a-radio-button>
+          <a-radio-button :value="1">{{ $t('notification.read') }}</a-radio-button>
         </a-radio-group>
       </div>
 
@@ -49,22 +49,22 @@
           <a-list-item>
             <template #actions>
               <a-space>
-                <a-button 
-                  type="link" 
-                  size="small" 
+                <a-button
+                  type="link"
+                  size="small"
                   v-if="item.isRead === 0"
                   @click="handleMarkAsRead(item.id)"
                 >
-                  标为已读
+                  {{ $t('notification.markAsRead') }}
                 </a-button>
                 <a-popconfirm
-                  title="确定要删除此通知吗？"
-                  ok-text="确定"
-                  cancel-text="取消"
+                  :title="$t('notification.confirmDelete')"
+                  :ok-text="$t('common.confirm')"
+                  :cancel-text="$t('common.cancel')"
                   @confirm="handleDelete(item.id)"
                 >
                   <a-button type="link" size="small" danger>
-                    删除
+                    {{ $t('common.delete') }}
                   </a-button>
                 </a-popconfirm>
               </a-space>
@@ -94,15 +94,15 @@
         
         <template #loadMore>
           <div class="load-more" v-if="notificationList.length < total">
-            <a-button :loading="loadingMore" @click="handleLoadMore">加载更多</a-button>
+            <a-button :loading="loadingMore" @click="handleLoadMore">{{ $t('common.loading') }}</a-button>
           </div>
         </template>
       </a-list>
       
       <!-- 空状态 -->
-      <a-empty 
-        v-if="!loading && notificationList.length === 0" 
-        description="暂无通知" 
+      <a-empty
+        v-if="!loading && notificationList.length === 0"
+        :description="$t('notification.noNotifications')"
         style="margin-top: 48px"
       />
     </a-card>
@@ -111,12 +111,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import {
   CheckCircleOutlined,
   DeleteOutlined
 } from '@ant-design/icons-vue'
 import { notificationApi, type Notification, type NotificationQuery } from '@/api/notification'
+
+const { t } = useI18n()
 
 // 查询参数
 const filterType = ref<number>(0) // 0-全部 1-系统通知 2-图谱通知 3-检索通知
@@ -166,7 +169,7 @@ const fetchNotifications = async (isLoadMore = false) => {
     total.value = res.total
     pageNum.value = res.pageNum + 1
   } catch (error) {
-    message.error('获取通知列表失败')
+    message.error(t('notification.loadFailed'))
   } finally {
     loading.value = false
     loadingMore.value = false
@@ -196,10 +199,10 @@ const getNotificationTypeColor = (type: number) => {
 // 获取通知类型文本
 const getNotificationTypeText = (type: number) => {
   switch (type) {
-    case 1: return '系统通知'
-    case 2: return '图谱通知'
-    case 3: return '检索通知'
-    default: return '未知'
+    case 1: return 'notification.systemNotification'
+    case 2: return 'notification.graphNotification'
+    case 3: return 'notification.searchNotification'
+    default: return 'notification.unknown'
   }
 }
 
@@ -218,7 +221,7 @@ const handleLoadMore = () => {
 const handleMarkAsRead = async (id: number) => {
   try {
     await notificationApi.markAsRead(id)
-    message.success('已标记为已读')
+    message.success(t('notification.markSuccess'))
     
     // 更新本地状态
     const index = notificationList.value.findIndex(n => n.id === id)
@@ -228,7 +231,7 @@ const handleMarkAsRead = async (id: number) => {
     
     fetchUnreadCount()
   } catch (error) {
-    message.error('操作失败')
+    message.error(t('notification.operationFailed'))
   }
 }
 
@@ -236,7 +239,7 @@ const handleMarkAsRead = async (id: number) => {
 const handleMarkAllAsRead = async () => {
   try {
     await notificationApi.markAllAsRead()
-    message.success('已全部标记为已读')
+    message.success(t('notification.markAllSuccess'))
     
     // 更新本地状态
     for (const notification of notificationList.value) {
@@ -245,7 +248,7 @@ const handleMarkAllAsRead = async () => {
     
     unreadCount.value = 0
   } catch (error) {
-    message.error('操作失败')
+    message.error(t('notification.operationFailed'))
   }
 }
 
@@ -253,7 +256,7 @@ const handleMarkAllAsRead = async () => {
 const handleDelete = async (id: number) => {
   try {
     await notificationApi.deleteNotification(id)
-    message.success('删除成功')
+    message.success(t('notification.deleteSuccess'))
     
     // 更新本地状态
     const index = notificationList.value.findIndex(n => n.id === id)
@@ -264,7 +267,7 @@ const handleDelete = async (id: number) => {
     
     fetchUnreadCount()
   } catch (error) {
-    message.error('删除失败')
+    message.error(t('notification.operationFailed'))
   }
 }
 
@@ -272,14 +275,14 @@ const handleDelete = async (id: number) => {
 const handleClearAll = async () => {
   try {
     await notificationApi.clearAllNotifications()
-    message.success('已清空所有通知')
+    message.success(t('notification.clearSuccess'))
     
     // 更新本地状态
     notificationList.value = []
     total.value = 0
     unreadCount.value = 0
   } catch (error) {
-    message.error('操作失败')
+    message.error(t('notification.operationFailed'))
   }
 }
 

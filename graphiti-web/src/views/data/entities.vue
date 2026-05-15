@@ -1,8 +1,8 @@
 <template>
   <div class="entities-page">
     <div class="page-header">
-      <h1 class="page-title">实体管理</h1>
-      <p class="page-desc">查看、搜索、编辑和删除图谱中的实体节点</p>
+      <h1 class="page-title">{{ $t('entities.title') }}</h1>
+      <p class="page-desc">{{ $t('entities.titleDesc') }}</p>
     </div>
 
     <a-card class="filter-card">
@@ -10,27 +10,27 @@
         <a-col :span="6">
           <a-input-search
             v-model:value="searchKeyword"
-            placeholder="搜索实体名称"
+            :placeholder="t('common.search') + ' ' + t('entities.name')"
             allow-clear
             @search="handleSearch"
           />
         </a-col>
         <a-col :span="4">
-          <a-select v-model:value="filterType" placeholder="实体类型" allow-clear style="width: 100%" @change="handleSearch">
+          <a-select v-model:value="filterType" :placeholder="t('entities.entityType')" allow-clear style="width: 100%" @change="handleSearch">
             <a-select-option v-for="t in entityTypes" :key="t" :value="t">{{ t }}</a-select-option>
           </a-select>
         </a-col>
         <a-col :span="4">
-          <a-select v-model:value="filterGraph" placeholder="选择图谱" allow-clear style="width: 100%" @change="handleSearch">
+          <a-select v-model:value="filterGraph" :placeholder="t('data.targetGraph')" allow-clear style="width: 100%" @change="handleSearch">
             <a-select-option v-for="g in graphOptions" :key="g.id" :value="g.id">{{ g.name }}</a-select-option>
           </a-select>
         </a-col>
         <a-col :span="10" style="text-align: right">
           <a-button type="primary" @click="handleSearch">
-            <SearchOutlined /> 查询
+            <SearchOutlined /> {{ t('common.query') }}
           </a-button>
           <a-button style="margin-left: 8px" @click="resetFilter">
-            <ReloadOutlined /> 重置
+            <ReloadOutlined /> {{ t('common.reset') }}
           </a-button>
         </a-col>
       </a-row>
@@ -56,11 +56,11 @@
           <template v-if="column.key === 'action'">
             <a-space>
               <a-button type="link" size="small" @click="openEditModal(record)">
-                <EditOutlined /> 编辑
+                <EditOutlined /> {{ t('common.edit') }}
               </a-button>
-              <a-popconfirm title="确定删除该实体？此操作不可恢复。" @confirm="deleteEntity(record.uuid)">
+              <a-popconfirm :title="t('entities.confirmDelete')" @confirm="deleteEntity(record.uuid)">
                 <a-button type="link" size="small" danger>
-                  <DeleteOutlined /> 删除
+                  <DeleteOutlined /> {{ t('common.delete') }}
                 </a-button>
               </a-popconfirm>
             </a-space>
@@ -72,21 +72,21 @@
     <!-- 编辑模态框 -->
     <a-modal
       v-model:open="editVisible"
-      title="编辑实体属性"
+      :title="t('entities.editEntity')"
       @ok="saveEntity"
       :confirm-loading="editSaving"
     >
       <a-form :model="editForm" layout="vertical">
-        <a-form-item label="UUID">
+        <a-form-item :label="t('common.id')">
           <a-input v-model:value="editForm.uuid" disabled />
         </a-form-item>
-        <a-form-item label="名称">
+        <a-form-item :label="t('common.name')">
           <a-input v-model:value="editForm.name" />
         </a-form-item>
-        <a-form-item label="类型">
+        <a-form-item :label="t('common.type')">
           <a-input v-model:value="editForm.type" disabled />
         </a-form-item>
-        <a-divider orientation="left">属性</a-divider>
+        <a-divider orientation="left">{{ t('common.properties') || t('entities.properties') }}</a-divider>
         <div v-for="(_val, key) in editForm.properties" :key="key" class="prop-edit-row">
           <span class="prop-key">{{ key }}</span>
           <a-input v-model:value="editForm.properties[key]" />
@@ -98,10 +98,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { SearchOutlined, ReloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { dataApi, type EntityItem, type EntityListParams } from '@/api/data'
 import { graphApi, type Graph } from '@/api/graph'
+
+const { t } = useI18n()
 
 const searchKeyword = ref('')
 const filterType = ref<string | undefined>(undefined)
@@ -116,22 +119,22 @@ const pagination = reactive({
   pageSize: 10,
   total: 0,
   showSizeChanger: true,
-  showTotal: (total: number) => `共 ${total} 条`
+  showTotal: (total: number) => `${t('common.total')} ${total}`
 })
 
 const columns = [
-  { title: 'UUID', dataIndex: 'uuid', key: 'uuid', width: 200 },
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: '类型', dataIndex: 'type', key: 'type', width: 120 },
-  { title: '属性', key: 'properties' },
-  { title: '操作', key: 'action', width: 150, fixed: 'right' }
+  { title: t('common.id'), dataIndex: 'uuid', key: 'uuid', width: 200 },
+  { title: t('common.name'), dataIndex: 'name', key: 'name' },
+  { title: t('common.type'), dataIndex: 'type', key: 'type', width: 120 },
+  { title: t('common.properties') || t('entities.properties'), key: 'properties' },
+  { title: t('common.actions'), key: 'action', width: 150, fixed: 'right' }
 ]
 
 const loadGraphs = async () => {
   try {
     graphOptions.value = await graphApi.getList()
   } catch (err) {
-    console.error('加载图谱列表失败', err)
+    console.error(t('entities.loadGraphsFailed'), err)
   }
 }
 
@@ -143,7 +146,7 @@ const loadEntityTypes = async () => {
   try {
     entityTypes.value = await dataApi.getEntityTypes(filterGraph.value)
   } catch (err) {
-    console.error('加载实体类型失败', err)
+    console.error(t('entities.loadTypesFailed'), err)
   }
 }
 
@@ -166,7 +169,7 @@ const loadEntities = async () => {
     entityList.value = res.list
     pagination.total = res.total
   } catch (err: any) {
-    message.error(err.message || '加载失败')
+    message.error(err.message || t('common.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -218,7 +221,7 @@ const openEditModal = (record: EntityItem) => {
 
 const saveEntity = async () => {
   if (!filterGraph.value) {
-    message.error('请先选择图谱')
+    message.error(t('entities.selectGraphFirst'))
     return
   }
   editSaving.value = true
@@ -229,11 +232,11 @@ const saveEntity = async () => {
       if (!k.startsWith('_')) editableProps[k] = v
     }
     await dataApi.updateEntity(editForm.uuid, { graphId: filterGraph.value, name: editForm.name, ...editableProps })
-    message.success('保存成功')
+    message.success(t('common.saveSuccess'))
     editVisible.value = false
     loadEntities()
   } catch (err: any) {
-    message.error(err.message || '保存失败')
+    message.error(err.message || t('common.saveFailed'))
   } finally {
     editSaving.value = false
   }
@@ -241,15 +244,15 @@ const saveEntity = async () => {
 
 const deleteEntity = async (uuid: string) => {
   if (!filterGraph.value) {
-    message.error('请先选择图谱')
+    message.error(t('entities.selectGraphFirst'))
     return
   }
   try {
     await dataApi.deleteEntity(uuid, filterGraph.value)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     loadEntities()
   } catch (err: any) {
-    message.error(err.message || '删除失败')
+    message.error(err.message || t('common.deleteFailed'))
   }
 }
 

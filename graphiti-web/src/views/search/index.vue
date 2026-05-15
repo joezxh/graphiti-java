@@ -1,15 +1,15 @@
 <template>
   <div class="search-page">
     <div class="search-header">
-      <h1 class="page-title">混合检索</h1>
-      <p class="page-desc">支持语义检索与结构化过滤的混合搜索</p>
+      <h1 class="page-title">{{ $t('search.title') }}</h1>
+      <p class="page-desc">{{ $t('search.titleDesc') }}</p>
     </div>
 
     <a-card class="search-card">
       <div class="search-input-wrapper">
         <a-input-search
           v-model:value="searchQuery"
-          placeholder="输入搜索关键词，如：张三、age > 25、科技公司创始人..."
+          :placeholder="$t('search.placeholder')"
           enter-button
           size="large"
           :loading="searching"
@@ -17,11 +17,11 @@
         >
           <template #addonBefore>
             <a-select v-model:value="searchMode" style="width: 110px">
-              <a-select-option value="semantic">语义检索</a-select-option>
-              <a-select-option value="structured">结构化</a-select-option>
-              <a-select-option value="hybrid">混合模式</a-select-option>
-              <a-select-option value="bfs">图遍历</a-select-option>
-              <a-select-option value="memory">记忆检索</a-select-option>
+              <a-select-option value="semantic">{{ $t('search.semanticSearch') }}</a-select-option>
+              <a-select-option value="structured">{{ $t('search.structuredSearch') }}</a-select-option>
+              <a-select-option value="hybrid">{{ $t('search.hybridMode') }}</a-select-option>
+              <a-select-option value="bfs">{{ $t('search.graphTraversal') }}</a-select-option>
+              <a-select-option value="memory">{{ $t('search.memorySearch') }}</a-select-option>
             </a-select>
           </template>
         </a-input-search>
@@ -29,19 +29,19 @@
 
       <div v-if="searchMode === 'structured' || searchMode === 'hybrid'" class="filter-panel">
         <a-row :gutter="12" align="middle">
-          <a-col>过滤条件：</a-col>
+          <a-col>{{ $t('search.filterConditions') }}</a-col>
           <a-col v-for="(filter, idx) in filters" :key="idx">
             <a-space>
-              <a-input v-model:value="filter.field" placeholder="字段" style="width: 100px" size="small" />
+              <a-input v-model:value="filter.field" :placeholder="$t('search.field')" style="width: 100px" size="small" />
               <a-select v-model:value="filter.operator" style="width: 90px" size="small">
-                <a-select-option value="eq">等于</a-select-option>
-                <a-select-option value="gt">大于</a-select-option>
-                <a-select-option value="gte">大于等于</a-select-option>
-                <a-select-option value="lt">小于</a-select-option>
-                <a-select-option value="lte">小于等于</a-select-option>
-                <a-select-option value="contains">包含</a-select-option>
+                <a-select-option value="eq">{{ $t('search.equals') }}</a-select-option>
+                <a-select-option value="gt">{{ $t('search.greaterThan') }}</a-select-option>
+                <a-select-option value="gte">{{ $t('search.greaterThanOrEqual') }}</a-select-option>
+                <a-select-option value="lt">{{ $t('search.lessThan') }}</a-select-option>
+                <a-select-option value="lte">{{ $t('search.lessThanOrEqual') }}</a-select-option>
+                <a-select-option value="contains">{{ $t('search.contains') }}</a-select-option>
               </a-select>
-              <a-input v-model:value="filter.value" placeholder="值" style="width: 120px" size="small" />
+              <a-input v-model:value="filter.value" :placeholder="$t('search.value')" style="width: 120px" size="small" />
               <a-button type="link" size="small" danger @click="removeFilter(idx)">
                 <CloseOutlined />
               </a-button>
@@ -49,7 +49,7 @@
           </a-col>
           <a-col>
             <a-button type="dashed" size="small" @click="addFilter">
-              <PlusOutlined /> 添加条件
+              <PlusOutlined /> {{ $t('search.addCondition') }}
             </a-button>
           </a-col>
         </a-row>
@@ -58,8 +58,8 @@
 
     <a-row :gutter="24" class="result-area">
       <a-col :span="10">
-        <a-card title="搜索结果" class="result-card">
-          <a-empty v-if="!searchResults.length && !searching" description="输入关键词开始搜索" />
+        <a-card :title="$t('search.searchResults')" class="result-card">
+          <a-empty v-if="!searchResults.length && !searching" :description="$t('search.enterKeywordToSearch')" />
           <a-list v-else :data-source="searchResults" size="small">
             <template #renderItem="{ item }">
               <a-list-item
@@ -69,14 +69,14 @@
                 <div class="result-content">
                   <div class="result-header">
                     <a-tag :color="item.type === 'node' ? 'blue' : 'purple'">
-                      {{ item.type === 'node' ? '节点' : '边' }}
+                      {{ item.type === 'node' ? $t('search.node') : $t('search.edge') }}
                     </a-tag>
                     <span class="result-name">{{ item.name }}</span>
                     <span class="result-score">{{ (item.score * 100).toFixed(1) }}%</span>
                   </div>
                   <div class="result-type">{{ item.entityType || item.relationType }}</div>
                   <div class="result-props">
-                    <span v-for="(val, key) in getDisplayProps(item.properties)" :key="key" class="prop-chip">
+                    <span v-for="(val, key) in getDisplayProps(item.properties)" :key="String(key)" class="prop-chip">
                       {{ key }}: {{ String(val).slice(0, 20) }}
                     </span>
                   </div>
@@ -88,7 +88,7 @@
       </a-col>
 
       <a-col :span="14">
-        <a-card title="结果可视化" class="viz-card">
+        <a-card :title="$t('search.resultVisualization')" class="viz-card">
           <ForceGraph
             v-if="searchResults.length > 0"
             graph-id="search-result"
@@ -98,12 +98,12 @@
             :highlight-node="selectedResult?.id"
             @node-click="onNodeClick"
           />
-          <a-empty v-else description="搜索结果将在图谱中高亮显示" />
+          <a-empty v-else :description="$t('search.resultsHighlighted')" />
         </a-card>
       </a-col>
     </a-row>
 
-    <a-card v-if="searchHistory.length > 0" title="搜索历史" class="history-card">
+    <a-card v-if="searchHistory.length > 0" :title="$t('search.searchHistory')" class="history-card">
       <a-space wrap>
         <a-tag
           v-for="h in searchHistory.slice(0, 10)"
@@ -125,7 +125,6 @@ import { message } from 'ant-design-vue'
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import { searchApi, type SearchParams, type SearchResult, type SearchFilter, type SearchHistory } from '@/api/search'
 import ForceGraph from '@/components/Graph/ForceGraph.vue'
-// import type { EChartsNode, EChartsEdge } from '@/utils/graph'
 
 const searchQuery = ref('')
 const searchMode = ref<'semantic' | 'structured' | 'hybrid' | 'bfs' | 'memory'>('hybrid')
@@ -153,36 +152,36 @@ const categories = [
 
 const vizNodes = computed(() => {
   return searchResults.value
-    .filter(r => r.type === 'node')
-    .map(r => ({
+    .filter((r) => r.type === "node")
+    .map((r) => ({
       id: r.id,
       name: r.name,
-      category: categories.findIndex(c => c.name === (r.entityType || 'Person')),
+      category: categories.findIndex((c) => c.name === (r.entityType || "Person")),
       value: String(r.score),
       symbolSize: 20 + r.score * 30,
-      itemStyle: { color: '#5e6ad2', borderColor: '#7b7ff0', borderWidth: 2, shadowBlur: 10, shadowColor: '#5e6ad266' },
-      label: { show: true, color: '#f7f8f8', fontSize: 12 },
+      itemStyle: { color: "#5e6ad2", borderColor: "#7b7ff0", borderWidth: 2, shadowBlur: 10, shadowColor: "#5e6ad266" },
+      label: { show: true, color: "#f7f8f8", fontSize: 12 },
       data: r as any
     }))
 })
 
 const vizEdges = computed(() => {
   return searchResults.value
-    .filter(r => r.type === 'edge' && r.source && r.target)
-    .map(r => ({
+    .filter((r) => r.type === "edge" && r.source && r.target)
+    .map((r) => ({
       id: r.id,
       source: r.source!,
       target: r.target!,
       value: String(r.score),
-      lineStyle: { width: 2, color: '#5e6ad266', curveness: 0.2, opacity: 0.6 },
-      label: { show: false, formatter: r.relationType || '', fontSize: 10, color: '#8a8f98' },
+      lineStyle: { width: 2, color: "#5e6ad266", curveness: 0.2, opacity: 0.6 },
+      label: { show: false, formatter: r.relationType || "", fontSize: 10, color: "#8a8f98" },
       data: r as any
     }))
 })
 
 const executeSearch = async () => {
   if (!searchQuery.value.trim()) {
-    message.warning('请输入搜索关键词')
+    message.warning("search.pleaseEnterKeyword")
     return
   }
   searching.value = true
@@ -211,7 +210,7 @@ const executeSearch = async () => {
     await searchApi.saveSearchHistory(searchQuery.value, searchMode.value, results.length)
     loadHistory()
   } catch (err: any) {
-    message.error(err.message || '搜索失败')
+    message.error(err.message || "search.searchFailed")
   } finally {
     searching.value = false
   }
@@ -244,7 +243,7 @@ const loadHistory = async () => {
     const resp = await searchApi.getSearchHistory()
     searchHistory.value = resp.list || []
   } catch (err) {
-    console.error('加载搜索历史失败', err)
+    console.error("search.loadHistoryFailed", err)
   }
 }
 

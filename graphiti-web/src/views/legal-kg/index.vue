@@ -1,8 +1,8 @@
 <template>
   <div class="legal-kg-page">
     <div class="page-header">
-      <h1 class="page-title">法律知识图谱</h1>
-      <p class="page-desc">基于典型案例、商事调解条例的法律领域知识图谱管理</p>
+      <h1 class="page-title">{{ $t('legalKg.title') }}</h1>
+      <p class="page-desc">{{ $t('legalKg.titleDesc') }}</p>
     </div>
 
     <!-- 图谱选择 & 操作区 -->
@@ -11,7 +11,7 @@
         <a-col :span="8">
           <a-select
             v-model:value="currentGraphId"
-            placeholder="选择图谱"
+            :placeholder="$t('legalKg.selectGraph')"
             style="width: 100%"
             @change="onGraphChange"
           >
@@ -23,19 +23,19 @@
         <a-col :span="16">
           <a-space>
             <a-button type="primary" @click="handleImport">
-              <CloudUploadOutlined /> 导入法律数据
+              <CloudUploadOutlined /> {{ $t('legalKg.importLegalData') }}
             </a-button>
             <a-button @click="handleImportProvisions">
-              <FileTextOutlined /> 导入示例法条
+              <FileTextOutlined /> {{ $t('legalKg.importExampleLaw') }}
             </a-button>
             <a-button @click="handleImportCases">
-              <AppstoreOutlined /> 导入示例案例
+              <AppstoreOutlined /> {{ $t('legalKg.importExampleCase') }}
             </a-button>
             <a-button @click="handleSetOntology">
-              <SettingOutlined /> 设置法律本体
+              <SettingOutlined /> {{ $t('legalKg.legalOntology') }}
             </a-button>
             <a-button @click="loadGraphStats">
-              <ReloadOutlined /> 刷新
+              <ReloadOutlined /> {{ $t('legalKg.refresh') }}
             </a-button>
           </a-space>
         </a-col>
@@ -44,22 +44,22 @@
       <!-- 图谱统计 -->
       <a-row :gutter="16" style="margin-top: 16px">
         <a-col :span="4">
-          <a-statistic title="节点总数" :value="stats.nodeCount" />
+          <a-statistic :title="$t('legalKg.nodeCount')" :value="stats.nodeCount" />
         </a-col>
         <a-col :span="4">
-          <a-statistic title="边总数" :value="stats.edgeCount" />
+          <a-statistic :title="$t('legalKg.edgeCount')" :value="stats.edgeCount" />
         </a-col>
         <a-col :span="4">
-          <a-statistic title="案件数" :value="stats.caseCount" />
+          <a-statistic :title="$t('legalKg.caseCount')" :value="stats.caseCount" />
         </a-col>
         <a-col :span="4">
-          <a-statistic title="法律条文数" :value="stats.provisionCount" />
+          <a-statistic :title="$t('legalKg.provisionCount')" :value="stats.provisionCount" />
         </a-col>
         <a-col :span="4">
-          <a-statistic title="当事人" :value="stats.partyCount" />
+          <a-statistic :title="$t('legalKg.partyCount')" :value="stats.partyCount" />
         </a-col>
         <a-col :span="4">
-          <a-statistic title="法院/法官" :value="stats.courtJudgeCount" />
+          <a-statistic :title="$t('legalKg.courtJudgeCount')" :value="stats.courtJudgeCount" />
         </a-col>
       </a-row>
     </a-card>
@@ -68,7 +68,7 @@
     <a-card class="content-card">
       <a-tabs v-model:activeKey="activeTab">
         <!-- 案件列表 -->
-        <a-tab-pane key="cases" tab="案件管理">
+        <a-tab-pane key="cases" :tab="$t('legalKg.caseManagement')">
           <a-table
             :columns="caseColumns"
             :data-source="caseList"
@@ -93,10 +93,10 @@
               <template v-else-if="column.key === 'action'">
                 <a-space>
                   <a-button type="link" size="small" @click="viewNodeDetail(record)">
-                    详情
+                    {{ $t('legalKg.details') }}
                   </a-button>
                   <a-button type="link" size="small" @click="viewNodeRelations(record)">
-                    关系
+                    {{ $t('legalKg.relations') }}
                   </a-button>
                 </a-space>
               </template>
@@ -105,7 +105,7 @@
         </a-tab-pane>
 
         <!-- 法律条文 -->
-        <a-tab-pane key="provisions" tab="法律条文">
+        <a-tab-pane key="provisions" :tab="$t('legalKg.legalProvisions')">
           <a-table
             :columns="provisionColumns"
             :data-source="provisionList"
@@ -127,7 +127,7 @@
               </template>
               <template v-else-if="column.key === 'action'">
                 <a-button type="link" size="small" @click="viewNodeDetail(record)">
-                  详情
+                  {{ $t('legalKg.details') }}
                 </a-button>
               </template>
             </template>
@@ -135,7 +135,7 @@
         </a-tab-pane>
 
         <!-- 当事人管理 -->
-        <a-tab-pane key="parties" tab="当事人管理">
+        <a-tab-pane key="parties" :tab="$t('legalKg.partyManagement')">
           <a-table
             :columns="partyColumns"
             :data-source="partyList"
@@ -154,8 +154,8 @@
               </template>
               <template v-else-if="column.key === 'action'">
                 <a-space>
-                  <a-button type="link" size="small" @click="viewNodeDetail(record)">详情</a-button>
-                  <a-button type="link" size="small" @click="viewNodeRelations(record)">关系</a-button>
+                  <a-button type="link" size="small" @click="viewNodeDetail(record)">{{ $t('legalKg.details') }}</a-button>
+                  <a-button type="link" size="small" @click="viewNodeRelations(record)">{{ $t('legalKg.relations') }}</a-button>
                 </a-space>
               </template>
             </template>
@@ -163,10 +163,10 @@
         </a-tab-pane>
 
         <!-- 法院 & 法官 -->
-        <a-tab-pane key="courts" tab="法院 & 法官">
+        <a-tab-pane key="courts" :tab="$t('legalKg.courtsJudges')">
           <a-row :gutter="16">
             <a-col :span="12">
-              <h3>法院</h3>
+              <h3>{{ $t('legalKg.courts') }}</h3>
               <a-table
                 :columns="courtColumns"
                 :data-source="courtList"
@@ -179,13 +179,13 @@
                     <a-tag color="geekblue">{{ record.properties?.level }}</a-tag>
                   </template>
                   <template v-else-if="column.key === 'action'">
-                    <a-button type="link" size="small" @click="viewNodeDetail(record)">详情</a-button>
+                    <a-button type="link" size="small" @click="viewNodeDetail(record)">{{ $t('legalKg.details') }}</a-button>
                   </template>
                 </template>
               </a-table>
             </a-col>
             <a-col :span="12">
-              <h3>法官</h3>
+              <h3>{{ $t('legalKg.judges') || 'Judges' }}</h3>
               <a-table
                 :columns="judgeColumns"
                 :data-source="judgeList"
@@ -198,7 +198,7 @@
                     <a-tag color="gold">{{ record.properties?.title }}</a-tag>
                   </template>
                   <template v-else-if="column.key === 'action'">
-                    <a-button type="link" size="small" @click="viewNodeDetail(record)">详情</a-button>
+                    <a-button type="link" size="small" @click="viewNodeDetail(record)">{{ $t('legalKg.details') }}</a-button>
                   </template>
                 </template>
               </a-table>
@@ -207,10 +207,10 @@
         </a-tab-pane>
 
         <!-- 关系视图 -->
-        <a-tab-pane key="relations" tab="关系视图">
+        <a-tab-pane key="relations" :tab="$t('legalKg.relationList')">
           <a-row :gutter="16">
             <a-col :span="8">
-              <h3>关系类型</h3>
+              <h3>{{ $t('legalKg.relationType') }}</h3>
               <a-list
                 :data-source="relationTypes"
                 size="small"
@@ -218,13 +218,13 @@
               >
                 <template #renderItem="{ item }">
                   <a-list-item>
-                    <a-list-item-meta :title="item.name" :description="item.count + ' 条'" />
+                    <a-list-item-meta :title="item.name" :description="item.count + ' '" />
                   </a-list-item>
                 </template>
               </a-list>
             </a-col>
             <a-col :span="16">
-              <h3>关系列表</h3>
+              <h3>{{ $t('legalKg.relationList') }}</h3>
               <a-table
                 :columns="edgeColumns"
                 :data-source="edgeList"
@@ -246,21 +246,21 @@
         </a-tab-pane>
 
         <!-- 检索 -->
-        <a-tab-pane key="search" tab="法律检索">
+        <a-tab-pane key="search" :tab="$t('legalKg.legalSearch')">
           <a-space direction="vertical" style="width: 100%">
             <a-space>
               <a-input-search
                 v-model:value="searchQuery"
-                placeholder="输入法律问题，如：商事调解的费用规定"
+                :placeholder="$t('legalKg.enterLegalQuestion')"
                 style="width: 500px"
-                enter-button="检索"
+                :enter-button="$t('legalKg.search')"
                 @search="handleLegalSearch"
               />
               <a-select v-model:value="searchMode" style="width: 120px">
-                <a-select-option value="hybrid">混合检索</a-select-option>
-                <a-select-option value="semantic">语义检索</a-select-option>
-                <a-select-option value="keyword">关键词</a-select-option>
-                <a-select-option value="graph">图检索</a-select-option>
+                <a-select-option value="hybrid">{{ $t('legalKg.hybridSearch') }}</a-select-option>
+                <a-select-option value="semantic">{{ $t('legalKg.semanticSearch') }}</a-select-option>
+                <a-select-option value="keyword">{{ $t('legalKg.keywordSearch') }}</a-select-option>
+                <a-select-option value="graph">{{ $t('legalKg.graphSearch') }}</a-select-option>
               </a-select>
             </a-space>
             <a-spin :spinning="searching">
@@ -277,7 +277,7 @@
                       <a-tag :color="item.nodeType === 'Case' ? 'red' : item.nodeType === 'LegalProvision' ? 'purple' : 'blue'">
                         {{ item.nodeType }}
                       </a-tag>
-                      <span>相似度: {{ (item.similarity * 100).toFixed(1) }}%</span>
+                      <span>{{ $t('legalKg.similarity') }}: {{ (item.similarity * 100).toFixed(1) }}%</span>
                     </template>
                     <a-list-item-meta>
                       <template #title>
@@ -290,16 +290,16 @@
                   </a-list-item>
                 </template>
               </a-list>
-              <a-empty v-else-if="!searching && searched" description="未找到相关结果" />
+              <a-empty v-else-if="!searching && searched" :description="$t('legalKg.noResults')" />
             </a-spin>
           </a-space>
         </a-tab-pane>
 
         <!-- LLM 提取 -->
-        <a-tab-pane key="extract" tab="LLM 提取">
+        <a-tab-pane key="extract" :tab="$t('legalKg.llmExtract')">
           <a-space direction="vertical" style="width: 100%" :size="16">
             <!-- 文件上传 -->
-            <a-card title="步骤 1：上传 JSON 文件" size="small">
+            <a-card :title="$t('legalKg.uploadJsonStep')" size="small">
               <a-upload-dragger
                 :before-upload="handleExtractFileUpload"
                 :file-list="extractFileList"
@@ -310,25 +310,25 @@
                 <p class="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>
-                <p class="ant-upload-text">点击或拖拽 JSON 文件到此处上传</p>
-                <p class="ant-upload-hint">支持单个 JSON 文件，文件大小建议不超过 10MB</p>
+                <p class="ant-upload-text">{{ $t('legalKg.clickOrDragJson') }}</p>
+                <p class="ant-upload-hint">{{ $t('legalKg.jsonFileHint') }}</p>
               </a-upload-dragger>
             </a-card>
 
             <!-- 预览与字段映射 -->
-            <a-card v-if="jsonPreview" title="步骤 2：配置字段映射" size="small">
+            <a-card v-if="jsonPreview" :title="$t('legalKg.previewMappingStep')" size="small">
               <a-space direction="vertical" style="width: 100%" :size="12">
                 <a-descriptions :column="4" size="small" bordered>
-                  <a-descriptions-item label="文件名">{{ jsonPreview.fileName }}</a-descriptions-item>
-                  <a-descriptions-item label="文件大小">{{ formatFileSize(jsonPreview.fileSize) }}</a-descriptions-item>
-                  <a-descriptions-item label="字段数量">{{ jsonPreview.fieldCount }}</a-descriptions-item>
-                  <a-descriptions-item label="状态">
-                    <a-tag color="green">已解析</a-tag>
+                  <a-descriptions-item :label="$t('legalKg.fileName')">{{ jsonPreview.fileName }}</a-descriptions-item>
+                  <a-descriptions-item :label="$t('legalKg.fileSize')">{{ formatFileSize(jsonPreview.fileSize) }}</a-descriptions-item>
+                  <a-descriptions-item :label="$t('legalKg.fieldCount')">{{ jsonPreview.fieldCount }}</a-descriptions-item>
+                  <a-descriptions-item :label="$t('legalKg.parsed')">
+                    <a-tag color="green">{{ $t('legalKg.parsed') }}</a-tag>
                   </a-descriptions-item>
                 </a-descriptions>
 
                 <a-collapse>
-                  <a-collapse-panel key="1" header="JSON 字段结构预览">
+                  <a-collapse-panel key="1" :header="$t('legalKg.jsonFieldPreview')">
                     <a-descriptions :column="2" size="small">
                       <a-descriptions-item
                         v-for="(info, path) in flattenFieldTree(jsonPreview.fieldTree)"
@@ -342,12 +342,11 @@
                   </a-collapse-panel>
                 </a-collapse>
 
-                <a-divider>字段映射配置</a-divider>
+                <a-divider>{{ $t('legalKg.fieldMappingConfig') }}</a-divider>
                 <a-alert type="info" show-icon>
-                  <template #message>如何配置映射？</template>
+                  <template #message>{{ $t('legalKg.mappingHelp') }}</template>
                   <template #description>
-                    将 JSON 文件中的字段路径（左侧）与本体字段（右侧）一一对应。
-                    例如：JSON 字段 <code>cpws_ajzl.ajms</code> → 本体字段 <code>Case.caseName</code>
+                    {{ $t('legalKg.mappingHelpContent') }}
                   </template>
                 </a-alert>
 
@@ -379,7 +378,7 @@
                         <template v-else-if="column.key === 'jsonField'">
                           <a-select
                             v-model:value="fieldMappings[`${entityType}.${record[0]}`]"
-                            placeholder="选择 JSON 字段"
+                            :placeholder="$t('legalKg.selectJsonField')"
                             style="width: 100%"
                             allow-clear
                             show-search
@@ -404,36 +403,36 @@
 
                 <a-space>
                   <a-button type="primary" :loading="extracting" :disabled="!hasMapping" @click="handleExtract">
-                    <RobotOutlined /> 提取法律知识
+                    <RobotOutlined /> {{ $t('legalKg.extractLegalKnowledge') }}
                   </a-button>
                   <a-button :loading="extracting" :disabled="!hasMapping" @click="handleExtractAndSave">
-                    <CloudUploadOutlined /> 提取并保存到图谱
+                    <CloudUploadOutlined /> {{ $t('legalKg.extractAndSave') }}
                   </a-button>
-                  <a-button @click="resetExtract">重置</a-button>
+                  <a-button @click="resetExtract">{{ $t('legalKg.reset') }}</a-button>
                 </a-space>
               </a-space>
             </a-card>
 
             <!-- 提取结果 -->
-            <a-card v-if="extractResult" title="步骤 3：提取结果" size="small">
+            <a-card v-if="extractResult" :title="$t('legalKg.extractResultStep')" size="small">
               <a-space direction="vertical" style="width: 100%" :size="12">
                 <a-row :gutter="16">
                   <a-col :span="6">
-                    <a-statistic title="案件" :value="extractResult.cases?.length || 0" />
+                    <a-statistic :title="$t('legalKg.cases')" :value="extractResult.cases?.length || 0" />
                   </a-col>
                   <a-col :span="6">
-                    <a-statistic title="当事人" :value="extractResult.parties?.length || 0" />
+                    <a-statistic :title="$t('legalKg.parties')" :value="extractResult.parties?.length || 0" />
                   </a-col>
                   <a-col :span="6">
-                    <a-statistic title="法院" :value="extractResult.courts?.length || 0" />
+                    <a-statistic :title="$t('legalKg.courts')" :value="extractResult.courts?.length || 0" />
                   </a-col>
                   <a-col :span="6">
-                    <a-statistic title="法律条文" :value="extractResult.provisions?.length || 0" />
+                    <a-statistic :title="$t('legalKg.legalProvisions')" :value="extractResult.provisions?.length || 0" />
                   </a-col>
                 </a-row>
 
                 <a-alert v-if="extractResult.errors?.length" type="error" show-icon>
-                  <template #message>提取过程中的问题</template>
+                  <template #message>{{ $t('legalKg.extractFailed') }}</template>
                   <template #description>
                     <a-list size="small">
                       <a-list-item v-for="(err, idx) in extractResult.errors" :key="idx">{{ err }}</a-list-item>
@@ -442,7 +441,7 @@
                 </a-alert>
 
                 <a-collapse>
-                  <a-collapse-panel key="cases" header="案件详情">
+                  <a-collapse-panel key="cases" :header="$t('legalKg.cases') + ' ' + $t('legalKg.details')">
                     <a-table
                       v-if="extractResult.cases?.length"
                       :columns="caseResultColumns"
@@ -452,14 +451,14 @@
                     >
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.key === 'amount'">
-                          {{ record.amountInDispute ? record.amountInDispute.toLocaleString() + ' 元' : '-' }}
+                          {{ record.amountInDispute ? record.amountInDispute.toLocaleString() + ' ' : '-' }}
                         </template>
                       </template>
                     </a-table>
-                    <a-empty v-else description="未提取到案件" />
+                    <a-empty v-else :description="t('legalKg.noResults')" />
                   </a-collapse-panel>
 
-                  <a-collapse-panel key="parties" header="当事人详情">
+                  <a-collapse-panel key="parties" :header="$t('legalKg.parties') + ' ' + $t('legalKg.details')">
                     <a-table
                       v-if="extractResult.parties?.length"
                       :columns="partyResultColumns"
@@ -467,10 +466,10 @@
                       :pagination="false"
                       size="small"
                     />
-                    <a-empty v-else description="未提取到当事人" />
+                    <a-empty v-else :description="t('legalKg.noResults')" />
                   </a-collapse-panel>
 
-                  <a-collapse-panel key="provisions" header="法律条文详情">
+                  <a-collapse-panel key="provisions" :header="$t('legalKg.legalProvisions') + ' ' + $t('legalKg.details')">
                     <a-table
                       v-if="extractResult.provisions?.length"
                       :columns="provisionResultColumns"
@@ -484,10 +483,10 @@
                         </template>
                       </template>
                     </a-table>
-                    <a-empty v-else description="未提取到法律条文" />
+                    <a-empty v-else :description="t('legalKg.noResults')" />
                   </a-collapse-panel>
 
-                  <a-collapse-panel key="courts" header="法院详情">
+                  <a-collapse-panel key="courts" :header="$t('legalKg.courts') + ' ' + $t('legalKg.details')">
                     <a-table
                       v-if="extractResult.courts?.length"
                       :columns="courtResultColumns"
@@ -495,7 +494,7 @@
                       :pagination="false"
                       size="small"
                     />
-                    <a-empty v-else description="未提取到法院" />
+                    <a-empty v-else :description="t('legalKg.noResults')" />
                   </a-collapse-panel>
                 </a-collapse>
               </a-space>
@@ -518,7 +517,7 @@
         </a-descriptions-item>
       </a-descriptions>
 
-      <a-divider>关联边</a-divider>
+      <a-divider>{{ $t('legalKg.relations') }}</a-divider>
       <a-list v-if="nodeEdges.length > 0" :data-source="nodeEdges" size="small">
         <template #renderItem="{ item }">
           <a-list-item>
@@ -530,36 +529,36 @@
           </a-list-item>
         </template>
       </a-list>
-      <a-empty v-else description="暂无关联边" />
+      <a-empty v-else :description="t('legalKg.noResults')" />
     </a-drawer>
 
     <!-- 导入确认弹窗 -->
     <a-modal
       v-model:open="importModalVisible"
-      title="导入法律知识图谱数据"
+      :title="t('legalKg.importModalTitle')"
       @ok="confirmImport"
       @cancel="importModalVisible = false"
       :confirm-loading="importing"
     >
       <a-space direction="vertical" style="width: 100%">
         <a-alert type="info" show-icon>
-          <template #message>导入内容</template>
+          <template #message>{{ t('legalKg.importContent') }}</template>
           <template #description>
-            将导入以下预定义的法律领域数据到当前选中的图谱中
+            {{ t('legalKg.importContentDesc') }}
           </template>
         </a-alert>
         <a-list size="small" bordered>
-          <a-list-item>商事调解条例全文（33条法律条文）</a-list-item>
-          <a-list-item>3 个示例商事案件</a-list-item>
-          <a-list-item>2 个商事调解组织</a-list-item>
-          <a-list-item>3 名调解员</a-list-item>
-          <a-list-item>3 个法院、3 名法官</a-list-item>
-          <a-list-item>2 名律师</a-list-item>
-          <a-list-item>2 个当事人</a-list-item>
-          <a-list-item>相关证据、裁判文书、调解协议</a-list-item>
+          <a-list-item>{{ t('legalKg.provisions33') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.cases3') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.orgs2') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.mediators3') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.courtsJudgesList') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.lawyers2') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.parties2') }}</a-list-item>
+          <a-list-item>{{ t('legalKg.evidenceDocs') }}</a-list-item>
         </a-list>
         <a-checkbox v-model:checked="importWithOntology">
-          同时设置法律本体定义（实体类型 + 关系类型）
+          {{ t('legalKg.setOntologyDef') }}
         </a-checkbox>
       </a-space>
     </a-modal>
@@ -568,8 +567,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
+
+const { t } = useI18n()
 import {
   CloudUploadOutlined,
   FileTextOutlined,
@@ -648,84 +650,84 @@ const extractedFile = ref<File | null>(null)
 
 // 表格列定义
 const caseColumns: TableColumnsType = [
-  { title: '案件编号', dataIndex: ['properties', 'caseNumber'], key: 'caseNumber', width: 200 },
-  { title: '案件名称', dataIndex: 'name', key: 'name' },
-  { title: '案件类型', key: 'caseType', width: 100 },
-  { title: '案件状态', key: 'caseStatus', width: 100 },
-  { title: '争议金额', key: 'amount', width: 120 },
-  { title: '操作', key: 'action', width: 150 }
+  { title: t('legalKg.caseNumber') || '案件编号', dataIndex: ['properties', 'caseNumber'], key: 'caseNumber', width: 200 },
+  { title: t('legalKg.caseName') || '案件名称', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.caseType') || '案件类型', key: 'caseType', width: 100 },
+  { title: t('legalKg.caseStatus') || '案件状态', key: 'caseStatus', width: 100 },
+  { title: t('legalKg.amount') || '争议金额', key: 'amount', width: 120 },
+  { title: t('legalKg.action') || '操作', key: 'action', width: 150 }
 ]
 
 const provisionColumns: TableColumnsType = [
-  { title: '条款', dataIndex: ['properties', 'articleNumber'], key: 'articleNumber', width: 120 },
-  { title: '条文名称', dataIndex: 'name', key: 'name' },
-  { title: '内容摘要', key: 'content', ellipsis: true },
-  { title: '关键词', key: 'keywords', width: 200 },
-  { title: '操作', key: 'action', width: 100 }
+  { title: t('legalKg.article') || '条款', dataIndex: ['properties', 'articleNumber'], key: 'articleNumber', width: 120 },
+  { title: t('legalKg.provisionName') || '条文名称', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.content') || '内容摘要', key: 'content', ellipsis: true },
+  { title: t('legalKg.keywords') || '关键词', key: 'keywords', width: 200 },
+  { title: t('legalKg.action') || '操作', key: 'action', width: 100 }
 ]
 
 const partyColumns: TableColumnsType = [
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: '类型', key: 'partyType', width: 100 },
-  { title: '角色', key: 'role', width: 100 },
-  { title: '住所地', dataIndex: ['properties', 'address'], key: 'address' },
-  { title: '操作', key: 'action', width: 150 }
+  { title: t('legalKg.name') || '名称', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.type') || '类型', key: 'partyType', width: 100 },
+  { title: t('legalKg.role') || '角色', key: 'role', width: 100 },
+  { title: t('legalKg.address') || '住所地', dataIndex: ['properties', 'address'], key: 'address' },
+  { title: t('legalKg.action') || '操作', key: 'action', width: 150 }
 ]
 
 const courtColumns: TableColumnsType = [
-  { title: '法院名称', dataIndex: 'name', key: 'name' },
-  { title: '级别', key: 'level', width: 150 },
-  { title: '所在地', dataIndex: ['properties', 'location'], key: 'location' },
-  { title: '操作', key: 'action', width: 80 }
+  { title: t('legalKg.courtName') || '法院名称', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.level') || '级别', key: 'level', width: 150 },
+  { title: t('legalKg.location') || '所在地', dataIndex: ['properties', 'location'], key: 'location' },
+  { title: t('legalKg.action') || '操作', key: 'action', width: 80 }
 ]
 
 const judgeColumns: TableColumnsType = [
-  { title: '姓名', dataIndex: 'name', key: 'name' },
-  { title: '职务', key: 'title', width: 120 },
-  { title: '所属法院', dataIndex: ['properties', 'courtName'], key: 'courtName' },
-  { title: '专业领域', dataIndex: ['properties', 'specialty'], key: 'specialty' },
-  { title: '操作', key: 'action', width: 80 }
+  { title: t('legalKg.name') || '姓名', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.title') || '职务', key: 'title', width: 120 },
+  { title: t('legalKg.court') || '所属法院', dataIndex: ['properties', 'courtName'], key: 'courtName' },
+  { title: t('legalKg.specialty') || '专业领域', dataIndex: ['properties', 'specialty'], key: 'specialty' },
+  { title: t('legalKg.action') || '操作', key: 'action', width: 80 }
 ]
 
 const edgeColumns: TableColumnsType = [
-  { title: '关系类型', key: 'type', width: 200 },
-  { title: '来源节点', dataIndex: 'source', key: 'source', width: 200 },
-  { title: '目标节点', dataIndex: 'target', key: 'target', width: 200 },
-  { title: '关系说明', key: 'fact', ellipsis: true }
+  { title: t('legalKg.relationType') || '关系类型', key: 'type', width: 200 },
+  { title: t('legalKg.sourceNode') || '来源节点', dataIndex: 'source', key: 'source', width: 200 },
+  { title: t('legalKg.targetNode') || '目标节点', dataIndex: 'target', key: 'target', width: 200 },
+  { title: t('legalKg.relationFact') || '关系说明', key: 'fact', ellipsis: true }
 ]
 
 // LLM 提取 - 字段映射表格列
 const mappingColumns: TableColumnsType = [
-  { title: '本体字段', key: 'ontField', width: 250 },
-  { title: 'JSON 字段路径', key: 'jsonField' }
+  { title: t('legalKg.ontologyField') || '本体字段', key: 'ontField', width: 250 },
+  { title: t('legalKg.jsonFieldPath') || 'JSON 字段路径', key: 'jsonField' }
 ]
 
 // LLM 提取 - 结果表格列
 const caseResultColumns: TableColumnsType = [
-  { title: '案件名称', dataIndex: 'caseName', key: 'caseName', ellipsis: true },
-  { title: '案号', dataIndex: 'caseNumber', key: 'caseNumber' },
-  { title: '案件类型', dataIndex: 'caseType', key: 'caseType' },
-  { title: '争议金额', key: 'amount' }
+  { title: t('legalKg.caseName') || '案件名称', dataIndex: 'caseName', key: 'caseName', ellipsis: true },
+  { title: t('legalKg.caseNumber') || '案号', dataIndex: 'caseNumber', key: 'caseNumber' },
+  { title: t('legalKg.caseType') || '案件类型', dataIndex: 'caseType', key: 'caseType' },
+  { title: t('legalKg.amount') || '争议金额', key: 'amount' }
 ]
 
 const partyResultColumns: TableColumnsType = [
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: '类型', dataIndex: 'partyType', key: 'partyType' },
-  { title: '角色', dataIndex: 'role', key: 'role' },
-  { title: '住所地', dataIndex: 'address', key: 'address', ellipsis: true }
+  { title: t('legalKg.name') || '名称', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.type') || '类型', dataIndex: 'partyType', key: 'partyType' },
+  { title: t('legalKg.role') || '角色', dataIndex: 'role', key: 'role' },
+  { title: t('legalKg.address') || '住所地', dataIndex: 'address', key: 'address', ellipsis: true }
 ]
 
 const provisionResultColumns: TableColumnsType = [
-  { title: '条文编号', dataIndex: 'provisionId', key: 'provisionId' },
-  { title: '法律名称', dataIndex: 'lawName', key: 'lawName' },
-  { title: '条款', dataIndex: 'articleNumber', key: 'articleNumber' },
-  { title: '内容', key: 'content', ellipsis: true }
+  { title: t('legalKg.provisionId') || '条文编号', dataIndex: 'provisionId', key: 'provisionId' },
+  { title: t('legalKg.lawName') || '法律名称', dataIndex: 'lawName', key: 'lawName' },
+  { title: t('legalKg.article') || '条款', dataIndex: 'articleNumber', key: 'articleNumber' },
+  { title: t('legalKg.content') || '内容', key: 'content', ellipsis: true }
 ]
 
 const courtResultColumns: TableColumnsType = [
-  { title: '法院名称', dataIndex: 'name', key: 'name' },
-  { title: '级别', dataIndex: 'level', key: 'level' },
-  { title: '所在地', dataIndex: 'location', key: 'location' }
+  { title: t('legalKg.courtName') || '法院名称', dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.level') || '级别', dataIndex: 'level', key: 'level' },
+  { title: t('legalKg.location') || '所在地', dataIndex: 'location', key: 'location' }
 ]
 
 // 生命周期
@@ -803,7 +805,7 @@ async function loadAllData() {
     judgeList.value = nodes.filter(n => n.type === 'Judge')
   } catch (e) {
     console.error('加载数据失败', e)
-    message.error('加载数据失败')
+    message.error(t('legalKg.loadFailed') || '加载数据失败')
   } finally {
     loading.value = false
   }
@@ -815,7 +817,7 @@ function handleImport() {
 
 async function confirmImport() {
   if (!currentGraphId.value) {
-    message.warning('请先选择图谱')
+    message.warning(t('legalKg.selectGraphFirst') || '请先选择图谱')
     return
   }
 
@@ -879,13 +881,13 @@ async function confirmImport() {
       }
     }
 
-    message.success('法律知识图谱数据导入成功')
+    message.success(t('legalKg.importSuccess') || '法律知识图谱数据导入成功')
     importModalVisible.value = false
     await loadGraphStats()
     await loadAllData()
   } catch (e: any) {
     console.error('导入失败', e)
-    message.error('导入失败: ' + (e?.message || '未知错误'))
+    message.error(t('legalKg.importFailed') + ': ' + (e?.message || ''))
   } finally {
     importing.value = false
   }
@@ -893,7 +895,7 @@ async function confirmImport() {
 
 async function handleImportProvisions() {
   if (!currentGraphId.value) {
-    message.warning('请先选择图谱')
+    message.warning(t('legalKg.selectGraphFirst') || '请先选择图谱')
     return
   }
   try {
@@ -917,17 +919,17 @@ async function handleImportProvisions() {
       }
     }
 
-    message.success(`成功导入 ${success}/${provisions.length} 条法律条文`)
+    message.success(t('legalKg.importedProvisions').replace('{count}', success.toString()).replace('{total}', provisions.length.toString()) || `成功导入 ${success}/${provisions.length} 条法律条文`)
     await loadGraphStats()
     await loadAllData()
   } catch (e) {
-    message.error('导入失败')
+    message.error(t('legalKg.importFailed') || '导入失败')
   }
 }
 
 async function handleImportCases() {
   if (!currentGraphId.value) {
-    message.warning('请先选择图谱')
+    message.warning(t('legalKg.selectGraphFirst') || '请先选择图谱')
     return
   }
   try {
@@ -951,17 +953,17 @@ async function handleImportCases() {
       }
     }
 
-    message.success(`成功导入 ${success}/${cases.length} 个案例`)
+    message.success(t('legalKg.importedCases').replace('{count}', success.toString()).replace('{total}', cases.length.toString()) || `成功导入 ${success}/${cases.length} 个案例`)
     await loadGraphStats()
     await loadAllData()
   } catch (e) {
-    message.error('导入失败')
+    message.error(t('legalKg.importFailed') || '导入失败')
   }
 }
 
 async function handleSetOntology() {
   if (!currentGraphId.value) {
-    message.warning('请先选择图谱')
+    message.warning(t('legalKg.selectGraphFirst') || '请先选择图谱')
     return
   }
   try {
@@ -969,9 +971,9 @@ async function handleSetOntology() {
       entities: JSON.stringify(LEGAL_ENTITIES),
       edges: JSON.stringify(LEGAL_EDGES)
     })
-    message.success('法律本体设置成功')
+    message.success(t('legalKg.ontologySetSuccess') || '法律本体设置成功')
   } catch (e: any) {
-    message.error('本体设置失败: ' + (e?.message || ''))
+    message.error(t('legalKg.ontologySetFailed') + ': ' + (e?.message || ''))
   }
 }
 
@@ -999,7 +1001,7 @@ async function handleLegalSearch() {
     }))
   } catch (e) {
     console.error('搜索失败', e)
-    message.error('搜索失败')
+    message.error(t('legalKg.searchFailed') || '搜索失败')
   } finally {
     searching.value = false
   }
@@ -1092,7 +1094,7 @@ async function loadOntologyFields() {
     ontologyFields.value = resp
   } catch (e) {
     console.error('加载本体字段失败', e)
-    message.error('加载本体字段定义失败')
+    message.error(t('legalKg.loadOntologyFailed') || '加载本体字段定义失败')
   }
 }
 
@@ -1115,7 +1117,7 @@ async function handleExtractFileUpload(file: File) {
     autoSuggestMappings()
   } catch (e: any) {
     console.error('预览JSON文件失败', e)
-    message.error('预览失败: ' + (e?.message || ''))
+    message.error(t('legalKg.previewFailed') + ': ' + (e?.message || ''))
     extractFileList.value = []
     extractedFile.value = null
   }
@@ -1232,15 +1234,15 @@ const hasMapping = computed(() => {
 
 async function handleExtract() {
   if (!extractedFile.value) {
-    message.warning('请先上传 JSON 文件')
+    message.warning(t('legalKg.uploadJsonFirst') || '请先上传 JSON 文件')
     return
   }
   if (!currentGraphId.value) {
-    message.warning('请先选择图谱')
+    message.warning(t('legalKg.selectGraphFirst') || '请先选择图谱')
     return
   }
   if (!hasMapping.value) {
-    message.warning('请至少配置一个字段映射')
+    message.warning(t('legalKg.configMappingFirst') || '请至少配置一个字段映射')
     return
   }
 
@@ -1248,10 +1250,10 @@ async function handleExtract() {
   try {
     const resp = await extractLegalKG(extractedFile.value, currentGraphId.value, fieldMappings.value)
     extractResult.value = resp as LegalExtractResultVO
-    message.success('提取完成')
+    message.success(t('legalKg.extractSuccess') || '提取完成')
   } catch (e: any) {
     console.error('提取失败', e)
-    message.error('提取失败: ' + (e?.message || ''))
+    message.error(t('legalKg.extractFailed') + ': ' + (e?.message || ''))
   } finally {
     extracting.value = false
   }
@@ -1259,15 +1261,15 @@ async function handleExtract() {
 
 async function handleExtractAndSave() {
   if (!extractedFile.value) {
-    message.warning('请先上传 JSON 文件')
+    message.warning(t('legalKg.uploadJsonFirst') || '请先上传 JSON 文件')
     return
   }
   if (!currentGraphId.value) {
-    message.warning('请先选择图谱')
+    message.warning(t('legalKg.selectGraphFirst') || '请先选择图谱')
     return
   }
   if (!hasMapping.value) {
-    message.warning('请至少配置一个字段映射')
+    message.warning(t('legalKg.configMappingFirst') || '请至少配置一个字段映射')
     return
   }
 
@@ -1280,14 +1282,14 @@ async function handleExtractAndSave() {
     const nodes = result.totalNodes || 0
     const edges = result.totalEdges || 0
 
-    message.success(`提取并保存成功！共导入 ${nodes} 个节点，${edges} 条边`)
+    message.success(t('legalKg.extractAndSaveSuccess').replace('{nodes}', nodes.toString()).replace('{edges}', edges.toString()) || `提取并保存成功！共导入 ${nodes} 个节点，${edges} 条边`)
 
     // 刷新数据
     await loadGraphStats()
     await loadAllData()
   } catch (e: any) {
     console.error('提取并保存失败', e)
-    message.error('提取并保存失败: ' + (e?.message || ''))
+    message.error(t('legalKg.extractAndSaveFailed') + ': ' + (e?.message || ''))
   } finally {
     extracting.value = false
   }

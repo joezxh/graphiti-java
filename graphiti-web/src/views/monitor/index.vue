@@ -5,7 +5,7 @@
         <a-card class="stats-card" :bordered="false">
           <div class="stats-content">
             <div class="stats-header">
-              <span class="stats-title">CPU使用率</span>
+              <span class="stats-title">{{ $t('monitor.cpuUsage') }}</span>
               <DashboardOutlined class="stats-icon" />
             </div>
             <div class="stats-value" :style="{ color: getCpuColor(systemStatus?.cpuUsage) }">
@@ -25,7 +25,7 @@
         <a-card class="stats-card" :bordered="false">
           <div class="stats-content">
             <div class="stats-header">
-              <span class="stats-title">内存使用率</span>
+              <span class="stats-title">{{ $t('monitor.memoryUsage') }}</span>
               <ClockCircleOutlined class="stats-icon" />
             </div>
             <div class="stats-value" :style="{ color: getMemoryColor(systemStatus?.memoryUsage) }">
@@ -45,7 +45,7 @@
         <a-card class="stats-card" :bordered="false">
           <div class="stats-content">
             <div class="stats-header">
-              <span class="stats-title">磁盘使用率</span>
+              <span class="stats-title">{{ $t('monitor.diskUsage') }}</span>
               <DatabaseOutlined class="stats-icon" />
             </div>
             <div class="stats-value" :style="{ color: getDiskColor(systemStatus?.diskUsage) }">
@@ -65,14 +65,14 @@
         <a-card class="stats-card" :bordered="false">
           <div class="stats-content">
             <div class="stats-header">
-              <span class="stats-title">系统运行时间</span>
+              <span class="stats-title">{{ $t('monitor.uptime') }}</span>
               <CheckCircleOutlined class="stats-icon" />
             </div>
             <div class="stats-value" style="font-size: 20px">
               {{ formatUptime(systemStatus?.uptime) || '--' }}
             </div>
             <div class="stats-footer">
-              当前时间: {{ systemStatus?.currentTime || '--' }}
+              {{ $t('monitor.currentTime') }}: {{ systemStatus?.currentTime || '--' }}
             </div>
           </div>
         </a-card>
@@ -82,13 +82,13 @@
     <a-row :gutter="16" class="charts-row">
       <a-col :span="18">
         <a-card class="chart-card" :bordered="false">
-          <template #title>性能趋势</template>
+          <template #title>{{ $t('monitor.performanceTrend') }}</template>
           <template #extra>
             <a-radio-group v-model:value="timeRange" button-style="solid" size="small">
-              <a-radio-button value="1h">1小时</a-radio-button>
-              <a-radio-button value="6h">6小时</a-radio-button>
-              <a-radio-button value="24h">24小时</a-radio-button>
-              <a-radio-button value="7d">7天</a-radio-button>
+              <a-radio-button value="1h">{{ $t('monitor.oneHour') }}</a-radio-button>
+              <a-radio-button value="6h">{{ $t('monitor.sixHours') }}</a-radio-button>
+              <a-radio-button value="24h">{{ $t('monitor.twentyFourHours') }}</a-radio-button>
+              <a-radio-button value="7d">{{ $t('monitor.sevenDays') }}</a-radio-button>
             </a-radio-group>
           </template>
           
@@ -98,36 +98,36 @@
       
       <a-col :span="6">
         <a-card class="status-card" :bordered="false">
-          <template #title>服务状态</template>
+          <template #title>{{ $t('monitor.serviceStatus') }}</template>
           
           <div class="service-status">
             <div class="service-item">
               <div class="service-name">
                 <span class="service-dot" :class="systemStatus?.neo4jStatus"></span>
-                Neo4j 数据库
+                {{ $t('monitor.neo4jDatabase') }}
               </div>
               <a-tag :color="systemStatus?.neo4jStatus === 'healthy' ? 'success' : 'error'">
-                {{ systemStatus?.neo4jStatus === 'healthy' ? '正常' : '异常' }}
+                {{ systemStatus?.neo4jStatus === 'healthy' ? $t('monitor.healthy') : $t('monitor.unhealthy') }}
               </a-tag>
             </div>
             
             <div class="service-item">
               <div class="service-name">
                 <span class="service-dot" :class="systemStatus?.mysqlStatus"></span>
-                MySQL 数据库
+                {{ $t('monitor.mysqlDatabase') }}
               </div>
               <a-tag :color="systemStatus?.mysqlStatus === 'healthy' ? 'success' : 'error'">
-                {{ systemStatus?.mysqlStatus === 'healthy' ? '正常' : '异常' }}
+                {{ systemStatus?.mysqlStatus === 'healthy' ? $t('monitor.healthy') : $t('monitor.unhealthy') }}
               </a-tag>
             </div>
             
             <div class="service-item">
               <div class="service-name">
                 <span class="service-dot" :class="systemStatus?.redisStatus"></span>
-                Redis 缓存
+                {{ $t('monitor.redisCache') }}
               </div>
               <a-tag :color="systemStatus?.redisStatus === 'healthy' ? 'success' : 'error'">
-                {{ systemStatus?.redisStatus === 'healthy' ? '正常' : '异常' }}
+                {{ systemStatus?.redisStatus === 'healthy' ? $t('monitor.healthy') : $t('monitor.unhealthy') }}
               </a-tag>
             </div>
           </div>
@@ -135,20 +135,20 @@
           <a-divider />
           
           <div class="database-info">
-            <div class="info-title">数据库信息</div>
+            <div class="info-title">{{ $t('monitor.dbInfo') }}</div>
             
             <div class="info-item">
-              <span class="info-label">Neo4j 版本</span>
+              <span class="info-label">{{ $t('monitor.neo4jVersion') }}</span>
               <span class="info-value">5.0.0</span>
             </div>
             
             <div class="info-item">
-              <span class="info-label">节点数量</span>
+              <span class="info-label">{{ $t('monitor.nodeCount') }}</span>
               <span class="info-value">1,250</span>
             </div>
             
             <div class="info-item">
-              <span class="info-label">关系数量</span>
+              <span class="info-label">{{ $t('monitor.relationCount') }}</span>
               <span class="info-value">3,680</span>
             </div>
           </div>
@@ -157,7 +157,7 @@
     </a-row>
     
     <a-card class="api-log-card" :bordered="false">
-      <template #title>API请求日志</template>
+      <template #title>{{ $t('monitor.apiLogs') }}</template>
       
       <a-table
         :data-source="apiLogs"
@@ -191,7 +191,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from 'vue'
+import { ref, onMounted, watch, onUnmounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   DashboardOutlined,
   ClockCircleOutlined,
@@ -201,7 +202,9 @@ import {
 import { monitorApi, type SystemStatus, type PerformanceMetrics, type ApiLog } from '@/api/monitor'
 import * as echarts from 'echarts'
 
-// 系统状态
+const { t } = useI18n()
+
+// System status
 const systemStatus = ref<SystemStatus>()
 
 // 性能指标
@@ -218,70 +221,70 @@ const timeRange = ref<string>('24h')
 const performanceChart = ref<HTMLElement>()
 let chartInstance: echarts.ECharts | null = null
 
-// 表格列定义
+// Table column definitions
 const columns = [
   {
-    title: '方法',
+    title: t('monitor.method'),
     dataIndex: 'method',
     width: 80
   },
   {
-    title: '路径',
+    title: t('monitor.path'),
     dataIndex: 'path',
     width: 200,
     ellipsis: true
   },
   {
-    title: '状态码',
+    title: t('monitor.statusCode'),
     dataIndex: 'statusCode',
     width: 80
   },
   {
-    title: '响应时间',
+    title: t('monitor.responseTime'),
     dataIndex: 'responseTime',
     width: 100
   },
   {
-    title: 'IP地址',
+    title: t('monitor.ipAddress'),
     dataIndex: 'ip',
     width: 120
   },
   {
-    title: '时间',
+    title: t('monitor.timestamp'),
     dataIndex: 'timestamp',
     width: 170
   }
 ]
 
-// 获取系统状态
+// Fetch system status
 const fetchSystemStatus = async () => {
   try {
     const res = await monitorApi.getSystemStatus()
     systemStatus.value = res
   } catch (error) {
-    console.error('获取系统状态失败', error)
+    console.error(t('monitor.fetchStatusFailed'), error)
   }
 }
 
-// 获取性能指标
+// Fetch performance metrics
 const fetchPerformanceMetrics = async () => {
   try {
     const res = await monitorApi.getPerformanceMetrics(timeRange.value)
     performanceMetrics.value = res
     updatePerformanceChart()
   } catch (error) {
-    console.error('获取性能指标失败', error)
+    console.error(t('monitor.fetchMetricsFailed'), error)
   }
 }
 
-// 获取API日志
+// Fetch API logs
 const fetchApiLogs = async () => {
   loading.value = true
   try {
     const res = await monitorApi.getApiLogs()
     apiLogs.value = res.list
   } catch (error) {
-    console.error('获取API日志失败', error)
+    console.error(t('monitor.fetchLogsFailed'), error)
   } finally {
     loading.value = false
   }
@@ -312,7 +315,7 @@ const updatePerformanceChart = () => {
       }
     },
     legend: {
-      data: ['CPU使用率', '内存使用率', '磁盘使用率'],
+      data: [t('monitor.cpuUsage'), t('monitor.memoryUsage'), t('monitor.diskUsage')],
       textStyle: {
         color: '#a4aab8'
       },
@@ -356,7 +359,7 @@ const updatePerformanceChart = () => {
     },
     series: [
       {
-        name: 'CPU使用率',
+        name: computed(() => t('monitor.cpuUsage')).value,
         type: 'line',
         smooth: true,
         data: cpuData,
@@ -368,7 +371,7 @@ const updatePerformanceChart = () => {
         }
       },
       {
-        name: '内存使用率',
+        name: computed(() => t('monitor.memoryUsage')).value,
         type: 'line',
         smooth: true,
         data: memoryData,
@@ -380,7 +383,7 @@ const updatePerformanceChart = () => {
         }
       },
       {
-        name: '磁盘使用率',
+        name: computed(() => t('monitor.diskUsage')).value,
         type: 'line',
         smooth: true,
         data: diskData,
@@ -449,20 +452,20 @@ const getMethodColor = (method: string) => {
   }
 }
 
-// 格式化运行时间
+// Format uptime
 const formatUptime = (seconds?: number) => {
   if (!seconds) return '--'
-  
+
   const days = Math.floor(seconds / 86400)
   const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
-  
+
   if (days > 0) {
-    return `${days}天 ${hours}小时`
+    return t('monitor.formatDaysHours', { days, hours })
   } else if (hours > 0) {
-    return `${hours}小时 ${minutes}分钟`
+    return t('monitor.formatHoursMinutes', { hours, minutes })
   } else {
-    return `${minutes}分钟`
+    return t('monitor.formatMinutes', { minutes })
   }
 }
 
