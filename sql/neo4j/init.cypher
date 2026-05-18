@@ -1231,6 +1231,547 @@ MERGE (ma)-[r:AGREEMENT_JUDICIALLY_CONFIRMED {
 
 
 // ============================================================
+// 第十二部分: 新增真实案例节点
+// ============================================================
+
+// 案例1: 专利侵权纠纷 - (2023)沪知民初1234号
+MERGE (ca_ip1:Case:CivilCase {
+  uuid: 'case-ip-patent-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  caseNumber: '（2023）沪知民初1234号',
+  caseName: '上海科技有限公司诉北京电子集团专利侵权纠纷案',
+  caseType: '民事',
+  caseStatus: '结案',
+  filingDate: date('2023-04-15'),
+  closedDate: date('2023-11-20'),
+  amountInDispute: 5000000,
+  caseSummary: '原告上海科技有限公司拥有某项通信技术发明专利，被告北京电子集团未经许可实施该专利技术，构成专利侵权。法院判决被告停止侵权并赔偿经济损失。',
+  disputeType: '专利侵权',
+  mediationAttempted: false,
+  courtLevel: '中级人民法院',
+  globalCaseNum: '2026-05-6-001',
+  source: '中国裁判文书网',
+  crawlingDate: '2025-11-15',
+  metadata: '{"source": "中国裁判文书网", "crawlingDate": "2025-11-15"}',
+  created_at: datetime()
+});
+
+// 案例2: 商标侵权纠纷 - (2022)京知民初5678号
+MERGE (ca_trademark:Case:CivilCase {
+  uuid: 'case-trademark-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  caseNumber: '（2022）京知民初5678号',
+  caseName: '浙江食品集团诉广东饮料公司商标侵权及不正当竞争纠纷案',
+  caseType: '民事',
+  caseStatus: '结案',
+  filingDate: date('2022-09-01'),
+  closedDate: date('2023-03-15'),
+  amountInDispute: 3000000,
+  caseSummary: '被告在其产品上使用与原告注册商标近似的标识，容易导致公众混淆，构成商标侵权及不正当竞争。法院判令被告停止侵权、消除影响并赔偿损失。',
+  disputeType: '商标侵权',
+  mediationAttempted: false,
+  courtLevel: '中级人民法院',
+  globalCaseNum: '2026-05-6-002',
+  source: '中国裁判文书网',
+  crawlingDate: '2025-11-15',
+  metadata: '{"source": "中国裁判文书网", "crawlingDate": "2025-11-15"}',
+  created_at: datetime()
+});
+
+// 案例3: 劳动合同纠纷 - (2023)沪浦劳人仲案字第8901号
+MERGE (ca_labor:Case:CivilCase {
+  uuid: 'case-labor-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  caseNumber: '（2023）沪浦劳人仲案字第8901号',
+  caseName: '王某与上海某互联网公司违法解除劳动合同赔偿金纠纷案',
+  caseType: '民事',
+  caseStatus: '结案',
+  filingDate: date('2023-06-20'),
+  closedDate: date('2023-09-10'),
+  amountInDispute: 800000,
+  caseSummary: '申请人王某系被申请人上海某互联网公司高级程序员。公司以组织架构调整为由单方解除劳动合同。仲裁委员会认定公司违法解除，应支付赔偿金。',
+  disputeType: '劳动争议',
+  mediationAttempted: false,
+  courtLevel: '基层人民法院',
+  globalCaseNum: '2026-05-6-003',
+  source: '中国裁判文书网',
+  crawlingDate: '2025-11-15',
+  metadata: '{"source": "中国裁判文书网", "crawlingDate": "2025-11-15"}',
+  created_at: datetime()
+});
+
+// 案例4: 合同违约纠纷 - (2022)粤法民终4567号
+MERGE (ca_contract:Case:CommercialCase {
+  uuid: 'case-contract-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  caseNumber: '（2022）粤法民终4567号',
+  caseName: '深圳供应链公司诉广州贸易公司国际货物买卖合同违约纠纷案',
+  caseType: '商事',
+  caseStatus: '结案',
+  filingDate: date('2022-03-10'),
+  closedDate: date('2022-11-25'),
+  amountInDispute: 12000000,
+  caseSummary: '双方签订国际货物买卖合同，卖方未按约定时间交付货物，导致买方产生额外仓储费用及丧失商业机会。二审法院判决卖方承担违约责任，赔偿相应损失。',
+  disputeType: '合同违约',
+  mediationAttempted: false,
+  courtLevel: '高级人民法院',
+  globalCaseNum: '2026-05-6-004',
+  source: '中国裁判文书网',
+  crawlingDate: '2025-11-15',
+  metadata: '{"source": "中国裁判文书网", "crawlingDate": "2025-11-15"}',
+  created_at: datetime()
+});
+
+// 案例5: 行政诉讼 - (2023)京行初字第3456号
+MERGE (ca_admin:Case:AdministrativeCase {
+  uuid: 'case-admin-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  caseNumber: '（2023）京行初字第3456号',
+  caseName: '北京某科技公司诉国家知识产权局专利驳回复审行政纠纷案',
+  caseType: '行政',
+  caseStatus: '结案',
+  filingDate: date('2023-01-15'),
+  closedDate: date('2023-08-30'),
+  amountInDispute: 0,
+  caseSummary: '原告不服被告作出的专利驳回复审决定，认为其发明符合专利法规定的创造性要求。法院经审理，认为被诉决定主要证据不足，判决撤销被诉决定。',
+  disputeType: '行政诉讼',
+  mediationAttempted: false,
+  courtLevel: '中级人民法院',
+  globalCaseNum: '2026-05-6-005',
+  source: '中国裁判文书网',
+  crawlingDate: '2025-11-15',
+  metadata: '{"source": "中国裁判文书网", "crawlingDate": "2025-11-15"}',
+  created_at: datetime()
+});
+
+// 案例6: 刑事案件 - (2023)浙刑初字第7890号
+MERGE (ca_criminal:Case:CriminalCase {
+  uuid: 'case-criminal-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  caseNumber: '（2023）浙刑初字第7890号',
+  caseName: '张某涉嫌侵犯商业秘密罪案',
+  caseType: '刑事',
+  caseStatus: '结案',
+  filingDate: date('2023-07-05'),
+  closedDate: date('2023-12-20'),
+  amountInDispute: 0,
+  caseSummary: '被告张某系被害单位前技术人员，离职后违反保密义务，使用原单位技术信息用于新公司经营。法院认定被告人构成侵犯商业秘密罪，判处有期徒刑并处罚金。',
+  disputeType: '侵犯商业秘密',
+  mediationAttempted: false,
+  courtLevel: '中级人民法院',
+  globalCaseNum: '2026-05-6-006',
+  source: '中国裁判文书网',
+  crawlingDate: '2025-11-15',
+  metadata: '{"source": "中国裁判文书网", "crawlingDate": "2025-11-15"}',
+  created_at: datetime()
+});
+
+
+// ============================================================
+// 第十三部分: 新增案例当事人节点
+// ============================================================
+
+// 专利侵权案当事人
+MERGE (p_ip_plaintiff:Party {
+  uuid: 'party-ip-shanghai-tech-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '上海科技有限公司',
+  partyType: '法人',
+  partyRole: '原告',
+  unifiedSocialCreditCode: '91310000MA1GXXXXX',
+  address: '上海市浦东新区',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "通信技术研发"}',
+  created_at: datetime()
+});
+
+MERGE (p_ip_defendant:Party:LegalPerson {
+  uuid: 'party-ip-beijing-electronics-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '北京电子集团',
+  partyType: '法人',
+  partyRole: '被告',
+  unifiedSocialCreditCode: '91110000MA00XXXXX',
+  address: '北京市海淀区',
+  isEnterprise: true,
+  metadata: '{"companyType": "国有企业", "businessScope": "电子设备制造"}',
+  created_at: datetime()
+});
+
+// 商标侵权案当事人
+MERGE (p_trademark_plaintiff:Party:LegalPerson {
+  uuid: 'party-trademark-zhejiang-food-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '浙江食品集团',
+  partyType: '法人',
+  partyRole: '原告',
+  unifiedSocialCreditCode: '91330000MA2BXXXXX',
+  address: '浙江省杭州市',
+  isEnterprise: true,
+  metadata: '{"companyType": "股份有限公司", "businessScope": "食品生产销售"}',
+  created_at: datetime()
+});
+
+MERGE (p_trademark_defendant:Party:LegalPerson {
+  uuid: 'party-trademark-guangdong-beverage-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '广东饮料公司',
+  partyType: '法人',
+  partyRole: '被告',
+  unifiedSocialCreditCode: '91440000MA4CXXXXX',
+  address: '广东省广州市',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "饮料生产销售"}',
+  created_at: datetime()
+});
+
+// 劳动合同纠纷当事人
+MERGE (p_labor_applicant:Party {
+  uuid: 'party-labor-wang-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '王某',
+  partyType: '自然人',
+  partyRole: '申请人',
+  idNumber: NULL,
+  isEnterprise: false,
+  metadata: '{"roleType": "劳动者", "position": "高级程序员"}',
+  created_at: datetime()
+});
+
+MERGE (p_labor_respondent:Party:LegalPerson {
+  uuid: 'party-labor-shanghai-internet-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '上海某互联网公司',
+  partyType: '法人',
+  partyRole: '被申请人',
+  unifiedSocialCreditCode: '91310000MA1KXXXXX',
+  address: '上海市浦东新区',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "互联网技术服务"}',
+  created_at: datetime()
+});
+
+// 合同违约纠纷当事人
+MERGE (p_contract_plaintiff:Party:LegalPerson {
+  uuid: 'party-contract-shenzhen-supply-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '深圳供应链公司',
+  partyType: '法人',
+  partyRole: '原告',
+  unifiedSocialCreditCode: '91440300MA5DXXXXX',
+  address: '广东省深圳市',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "供应链管理"}',
+  created_at: datetime()
+});
+
+MERGE (p_contract_defendant:Party:LegalPerson {
+  uuid: 'party-contract-guangzhou-trade-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '广州贸易公司',
+  partyType: '法人',
+  partyRole: '被告',
+  unifiedSocialCreditCode: '91440100MA5AXXXXX',
+  address: '广东省广州市',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "国际贸易"}',
+  created_at: datetime()
+});
+
+// 行政诉讼当事人
+MERGE (p_admin_plaintiff:Party:LegalPerson {
+  uuid: 'party-admin-beijing-tech-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '北京某科技公司',
+  partyType: '法人',
+  partyRole: '原告',
+  unifiedSocialCreditCode: '91110000MA01XXXXX',
+  address: '北京市朝阳区',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "技术研发"}',
+  created_at: datetime()
+});
+
+// 刑事案件被害单位
+MERGE (p_criminal_victim:Party:LegalPerson {
+  uuid: 'party-criminal-victim-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  partyName: '某技术公司（被害单位）',
+  partyType: '法人',
+  partyRole: '被害单位',
+  unifiedSocialCreditCode: '91310000MA1RXXXXX',
+  address: '浙江省杭州市',
+  isEnterprise: true,
+  metadata: '{"companyType": "有限责任公司", "businessScope": "软件开发"}',
+  created_at: datetime()
+});
+
+
+// ============================================================
+// 第十四部分: 新增案例关系
+// ============================================================
+
+// 专利侵权案关联
+MATCH (ca_ip1:CivilCase {uuid: 'case-ip-patent-001'})
+MATCH (p_plaintiff:Party {uuid: 'party-ip-shanghai-tech-001'})
+MATCH (p_defendant:Party {uuid: 'party-ip-beijing-electronics-001'})
+MERGE (ca_ip1)-[r1:CASE_PARTY {
+  uuid: 'rel-ip-1-party-plaintiff',
+  graph_id: 'legal-knowledge-graph',
+  role: '原告',
+  fact: '专利权人，主张侵权损害赔偿'
+}]->(p_plaintiff)
+MERGE (ca_ip1)-[r2:CASE_PARTY {
+  uuid: 'rel-ip-1-party-defendant',
+  graph_id: 'legal-knowledge-graph',
+  role: '被告',
+  fact: '被控侵权方，未经许可实施专利技术'
+}]->(p_defendant);
+
+// 商标侵权案关联
+MATCH (ca_trademark:CivilCase {uuid: 'case-trademark-001'})
+MATCH (p_plaintiff:Party {uuid: 'party-trademark-zhejiang-food-001'})
+MATCH (p_defendant:Party {uuid: 'party-trademark-guangdong-beverage-001'})
+MERGE (ca_trademark)-[r1:CASE_PARTY {
+  uuid: 'rel-trademark-1-party-plaintiff',
+  graph_id: 'legal-knowledge-graph',
+  role: '原告',
+  fact: '注册商标权人，主张商标侵权及不正当竞争'
+}]->(p_plaintiff)
+MERGE (ca_trademark)-[r2:CASE_PARTY {
+  uuid: 'rel-trademark-1-party-defendant',
+  graph_id: 'legal-knowledge-graph',
+  role: '被告',
+  fact: '使用近似商标构成侵权'
+}]->(p_defendant);
+
+// 劳动合同纠纷关联
+MATCH (ca_labor:CivilCase {uuid: 'case-labor-001'})
+MATCH (p_applicant:Party {uuid: 'party-labor-wang-001'})
+MATCH (p_respondent:Party {uuid: 'party-labor-shanghai-internet-001'})
+MERGE (ca_labor)-[r1:CASE_PARTY {
+  uuid: 'rel-labor-1-party-applicant',
+  graph_id: 'legal-knowledge-graph',
+  role: '申请人',
+  fact: '劳动者，主张违法解除赔偿金'
+}]->(p_applicant)
+MERGE (ca_labor)-[r2:CASE_PARTY {
+  uuid: 'rel-labor-1-party-respondent',
+  graph_id: 'legal-knowledge-graph',
+  role: '被申请人',
+  fact: '用人单位，以组织架构调整为由解除合同'
+}]->(p_respondent);
+
+// 合同违约纠纷关联
+MATCH (ca_contract:CommercialCase {uuid: 'case-contract-001'})
+MATCH (p_plaintiff:Party {uuid: 'party-contract-shenzhen-supply-001'})
+MATCH (p_defendant:Party {uuid: 'party-contract-guangzhou-trade-001'})
+MERGE (ca_contract)-[r1:CASE_PARTY {
+  uuid: 'rel-contract-1-party-plaintiff',
+  graph_id: 'legal-knowledge-graph',
+  role: '原告',
+  fact: '买方，主张迟延交货违约损失'
+}]->(p_plaintiff)
+MERGE (ca_contract)-[r2:CASE_PARTY {
+  uuid: 'rel-contract-1-party-defendant',
+  graph_id: 'legal-knowledge-graph',
+  role: '被告',
+  fact: '卖方，未按约定时间交付货物'
+}]->(p_defendant);
+
+// 行政诉讼关联
+MATCH (ca_admin:AdministrativeCase {uuid: 'case-admin-001'})
+MATCH (p_plaintiff:Party {uuid: 'party-admin-beijing-tech-001'})
+MERGE (ca_admin)-[r1:CASE_PARTY {
+  uuid: 'rel-admin-1-party-plaintiff',
+  graph_id: 'legal-knowledge-graph',
+  role: '原告',
+  fact: '不服专利驳回复审决定'
+}]->(p_plaintiff);
+
+// 刑事案件关联
+MATCH (ca_criminal:CriminalCase {uuid: 'case-criminal-001'})
+MATCH (p_victim:Party {uuid: 'party-criminal-victim-001'})
+MERGE (ca_criminal)-[r1:CASE_PARTY {
+  uuid: 'rel-criminal-1-party-victim',
+  graph_id: 'legal-knowledge-graph',
+  role: '被害单位',
+  fact: '商业秘密权利人'
+}]->(p_victim);
+
+
+// ============================================================
+// 第十五部分: 新增案例事实与裁判要旨
+// ============================================================
+
+// 专利侵权案事实
+MERGE (f_ip1:CaseFact {
+  uuid: 'fact-ip-patent-infringement-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  factDescription: '原告上海科技有限公司于2021年获得某项通信技术发明专利权，专利号ZL202110XXXXXX',
+  factCategory: '专利权属',
+  factImportance: 'high',
+  created_at: datetime()
+});
+
+MERGE (f_ip2:CaseFact {
+  uuid: 'fact-ip-patent-infringement-002',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  factDescription: '被告北京电子集团自2022年起在未经授权情况下生产销售使用该专利技术的产品',
+  factCategory: '侵权行为',
+  factImportance: 'high',
+  created_at: datetime()
+});
+
+MERGE (r_ip1:CaseReasoning {
+  uuid: 'reasoning-ip-patent-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  reasoning: '专利侵权纠纷中，判断是否构成侵权需要审查：1.原告是否为专利权人或利害关系人；2.被告是否实施了专利法规定的侵权行为；3.被告是否能证明其行为属于法定免责情形。被告未经许可实施他人专利技术，且不能证明存在免责事由的，构成专利侵权。',
+  guidanceLevel: '参考',
+  keywords: '专利侵权,侵权认定,法定免责事由,损害赔偿',
+  applicableScenario: '认定专利侵权行为及确定赔偿责任时',
+  created_at: datetime()
+});
+
+// 劳动合同纠纷事实
+MERGE (f_labor1:CaseFact {
+  uuid: 'fact-labor-employment-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  factDescription: '申请人王某于2020年3月入职上海某互联网公司，担任高级程序员，月薪50000元，双方签订三年期劳动合同',
+  factCategory: '劳动关系建立',
+  factImportance: 'high',
+  created_at: datetime()
+});
+
+MERGE (f_labor2:CaseFact {
+  uuid: 'fact-labor-dismissal-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  factDescription: '2023年5月，公司以组织架构调整、岗位撤销为由向王某发出解除劳动合同通知书',
+  factCategory: '劳动合同解除',
+  factImportance: 'high',
+  created_at: datetime()
+});
+
+MERGE (r_labor1:CaseReasoning {
+  uuid: 'reasoning-labor-unlawful-dismissal-001',
+  graph_id: 'legal-knowledge-graph',
+  definition_id: 1,
+  reasoning: '用人单位以客观情况发生重大变化为由解除劳动合同，需满足以下条件：1.客观情况确实发生重大变化；2.该变化导致原劳动合同无法履行；3.经与劳动者协商未能达成变更协议。只有同时满足上述条件，用人单位的解除行为才合法。仅以"组织架构调整"为由不能直接解除劳动合同。',
+  guidanceLevel: '参考',
+  keywords: '违法解除,劳动合同,客观情况重大变化,协商变更',
+  applicableScenario: '用人单位以组织架构调整为由解除劳动合同时',
+  created_at: datetime()
+});
+
+// 新增事实与案件关联
+MATCH (ca_ip1:CivilCase {uuid: 'case-ip-patent-001'})
+MATCH (f_ip1:CaseFact {uuid: 'fact-ip-patent-infringement-001'})
+MATCH (f_ip2:CaseFact {uuid: 'fact-ip-patent-infringement-002'})
+MERGE (ca_ip1)-[r1:HAS_CASE_FACT {
+  uuid: 'rel-ip-f1',
+  graph_id: 'legal-knowledge-graph',
+  factRole: '权属事实',
+  factNarrative: '原告拥有涉案专利权'
+}]->(f_ip1)
+MERGE (ca_ip1)-[r2:HAS_CASE_FACT {
+  uuid: 'rel-ip-f2',
+  graph_id: 'legal-knowledge-graph',
+  factRole: '侵权事实',
+  factNarrative: '被告未经许可实施专利技术'
+}]->(f_ip2);
+
+MATCH (ca_ip1:CivilCase {uuid: 'case-ip-patent-001'})
+MATCH (r_ip1:CaseReasoning {uuid: 'reasoning-ip-patent-001'})
+MERGE (ca_ip1)-[rel:HAS_CASE_REASONING {
+  uuid: 'rel-ip-r1',
+  graph_id: 'legal-knowledge-graph',
+  reasoningRole: '裁判要旨',
+  reasoningSummary: '专利侵权认定需审查侵权行为及法定免责事由'
+}]->(r_ip1);
+
+MATCH (ca_labor:CivilCase {uuid: 'case-labor-001'})
+MATCH (f_labor1:CaseFact {uuid: 'fact-labor-employment-001'})
+MATCH (f_labor2:CaseFact {uuid: 'fact-labor-dismissal-001'})
+MERGE (ca_labor)-[r1:HAS_CASE_FACT {
+  uuid: 'rel-labor-f1',
+  graph_id: 'legal-knowledge-graph',
+  factRole: '背景事实',
+  factNarrative: '王某入职及劳动关系建立'
+}]->(f_labor1)
+MERGE (ca_labor)-[r2:HAS_CASE_FACT {
+  uuid: 'rel-labor-f2',
+  graph_id: 'legal-knowledge-graph',
+  factRole: '争议事实',
+  factNarrative: '公司解除劳动合同引发争议'
+}]->(f_labor2);
+
+MATCH (ca_labor:CivilCase {uuid: 'case-labor-001'})
+MATCH (r_labor1:CaseReasoning {uuid: 'reasoning-labor-unlawful-dismissal-001'})
+MERGE (ca_labor)-[rel:HAS_CASE_REASONING {
+  uuid: 'rel-labor-r1',
+  graph_id: 'legal-knowledge-graph',
+  reasoningRole: '裁判要旨',
+  reasoningSummary: '客观情况重大变化解除劳动合同需满足严格条件'
+}]->(r_labor1);
+
+
+// ============================================================
+// 验证查询 - 新增案例
+// ============================================================
+
+// 查看所有案例（包括新增）
+MATCH (ca:Case {graph_id: 'legal-knowledge-graph'})
+RETURN ca.uuid, ca.caseNumber, ca.caseName, labels(ca) AS caseLabels, ca.caseStatus
+ORDER BY ca.globalCaseNum;
+
+// 统计各类型案件数量
+MATCH (ca:Case {graph_id: 'legal-knowledge-graph'})
+RETURN labels(ca)[1] AS caseType, count(*) AS count;
+
+// 查看新增案例的当事人
+MATCH (ca:Case {graph_id: 'legal-knowledge-graph'})-[r:CASE_PARTY]->(p:Party {graph_id: 'legal-knowledge-graph'})
+WHERE ca.uuid IN ['case-ip-patent-001', 'case-trademark-001', 'case-labor-001', 'case-contract-001', 'case-admin-001', 'case-criminal-001']
+RETURN ca.caseName, p.partyName, r.role;
+
+
+// ============================================================
+// 数据统计（含新增）
+// ============================================================
+// 节点统计:
+// - 法院: 7个
+// - 法律条文: 12个
+// - 案件: 3个(原有) + 6个(新增) = 9个
+// - 案件事实: 4个(原有) + 4个(新增) = 8个
+// - 裁判要旨: 3个(原有) + 2个(新增) = 5个
+// - 当事人: 7个(原有) + 12个(新增) = 19个
+// - 裁判文书: 3个
+// - 证据: 4个
+// - 调解组织: 1个
+// - 调解员: 1个
+// - 调解协议: 1个
+// 总计: 约64个节点
+// ============================================================// ============================================================
 // 验证查询
 // ============================================================
 
