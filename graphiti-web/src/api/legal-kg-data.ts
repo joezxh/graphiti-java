@@ -44,6 +44,38 @@ export const LEGAL_ENTITIES = [
     }
   },
   {
+    name: 'CivilCase',
+    displayName: '民事案件',
+    description: '民事案件，包括婚姻家庭、继承、合同等纠纷',
+    extends: 'Case',
+    properties: {
+      disputeType: { type: 'string', description: '纠纷类型' },
+      caseStatus: { type: 'string', description: '案件状态' },
+      filingDate: { type: 'date', description: '立案日期' }
+    }
+  },
+  {
+    name: 'CriminalCase',
+    displayName: '刑事案件',
+    description: '刑事案件，包括公诉和自诉',
+    extends: 'Case',
+    properties: {}
+  },
+  {
+    name: 'AdministrativeCase',
+    displayName: '行政案件',
+    description: '行政案件',
+    extends: 'Case',
+    properties: {}
+  },
+  {
+    name: 'ExecutionCase',
+    displayName: '执行案件',
+    description: '执行案件',
+    extends: 'Case',
+    properties: {}
+  },
+  {
     name: 'Party',
     displayName: '当事人',
     description: '案件中的当事人（原告、被告、第三人等）',
@@ -136,12 +168,11 @@ export const LEGAL_ENTITIES = [
     }
   },
   {
-    name: 'LegalOrganization',
-    displayName: '法律组织',
-    description: '调解组织、仲裁机构、公证机构等',
+    name: 'CommercialMediationOrganization',
+    displayName: '商事调解组织',
+    description: '商事调解组织',
     properties: {
       name: { type: 'string', required: true, description: '组织名称' },
-      orgType: { type: 'string', description: '组织类型', enum: ['商事调解组织', '人民调解组织', '仲裁机构', '公证机构', '法律援助中心'] },
       location: { type: 'string', description: '所在地' },
       licenseNumber: { type: 'string', description: '执业证书编号' },
       establishedDate: { type: 'date', description: '设立日期' },
@@ -174,6 +205,27 @@ export const LEGAL_ENTITIES = [
       performanceDeadline: { type: 'date', description: '履行期限' },
       signDate: { type: 'date', description: '签订日期' },
       judiciallyConfirmed: { type: 'boolean', description: '是否经司法确认' }
+    }
+  },
+  {
+    name: 'CaseReasoning',
+    displayName: '裁判要旨',
+    description: '案例的裁判要旨或指导意义',
+    properties: {
+      reasoning: { type: 'text', required: true, description: '裁判要旨内容' },
+      guidanceLevel: { type: 'string', description: '指导级别', enum: ['典型', '参考', '备查'] },
+      applicableScenario: { type: 'text', description: '适用场景' },
+      keywords: { type: 'string', description: '关键词' }
+    }
+  },
+  {
+    name: 'CaseFact',
+    displayName: '案件事实',
+    description: '案件事实描述',
+    properties: {
+      factDescription: { type: 'text', required: true, description: '事实描述' },
+      factCategory: { type: 'string', description: '事实类别' },
+      factImportance: { type: 'string', description: '重要程度', enum: ['high', 'medium', 'low'] }
     }
   }
 ];
@@ -278,7 +330,7 @@ export const LEGAL_EDGES = [
   {
     name: 'ORG_MEDIATOR',
     displayName: '组织-调解员关系',
-    sourceType: 'LegalOrganization',
+    sourceType: 'CommercialMediationOrganization',
     targetType: 'Mediator',
     description: '法律组织与调解员的聘用关系',
     properties: {
@@ -290,7 +342,7 @@ export const LEGAL_EDGES = [
     name: 'CASE_MEDIATION_ORG',
     displayName: '案件-调解组织关系',
     sourceType: 'Case',
-    targetType: 'LegalOrganization',
+    targetType: 'CommercialMediationOrganization',
     description: '案件与调解组织的参与关系',
     properties: {
       mediationStage: { type: 'string', description: '调解阶段', enum: ['诉前调解', '诉中调解', '执行调解'] },
@@ -305,6 +357,49 @@ export const LEGAL_EDGES = [
     description: '案件与调解协议的关联',
     properties: {
       agreementRole: { type: 'string', description: '协议角色', enum: ['调解达成', '司法确认'] }
+    }
+  },
+  {
+    name: 'HAS_CASE_REASONING',
+    displayName: '案件-裁判要旨',
+    sourceType: 'Case',
+    targetType: 'CaseReasoning',
+    description: '案件关联的裁判要旨',
+    properties: {
+      reasoningRole: { type: 'string', description: '要旨角色' },
+      reasoningSummary: { type: 'string', description: '要旨摘要' }
+    }
+  },
+  {
+    name: 'HAS_CASE_FACT',
+    displayName: '案件-案件事实',
+    sourceType: 'Case',
+    targetType: 'CaseFact',
+    description: '案件关联的事实',
+    properties: {
+      factRole: { type: 'string', description: '事实角色' },
+      factNarrative: { type: 'string', description: '事实描述' }
+    }
+  },
+  {
+    name: 'COURT_HIERARCHY',
+    displayName: '法院层级关系',
+    sourceType: 'Court',
+    targetType: 'Court',
+    description: '法院之间的上下级关系',
+    properties: {
+      relationType: { type: 'string', description: '关系类型' }
+    }
+  },
+  {
+    name: 'AGREEMENT_JUDICIALLY_CONFIRMED',
+    displayName: '调解协议-司法确认',
+    sourceType: 'MediationAgreement',
+    targetType: 'Court',
+    description: '调解协议经法院司法确认',
+    properties: {
+      confirmDate: { type: 'date', description: '确认日期' },
+      confirmResult: { type: 'string', description: '确认结果' }
     }
   }
 ];
@@ -455,7 +550,7 @@ export const LEGAL_NODES = [
   {
     uuid: 'org-00001',
     name: '上海国际商事调解中心',
-    type: 'LegalOrganization',
+    type: 'CommercialMediationOrganization',
     summary: '上海国际商事调解中心，提供国际商事调解服务',
     properties: {
       orgType: '商事调解组织',
@@ -468,7 +563,7 @@ export const LEGAL_NODES = [
   {
     uuid: 'org-00002',
     name: '中国国际贸易促进委员会调解中心',
-    type: 'LegalOrganization',
+    type: 'CommercialMediationOrganization',
     summary: '中国国际贸易促进委员会调解中心，从事涉外商事调解',
     properties: {
       orgType: '商事调解组织',
