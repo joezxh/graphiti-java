@@ -1,6 +1,6 @@
 -- ============================================================
 -- Graphiti 初始化数据 (PostgreSQL 版本)
--- 版本: 2026-05-13
+-- 版本: 2026-05-18
 -- 说明: 系统权限 + 法律本体 + 提示词模板 + 示例图谱
 -- ============================================================
 
@@ -14,7 +14,7 @@ INSERT INTO sys_role (name, code, status) VALUES
 ('管理员', 'ADMIN', 1),
 ('普通用户', 'USER', 1);
 
--- 初始化系统用户（密码：admin123）
+-- 初始化系统用户（密码：admin123，BCrypt加密）
 INSERT INTO sys_user (username, password, nickname, email, mobile, status, create_time, update_time, deleted)
 VALUES (
     'admin',
@@ -44,7 +44,13 @@ INSERT INTO sys_menu (name, permission, url, parent_id, sort, status) VALUES
 ('系统管理', 'system:manage', '/system', 0, 1, 1),
 ('用户管理', 'system:user:list', '/system/user', 1, 1, 1),
 ('角色管理', 'system:role:list', '/system/role', 1, 2, 1),
-('菜单管理', 'system:menu:list', '/system/menu', 1, 3, 1);
+('菜单管理', 'system:menu:list', '/system/menu', 1, 3, 1),
+('图谱管理', 'graph:manage', '/graph', 0, 2, 1),
+('图谱列表', 'graph:list', '/graph/list', 5, 1, 1),
+('本体管理', 'ontology:manage', '/ontology', 0, 3, 1),
+('本体定义', 'ontology:definition:list', '/ontology/definition', 7, 1, 1),
+('提示词管理', 'prompt:manage', '/prompt', 0, 4, 1),
+('提示词模板', 'prompt:template:list', '/prompt/template', 9, 1, 1);
 
 -- 初始化角色菜单关联
 DO $$
@@ -54,17 +60,35 @@ DECLARE
     menu_id_2 BIGINT;
     menu_id_3 BIGINT;
     menu_id_4 BIGINT;
+    menu_id_5 BIGINT;
+    menu_id_6 BIGINT;
+    menu_id_7 BIGINT;
+    menu_id_8 BIGINT;
+    menu_id_9 BIGINT;
+    menu_id_10 BIGINT;
 BEGIN
     SELECT id INTO super_admin_role_id FROM sys_role WHERE code = 'SUPER_ADMIN';
     SELECT id INTO menu_id_1 FROM sys_menu WHERE name = '系统管理';
     SELECT id INTO menu_id_2 FROM sys_menu WHERE name = '用户管理';
     SELECT id INTO menu_id_3 FROM sys_menu WHERE name = '角色管理';
     SELECT id INTO menu_id_4 FROM sys_menu WHERE name = '菜单管理';
+    SELECT id INTO menu_id_5 FROM sys_menu WHERE name = '图谱管理';
+    SELECT id INTO menu_id_6 FROM sys_menu WHERE name = '图谱列表';
+    SELECT id INTO menu_id_7 FROM sys_menu WHERE name = '本体管理';
+    SELECT id INTO menu_id_8 FROM sys_menu WHERE name = '本体定义';
+    SELECT id INTO menu_id_9 FROM sys_menu WHERE name = '提示词管理';
+    SELECT id INTO menu_id_10 FROM sys_menu WHERE name = '提示词模板';
     INSERT INTO sys_role_menu (role_id, menu_id) VALUES
     (super_admin_role_id, menu_id_1),
     (super_admin_role_id, menu_id_2),
     (super_admin_role_id, menu_id_3),
-    (super_admin_role_id, menu_id_4);
+    (super_admin_role_id, menu_id_4),
+    (super_admin_role_id, menu_id_5),
+    (super_admin_role_id, menu_id_6),
+    (super_admin_role_id, menu_id_7),
+    (super_admin_role_id, menu_id_8),
+    (super_admin_role_id, menu_id_9),
+    (super_admin_role_id, menu_id_10);
 END $$;
 
 
@@ -72,28 +96,22 @@ END $$;
 -- 第二部分: 示例图谱
 -- ============================================================
 
-INSERT INTO graphiti_graph_metadata (graph_id, name, description, node_count, edge_count, deleted)
-VALUES (
-    'example-graph',
-    '示例图谱',
-    '这是一个示例知识图谱',
-    0,
-    0,
-    FALSE
-);
+INSERT INTO graphiti_graph_metadata (graph_id, name, description, node_count, edge_count, status, deleted)
+VALUES ('example-graph', '示例图谱', '这是一个示例知识图谱', 0, 0, 'ACTIVE', FALSE);
+
+INSERT INTO graphiti_graph_metadata (graph_id, name, description, node_count, edge_count, status, deleted)
+VALUES ('legal-knowledge-graph', '法律知识图谱', '基于典型案例和法律条文设计的法律领域本体图谱', 0, 0, 'ACTIVE', FALSE);
 
 
 -- ============================================================
--- 第三部分: 法律知识图谱本体定义 V2
+-- 第三部分: 法律知识图谱本体定义 V2.0.0
 -- ============================================================
 
 DO $$
 DECLARE
     v_def_id BIGINT;
 BEGIN
-    -- ----------------------------------------------------------
-    -- Step 1: 插入本体定义
-    -- ----------------------------------------------------------
+    -- 插入本体定义
     INSERT INTO ont_definition (graph_id, namespace, name, version, status, description, created_by, created_at, updated_at)
     VALUES (
         'legal-knowledge-graph',
@@ -119,10 +137,8 @@ BEGIN
     RAISE NOTICE 'Using definition_id: %', v_def_id;
 
     -- ----------------------------------------------------------
-    -- Step 2: 插入本体类 (20个)
+    -- 案件域实体 (6个)
     -- ----------------------------------------------------------
-
-    -- 案件域实体
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/Case', 'Case', NULL,
@@ -160,7 +176,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    -- 当事人与代理人实体
+    -- ----------------------------------------------------------
+    -- 当事人与代理人实体 (3个)
+    -- ----------------------------------------------------------
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/Party', 'Party', NULL,
@@ -183,7 +201,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    -- 司法机构实体
+    -- ----------------------------------------------------------
+    -- 司法机构实体 (2个)
+    -- ----------------------------------------------------------
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/Court', 'Court', NULL,
@@ -201,7 +221,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    -- 法律条文实体
+    -- ----------------------------------------------------------
+    -- 法律条文实体 (2个)
+    -- ----------------------------------------------------------
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/LegalProvision', 'LegalProvision', NULL,
@@ -219,7 +241,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    -- 裁判文书实体
+    -- ----------------------------------------------------------
+    -- 裁判文书实体 (2个)
+    -- ----------------------------------------------------------
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/JudgmentDocument', 'JudgmentDocument', NULL,
@@ -237,7 +261,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    -- 证据与事实实体
+    -- ----------------------------------------------------------
+    -- 证据与事实实体 (2个)
+    -- ----------------------------------------------------------
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/Evidence', 'Evidence', NULL,
@@ -255,7 +281,9 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    -- 商事调解实体
+    -- ----------------------------------------------------------
+    -- 商事调解实体 (3个)
+    -- ----------------------------------------------------------
     INSERT INTO ont_class (definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint, metadata, created_at, updated_at)
     VALUES
     (v_def_id, 'http://legal-ai.cc/ontology/CommercialMediationOrganization', 'CommercialMediationOrganization', NULL,
@@ -278,13 +306,59 @@ BEGIN
         metadata = EXCLUDED.metadata,
         updated_at = CURRENT_TIMESTAMP;
 
-    RAISE NOTICE 'Step 2: Inserted 20 ontology classes';
+    RAISE NOTICE 'Inserted 20 ontology classes';
 
     -- ----------------------------------------------------------
-    -- Step 3: 插入本体属性
+    -- 本体类继承关系填充
     -- ----------------------------------------------------------
 
-    -- Case属性
+    RAISE NOTICE 'Filling ontology class inheritance relationships';
+
+    -- 填充 ont_class.parent_class_id（单继承）
+    UPDATE ont_class SET parent_class_id = (
+        SELECT id FROM ont_class c2
+        WHERE c2.definition_id = ont_class.definition_id
+          AND c2.local_name = 'Case'
+    )
+    WHERE definition_id = v_def_id
+      AND local_name IN ('CivilCase', 'CriminalCase', 'AdministrativeCase', 'CommercialCase', 'ExecutionCase');
+
+    UPDATE ont_class SET parent_class_id = (
+        SELECT id FROM ont_class c2
+        WHERE c2.definition_id = ont_class.definition_id
+          AND c2.local_name = 'Party'
+    )
+    WHERE definition_id = v_def_id
+      AND local_name = 'LegalPerson';
+
+    -- 填充 ont_class_inheritance（多继承表）
+    INSERT INTO ont_class_inheritance (class_id, parent_class_id, definition_id, distance, created_at)
+    SELECT
+        (SELECT id FROM ont_class WHERE definition_id = v_def_id AND local_name = sub_class).id,
+        (SELECT id FROM ont_class WHERE definition_id = v_def_id AND local_name = parent_class).id,
+        v_def_id,
+        1,
+        CURRENT_TIMESTAMP
+    FROM (VALUES
+        ('CivilCase', 'Case'),
+        ('CriminalCase', 'Case'),
+        ('AdministrativeCase', 'Case'),
+        ('CommercialCase', 'Case'),
+        ('ExecutionCase', 'Case'),
+        ('LegalPerson', 'Party')
+    ) AS inheritance(sub_class, parent_class)
+    ON CONFLICT ON CONSTRAINT uk_class_parent DO NOTHING;
+
+    -- 验证 ont_class.parent_class_id
+    SELECT local_name, (SELECT local_name FROM ont_class c2 WHERE c2.id = ont_class.parent_class_id) AS parent
+    FROM ont_class WHERE definition_id = v_def_id AND parent_class_id IS NOT NULL;
+
+    -- 验证 ont_class_inheritance 记录数
+    SELECT COUNT(*) AS inheritance_count FROM ont_class_inheritance WHERE definition_id = v_def_id;
+
+    -- ----------------------------------------------------------
+    -- 本体属性 - Case
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/caseNumber', 'caseNumber', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '案件编号，如：（2023）沪01民终11293号', '（2022）沪0105民初21387号',
@@ -341,7 +415,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Case'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- CommercialCase属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - CommercialCase
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/disputeType', 'disputeType', 'DATATYPE', c.id, 'string', 0, 1, FALSE, FALSE,
         '纠纷类型', '公司解散',
@@ -356,7 +432,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CommercialCase'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- Party属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - Party
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/partyName', 'partyName', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '当事人姓名或名称', '徐某骥',
@@ -392,7 +470,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Party'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- Court属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - Court
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/courtName', 'courtName', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '法院名称', '上海市第一中级人民法院',
@@ -414,7 +494,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Court'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- Judge属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - Judge
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/judgeName', 'judgeName', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '法官姓名', '张某',
@@ -429,7 +511,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Judge'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- LegalProvision属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - LegalProvision
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/provisionId', 'provisionId', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '条文唯一标识编号', 'L001',
@@ -472,7 +556,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'LegalProvision'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- JudgmentDocument属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - JudgmentDocument
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/documentNumber', 'documentNumber', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '文书编号', '（2022）沪0105民初21387号',
@@ -508,7 +594,9 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'JudgmentDocument'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    -- MediationAgreement属性
+    -- ----------------------------------------------------------
+    -- 本体属性 - MediationAgreement
+    -- ----------------------------------------------------------
     INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
     SELECT v_def_id, 'http://legal-ai.cc/ontology/property/agreementNumber', 'agreementNumber', 'DATATYPE', c.id, 'string', 1, 1, TRUE, FALSE,
         '调解协议编号', 'MA2024001',
@@ -537,14 +625,139 @@ BEGIN
     FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'MediationAgreement'
     ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
-    RAISE NOTICE 'Step 3: Inserted ontology properties';
+    -- ----------------------------------------------------------
+    -- 新增本体属性（Court 扩展）
+    -- ----------------------------------------------------------
+    UPDATE ont_class SET id = id WHERE definition_id = v_def_id AND local_name = 'Court';
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/jurisdiction', 'jurisdiction', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '管辖范围', '上海市辖区内的重大案件', '{"displayName": "管辖范围", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Court'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/parentCourt', 'parentCourt', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '上级法院名称', '上海市高级人民法院', '{"displayName": "上级法院", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Court'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
 
     -- ----------------------------------------------------------
-    -- Step 4: 插入本体约束
+    -- 新增本体属性（Judge 扩展）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/specialty', 'specialty', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '专业领域', '民商事审判', '{"displayName": "专业领域", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Judge'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    -- ----------------------------------------------------------
+    -- 新增本体属性（LegalProvision 扩展）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/keywords', 'keywords', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '关键词标签', '公司解散,公司僵局,判断标准', '{"displayName": "关键词", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'LegalProvision'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    -- ----------------------------------------------------------
+    -- 新增本体属性（JudgmentDocument 扩展）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/mainContent', 'mainContent', 'DATATYPE', c.id, 'text', 0, 1, 0, 0, '主要内容摘要', '经审理查明...', '{"displayName": "正文摘要", "formType": "textarea"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'JudgmentDocument'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/judgmentCourtName', 'judgmentCourtName', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '作出法院名称', '上海市第一中级人民法院', '{"displayName": "作出法院", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'JudgmentDocument'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    -- ----------------------------------------------------------
+    -- 新增本体属性（CaseReasoning）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/reasoning', 'reasoning', 'DATATYPE', c.id, 'text', 1, 1, 1, 0, '裁判要旨内容', '公司解散纠纷是股东在穷尽公司自治或其他途径...', '{"displayName": "裁判要旨", "formType": "textarea"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CaseReasoning'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/guidanceLevel', 'guidanceLevel', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '指导级别', '参考', '{"displayName": "指导级别", "formType": "select", "allowedValues": ["典型", "参考", "备查"]}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CaseReasoning'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/applicableScenario', 'applicableScenario', 'DATATYPE', c.id, 'text', 0, 1, 0, 0, '适用场景', '股东诉请解散公司时，公司运营良好且股东矛盾可通过其他途径解决的', '{"displayName": "适用场景", "formType": "textarea"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CaseReasoning'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    -- ----------------------------------------------------------
+    -- 新增本体属性（CaseFact）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/factDescription', 'factDescription', 'DATATYPE', c.id, 'text', 1, 1, 1, 0, '事实描述', '2020年3月30日，原告受让被告五位股东持有的股权...', '{"displayName": "事实描述", "formType": "textarea"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CaseFact'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/factCategory', 'factCategory', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '事实类别', '股权转让', '{"displayName": "事实类别", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CaseFact'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/factImportance', 'factImportance', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '重要程度', 'high', '{"displayName": "重要程度", "formType": "select", "allowedValues": ["high", "medium", "low"]}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CaseFact'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    -- ----------------------------------------------------------
+    -- 新增本体属性（CommercialMediationOrganization）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/orgType', 'orgType', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '组织类型', '商事调解组织', '{"displayName": "组织类型", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CommercialMediationOrganization'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/licenseNumber', 'licenseNumber', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '证照编号', '沪商调证字2024001号', '{"displayName": "证照编号", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CommercialMediationOrganization'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/establishedDate', 'establishedDate', 'DATATYPE', c.id, 'date', 0, 1, 0, 0, '成立日期', '2024-01-01', '{"displayName": "成立日期", "formType": "date"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CommercialMediationOrganization'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/assetAmount', 'assetAmount', 'DATATYPE', c.id, 'decimal', 0, 1, 0, 0, '资产金额', '500000', '{"displayName": "资产金额", "formType": "number"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CommercialMediationOrganization'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/mediatorCount', 'mediatorCount', 'DATATYPE', c.id, 'integer', 0, 1, 0, 0, '调解员数量', '15', '{"displayName": "调解员数量", "formType": "number"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'CommercialMediationOrganization'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    -- ----------------------------------------------------------
+    -- 新增本体属性（Mediator）
+    -- ----------------------------------------------------------
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/qualification', 'qualification', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '资质类型', '法律职业资格+5年调解经验', '{"displayName": "资质", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Mediator'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/organizationName', 'organizationName', 'DATATYPE', c.id, 'string', 0, 1, 0, 0, '所属组织', '上海国际商事调解中心', '{"displayName": "所属组织", "formType": "text"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Mediator'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    INSERT INTO ont_property (definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, min_cardinality, max_cardinality, is_required, is_multiple, description, example, metadata, created_at, updated_at)
+    SELECT v_def_id, 'http://legal-ai.cc/ontology/property/yearsExperience', 'yearsExperience', 'DATATYPE', c.id, 'integer', 0, 1, 0, 0, '从业年限', '5', '{"displayName": "从业年限", "formType": "number"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    FROM ont_class c WHERE c.definition_id = v_def_id AND c.local_name = 'Mediator'
+    ON CONFLICT ON CONSTRAINT uk_ont_prop_uri DO UPDATE SET description = EXCLUDED.description, metadata = EXCLUDED.metadata, updated_at = CURRENT_TIMESTAMP;
+
+    RAISE NOTICE 'Inserted ontology properties';
+
+    -- ----------------------------------------------------------
+    -- 本体约束
     -- ----------------------------------------------------------
     INSERT INTO ont_constraint (definition_id, class_id, property_id, constraint_type, value, error_message, severity, description, created_at, updated_at)
     SELECT v_def_id, c.id, p.id, 'PATTERN',
-        '{"pattern": "^[（(][0-9]{1,4}）?[地东西南北华中上下]?\\d{2,}[民刑执行经知行赔][初重终辖再简调强执抗不适赔认补他号字]\\d{3,10}号?$"}',
+        '{"pattern": "^[（(][0-9]{1,4}）)?[地东西南北华中上下]?\\d{2,}[民刑执行经知行赔][初重终辖再简调强执抗不适赔认补他号字]\\d{3,10}号?$"}',
         '案件编号格式不正确', 'WARNING', '案件编号应符合中国法院案号规范',
         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
     FROM ont_class c LEFT JOIN ont_property p ON p.domain_class_id = c.id AND p.local_name = 'caseNumber'
@@ -591,21 +804,21 @@ BEGIN
     WHERE c.definition_id = v_def_id AND c.local_name = 'MediationAgreement'
     ON CONFLICT DO NOTHING;
 
-    RAISE NOTICE 'Step 4: Inserted ontology constraints';
+    RAISE NOTICE 'Inserted ontology constraints';
 
     -- ----------------------------------------------------------
-    -- Step 5: 记录版本历史
+    -- 版本历史
     -- ----------------------------------------------------------
     INSERT INTO ont_version_history (definition_id, version, change_type, entity_type, entity_id, before_state, after_state, diff_summary, changed_by, changed_at)
     VALUES (
         v_def_id, '2.0.0', 'DEFINITION_CREATED', 'DEFINITION', v_def_id,
         NULL,
-        '{"name": "法律知识图谱本体 V2", "version": "2.0.0", "classCount": 20, "propertyCount": 35, "constraintCount": 6}',
-        '创建法律知识图谱本体 V2，定义20个实体类、35个属性、6个约束',
+        '{"name": "法律知识图谱本体 V2", "version": "2.0.0", "classCount": 20, "propertyCount": 55, "constraintCount": 6}',
+        '创建法律知识图谱本体 V2，定义20个实体类、55个属性、6个约束',
         'system', CURRENT_TIMESTAMP
     );
 
-    RAISE NOTICE 'Step 5: Ontology setup complete for definition_id=%', v_def_id;
+    RAISE NOTICE 'Ontology setup complete for definition_id=%', v_def_id;
 
 END $$;
 
@@ -632,11 +845,27 @@ VALUES
  '你是一名专业的法律文书摘要专家。请为给定的裁判文书生成简明摘要。',
  '请为以下裁判文书生成摘要（200字以内）：\n\n{content}',
  '{"type": "object", "properties": {"summary": {"type": "string"}, "keyPoints": {"type": "array", "items": {"type": "string"}}}}',
- TRUE, NULL, 3, '["legal", "summary"]', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+ TRUE, NULL, 3, '["legal", "summary"]', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('LEGAL_DEDUPE', '实体去重', '识别并合并重复的实体', 'dedupe',
+ '你是一名专业的法律知识图谱工程师。请识别并合并重复的实体。',
+ '请识别以下实体列表中的重复项并合并：\n\n{entities}\n\n要求：\n1. 基于名称、类型等特征识别重复实体\n2. 保留最完整的实体信息\n3. 以JSON格式返回合并结果',
+ '{"type": "object", "properties": {"merged": {"type": "array"}, "duplicates": {"type": "array"}}}',
+ TRUE, NULL, 4, '["legal", "dedupe"]', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- ============================================================
--- 验证数据
+-- 第五部分: 全局自定义指令
+-- ============================================================
+
+INSERT INTO custom_instruction (graph_id, instruction, enabled, created_at, updated_at)
+VALUES
+(NULL, '请在抽取法律实体时，确保准确识别当事人是自然人还是法人组织。', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, '案件编号必须符合中国法院案号规范：年份+法院代码+案件类型+序号。', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+
+-- ============================================================
+-- 验证数据统计
 -- ============================================================
 
 SELECT 'Users' as table_name, count(*) as count FROM sys_user
@@ -649,5 +878,11 @@ UNION ALL SELECT 'OntDefinitions', count(*) FROM ont_definition
 UNION ALL SELECT 'OntClasses', count(*) FROM ont_class
 UNION ALL SELECT 'OntProperties', count(*) FROM ont_property
 UNION ALL SELECT 'OntConstraints', count(*) FROM ont_constraint
-UNION ALL SELECT 'PromptTemplates', count(*) FROM prompt_template;
+UNION ALL SELECT 'OntVersionHistory', count(*) FROM ont_version_history
+UNION ALL SELECT 'PromptTemplates', count(*) FROM prompt_template
+UNION ALL SELECT 'CustomInstructions', count(*) FROM custom_instruction;
 
+
+-- ============================================================
+-- 初始化完成
+-- ============================================================
