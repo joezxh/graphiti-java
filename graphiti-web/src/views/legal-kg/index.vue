@@ -59,7 +59,10 @@
           <a-statistic :title="$t('legalKg.partyCount')" :value="stats.partyCount" />
         </a-col>
         <a-col :span="4">
-          <a-statistic :title="$t('legalKg.courtJudgeCount')" :value="stats.courtJudgeCount" />
+          <a-statistic :title="$t('legalKg.courtCount')" :value="stats.courtCount" />
+        </a-col>
+        <a-col :span="4">
+          <a-statistic :title="$t('legalKg.judgeCount')" :value="stats.judgeCount" />
         </a-col>
       </a-row>
     </a-card>
@@ -611,7 +614,8 @@ const stats = reactive({
   caseCount: 0,
   provisionCount: 0,
   partyCount: 0,
-  courtJudgeCount: 0
+  courtCount: 0,
+  judgeCount: 0
 })
 
 // 列表数据
@@ -773,10 +777,11 @@ async function loadGraphStats() {
     const nodesResp = await nodeApi.list({ graphId: currentGraphId.value, limit: 10000 })
     const nodes = nodesResp as any[] || []
 
-    stats.caseCount = nodes.filter(n => n.type === 'Case').length
+    stats.caseCount = nodes.filter(n => ['Case', 'CivilCase', 'CriminalCase', 'AdministrativeCase', 'CommercialCase', 'ExecutionCase'].includes(n.type)).length
     stats.provisionCount = nodes.filter(n => n.type === 'LegalProvision').length
     stats.partyCount = nodes.filter(n => n.type === 'Party').length
-    stats.courtJudgeCount = nodes.filter(n => n.type === 'Court' || n.type === 'Judge').length
+    stats.courtCount = nodes.filter(n => n.type === 'Court').length
+    stats.judgeCount = nodes.filter(n => n.type === 'Judge').length
 
     // 统计关系类型
     const allEdgesResp = await edgeApi.list(currentGraphId.value, {})
@@ -1081,7 +1086,11 @@ function getEdgeColor(type: string) {
     'CASE_RELATED': 'volcano',
     'ORG_MEDIATOR': 'lime',
     'CASE_MEDIATION_ORG': 'geekblue',
-    'CASE_MEDIATION_AGREEMENT': 'green'
+    'CASE_MEDIATION_AGREEMENT': 'green',
+    'COURT_HIERARCHY': 'purple',
+    'HAS_CASE_REASONING': 'gold',
+    'HAS_CASE_FACT': 'cyan',
+    'AGREEMENT_JUDICIALLY_CONFIRMED': 'pink'
   }
   return colors[type] || 'default'
 }
@@ -1166,17 +1175,17 @@ function autoSuggestMappings() {
 
     // Party 字段匹配
     if (path.includes('dsr') || value.includes('原告') || value.includes('被告')) {
-      suggestions['Party.name'] = jsonPath
+      suggestions['Party.partyName'] = jsonPath
     }
 
     // Court 字段匹配
     if (path.includes('fy') || value.includes('法院')) {
-      suggestions['Court.name'] = jsonPath
+      suggestions['Court.courtName'] = jsonPath
     }
 
     // LegalProvision 字段匹配
     if (path.includes('tznr') || value.includes('条') && value.includes('本条例')) {
-      suggestions['LegalProvision.content'] = jsonPath
+      suggestions['LegalProvision.provisionContent'] = jsonPath
     }
   }
 
