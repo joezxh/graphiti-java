@@ -30,6 +30,18 @@
           </template>
           {{ $t('nav.graphList') }}
         </a-menu-item>
+        <a-menu-item key="/graph/ide">
+          <template #icon>
+            <CodeOutlined />
+          </template>
+          {{ $t('nav.graphIDE') }}
+        </a-menu-item>
+        <a-menu-item key="/business-info">
+          <template #icon>
+            <ControlOutlined />
+          </template>
+          {{ $t('nav.businessInfo') }}
+        </a-menu-item>
         <a-menu-item key="/graph/temporal">
           <template #icon>
             <HistoryOutlined />
@@ -191,7 +203,9 @@ import {
   EditOutlined,
   // SafetyOutlined, // 未使用
   AuditOutlined,
-  MessageOutlined
+  MessageOutlined,
+  ControlOutlined,
+  CodeOutlined
 } from '@ant-design/icons-vue'
 
 const route = useRoute()

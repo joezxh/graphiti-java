@@ -1,7 +1,7 @@
 -- ============================================================
 -- Graphiti 数据库 Schema (PostgreSQL 版本)
--- 版本: 2026-05-13
--- 说明: 完整的21张表结构定义，与当前DO类实现一致
+-- 版本: 2026-05-18
+-- 说明: 完整的23张表结构定义，与当前DO类实现一致
 -- ============================================================
 
 -- 设置客户端编码
@@ -20,11 +20,13 @@ DROP TABLE IF EXISTS sys_search_history;
 DROP TABLE IF EXISTS sys_operation_log;
 DROP TABLE IF EXISTS sys_system_config;
 DROP TABLE IF EXISTS ont_mapping;
+DROP TABLE IF EXISTS ont_class_inheritance;
 DROP TABLE IF EXISTS ont_version_history;
 DROP TABLE IF EXISTS ont_constraint;
 DROP TABLE IF EXISTS ont_property;
 DROP TABLE IF EXISTS ont_class;
 DROP TABLE IF EXISTS ont_definition;
+DROP TABLE IF EXISTS ont_draft;
 DROP TABLE IF EXISTS prompt_version;
 DROP TABLE IF EXISTS prompt_variable;
 DROP TABLE IF EXISTS prompt_template;
@@ -54,10 +56,10 @@ $$ LANGUAGE plpgsql;
 
 
 -- ============================================================
--- 系统管理模块表
+-- 第三步：系统管理模块表
 -- ============================================================
 
--- 用户表
+-- 系统用户表
 CREATE TABLE sys_user (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -91,7 +93,7 @@ CREATE INDEX idx_sys_user_status ON sys_user(status);
 CREATE INDEX idx_sys_user_deleted ON sys_user(deleted);
 
 
--- 角色表
+-- 系统角色表
 CREATE TABLE sys_role (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -136,7 +138,7 @@ CREATE INDEX idx_sys_user_role_user_id ON sys_user_role(user_id);
 CREATE INDEX idx_sys_user_role_role_id ON sys_user_role(role_id);
 
 
--- 菜单表
+-- 系统菜单表
 CREATE TABLE sys_menu (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -345,7 +347,7 @@ CREATE INDEX idx_sys_user_notification_settings_deleted ON sys_user_notification
 
 
 -- ============================================================
--- 图谱管理模块表
+-- 第四步：图谱管理模块表
 -- ============================================================
 
 -- 图谱元数据表
@@ -356,6 +358,7 @@ CREATE TABLE graphiti_graph_metadata (
     description TEXT,
     node_count INTEGER DEFAULT 0,
     edge_count INTEGER DEFAULT 0,
+    status VARCHAR(20) DEFAULT 'ACTIVE',
     create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN NOT NULL DEFAULT FALSE
@@ -372,6 +375,7 @@ COMMENT ON COLUMN graphiti_graph_metadata.name IS '图谱名称';
 COMMENT ON COLUMN graphiti_graph_metadata.description IS '图谱描述';
 COMMENT ON COLUMN graphiti_graph_metadata.node_count IS '节点数量';
 COMMENT ON COLUMN graphiti_graph_metadata.edge_count IS '边数量';
+COMMENT ON COLUMN graphiti_graph_metadata.status IS '图谱状态';
 COMMENT ON COLUMN graphiti_graph_metadata.create_time IS '创建时间';
 COMMENT ON COLUMN graphiti_graph_metadata.update_time IS '更新时间';
 COMMENT ON COLUMN graphiti_graph_metadata.deleted IS '删除标志';
@@ -381,7 +385,7 @@ CREATE INDEX idx_graphiti_graph_metadata_deleted ON graphiti_graph_metadata(dele
 
 
 -- ============================================================
--- 本体管理模块表
+-- 第五步：本体管理模块表
 -- ============================================================
 
 -- 本体定义表
@@ -409,9 +413,9 @@ COMMENT ON COLUMN ont_definition.graph_id IS '所属图谱的唯一标识符';
 COMMENT ON COLUMN ont_definition.namespace IS '本体命名空间';
 COMMENT ON COLUMN ont_definition.name IS '本体名称';
 COMMENT ON COLUMN ont_definition.version IS '语义化版本号';
-COMMENT ON COLUMN ont_definition.status IS '本体状态: ACTIVE/DEPRECATED/ARCHIVED';
+COMMENT ON COLUMN ont_definition.status IS '本体状态: DRAFT/ACTIVE/DEPRECATED/ARCHIVED';
 COMMENT ON COLUMN ont_definition.description IS '本体的详细描述';
-COMMENT ON COLUMN ont_definition.parent_version_id IS '父版本ID，用于构建版本历史链';
+COMMENT ON COLUMN ont_definition.parent_version_id IS '父版本ID';
 COMMENT ON COLUMN ont_definition.created_by IS '创建该版本的用户ID';
 COMMENT ON COLUMN ont_definition.created_at IS '创建时间';
 COMMENT ON COLUMN ont_definition.updated_at IS '更新时间';
@@ -456,6 +460,32 @@ COMMENT ON COLUMN ont_class.domain_hint IS '领域分类标记';
 COMMENT ON COLUMN ont_class.metadata IS '扩展元数据(JSON格式)';
 COMMENT ON COLUMN ont_class.created_at IS '创建时间';
 COMMENT ON COLUMN ont_class.updated_at IS '更新时间';
+
+
+-- 本体类继承关系表（支持多继承）
+CREATE TABLE ont_class_inheritance (
+    id BIGSERIAL PRIMARY KEY,
+    class_id BIGINT NOT NULL,
+    parent_class_id BIGINT NOT NULL,
+    definition_id BIGINT NOT NULL,
+    distance INTEGER DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_inheritance_class FOREIGN KEY (class_id) REFERENCES ont_class(id) ON DELETE CASCADE,
+    CONSTRAINT fk_inheritance_parent FOREIGN KEY (parent_class_id) REFERENCES ont_class(id) ON DELETE CASCADE,
+    CONSTRAINT fk_inheritance_definition FOREIGN KEY (definition_id) REFERENCES ont_definition(id) ON DELETE CASCADE,
+    CONSTRAINT uk_ont_inheritance_pair UNIQUE (class_id, parent_class_id)
+);
+
+CREATE INDEX idx_ont_inheritance_class ON ont_class_inheritance(class_id);
+CREATE INDEX idx_ont_inheritance_parent ON ont_class_inheritance(parent_class_id);
+
+COMMENT ON TABLE ont_class_inheritance IS '本体类继承关系表 - 支持多继承';
+COMMENT ON COLUMN ont_class_inheritance.id IS '主键ID';
+COMMENT ON COLUMN ont_class_inheritance.class_id IS '类ID';
+COMMENT ON COLUMN ont_class_inheritance.parent_class_id IS '父类ID';
+COMMENT ON COLUMN ont_class_inheritance.definition_id IS '所属本体定义ID';
+COMMENT ON COLUMN ont_class_inheritance.distance IS '继承距离（1=直接父类）';
+COMMENT ON COLUMN ont_class_inheritance.created_at IS '创建时间';
 
 
 -- 本体属性表
@@ -587,7 +617,7 @@ COMMENT ON TABLE ont_version_history IS '本体版本历史表 - 记录所有本
 COMMENT ON COLUMN ont_version_history.id IS '主键ID';
 COMMENT ON COLUMN ont_version_history.definition_id IS '关联的本体定义ID';
 COMMENT ON COLUMN ont_version_history.version IS '变更时的版本号';
-COMMENT ON COLUMN ont_version_history.change_type IS '变更操作类型';
+COMMENT ON COLUMN ont_version_history.change_type IS '变更操作类型: CREATED/UPDATED/DELETED/ACTIVATED/DEPRECATED';
 COMMENT ON COLUMN ont_version_history.entity_type IS '被修改实体的类型: CLASS/PROPERTY/CONSTRAINT/DEFINITION';
 COMMENT ON COLUMN ont_version_history.entity_id IS '被修改实体的ID';
 COMMENT ON COLUMN ont_version_history.before_state IS '变更前的完整状态JSON';
@@ -628,8 +658,45 @@ COMMENT ON COLUMN ont_mapping.metadata IS '扩展信息';
 COMMENT ON COLUMN ont_mapping.created_at IS '创建时间';
 
 
+-- 本体草稿表
+CREATE TABLE ont_draft (
+    id BIGSERIAL PRIMARY KEY,
+    graph_id VARCHAR(64) NOT NULL,
+    draft_name VARCHAR(128) NOT NULL,
+    draft_type VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
+    source_info TEXT,
+    generated_info TEXT,
+    mock_data TEXT,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    created_by VARCHAR(64),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER update_ont_draft_update_time
+    BEFORE UPDATE ON ont_draft
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+COMMENT ON TABLE ont_draft IS '本体草稿表 - 存储LLM生成的本体定义草稿和模拟数据';
+COMMENT ON COLUMN ont_draft.id IS '主键ID';
+COMMENT ON COLUMN ont_draft.graph_id IS '所属图谱ID';
+COMMENT ON COLUMN ont_draft.draft_name IS '草稿名称';
+COMMENT ON COLUMN ont_draft.draft_type IS '草稿类型: DRAFT/OPTIMIZED/GENERATED';
+COMMENT ON COLUMN ont_draft.source_info IS '原始业务信息(JSON)';
+COMMENT ON COLUMN ont_draft.generated_info IS 'LLM生成的本体定义(JSON)';
+COMMENT ON COLUMN ont_draft.mock_data IS '生成的模拟数据(JSON): 节点+边';
+COMMENT ON COLUMN ont_draft.status IS '状态: PENDING/APPROVED/REJECTED/APPLIED';
+COMMENT ON COLUMN ont_draft.created_by IS '创建人';
+COMMENT ON COLUMN ont_draft.created_at IS '创建时间';
+COMMENT ON COLUMN ont_draft.updated_at IS '更新时间';
+
+CREATE INDEX idx_ont_draft_graph_id ON ont_draft(graph_id);
+CREATE INDEX idx_ont_draft_status ON ont_draft(status);
+CREATE INDEX idx_ont_draft_type ON ont_draft(draft_type);
+
+
 -- ============================================================
--- 提示词管理模块表
+-- 第六步：提示词管理模块表
 -- ============================================================
 
 -- 提示词模板表
@@ -752,7 +819,7 @@ CREATE INDEX idx_prompt_ver_active ON prompt_version(active);
 
 
 -- ============================================================
--- 自定义指令模块表
+-- 第七步：自定义指令模块表
 -- ============================================================
 
 -- 自定义抽取指令表
@@ -779,3 +846,8 @@ COMMENT ON COLUMN custom_instruction.updated_at IS '更新时间';
 
 CREATE INDEX idx_custom_instruction_graph_id ON custom_instruction(graph_id);
 CREATE INDEX idx_custom_instruction_enabled ON custom_instruction(enabled);
+
+
+-- ============================================================
+-- 初始化完成
+-- ============================================================

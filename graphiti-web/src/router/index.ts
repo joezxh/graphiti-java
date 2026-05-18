@@ -33,6 +33,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'nav.graphList', requiresAuth: true }
       },
       {
+        path: 'graph/ide',
+        name: 'GraphIDESelector',
+        component: () => import('@/views/graph/ide.vue'),
+        meta: { title: 'nav.graphIDE', requiresAuth: true }
+      },
+      {
         path: 'graph/create',
         name: 'GraphCreate',
         component: () => import('@/views/graph/create.vue'),
@@ -163,6 +169,30 @@ const routes: RouteRecordRaw[] = [
         name: 'Monitor',
         component: () => import('@/views/monitor/index.vue'),
         meta: { title: 'nav.systemMonitor', requiresAuth: true }
+      },
+      {
+        path: 'graph/ide/:id',
+        name: 'GraphIDE',
+        component: () => import('@/views/graph/ide.vue'),
+        meta: { title: 'nav.graphIDE', requiresAuth: true }
+      },
+      {
+        path: 'business-info',
+        name: 'BusinessInfo',
+        component: () => import('@/views/business-info/index.vue'),
+        meta: { title: 'nav.businessInfo', requiresAuth: true }
+      },
+      {
+        path: 'business-info/ontology/:id',
+        name: 'BusinessInfoOntology',
+        component: () => import('@/views/business-info/ontology-metadata-viewer.vue'),
+        meta: { title: 'nav.businessInfoOntology', requiresAuth: true }
+      },
+      {
+        path: 'business-info/mock-data/:id',
+        name: 'BusinessInfoMockData',
+        component: () => import('@/views/business-info/mock-data-graph.vue'),
+        meta: { title: 'nav.businessInfoMockData', requiresAuth: true }
       }
     ]
   },

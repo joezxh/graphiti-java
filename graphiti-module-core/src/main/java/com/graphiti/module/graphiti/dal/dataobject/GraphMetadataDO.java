@@ -56,4 +56,9 @@ public class GraphMetadataDO implements Serializable {
      */
     @TableLogic(value = "false", delval = "true")
     private Boolean deleted;
+
+    /**
+     * 图谱状态
+     */
+    private String status;
 }

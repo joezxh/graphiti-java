@@ -54,9 +54,22 @@ public class GlobalExceptionHandler {
     public CommonResult<?> handleMissingServletRequestParameterException(
             MissingServletRequestParameterException e) {
         String parameterName = e.getParameterName();
-        String message = String.format("缺少必需参数: %s", parameterName);
-        log.warn("缺少请求参数: parameterName={}", parameterName);
+        String message = String.format("miss required parameter: %s", parameterName);
+        log.warn("miss required parameter: parameterName={}", parameterName);
         return CommonResult.error(400, message);
+    }
+
+    /**
+     * 处理非法参数异常
+     * @param e IllegalArgumentException
+     * @return CommonResult<?>
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult<?> handleIllegalArgumentException(
+            IllegalArgumentException e) {
+        log.warn("Illegal Argument: {}", e.getMessage());
+        return CommonResult.error(400, e.getMessage());
     }
 
     /**
@@ -67,7 +80,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult<?> handleException(Exception e) {
-        log.error("系统异常", e);
-        return CommonResult.error(500, "系统内部错误");
+        log.error("system exception", e);
+        return CommonResult.error(500, "internal error occupied");
     }
 }

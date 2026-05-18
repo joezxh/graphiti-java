@@ -1,6 +1,6 @@
 import request from './request'
 
-// 类型定义
+// 类型定义（扩展自 api/graph.ts）
 export interface Graph {
   id?: string        // 兼容前端旧代码（实际值为 graphId）
   graphId: string
@@ -11,6 +11,116 @@ export interface Graph {
   episodeCount?: number
   createdAt?: string
   updatedAt?: string
+}
+
+// IDE 相关类型
+export interface GraphVisualizationData {
+  nodes: GraphIDENode[]
+  edges: GraphIDEEdge[]
+  pagination?: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
+  aggregations?: {
+    byClass: Array<{ type: string; count: number }>
+  }
+}
+
+export interface GraphIDENode {
+  uuid: string
+  name: string
+  type: string
+  x?: number
+  y?: number
+  properties?: Record<string, any>
+  summary?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface GraphIDEEdge {
+  uuid: string
+  source: string
+  target: string
+  type: string
+  fact?: string
+  properties?: Record<string, any>
+}
+
+export interface ClassInstance {
+  uuid: string
+  name: string
+  type: string
+  properties?: Record<string, any>
+  summary?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface GraphMetadata {
+  graphId: string
+  name: string
+  description?: string
+  status: 'ACTIVE' | 'INACTIVE' | 'DRAFT'
+  nodeCount: number
+  edgeCount: number
+  classCount: number
+  episodeCount: number
+  communityCount: number
+}
+
+export interface SchemaClass {
+  id: number
+  definitionId: number
+  classUri: string
+  localName: string
+  description?: string
+  parentClassIds: number[]
+  propertyCount: number
+  properties?: SchemaProperty[]
+}
+
+export interface SchemaProperty {
+  id: number
+  definitionId: number
+  localName: string
+  propertyType: 'DATATYPE' | 'OBJECT' | 'ANNOTATION'
+  rangeDataType?: string
+  domainClassId?: number
+  rangeClassId?: number
+  isRequired: boolean
+  isMultiple: boolean
+  defaultValue?: any
+  allowedValues?: any[]
+  pattern?: string
+  minValue?: number
+  maxValue?: number
+}
+
+export interface CascadeFilter {
+  classType: string
+  conditions: PropertyCondition[]
+  logic: 'AND' | 'OR'
+}
+
+export interface PropertyCondition {
+  propertyName: string
+  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'contains' | 'not_contains' | 'in' | 'not_in' | 'is_null' | 'is_not_null'
+  value: any
+}
+
+export interface CascadePreviewResponse {
+  totalMatch: number
+  distribution: Array<{ groupBy: string; value: string; count: number }>
+}
+
+export interface CascadeExecuteResponse {
+  success: boolean
+  affectedCount: number
+  failedCount: number
+  errors: string[]
 }
 
 export interface Node {
@@ -189,6 +299,213 @@ export const graphApi = {
   // 删除自定义指令
   async deleteCustomInstruction(id: string): Promise<void> {
     return request.delete(`/custom-instructions/${id}`)
+  },
+
+  // ===== Graph IDE API =====
+
+  // 获取图谱可视化数据
+  async getVisualization(
+    graphId: string,
+    params?: {
+      layout?: string
+      page?: number
+      pageSize?: number
+      classType?: string
+      keyword?: string
+    }
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization`, { params })
+  },
+
+  // 获取图谱元数据
+  async getGraphMetadata(graphId: string): Promise<GraphMetadata> {
+    return request.get(`/graph/${graphId}/metadata`)
+  },
+
+  // 获取节点详情
+  async getNodeDetail(graphId: string, uuid: string): Promise<GraphIDENode & { relations: any[] }> {
+    return request.get(`/graph/${graphId}/nodes/${uuid}`)
+  },
+
+  // 创建节点
+  async createNode(
+    graphId: string,
+    data: { name: string; type: string; properties?: Record<string, any> }
+  ): Promise<GraphIDENode> {
+    return request.post(`/graph/${graphId}/nodes`, data)
+  },
+
+  // 更新节点
+  async updateNode(
+    graphId: string,
+    uuid: string,
+    data: { name?: string; properties?: Record<string, any> }
+  ): Promise<GraphIDENode> {
+    return request.put(`/graph/${graphId}/nodes/${uuid}`, data)
+  },
+
+  // 删除节点
+  async deleteNode(graphId: string, uuid: string): Promise<void> {
+    return request.delete(`/graph/${graphId}/nodes/${uuid}`)
+  },
+
+  // 创建边
+  async createEdge(
+    graphId: string,
+    data: { sourceUuid: string; targetUuid: string; type: string; fact?: string }
+  ): Promise<GraphIDEEdge> {
+    return request.post(`/graph/${graphId}/edges`, data)
+  },
+
+  // 展开邻居节点
+  async expandNeighbors(
+    graphId: string,
+    uuid: string,
+    options?: { depth?: number; edgeTypes?: string[]; maxNodes?: number }
+  ): Promise<{ nodes: GraphIDENode[]; edges: GraphIDEEdge[] }> {
+    return request.post(`/graph/${graphId}/nodes/${uuid}/expand`, options || {})
+  },
+
+  // ===== Schema API =====
+
+  // 获取类列表
+  async getSchemaClasses(graphId: string): Promise<SchemaClass[]> {
+    return request.get(`/graph/${graphId}/ontology/classes`)
+  },
+
+  // 获取类详情
+  async getSchemaClassDetail(graphId: string, classId: number): Promise<SchemaClass> {
+    return request.get(`/graph/${graphId}/ontology/classes/${classId}`)
+  },
+
+  // 获取类的实例数据列表
+  async getClassInstances(
+    graphId: string,
+    classType: string,
+    params?: { page?: number; pageSize?: number; keyword?: string }
+  ): Promise<{ data: ClassInstance[]; total: number }> {
+    return request.get(`/graph/${graphId}/instances`, {
+      params: { classType, ...params }
+    })
+  },
+
+  // 创建类
+  async createSchemaClass(
+    graphId: string,
+    data: { localName: string; description?: string; parentClassIds?: number[] }
+  ): Promise<SchemaClass> {
+    return request.post(`/graph/${graphId}/ontology/classes`, data)
+  },
+
+  // 更新类
+  async updateSchemaClass(
+    graphId: string,
+    classId: number,
+    data: { localName?: string; description?: string; parentClassIds?: number[] }
+  ): Promise<SchemaClass> {
+    return request.put(`/graph/${graphId}/ontology/classes/${classId}`, data)
+  },
+
+  // 删除类
+  async deleteSchemaClass(graphId: string, classId: number): Promise<void> {
+    return request.delete(`/graph/${graphId}/ontology/classes/${classId}`)
+  },
+
+  // 获取类属性列表
+  async getClassProperties(graphId: string, classId: number): Promise<SchemaProperty[]> {
+    return request.get(`/graph/${graphId}/ontology/classes/${classId}/properties`)
+  },
+
+  // 创建属性
+  async createClassProperty(
+    graphId: string,
+    classId: number,
+    data: {
+      localName: string
+      propertyType?: string
+      rangeDataType?: string
+      isRequired?: boolean
+      defaultValue?: any
+      allowedValues?: any[]
+      pattern?: string
+      minValue?: number
+      maxValue?: number
+    }
+  ): Promise<SchemaProperty> {
+    return request.post(`/graph/${graphId}/ontology/classes/${classId}/properties`, data)
+  },
+
+  // 更新属性
+  async updateClassProperty(
+    graphId: string,
+    classId: number,
+    propertyId: number,
+    data: Partial<SchemaProperty>
+  ): Promise<SchemaProperty> {
+    return request.put(`/graph/${graphId}/ontology/classes/${classId}/properties/${propertyId}`, data)
+  },
+
+  // 删除属性
+  async deleteClassProperty(graphId: string, classId: number, propertyId: number): Promise<void> {
+    return request.delete(`/graph/${graphId}/ontology/classes/${classId}/properties/${propertyId}`)
+  },
+
+  // ===== Cascade Edit API =====
+
+  // 预览级联编辑影响范围
+  async previewCascade(
+    graphId: string,
+    data: CascadeFilter
+  ): Promise<CascadePreviewResponse> {
+    return request.post(`/graph/${graphId}/cascade/preview`, data)
+  },
+
+  // 执行级联编辑
+  async executeCascade(
+    graphId: string,
+    data: {
+      classType: string
+      conditions: PropertyCondition[]
+      logic: 'AND' | 'OR'
+      updates: Record<string, any>
+    }
+  ): Promise<CascadeExecuteResponse> {
+    return request.post(`/graph/${graphId}/cascade/execute`, data)
+  },
+
+  // ===== Schema Validation API =====
+
+  // 验证 Schema 变更影响
+  async validateSchemaChange(
+    graphId: string,
+    data: {
+      type: 'UPDATE_CLASS' | 'UPDATE_PROPERTY' | 'DELETE_PROPERTY' | 'ADD_REQUIRED_PROPERTY'
+      classId?: number
+      propertyId?: number
+      changes?: {
+        newLocalName?: string
+        oldIsRequired?: boolean
+        newIsRequired?: boolean
+        newRangeDataType?: string
+        newAllowedValues?: string[]
+        newPattern?: string
+        newMinValue?: number
+        newMaxValue?: number
+      }
+    }
+  ): Promise<{
+    compatible: boolean
+    affectedNodes: number
+    violations: Array<{
+      nodeUuid?: string
+      nodeName?: string
+      violationType: string
+      reason: string
+      currentValue?: any
+      expectedValue?: any
+    }>
+  }> {
+    return request.post(`/graph/${graphId}/ontology/validate-change`, data)
   }
 }
 

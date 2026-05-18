@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphiti IDE - 知识图谱可视化与 Schema 编辑系统</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-plus@2.4.4/dist/index.css">
+  <script src="https://unpkg.com/vue@3.4.15/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/element-plus@2.4.4/dist/index.full.js"></script>
+  <script src="https://unpkg.com/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --bg-elevated: #30363d;
+      --border-color: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --accent-blue: #58a6ff;
+      --accent-purple: #a371f7;
+      --accent-green: #3fb950;
+      --accent-orange: #d29922;
+      --accent-red: #f85149;
+      --glow-blue: rgba(88, 166, 255, 0.4);
+      --glow-purple: rgba(163, 113, 247, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    .glass-card {
+      background: linear-gradient(135deg, rgba(33, 38, 45, 0.9) 0%, rgba(22, 27, 34, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+
+    .neo-border {
+      position: relative;
+    }
+
+    .neo-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .cyber-input {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .cyber-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--glow-blue);
+    }
+
+    .cyber-btn {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cyber-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--glow-blue);
+    }
+
+    .cyber-btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .cyber-btn-ghost:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .cyber-btn-danger {
+      background: linear-gradient(135deg, var(--accent-red), #dc2626);
+    }
+
+    .cyber-btn-danger:hover {
+      box-shadow: 0 4px 12px rgba(248, 81, 73, 0.4);
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      height: 56px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 20px;
+    }
+
+    .header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-primary);
+    }
+
+    .header .logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .breadcrumb .separator {
+      color: var(--text-muted);
+    }
+
+    .breadcrumb .current {
+      color: var(--text-primary);
+    }
+
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .sidebar-tab {
+      flex: 1;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sidebar-tab.active {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .sidebar-tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .tree-item {
+      margin-bottom: 2px;
+    }
+
+    .tree-item-header {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      gap: 8px;
+    }
+
+    .tree-item-header:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .tree-item-header.selected {
+      background: rgba(88, 166, 255, 0.15);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+
+    .tree-item-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .tree-item-name {
+      flex: 1;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tree-item-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    .tree-children {
+      padding-left: 20px;
+      margin-top: 2px;
+    }
+
+    .tree-children.collapsed {
+      display: none;
+    }
+
+    /* Canvas Area */
+    .canvas-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-primary);
+      position: relative;
+    }
+
+    .canvas-toolbar {
+      height: 48px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .toolbar-separator {
+      width: 1px;
+      height: 24px;
+      background: var(--border-color);
+      margin: 0 8px;
+    }
+
+    .toolbar-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toolbar-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .toolbar-btn.active {
+      background: rgba(88, 166, 255, 0.15);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .layout-selector {
+      display: flex;
+      gap: 4px;
+    }
+
+    .layout-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .layout-btn:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .layout-btn.active {
+      background: rgba(88, 166, 255, 0.15);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #graph-canvas {
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.03) 0%, transparent 50%),
+        linear-gradient(var(--bg-primary), var(--bg-primary));
+    }
+
+    .canvas-controls {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .zoom-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .zoom-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .zoom-level {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .minimap {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      width: 180px;
+      height: 120px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .minimap-content {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .minimap-viewport {
+      position: absolute;
+      border: 2px solid var(--accent-blue);
+      background: rgba(88, 166, 255, 0.1);
+      border-radius: 2px;
+    }
+
+    /* Right Panel */
+    .right-panel {
+      width: 320px;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-tab {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .panel-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .panel-tab.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .panel-section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .info-value {
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .property-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .property-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+    }
+
+    .property-key {
+      font-size: 12px;
+      color: var(--accent-blue);
+    }
+
+    .property-value {
+      flex: 1;
+      font-size: 12px;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .property-type {
+      font-size: 10px;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .relation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .relation-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .relation-item:hover {
+      background: var(--bg-elevated);
+    }
+
+    .relation-type {
+      font-size: 11px;
+      color: var(--accent-purple);
+      background: rgba(163, 113, 247, 0.15);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .relation-name {
+      flex: 1;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 28px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+    }
+
+    .status-dot.warning {
+      background: var(--accent-orange);
+    }
+
+    .status-dot.error {
+      background: var(--accent-red);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      width: 600px;
+      max-height: 80vh;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--glow-blue);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* Condition Builder */
+    .condition-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .condition-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+    }
+
+    .condition-item .form-select,
+    .condition-item .form-input {
+      flex: 1;
+      padding: 8px;
+      font-size: 13px;
+    }
+
+    .condition-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+
+    .condition-connector select {
+      padding: 6px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--accent-purple);
+      font-size: 12px;
+    }
+
+    /* Preview Card */
+    .preview-card {
+      background: linear-gradient(135deg, rgba(63, 185, 80, 0.1) 0%, rgba(88, 166, 255, 0.1) 100%);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-green);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-stat {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .preview-distribution {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .distribution-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .distribution-label {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .distribution-bar {
+      width: 100px;
+      height: 6px;
+      background: var(--bg-elevated);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .distribution-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 3px;
+    }
+
+    .distribution-count {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* Schema Editor */
+    .schema-editor {
+      display: flex;
+      height: 100%;
+    }
+
+    .schema-class-tree {
+      width: 240px;
+      border-right: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      padding: 16px;
+    }
+
+    .schema-class-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .schema-class-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .schema-class-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .schema-class-item.selected {
+      background: rgba(88, 166, 255, 0.15);
+      border-color: var(--accent-blue);
+    }
+
+    .class-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .class-info {
+      flex: 1;
+    }
+
+    .class-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .class-count {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .schema-inheritance {
+      flex: 1;
+      background: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .schema-properties {
+      width: 320px;
+      border-left: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .property-form {
+      margin-bottom: 16px;
+    }
+
+    .property-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .property-row .property-name {
+      flex: 1;
+      font-size: 13px;
+      color: var(--accent-blue);
+    }
+
+    .property-row .property-type-badge {
+      font-size: 11px;
+      color: var(--accent-purple);
+      background: rgba(163, 113, 247, 0.15);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .property-row .property-required {
+      font-size: 10px;
+      color: var(--accent-red);
+    }
+
+    .add-property-btn {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .add-property-btn:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* Inheritance Graph SVG */
+    .inheritance-graph {
+      width: 100%;
+      height: 100%;
+    }
+
+    .inheritance-node {
+      cursor: pointer;
+    }
+
+    .inheritance-node rect {
+      fill: var(--bg-secondary);
+      stroke: var(--border-color);
+      stroke-width: 2;
+      rx: 8;
+      transition: all 0.2s;
+    }
+
+    .inheritance-node:hover rect {
+      stroke: var(--accent-blue);
+    }
+
+    .inheritance-node.selected rect {
+      stroke: var(--accent-blue);
+      stroke-width: 3;
+      filter: drop-shadow(0 0 8px var(--glow-blue));
+    }
+
+    .inheritance-node text {
+      fill: var(--text-primary);
+      font-size: 12px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .inheritance-line {
+      stroke: var(--border-color);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .inheritance-arrow {
+      fill: var(--border-color);
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      color: var(--text-muted);
+    }
+
+    .empty-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    /* Graph Nodes */
+    .graph-node {
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .graph-node:hover {
+      transform: scale(1.05);
+    }
+
+    .graph-node.selected {
+      filter: drop-shadow(0 0 12px var(--glow-blue));
+    }
+
+    /* Context Menu */
+    .context-menu {
+      position: fixed;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 4px;
+      min-width: 160px;
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .context-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .context-menu-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .context-menu-item .icon {
+      width: 16px;
+      height: 16px;
+      color: var(--text-secondary);
+    }
+
+    .context-menu-separator {
+      height: 1px;
+      background: var(--border-color);
+      margin: 4px 0;
+    }
+
+    /* Tooltips */
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-elevated);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-color);
+    }
+
+    /* Element Plus Overrides */
+    .el-input__wrapper {
+      background-color: var(--bg-tertiary) !important;
+      box-shadow: none !important;
+      border: 1px solid var(--border-color) !important;
+    }
+
+    .el-input__inner {
+      color: var(--text-primary) !important;
+    }
+
+    .el-select__wrapper {
+      background-color: var(--bg-tertiary) !important;
+      box-shadow: none !important;
+      border: 1px solid var(--border-color) !important;
+    }
+
+    .el-select-dropdown {
+      background-color: var(--bg-secondary) !important;
+      border: 1px solid var(--border-color) !important;
+    }
+
+    .el-select-dropdown__item {
+      color: var(--text-primary) !important;
+    }
+
+    .el-select-dropdown__item:hover {
+      background-color: var(--bg-tertiary) !important;
+    }
+
+    .el-popper.is-light {
+      background: var(--bg-secondary) !important;
+      border: 1px solid var(--border-color) !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <svg viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="14" stroke="url(#logoGradient)" stroke-width="2"/>
+            <circle cx="10" cy="12" r="3" fill="#58a6ff"/>
+            <circle cx="22" cy="12" r="3" fill="#a371f7"/>
+            <circle cx="16" cy="22" r="3" fill="#3fb950"/>
+            <line x1="10" y1="12" x2="22" y2="12" stroke="#58a6ff" stroke-width="1.5"/>
+            <line x1="10" y1="12" x2="16" y2="22" stroke="#58a6ff" stroke-width="1.5"/>
+            <line x1="22" y1="12" x2="16" y2="22" stroke="#a371f7" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="logoGradient" x1="0" y1="0" x2="32" y2="32">
+                <stop offset="0%" stop-color="#58a6ff"/>
+                <stop offset="100%" stop-color="#a371f7"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span>Graphiti</span>
+        </div>
+        
+        <div class="breadcrumb">
+          <span>图谱管理</span>
+          <span class="separator">/</span>
+          <span class="current">电商知识图谱</span>
+        </div>
+
+        <div class="header-actions">
+          <button class="cyber-btn cyber-btn-ghost" @click="syncGraph">
+            <span>🔄</span> 同步
+          </button>
+          <button class="cyber-btn cyber-btn-ghost" @click="showSettings = true">
+            <span>⚙️</span>
+          </button>
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #58a6ff, #a371f7); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;">
+            J
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-tabs">
+              <button class="sidebar-tab" :class="{ active: sidebarTab === 'explorer' }" @click="sidebarTab = 'explorer'">
+                资源
+              </button>
+              <button class="sidebar-tab" :class="{ active: sidebarTab === 'schema' }" @click="sidebarTab = 'schema'">
+                Schema
+              </button>
+            </div>
+          </div>
+
+          <div class="sidebar-content">
+            <!-- Explorer Tab -->
+            <div v-if="sidebarTab === 'explorer'">
+              <div class="tree-item">
+                <div class="tree-item-header" @click="toggleTree('graph')">
+                  <span>{{ isTreeExpanded('graph') ? '📂' : '📁' }}</span>
+                  <span class="tree-item-name">电商知识图谱</span>
+                  <span class="tree-item-badge">12.4k</span>
+                </div>
+                <div class="tree-children" :class="{ collapsed: !isTreeExpanded('graph') }">
+                  <!-- Ontology -->
+                  <div class="tree-item">
+                    <div class="tree-item-header" @click="toggleTree('ontology')">
+                      <span>{{ isTreeExpanded('ontology') ? '📂' : '📁' }}</span>
+                      <span class="tree-item-name">本体定义</span>
+                    </div>
+                    <div class="tree-children" :class="{ collapsed: !isTreeExpanded('ontology') }">
+                      <div class="tree-item">
+                        <div class="tree-item-header" @click="toggleTree('classes')">
+                          <span>{{ isTreeExpanded('classes') ? '📂' : '📁' }}</span>
+                          <span class="tree-item-name">类</span>
+                          <span class="tree-item-badge">8</span>
+                        </div>
+                        <div class="tree-children" :class="{ collapsed: !isTreeExpanded('classes') }">
+                          <div class="tree-item-header" v-for="cls in classes" :key="cls.id" 
+                               :class="{ selected: selectedClass?.id === cls.id }"
+                               @click="selectClass(cls)">
+                            <span style="color: #58a6ff;">◉</span>
+                            <span class="tree-item-name">{{ cls.name }}</span>
+                            <span class="tree-item-badge">{{ cls.propertyCount }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tree-item-header">
+                        <span style="color: #a371f7;">◈</span>
+                        <span class="tree-item-name">关系类型</span>
+                        <span class="tree-item-badge">5</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="tree-item-header">
+                    <span style="color: #3fb950;">◉</span>
+                    <span class="tree-item-name">实例数据</span>
+                    <span class="tree-item-badge">12.4k</span>
+                  </div>
+                  <div class="tree-item-header">
+                    <span style="color: #d29922;">◆</span>
+                    <span class="tree-item-name">边</span>
+                    <span class="tree-item-badge">45.3k</span>
+                  </div>
+                  <div class="tree-item-header">
+                    <span style="color: #f85149;">◇</span>
+                    <span class="tree-item-name">事件流</span>
+                    <span class="tree-item-badge">156</span>
+                  </div>
+                  <div class="tree-item-header">
+                    <span style="color: #8b949e;">○</span>
+                    <span class="tree-item-name">社区</span>
+                    <span class="tree-item-badge">23</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Schema Tab -->
+            <div v-if="sidebarTab === 'schema'">
+              <div style="padding: 8px 0; margin-bottom: 12px;">
+                <input type="text" class="cyber-input" placeholder="搜索类..." v-model="schemaSearch" style="width: 100%;">
+              </div>
+              <div class="schema-class-list">
+                <div class="schema-class-item" v-for="cls in filteredClasses" :key="cls.id"
+                     :class="{ selected: selectedClass?.id === cls.id }"
+                     @click="selectClass(cls)">
+                  <div class="class-icon">{{ cls.name.charAt(0) }}</div>
+                  <div class="class-info">
+                    <div class="class-name">{{ cls.name }}</div>
+                    <div class="class-count">{{ cls.propertyCount }} 个属性</div>
+                  </div>
+                </div>
+              </div>
+              <button class="add-property-btn" style="margin-top: 16px;">
+                <span>+</span> 添加类
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+          <div class="canvas-toolbar">
+            <div class="toolbar-group">
+              <button class="toolbar-btn" @click="addNode" data-tooltip="添加节点">
+                <span>➕</span>
+              </button>
+              <button class="toolbar-btn" @click="addEdge" data-tooltip="添加边">
+                <span>🔗</span>
+              </button>
+              <button class="toolbar-btn" :class="{ active: tool === 'select' }" @click="tool = 'select'" data-tooltip="选择">
+                <span>👆</span>
+              </button>
+              <button class="toolbar-btn" :class="{ active: tool === 'pan' }" @click="tool = 'pan'" data-tooltip="平移">
+                <span>✋</span>
+              </button>
+            </div>
+
+            <div class="toolbar-separator"></div>
+
+            <div class="layout-selector">
+              <button class="layout-btn" :class="{ active: layout === 'force' }" @click="layout = 'force'">力导向</button>
+              <button class="layout-btn" :class="{ active: layout === 'grid' }" @click="layout = 'grid'">网格</button>
+              <button class="layout-btn" :class="{ active: layout === 'dagre' }" @click="layout = 'dagre'">层次</button>
+              <button class="layout-btn" :class="{ active: layout === 'concentric' }" @click="layout = 'concentric'">同心</button>
+            </div>
+
+            <div class="toolbar-separator"></div>
+
+            <div class="toolbar-group">
+              <button class="toolbar-btn" :class="{ active: showMinimap }" @click="showMinimap = !showMinimap" data-tooltip="小地图">
+                <span>🗺️</span>
+              </button>
+              <button class="toolbar-btn" :class="{ active: showAggregation }" @click="showAggregation = !showAggregation" data-tooltip="聚合">
+                <span>📊</span>
+              </button>
+            </div>
+
+            <div style="flex: 1;"></div>
+
+            <div class="toolbar-group">
+              <input type="text" class="cyber-input" placeholder="搜索节点..." v-model="searchKeyword" style="width: 180px;">
+              <button class="cyber-btn cyber-btn-ghost" @click="searchNodes">
+                <span>🔍</span>
+              </button>
+            </div>
+
+            <button class="cyber-btn" @click="showCascadeModal = true">
+              级联编辑
+            </button>
+          </div>
+
+          <div class="canvas-container">
+            <svg id="graph-canvas">
+              <!-- Grid Pattern -->
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262d" stroke-width="0.5"/>
+                </pattern>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#6e7681"/>
+                </marker>
+                <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#30363d"/>
+                  <stop offset="100%" stop-color="#21262d"/>
+                </linearGradient>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)"/>
+
+              <!-- Edges -->
+              <g id="edges">
+                <g v-for="edge in visibleEdges" :key="edge.id" class="graph-edge">
+                  <path :d="getEdgePath(edge)" 
+                        stroke="#6e7681" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+                  <text :x="(getNodePos(edge.source).x + getNodePos(edge.target).x) / 2"
+                        :y="(getNodePos(edge.source).y + getNodePos(edge.target).y) / 2 - 8"
+                        fill="#8b949e" font-size="10" text-anchor="middle">{{ edge.type }}</text>
+                </g>
+              </g>
+
+              <!-- Nodes -->
+              <g id="nodes">
+                <g v-for="node in visibleNodes" :key="node.id" 
+                   class="graph-node"
+                   :class="{ selected: selectedNode?.id === node.id }"
+                   :transform="'translate(' + node.x + ',' + node.y + ')'"
+                   @click="selectNode(node)"
+                   @dblclick="editNode(node)"
+                   @contextmenu.prevent="showContextMenu($event, node)">
+                  <circle r="28" fill="url(#nodeGradient)" :stroke="getNodeColor(node.type)" stroke-width="2"/>
+                  <circle r="24" fill="none" :stroke="getNodeColor(node.type)" stroke-width="1" opacity="0.5"/>
+                  <text y="4" fill="#e6edf3" font-size="12" font-weight="500" text-anchor="middle">{{ getNodeLabel(node) }}</text>
+                  <text y="-32" fill="#8b949e" font-size="10" text-anchor="middle">{{ node.name }}</text>
+                  <rect x="-20" y="22" width="40" height="16" rx="8" fill="#21262d" stroke="#30363d"/>
+                  <text y="33" fill="#6e7681" font-size="9" text-anchor="middle">{{ node.type }}</text>
+                </g>
+              </g>
+            </svg>
+
+            <!-- Minimap -->
+            <div class="minimap" v-if="showMinimap">
+              <div class="minimap-content">
+                <svg width="100%" height="100%">
+                  <circle v-for="node in visibleNodes" :key="node.id"
+                          :cx="(node.x / canvasWidth) * 180"
+                          :cy="(node.y / canvasHeight) * 120"
+                          r="3" :fill="getNodeColor(node.type)"/>
+                </svg>
+                <div class="minimap-viewport" 
+                     :style="{ 
+                       left: (viewBox.x / canvasWidth) * 180 + 'px',
+                       top: (viewBox.y / canvasHeight) * 120 + 'px',
+                       width: (viewBox.width / canvasWidth) * 180 + 'px',
+                       height: (viewBox.height / canvasHeight) * 120 + 'px'
+                     }"></div>
+              </div>
+            </div>
+
+            <!-- Canvas Controls -->
+            <div class="canvas-controls">
+              <button class="zoom-btn" @click="zoomIn">➕</button>
+              <div class="zoom-level">{{ Math.round(zoom * 100) }}%</div>
+              <button class="zoom-btn" @click="zoomOut">➖</button>
+              <button class="zoom-btn" @click="fitView">⊡</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <aside class="right-panel" v-if="selectedNode || selectedClass">
+          <div class="panel-header">
+            <span class="panel-title">{{ selectedNode ? '节点详情' : '类详情' }}</span>
+            <button class="modal-close" @click="selectedNode = null; selectedClass = null;">
+              <span>✕</span>
+            </button>
+          </div>
+
+          <div class="panel-tabs">
+            <button class="panel-tab" :class="{ active: panelTab === 'info' }" @click="panelTab = 'info'">基本信息</button>
+            <button class="panel-tab" :class="{ active: panelTab === 'properties' }" @click="panelTab = 'properties'">属性</button>
+            <button class="panel-tab" :class="{ active: panelTab === 'relations' }" @click="panelTab = 'relations'">关系</button>
+          </div>
+
+          <div class="panel-content">
+            <!-- Info Tab -->
+            <div v-if="panelTab === 'info'" class="panel-section">
+              <div class="section-title">基本信息</div>
+              <div class="info-row">
+                <span class="info-label">名称</span>
+                <span class="info-value">{{ selectedNode?.name || selectedClass?.name }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">类型</span>
+                <span class="info-value">
+                  <span class="property-type">{{ selectedNode?.type || selectedClass?.name }}</span>
+                </span>
+              </div>
+              <div class="info-row" v-if="selectedNode">
+                <span class="info-label">摘要</span>
+                <span class="info-value">{{ selectedNode.summary }}</span>
+              </div>
+              <div class="info-row" v-if="selectedClass">
+                <span class="info-label">URI</span>
+                <span class="info-value" style="font-size: 11px;">http://example.org/ontology/{{ selectedClass.name }}</span>
+              </div>
+              <div class="info-row" v-if="selectedClass">
+                <span class="info-label">属性数</span>
+                <span class="info-value">{{ selectedClass.propertyCount }}</span>
+              </div>
+              <div class="info-row" v-if="selectedNode">
+                <span class="info-label">创建时间</span>
+                <span class="info-value">{{ selectedNode.createdAt }}</span>
+              </div>
+            </div>
+
+            <!-- Properties Tab -->
+            <div v-if="panelTab === 'properties'" class="panel-section">
+              <div class="section-title">属性列表</div>
+              <div class="property-list">
+                <div class="property-item" v-for="prop in (selectedNode?.properties || selectedClass?.properties)" :key="prop.name">
+                  <span class="property-key">{{ prop.name }}</span>
+                  <span class="property-value">{{ prop.value }}</span>
+                  <span class="property-type">{{ prop.type }}</span>
+                </div>
+              </div>
+              <button class="add-property-btn" style="margin-top: 12px;" @click="showPropertyForm = true" v-if="selectedNode">
+                <span>+</span> 添加属性
+              </button>
+            </div>
+
+            <!-- Relations Tab -->
+            <div v-if="panelTab === 'relations'" class="panel-section">
+              <div class="section-title">关联关系</div>
+              <div class="relation-list" v-if="selectedNode?.relations">
+                <div class="relation-item" v-for="rel in selectedNode.relations" :key="rel.id" @click="navigateToNode(rel.targetId)">
+                  <span class="relation-type">{{ rel.type }}</span>
+                  <span class="relation-name">{{ rel.targetName }}</span>
+                  <span>→</span>
+                </div>
+              </div>
+              <div class="empty-state" v-else>
+                <div class="empty-desc">暂无关联关系</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding: 16px; border-top: 1px solid var(--border-color); display: flex; gap: 8px;">
+            <button class="cyber-btn" style="flex: 1;" @click="editSelected" v-if="selectedNode">
+              编辑
+            </button>
+            <button class="cyber-btn cyber-btn-danger" @click="deleteSelected">
+              删除
+            </button>
+          </div>
+        </aside>
+
+        <!-- Empty Right Panel -->
+        <aside class="right-panel" v-else>
+          <div class="empty-state" style="height: 100%;">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4M12 16h.01"/>
+            </svg>
+            <div class="empty-title">选择节点或类</div>
+            <div class="empty-desc">点击图谱中的节点或左侧资源管理器中的类查看详情</div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Status Bar -->
+      <footer class="status-bar">
+        <div class="status-item">
+          <span class="status-dot"></span>
+          <span>Neo4j 已连接</span>
+        </div>
+        <div class="status-item">
+          节点: <strong>12,453</strong>
+        </div>
+        <div class="status-item">
+          边: <strong>45,321</strong>
+        </div>
+        <div class="status-item">
+          类: <strong>8</strong>
+        </div>
+        <div class="status-item">
+          事件: <strong>156</strong>
+        </div>
+        <div style="flex: 1;"></div>
+        <div class="status-item">
+          <span>显示: {{ visibleNodes.length }} / {{ totalNodes }}</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu fade-in" v-if="contextMenu.visible" 
+         :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
+         @click="contextMenu.visible = false">
+      <div class="context-menu-item" @click="viewNodeDetails">
+        <span class="icon">👁️</span> 查看详情
+      </div>
+      <div class="context-menu-item" @click="editNodeFromMenu">
+        <span class="icon">✏️</span> 编辑属性
+      </div>
+      <div class="context-menu-separator"></div>
+      <div class="context-menu-item" @click="expandNeighbors">
+        <span class="icon">📤</span> 展开邻居
+      </div>
+      <div class="context-menu-item" @click="addRelation">
+        <span class="icon">🔗</span> 添加关联
+      </div>
+      <div class="context-menu-separator"></div>
+      <div class="context-menu-item" style="color: var(--accent-red);" @click="deleteFromMenu">
+        <span class="icon">🗑️</span> 删除节点
+      </div>
+    </div>
+
+    <!-- Cascade Edit Modal -->
+    <div class="modal-overlay" v-if="showCascadeModal" @click.self="showCascadeModal = false">
+      <div class="modal" style="width: 700px;">
+        <div class="modal-header">
+          <span class="modal-title">属性级联编辑</span>
+          <button class="modal-close" @click="showCascadeModal = false">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Filter Conditions -->
+          <div class="form-group">
+            <label class="form-label">筛选条件</label>
+            <div class="condition-list">
+              <div class="condition-item">
+                <select class="form-select" style="width: 140px;" v-model="cascadeFilter.classType">
+                  <option value="">选择类型</option>
+                  <option v-for="cls in classes" :key="cls.id" :value="cls.name">{{ cls.name }}</option>
+                </select>
+                <select class="form-select" style="width: 120px;" v-model="cascadeFilter.conditions[0].property">
+                  <option value="">选择属性</option>
+                  <option value="status">status</option>
+                  <option value="age">age</option>
+                  <option value="city">city</option>
+                  <option value="company">company</option>
+                </select>
+                <select class="form-select" style="width: 100px;" v-model="cascadeFilter.conditions[0].operator">
+                  <option value="eq">等于</option>
+                  <option value="ne">不等于</option>
+                  <option value="gt">大于</option>
+                  <option value="lt">小于</option>
+                  <option value="contains">包含</option>
+                </select>
+                <input type="text" class="form-input" style="flex: 1;" v-model="cascadeFilter.conditions[0].value" placeholder="值">
+                <button class="modal-close" @click="removeCondition(0)" v-if="cascadeFilter.conditions.length > 1">✕</button>
+              </div>
+            </div>
+            <button class="add-property-btn" @click="addCondition" style="margin-top: 8px;">
+              <span>+</span> 添加条件
+            </button>
+            <div style="margin-top: 8px;">
+              <select class="form-select" style="width: 100px;" v-model="cascadeFilter.logic">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <button class="cyber-btn" @click="previewCascade" style="margin-bottom: 16px;">
+            🔍 预览影响范围
+          </button>
+
+          <div class="preview-card fade-in" v-if="cascadePreview.visible">
+            <div class="preview-title">
+              <span>📊</span> 影响范围预览
+            </div>
+            <div class="preview-stat">{{ cascadePreview.totalMatch }}</div>
+            <div class="preview-distribution">
+              <div class="distribution-item" v-for="dist in cascadePreview.distribution" :key="dist.label">
+                <span class="distribution-label">{{ dist.label }}</span>
+                <div class="distribution-bar">
+                  <div class="distribution-fill" :style="{ width: (dist.count / cascadePreview.totalMatch * 100) + '%' }"></div>
+                </div>
+                <span class="distribution-count">{{ dist.count }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Update -->
+          <div class="form-group" v-if="cascadePreview.visible">
+            <label class="form-label">修改内容</label>
+            <div class="condition-item">
+              <select class="form-select" style="width: 140px;" v-model="cascadeUpdate.property">
+                <option value="">选择属性</option>
+                <option value="status">status</option>
+                <option value="age">age</option>
+                <option value="city">city</option>
+              </select>
+              <span style="color: var(--text-secondary);">=</span>
+              <input type="text" class="form-input" style="flex: 1;" v-model="cascadeUpdate.value" placeholder="新值">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cyber-btn cyber-btn-ghost" @click="showCascadeModal = false">取消</button>
+          <button class="cyber-btn" @click="executeCascade" v-if="cascadePreview.visible" 
+                  :disabled="!cascadeUpdate.property || !cascadeUpdate.value">
+            确认修改 ({{ cascadePreview.totalMatch }} 个节点)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Node Edit Modal -->
+    <div class="modal-overlay" v-if="showNodeEditModal" @click.self="showNodeEditModal = false">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">编辑节点</span>
+          <button class="modal-close" @click="showNodeEditModal = false">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">名称</label>
+            <input type="text" class="form-input" v-model="nodeEditForm.name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">类型</label>
+            <select class="form-select" v-model="nodeEditForm.type">
+              <option v-for="cls in classes" :key="cls.id" :value="cls.name">{{ cls.name }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">属性</label>
+            <div class="property-list">
+              <div class="property-item" v-for="(value, key) in nodeEditForm.properties" :key="key">
+                <span class="property-key">{{ key }}</span>
+                <input type="text" class="form-input" style="flex: 1; padding: 4px 8px; font-size: 12px;" v-model="nodeEditForm.properties[key]">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cyber-btn cyber-btn-ghost" @click="showNodeEditModal = false">取消</button>
+          <button class="cyber-btn" @click="saveNode">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schema Editor Modal -->
+    <div class="modal-overlay" v-if="showSchemaEditor" @click.self="showSchemaEditor = false">
+      <div class="modal" style="width: 1000px; max-width: 95vw; height: 80vh;">
+        <div class="modal-header">
+          <span class="modal-title">Schema 编辑器</span>
+          <div style="display: flex; gap: 8px;">
+            <button class="cyber-btn cyber-btn-ghost" @click="showSchemaEditor = false">取消</button>
+            <button class="cyber-btn">保存</button>
+          </div>
+        </div>
+        <div class="modal-body" style="padding: 0; height: calc(100% - 70px);">
+          <div class="schema-editor">
+            <!-- Class Tree -->
+            <div class="schema-class-tree">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">类列表</div>
+              <div class="schema-class-list">
+                <div class="schema-class-item" v-for="cls in classes" :key="cls.id"
+                     :class="{ selected: schemaSelectedClass?.id === cls.id }"
+                     @click="schemaSelectedClass = cls">
+                  <div class="class-icon">{{ cls.name.charAt(0) }}</div>
+                  <div class="class-info">
+                    <div class="class-name">{{ cls.name }}</div>
+                    <div class="class-count">{{ cls.propertyCount }} 个属性</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inheritance Graph -->
+            <div class="schema-inheritance">
+              <svg class="inheritance-graph">
+                <defs>
+                  <marker id="inheritanceArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#6e7681"/>
+                  </marker>
+                </defs>
+                
+                <!-- Inheritance Lines -->
+                <line x1="200" y1="80" x2="200" y2="120" class="inheritance-line" marker-end="url(#inheritanceArrow)"/>
+                <line x1="100" y1="200" x2="150" y2="160" class="inheritance-line" marker-end="url(#inheritanceArrow)"/>
+                <line x1="300" y1="200" x2="250" y2="160" class="inheritance-line" marker-end="url(#inheritanceArrow)"/>
+                <line x1="200" y1="240" x2="200" y2="200" class="inheritance-line" marker-end="url(#inheritanceArrow)"/>
+
+                <!-- Thing -->
+                <g class="inheritance-node" transform="translate(150, 40)">
+                  <rect width="100" height="40" rx="8"/>
+                  <text x="50" y="24">Thing</text>
+                </g>
+
+                <!-- Agent -->
+                <g class="inheritance-node" transform="translate(50, 160)">
+                  <rect width="100" height="40" rx="8"/>
+                  <text x="50" y="24">Agent</text>
+                </g>
+
+                <!-- Entity -->
+                <g class="inheritance-node" transform="translate(250, 160)">
+                  <rect width="100" height="40" rx="8"/>
+                  <text x="50" y="24">Entity</text>
+                </g>
+
+                <!-- Person -->
+                <g class="inheritance-node selected" transform="translate(150, 240)">
+                  <rect width="100" height="40" rx="8"/>
+                  <text x="50" y="24">Person</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Properties Panel -->
+            <div class="schema-properties">
+              <div class="section-title">属性配置</div>
+              <div class="property-form" v-if="schemaSelectedClass">
+                <div class="form-group">
+                  <label class="form-label">类名称</label>
+                  <input type="text" class="form-input" v-model="schemaSelectedClass.name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">描述</label>
+                  <input type="text" class="form-input" v-model="schemaSelectedClass.description">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">父类 (多继承)</label>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <span v-for="parent in schemaSelectedClass.parents" :key="parent" 
+                          style="padding: 4px 8px; background: var(--bg-tertiary); border-radius: 4px; font-size: 12px;">
+                      {{ parent }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="section-title" style="margin-top: 20px;">属性列表</div>
+                <div class="property-row" v-for="prop in schemaSelectedClass.properties" :key="prop.name">
+                  <span class="property-name">{{ prop.name }}</span>
+                  <span class="property-type-badge">{{ prop.dataType }}</span>
+                  <span class="property-required" v-if="prop.required">*</span>
+                </div>
+
+                <button class="add-property-btn" @click="showAddPropertyForm = true">
+                  <span>+</span> 添加属性
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, reactive, computed, onMounted } = Vue;
+
+    const app = createApp({
+      setup() {
+        // State
+        const sidebarTab = ref('explorer');
+        const tool = ref('select');
+        const layout = ref('force');
+        const zoom = ref(100);
+        const searchKeyword = ref('');
+        const showMinimap = ref(true);
+        const showAggregation = ref(false);
+        const selectedNode = ref(null);
+        const selectedClass = ref(null);
+        const panelTab = ref('info');
+        const schemaSearch = ref('');
+
+        // Canvas
+        const canvasWidth = ref(800);
+        const canvasHeight = ref(600);
+        const viewBox = reactive({ x: 0, y: 0, width: 800, height: 600 });
+
+        // Modal States
+        const showCascadeModal = ref(false);
+        const showNodeEditModal = ref(false);
+        const showSchemaEditor = ref(false);
+        const showPropertyForm = ref(false);
+        const showAddPropertyForm = ref(false);
+        const showSettings = ref(false);
+
+        // Context Menu
+        const contextMenu = reactive({
+          visible: false,
+          x: 0,
+          y: 0,
+          node: null
+        });
+
+        // Data
+        const classes = ref([
+          { id: 1, name: 'Person', propertyCount: 5, description: '人物实体', parents: ['Agent', 'Entity'], 
+            properties: [
+              { name: 'name', dataType: 'string', required: true },
+              { name: 'age', dataType: 'integer', required: false },
+              { name: 'city', dataType: 'string', required: false },
+              { name: 'status', dataType: 'string', required: false },
+              { name: 'company', dataType: 'string', required: false }
+            ]
+          },
+          { id: 2, name: 'Company', propertyCount: 4, description: '公司实体', parents: ['Entity'],
+            properties: [
+              { name: 'name', dataType: 'string', required: true },
+              { name: 'industry', dataType: 'string', required: false },
+              { name: 'location', dataType: 'string', required: false },
+              { name: 'founded', dataType: 'date', required: false }
+            ]
+          },
+          { id: 3, name: 'Product', propertyCount: 3, description: '产品实体', parents: ['Entity'],
+            properties: [
+              { name: 'name', dataType: 'string', required: true },
+              { name: 'price', dataType: 'float', required: false },
+              { name: 'category', dataType: 'string', required: false }
+            ]
+          },
+          { id: 4, name: 'Order', propertyCount: 4, description: '订单实体', parents: ['Entity'],
+            properties: [
+              { name: 'orderId', dataType: 'string', required: true },
+              { name: 'amount', dataType: 'float', required: true },
+              { name: 'status', dataType: 'string', required: false },
+              { name: 'date', dataType: 'date', required: false }
+            ]
+          },
+          { id: 5, name: 'Location', propertyCount: 3, description: '地点实体', parents: ['Entity'],
+            properties: [
+              { name: 'name', dataType: 'string', required: true },
+              { name: 'type', dataType: 'string', required: false },
+              { name: 'country', dataType: 'string', required: false }
+            ]
+          },
+          { id: 6, name: 'Event', propertyCount: 3, description: '事件实体', parents: ['Entity'],
+            properties: [
+              { name: 'name', dataType: 'string', required: true },
+              { name: 'date', dataType: 'date', required: false },
+              { name: 'location', dataType: 'string', required: false }
+            ]
+          },
+          { id: 7, name: 'Review', propertyCount: 3, description: '评论实体', parents: ['Entity'],
+            properties: [
+              { name: 'content', dataType: 'string', required: true },
+              { name: 'rating', dataType: 'integer', required: false },
+              { name: 'date', dataType: 'date', required: false }
+            ]
+          },
+          { id: 8, name: 'Category', propertyCount: 2, description: '分类实体', parents: ['Entity'],
+            properties: [
+              { name: 'name', dataType: 'string', required: true },
+              { name: 'description', dataType: 'string', required: false }
+            ]
+          }
+        ]);
+
+        const nodes = ref([
+          { id: 1, name: '张三', type: 'Person', x: 200, y: 150, summary: '阿里巴巴高级工程师',
+            properties: { age: 35, city: '北京', status: 'active', company: '阿里巴巴' },
+            createdAt: '2024-01-15 10:30', relations: [
+              { id: 1, type: 'WORKS_FOR', targetId: 9, targetName: '阿里巴巴' },
+              { id: 2, type: 'KNOWS', targetId: 2, targetName: '李四' }
+            ]
+          },
+          { id: 2, name: '李四', type: 'Person', x: 350, y: 200, summary: '腾讯产品经理',
+            properties: { age: 30, city: '深圳', status: 'active', company: '腾讯' },
+            createdAt: '2024-02-10 14:20', relations: [
+              { id: 3, type: 'WORKS_FOR', targetId: 10, targetName: '腾讯' },
+              { id: 2, type: 'KNOWS', targetId: 1, targetName: '张三' }
+            ]
+          },
+          { id: 3, name: '王五', type: 'Person', x: 450, y: 100, summary: '字节跳动设计师',
+            properties: { age: 28, city: '北京', status: 'active', company: '字节跳动' },
+            createdAt: '2024-03-05 09:15', relations: [
+              { id: 4, type: 'WORKS_FOR', targetId: 11, targetName: '字节跳动' }
+            ]
+          },
+          { id: 4, name: '赵六', type: 'Person', x: 150, y: 300, summary: '美团开发工程师',
+            properties: { age: 32, city: '上海', status: 'inactive', company: '美团' },
+            createdAt: '2024-01-20 16:45', relations: []
+          },
+          { id: 5, name: '钱七', type: 'Person', x: 500, y: 250, summary: '京东架构师',
+            properties: { age: 38, city: '北京', status: 'active', company: '京东' },
+            createdAt: '2024-02-28 11:00', relations: []
+          },
+          { id: 6, name: '华为手机', type: 'Product', x: 300, y: 350, summary: '华为旗舰手机',
+            properties: { price: 5999, category: '电子产品' },
+            createdAt: '2024-03-10 08:30', relations: []
+          },
+          { id: 7, name: '小米电视', type: 'Product', x: 550, y: 350, summary: '小米智能电视',
+            properties: { price: 2999, category: '电子产品' },
+            createdAt: '2024-03-12 10:00', relations: []
+          },
+          { id: 8, name: 'ThinkPad笔记本', type: 'Product', x: 100, y: 400, summary: '联想商务笔记本',
+            properties: { price: 7999, category: '电子产品' },
+            createdAt: '2024-03-15 14:20', relations: []
+          }
+        ]);
+
+        const edges = ref([
+          { id: 1, source: 1, target: 9, type: 'WORKS_FOR' },
+          { id: 2, source: 2, target: 10, type: 'WORKS_FOR' },
+          { id: 3, source: 3, target: 11, type: 'WORKS_FOR' },
+          { id: 4, source: 1, target: 2, type: 'KNOWS' },
+          { id: 5, source: 2, target: 3, type: 'KNOWS' },
+          { id: 6, source: 1, target: 6, type: 'PURCHASED' },
+          { id: 7, source: 2, target: 7, type: 'PURCHASED' },
+          { id: 8, source: 4, target: 8, type: 'PURCHASED' }
+        ]);
+
+        // Cascade Edit
+        const cascadeFilter = reactive({
+          classType: 'Person',
+          conditions: [
+            { property: 'status', operator: 'eq', value: 'active' }
+          ],
+          logic: 'AND'
+        });
+
+        const cascadePreview = reactive({
+          visible: false,
+          totalMatch: 128,
+          distribution: [
+            { label: '北京', count: 45 },
+            { label: '上海', count: 38 },
+            { label: '深圳', count: 45 }
+          ]
+        });
+
+        const cascadeUpdate = reactive({
+          property: '',
+          value: ''
+        });
+
+        // Node Edit
+        const nodeEditForm = reactive({
+          name: '',
+          type: '',
+          properties: {}
+        });
+
+        // Schema Editor
+        const schemaSelectedClass = ref(null);
+
+        // Tree State
+        const expandedTrees = reactive({
+          graph: true,
+          ontology: true,
+          classes: true
+        });
+
+        // Computed
+        const visibleNodes = computed(() => {
+          if (showAggregation.value) {
+            return classes.value.slice(0, 5).map((cls, i) => ({
+              id: cls.id,
+              name: cls.name,
+              type: 'Class',
+              x: 150 + i * 120,
+              y: 200,
+              isAggregation: true,
+              count: nodes.value.filter(n => n.type === cls.name).length
+            }));
+          }
+          return nodes.value;
+        });
+
+        const visibleEdges = computed(() => {
+          if (showAggregation.value) return [];
+          return edges.value;
+        });
+
+        const totalNodes = computed(() => 12453);
+
+        const filteredClasses = computed(() => {
+          if (!schemaSearch.value) return classes.value;
+          return classes.value.filter(c => 
+            c.name.toLowerCase().includes(schemaSearch.value.toLowerCase())
+          );
+        });
+
+        // Methods
+        const toggleTree = (key) => {
+          expandedTrees[key] = !expandedTrees[key];
+        };
+
+        const isTreeExpanded = (key) => expandedTrees[key];
+
+        const selectClass = (cls) => {
+          selectedClass.value = cls;
+          schemaSelectedClass.value = cls;
+          selectedNode.value = null;
+        };
+
+        const selectNode = (node) => {
+          selectedNode.value = node;
+          selectedClass.value = null;
+        };
+
+        const getNodeColor = (type) => {
+          const colors = {
+            Person: '#58a6ff',
+            Company: '#3fb950',
+            Product: '#d29922',
+            Order: '#a371f7',
+            Location: '#f85149',
+            Event: '#8b5cf6',
+            Review: '#06b6d4',
+            Category: '#84cc16',
+            Class: '#6e7681'
+          };
+          return colors[type] || '#6e7681';
+        };
+
+        const getNodeLabel = (node) => {
+          if (node.isAggregation) {
+            return node.name.charAt(0) + '(' + node.count + ')';
+          }
+          return node.name.charAt(0);
+        };
+
+        const getNodePos = (nodeId) => {
+          const node = nodes.value.find(n => n.id === nodeId);
+          return node ? { x: node.x, y: node.y } : { x: 0, y: 0 };
+        };
+
+        const getEdgePath = (edge) => {
+          const source = getNodePos(edge.source);
+          const target = getNodePos(edge.target);
+          const dx = target.x - source.x;
+          const dy = target.y - source.y;
+          const dr = Math.sqrt(dx * dx + dy * dy);
+          return `M${source.x},${source.y} Q${(source.x + target.x) / 2},${(source.y + target.y) / 2 - 30} ${target.x},${target.y}`;
+        };
+
+        const zoomIn = () => {
+          zoom.value = Math.min(200, zoom.value + 10);
+        };
+
+        const zoomOut = () => {
+          zoom.value = Math.max(25, zoom.value - 10);
+        };
+
+        const fitView = () => {
+          zoom.value = 100;
+          viewBox.x = 0;
+          viewBox.y = 0;
+        };
+
+        const showContextMenu = (event, node) => {
+          contextMenu.visible = true;
+          contextMenu.x = event.clientX;
+          contextMenu.y = event.clientY;
+          contextMenu.node = node;
+        };
+
+        const hideContextMenu = () => {
+          contextMenu.visible = false;
+        };
+
+        const viewNodeDetails = () => {
+          selectedNode.value = contextMenu.node;
+          hideContextMenu();
+        };
+
+        const editNode = (node) => {
+          nodeEditForm.name = node.name;
+          nodeEditForm.type = node.type;
+          nodeEditForm.properties = { ...node.properties };
+          showNodeEditModal.value = true;
+        };
+
+        const editNodeFromMenu = () => {
+          editNode(contextMenu.node);
+          hideContextMenu();
+        };
+
+        const saveNode = () => {
+          if (selectedNode.value) {
+            selectedNode.value.name = nodeEditForm.name;
+            selectedNode.value.type = nodeEditForm.type;
+            selectedNode.value.properties = { ...nodeEditForm.properties };
+          }
+          showNodeEditModal.value = false;
+        };
+
+        const deleteSelected = () => {
+          if (selectedNode.value) {
+            const index = nodes.value.findIndex(n => n.id === selectedNode.value.id);
+            if (index > -1) nodes.value.splice(index, 1);
+            selectedNode.value = null;
+          }
+        };
+
+        const deleteFromMenu = () => {
+          const node = contextMenu.node;
+          const index = nodes.value.findIndex(n => n.id === node.id);
+          if (index > -1) nodes.value.splice(index, 1);
+          if (selectedNode.value?.id === node.id) selectedNode.value = null;
+          hideContextMenu();
+        };
+
+        const editSelected = () => {
+          if (selectedNode.value) {
+            editNode(selectedNode.value);
+          }
+        };
+
+        const expandNeighbors = () => {
+          hideContextMenu();
+          ElementPlus.ElMessage.info('展开邻居节点...');
+        };
+
+        const addRelation = () => {
+          hideContextMenu();
+          ElementPlus.ElMessage.info('添加关联...');
+        };
+
+        const navigateToNode = (nodeId) => {
+          const node = nodes.value.find(n => n.id === nodeId);
+          if (node) selectNode(node);
+        };
+
+        const addCondition = () => {
+          cascadeFilter.conditions.push({ property: '', operator: 'eq', value: '' });
+        };
+
+        const removeCondition = (index) => {
+          cascadeFilter.conditions.splice(index, 1);
+        };
+
+        const previewCascade = () => {
+          cascadePreview.visible = true;
+        };
+
+        const executeCascade = () => {
+          ElementPlus.ElMessage.success(`成功修改 ${cascadePreview.totalMatch} 个节点`);
+          showCascadeModal.value = false;
+          cascadePreview.visible = false;
+        };
+
+        const addNode = () => {
+          ElementPlus.ElMessage.info('添加节点...');
+        };
+
+        const addEdge = () => {
+          ElementPlus.ElMessage.info('添加边...');
+        };
+
+        const searchNodes = () => {
+          ElementPlus.ElMessage.info(`搜索: ${searchKeyword.value}`);
+        };
+
+        const syncGraph = () => {
+          ElementPlus.ElMessage.success('同步完成');
+        };
+
+        // Lifecycle
+        onMounted(() => {
+          document.addEventListener('click', (e) => {
+            if (!e.target.closest('.context-menu')) {
+              hideContextMenu();
+            }
+          });
+        });
+
+        return {
+          sidebarTab,
+          tool,
+          layout,
+          zoom,
+          searchKeyword,
+          showMinimap,
+          showAggregation,
+          selectedNode,
+          selectedClass,
+          panelTab,
+          schemaSearch,
+          canvasWidth,
+          canvasHeight,
+          viewBox,
+          showCascadeModal,
+          showNodeEditModal,
+          showSchemaEditor,
+          showPropertyForm,
+          showSettings,
+          contextMenu,
+          classes,
+          nodes,
+          edges,
+          cascadeFilter,
+          cascadePreview,
+          cascadeUpdate,
+          nodeEditForm,
+          schemaSelectedClass,
+          visibleNodes,
+          visibleEdges,
+          totalNodes,
+          filteredClasses,
+          toggleTree,
+          isTreeExpanded,
+          selectClass,
+          selectNode,
+          getNodeColor,
+          getNodeLabel,
+          getNodePos,
+          getEdgePath,
+          zoomIn,
+          zoomOut,
+          fitView,
+          showContextMenu,
+          viewNodeDetails,
+          editNode,
+          editNodeFromMenu,
+          saveNode,
+          deleteSelected,
+          editSelected,
+          expandNeighbors,
+          addRelation,
+          navigateToNode,
+          addCondition,
+          removeCondition,
+          previewCascade,
+          executeCascade,
+          addNode,
+          addEdge,
+          searchNodes,
+          syncGraph
+        };
+      }
+    });
+
+    // Register Element Plus
+    app.use(ElementPlus);
+
+    // Register Icons
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+
+    app.mount('#app');
+  </script>
+</body>
+</html>

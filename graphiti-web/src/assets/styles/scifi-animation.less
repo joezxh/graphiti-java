@@ -1,0 +1,194 @@
+// 科幻动画效果 - Sci-Fi Animations
+// 用于业务信息管理模块的动态视觉效果
+
+// ==================== 节点脉冲动画 ====================
+// 用于图谱可视化中的节点脉冲效果
+@keyframes nodePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px currentColor;
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 16px currentColor, 0 0 24px currentColor;
+  }
+}
+
+@keyframes nodePulseRing {
+  0% {
+    r: 20;
+    opacity: 0.6;
+  }
+  100% {
+    r: 40;
+    opacity: 0;
+  }
+}
+
+// ==================== 连线流动效果 ====================
+// 用于图谱可视化中的边流动动画
+@keyframes edgeFlow {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes edgeFlowReverse {
+  0% {
+    stroke-dashoffset: -24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+// ==================== 扫描线效果 ====================
+// 背景装饰性扫描线
+@keyframes scanLine {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+// ==================== 渐入动画 ====================
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ==================== 脉冲边框动画 ====================
+@keyframes pulseBorder {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+// ==================== 旋转动画 ====================
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==================== 闪烁动画 ====================
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+// ==================== 渐变动画 ====================
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// ==================== 悬浮动画 ====================
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// ==================== 渐变文字动画 ====================
+@keyframes gradientText {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// ==================== 动画类 ====================
+.pulse-node {
+  animation: nodePulse 2.5s ease-in-out infinite;
+}
+
+.flowing-edge {
+  stroke-dasharray: 8 4;
+  animation: edgeFlow 1.5s linear infinite;
+}
+
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 240, 255, 0.15),
+    transparent
+  );
+  animation: scanLine 8s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fade-slide-up {
+  animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.blink-text {
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, @neon-cyan, @neon-purple, @neon-cyan);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientText 3s ease infinite;
+}
+
+.float-element {
+  animation: float 3s ease-in-out infinite;
+}
