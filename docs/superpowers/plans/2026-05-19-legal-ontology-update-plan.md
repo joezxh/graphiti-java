@@ -17,7 +17,7 @@
 **Files:**
 - Read: `sql/postgresql/init-data.sql`
 - Read: `sql/mysql/init-data.sql`
-- Read: `sql/postgresql/V7__seed_legal_neo4j_data.sql`
+- Read: `sql/neo4j/init.cypher`
 - Read: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java`
 - Read: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java`
 
@@ -29,9 +29,9 @@
 
 确认与 PostgreSQL 版本的结构一致性。
 
-- [ ] **Step 3: Read V7__seed_legal_neo4j_data.sql**
+- [ ] **Step 3: Read sql/neo4j/init.cypher**
 
-确认现有 Neo4j 节点数量和关系数量。
+确认现有 Neo4j 节点数量和关系数量，检查是否已有 `definition_id` 属性。
 
 ---
 
@@ -263,18 +263,18 @@ git commit -m "feat(sql): sync ontology inheritance and new properties to MySQL 
 
 ---
 
-### Task 5: 更新 Neo4j V7 数据脚本
+### Task 5: 更新 Neo4j init.cypher — 增加 definition_id
 
 **Files:**
-- Modify: `sql/postgresql/V7__seed_legal_neo4j_data.sql`
+- Modify: `sql/neo4j/init.cypher`
 
 - [ ] **Step 1: 在所有节点 MERGE 语句中追加 `definition_id: 1`**
 
-使用 replace-all 将每个节点块的 `graph_id:` 之后追加 `definition_id: 1,`：
+检查现有 `init.cypher` 中各节点是否已有 `definition_id` 属性。如无，在每个节点块的 `graph_id` 行之后追加 `definition_id: 1,`：
 
 ```cypher
--- 在每个 MERGE 块的 graph_id 行追加 definition_id
--- 例如：
+// 在每个 MERGE 块的 graph_id 行追加 definition_id
+// 例如：
 MERGE (c1:Court {
   uuid: 'court-supreme-001',
   graph_id: 'legal-knowledge-graph',
@@ -285,16 +285,16 @@ MERGE (c1:Court {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add sql/postgresql/V7__seed_legal_neo4j_data.sql
-git commit -m "feat(neo4j): add definition_id to all nodes in V7 seed data"
+git add sql/neo4j/init.cypher
+git commit -m "feat(neo4j): add definition_id to all nodes in init.cypher"
 ```
 
 ---
 
-### Task 6: 提取真实案例数据并更新 Neo4j 脚本
+### Task 6: 提取真实案例数据并更新 Neo4j init.cypher
 
 **Files:**
-- Modify: `sql/postgresql/V7__seed_legal_neo4j_data.sql`（追加新案例节点和关系）
+- Modify: `sql/neo4j/init.cypher`（追加新案例节点和关系）
 
 - [ ] **Step 1: 确定要提取的案例**
 
@@ -345,8 +345,8 @@ MERGE (ca_new:CivilCase:Case {
 - [ ] **Step 5: Commit**
 
 ```bash
-git add sql/postgresql/V7__seed_legal_neo4j_data.sql
-git commit -m "feat(neo4j): add real cases from court case library to V7 seed data"
+git add sql/neo4j/init.cypher
+git commit -m "feat(neo4j): add real cases from court case library to init.cypher"
 ```
 
 ---
@@ -640,6 +640,6 @@ git commit -m "chore: finalize legal ontology update and frontend alignment"
 |------|---------|---------|
 | `sql/postgresql/init-data.sql` | 修改 | 继承关系填充 + 新增 40+ 属性 |
 | `sql/mysql/init-data.sql` | 修改 | 同步 PostgreSQL 变更 |
-| `sql/postgresql/V7__seed_legal_neo4j_data.sql` | 修改 | definition_id + 新案例节点 |
+| `sql/neo4j/init.cypher` | 修改 | definition_id + 新案例节点 |
 | `graphiti-web/src/api/legal-kg-data.ts` | 修改 | 类名/关系名修正 + 补全子类/新类 |
 | `graphiti-web/src/views/legal-kg/index.vue` | 修改 | 统计逻辑 + 字段匹配 + 颜色映射 |
