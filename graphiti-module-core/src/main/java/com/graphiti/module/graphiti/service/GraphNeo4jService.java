@@ -29,7 +29,7 @@ public class GraphNeo4jService {
     
     /**
      * 创建实体节点（带嵌入向量）
-     * @param graphId 图谱ID（用作 group_id）
+     * @param graphId 图谱ID（用作 graph_id）
      * @param uuid 节点UUID
      * @param name 节点名称
      * @param type 节点类型（实体类型）
@@ -40,12 +40,24 @@ public class GraphNeo4jService {
      */
     public Map<String, Object> createEntityNode(String graphId, String uuid, String name, String type,
                                                 String summary, float[] embedding, Map<String, Object> properties) {
-        String cypher = "CREATE (n:Entity {group_id: $group_id, uuid: $uuid, name: $name, type: $type, " +
+        // 根据 type 将 name 写入对应的类型专属字段
+        String nameField = getTypeNameField(type);
+        
+        // props 中的类型专属名称字段应该被忽略，避免与 name 参数冲突
+        // 构建排除列表
+        List<String> nameFieldsToExclude = getAllTypeNameFields();
+        Map<String, Object> safeProps = properties != null 
+            ? properties.entrySet().stream()
+                .filter(e -> !nameFieldsToExclude.contains(e.getKey()))
+                .collect(java.util.stream.Collectors.toMap(java.util.Map.Entry::getKey, java.util.Map.Entry::getValue))
+            : new HashMap<>();
+        
+        String cypher = "CREATE (n:Entity {graph_id: $graph_id, uuid: $uuid, type: $type, " +
                         "summary: $summary, embedding: $embedding, valid_at: timestamp(), invalid_at: null}) " +
-                        "SET n += $props RETURN n";
+                        "SET n." + nameField + " = $name SET n += $props RETURN n";
 
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
         params.put("uuid", uuid);
         params.put("name", name);
         params.put("type", type);
@@ -62,6 +74,28 @@ public class GraphNeo4jService {
         }
         return null;
     }
+    
+    /**
+     * 根据节点类型获取对应的名称字段名
+     */
+    private String getTypeNameField(String type) {
+        if (type == null) return "name";
+        return switch (type) {
+            case "Court" -> "courtName";
+            case "Party" -> "partyName";
+            case "Case" -> "caseName";
+            case "LegalProvision" -> "articleNumber";
+            case "Judge" -> "judgeName";
+            case "JudgmentDocument" -> "documentNumber";
+            case "MediationAgreement" -> "agreementNumber";
+            case "CommercialMediationOrganization" -> "name";
+            case "Mediator" -> "name";
+            case "Evidence" -> "evidenceNumber";
+            case "CaseReasoning" -> "reasoning";
+            case "CaseFact" -> "factDescription";
+            default -> "name";
+        };
+    }
 
     /**
      * 更新节点嵌入向量
@@ -70,10 +104,10 @@ public class GraphNeo4jService {
      * @param embedding 嵌入向量
      */
     public void updateNodeEmbedding(String graphId, String uuid, float[] embedding) {
-        String cypher = "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) " +
+        String cypher = "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) " +
                         "SET n.embedding = $embedding";
         try (Session session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId, "uuid", uuid,
+            session.run(cypher, Values.parameters("graph_id", graphId, "uuid", uuid,
                     "embedding", embedding != null ? toFloatList(embedding) : null));
         }
     }
@@ -95,8 +129,8 @@ public class GraphNeo4jService {
                                                     float[] embedding, Map<String, Object> properties) {
         String relationType = (type != null && !type.isBlank()) ? type : "RELATES_TO";
         String cypher =
-            "MATCH (a:Entity {group_id: $group_id, uuid: $sourceUuid}) " +
-            "MATCH (b:Entity {group_id: $group_id, uuid: $targetUuid}) " +
+            "MATCH (a:Entity {graph_id: $graph_id, uuid: $sourceUuid}) " +
+            "MATCH (b:Entity {graph_id: $graph_id, uuid: $targetUuid}) " +
             "CREATE (a)-[r:" + relationType + " {uuid: $edgeUuid, type: $type, fact: $fact, " +
             "embedding: $embedding, valid_at: timestamp(), invalid_at: null}]->(b) " +
             "SET r += $props RETURN r";
@@ -107,7 +141,7 @@ public class GraphNeo4jService {
         }
 
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
         params.put("sourceUuid", sourceUuid);
         params.put("targetUuid", targetUuid);
         params.put("type", type);
@@ -143,8 +177,8 @@ public class GraphNeo4jService {
                                                     String targetUuid, String relationType, String type,
                                                     String fact, float[] embedding, Map<String, Object> properties) {
         String cypher =
-            "MATCH (a:Entity {group_id: $group_id, uuid: $sourceUuid}) " +
-            "MATCH (b:Entity {group_id: $group_id, uuid: $targetUuid}) " +
+            "MATCH (a:Entity {graph_id: $graph_id, uuid: $sourceUuid}) " +
+            "MATCH (b:Entity {graph_id: $graph_id, uuid: $targetUuid}) " +
             "CREATE (a)-[r:" + relationType + " {uuid: $edgeUuid, type: $type, fact: $fact, " +
             "embedding: $embedding, valid_at: timestamp(), invalid_at: null}]->(b) " +
             "SET r += $props RETURN r";
@@ -155,7 +189,7 @@ public class GraphNeo4jService {
         }
 
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
         params.put("sourceUuid", sourceUuid);
         params.put("targetUuid", targetUuid);
         params.put("type", type);
@@ -180,10 +214,10 @@ public class GraphNeo4jService {
      * @param embedding 嵌入向量
      */
     public void updateEdgeEmbedding(String graphId, String uuid, float[] embedding) {
-        String cypher = "MATCH ()-[r:RELATES_TO {group_id: $group_id, uuid: $uuid}]->() " +
+        String cypher = "MATCH ()-[r:RELATES_TO {graph_id: $graph_id, uuid: $uuid}]->() " +
                         "SET r.embedding = $embedding";
         try (Session session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId, "uuid", uuid,
+            session.run(cypher, Values.parameters("graph_id", graphId, "uuid", uuid,
                     "embedding", embedding != null ? toFloatList(embedding) : null));
         }
     }
@@ -195,11 +229,11 @@ public class GraphNeo4jService {
      * @return 节点信息 Map
      */
     public Map<String, Object> getEntityNode(String graphId, String uuid) {
-        String cypher = "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) RETURN n";
+        String cypher = "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) RETURN n";
         
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher, 
-                Values.parameters("group_id", graphId, "uuid", uuid));
+                Values.parameters("graph_id", graphId, "uuid", uuid));
             if (result.hasNext()) {
                 Record record = result.next();
                 return record.get("n").asNode().asMap();
@@ -217,13 +251,13 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> listNodes(String graphId, long skip, long limit) {
         String cypher =
-            "MATCH (n) WHERE n.group_id = $group_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) " +
+            "MATCH (n) WHERE n.graph_id = $graph_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) " +
             "RETURN n, labels(n)[0] as label SKIP $skip LIMIT $limit";
 
         List<Map<String, Object>> nodes = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "skip", skip, "limit", limit));
+                Values.parameters("graph_id", graphId, "skip", skip, "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> nodeMap = new HashMap<>(record.get("n").asNode().asMap());
@@ -246,13 +280,13 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> listEdges(String graphId, String type, String source, String target, long skip, long limit) {
         StringBuilder cypher = new StringBuilder(
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity) "
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO]->(b:Entity) "
         );
         
         // 构建 WHERE 条件
         List<String> conditions = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
         
         if (type != null && !type.isEmpty()) {
             conditions.add("r.type = $type");
@@ -299,12 +333,12 @@ public class GraphNeo4jService {
      */
     public Map<String, Object> getEdgeByUuid(String graphId, String uuid) {
         String cypher = 
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO {uuid: $uuid}]->(b:Entity) " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO {uuid: $uuid}]->(b:Entity) " +
             "RETURN r, a.uuid as source, b.uuid as target";
         
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher, 
-                Values.parameters("group_id", graphId, "uuid", uuid));
+                Values.parameters("graph_id", graphId, "uuid", uuid));
             if (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> edge = new HashMap<>(record.get("r").asRelationship().asMap());
@@ -323,12 +357,12 @@ public class GraphNeo4jService {
      */
     public void deleteEdge(String graphId, String uuid) {
         String cypher = 
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO {uuid: $uuid}]->(b:Entity) " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO {uuid: $uuid}]->(b:Entity) " +
             "DELETE r";
         
         try (Session session = neo4jDriver.session()) {
             session.run(cypher, 
-                Values.parameters("group_id", graphId, "uuid", uuid));
+                Values.parameters("graph_id", graphId, "uuid", uuid));
         }
     }
     
@@ -340,10 +374,10 @@ public class GraphNeo4jService {
      * @return Episode 数量
      */
     public long countEpisodesByGraphId(String graphId) {
-        String cypher = "MATCH (e:Episode {group_id: $group_id}) RETURN count(e) as count";
+        String cypher = "MATCH (e:Episode {graph_id: $graph_id}) RETURN count(e) as count";
         
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            Result result = session.run(cypher, Values.parameters("graph_id", graphId));
             if (result.hasNext()) {
                 return result.next().get("count").asLong();
             }
@@ -359,17 +393,26 @@ public class GraphNeo4jService {
      * @return Episode 列表
      */
     public List<Map<String, Object>> getEpisodesByGraphId(String graphId, int limit, int offset) {
-        String cypher = 
-            "MATCH (e:Episode {group_id: $group_id}) " +
+        String cypher =
+            "MATCH (e:Episode {graph_id: $graph_id}) " +
             "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
             "e.source_description as source_description, e.content as content, " +
-            "e.created_at as created_at, e.valid_at as valid_at, e.group_id as group_id " +
+            "e.created_at as created_at, e.valid_at as valid_at, e.graph_id as graph_id, " +
+            // V3.0.0 fields
+            "e.episode_type as episode_type, " +
+            "e.legal_process as legal_process, " +
+            "e.stage_label as stage_label, " +
+            "e.court_level as court_level, " +
+            "e.is_trial_stage as is_trial_stage, " +
+            "e.start_time as start_time, " +
+            "e.end_time as end_time, " +
+            "e.case_id as case_id " +
             "SKIP $offset LIMIT $limit";
-        
+
         List<Map<String, Object>> episodes = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, 
-                Values.parameters("group_id", graphId, "offset", offset, "limit", limit));
+            Result result = session.run(cypher,
+                Values.parameters("graph_id", graphId, "offset", offset, "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> episode = new HashMap<>();
@@ -380,7 +423,16 @@ public class GraphNeo4jService {
                 episode.put("content", record.get("content").asString());
                 episode.put("created_at", record.get("created_at").asLong());
                 episode.put("valid_at", record.get("valid_at").asLong());
-                episode.put("group_id", record.get("group_id").asString());
+                episode.put("graph_id", record.get("graph_id").asString());
+                // V3.0.0 fields
+                episode.put("episode_type", record.get("episode_type").asString(null));
+                episode.put("legal_process", record.get("legal_process").asString(null));
+                episode.put("stage_label", record.get("stage_label").asString(null));
+                episode.put("court_level", record.get("court_level").asString(null));
+                episode.put("is_trial_stage", record.get("is_trial_stage").asBoolean(false));
+                episode.put("start_time", record.get("start_time").asString(null));
+                episode.put("end_time", record.get("end_time").asString(null));
+                episode.put("case_id", record.get("case_id").asString(null));
                 episodes.add(episode);
             }
         }
@@ -395,15 +447,24 @@ public class GraphNeo4jService {
      */
     public Map<String, Object> getEpisodeByUuid(String graphId, String episodeUuid) {
         String cypher = 
-            "MATCH (e:Episode {group_id: $group_id, uuid: $uuid}) " +
+            "MATCH (e:Episode {graph_id: $graph_id, uuid: $uuid}) " +
             "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
             "e.source_description as source_description, e.content as content, " +
-            "e.created_at as created_at, e.valid_at as valid_at, e.group_id as group_id, " +
-            "e.processed as processed";
+            "e.created_at as created_at, e.valid_at as valid_at, e.graph_id as graph_id, " +
+            "e.processed as processed, " +
+            // V3.0.0 fields
+            "e.episode_type as episode_type, " +
+            "e.legal_process as legal_process, " +
+            "e.stage_label as stage_label, " +
+            "e.court_level as court_level, " +
+            "e.is_trial_stage as is_trial_stage, " +
+            "e.start_time as start_time, " +
+            "e.end_time as end_time, " +
+            "e.case_id as case_id";
         
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher, 
-                Values.parameters("group_id", graphId, "uuid", episodeUuid));
+                Values.parameters("graph_id", graphId, "uuid", episodeUuid));
             if (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> episode = new HashMap<>();
@@ -414,8 +475,17 @@ public class GraphNeo4jService {
                 episode.put("content", record.get("content").asString());
                 episode.put("created_at", record.get("created_at").asLong());
                 episode.put("valid_at", record.get("valid_at").asLong());
-                episode.put("group_id", record.get("group_id").asString());
+                episode.put("graph_id", record.get("graph_id").asString());
                 episode.put("processed", record.get("processed").asBoolean());
+                // V3.0.0 fields
+                episode.put("episode_type", record.get("episode_type").asString(null));
+                episode.put("legal_process", record.get("legal_process").asString(null));
+                episode.put("stage_label", record.get("stage_label").asString(null));
+                episode.put("court_level", record.get("court_level").asString(null));
+                episode.put("is_trial_stage", record.get("is_trial_stage").asBoolean(false));
+                episode.put("start_time", record.get("start_time").asString(null));
+                episode.put("end_time", record.get("end_time").asString(null));
+                episode.put("case_id", record.get("case_id").asString(null));
                 return episode;
             }
         }
@@ -436,7 +506,13 @@ public class GraphNeo4jService {
             "MATCH (e:Episode {uuid: $uuid})-" +
             "[mentions:MENTIONS]->(n:Entity) " +
             "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
-            "labels(n) as labels";
+            "labels(n) as labels, " +
+            "n.courtName as courtName, n.partyName as partyName, " +
+            "n.caseName as caseName, n.caseNumber as caseNumber, " +
+            "n.articleNumber as articleNumber, n.lawName as lawName, " +
+            "n.judgeName as judgeName, n.documentNumber as documentNumber, " +
+            "n.agreementNumber as agreementNumber, n.evidenceNumber as evidenceNumber, " +
+            "n.reasoning as reasoning, n.factDescription as factDescription";
         
         try (Session session = neo4jDriver.session()) {
             Result nodeResult = session.run(cypher, Values.parameters("uuid", episodeUuid));
@@ -444,9 +520,27 @@ public class GraphNeo4jService {
                 Record record = nodeResult.next();
                 Map<String, Object> node = new HashMap<>();
                 node.put("uuid", record.get("uuid").asString());
-                node.put("name", record.get("name").asString());
-                node.put("type", record.get("type").asString());
-                node.put("summary", record.get("summary").asString());
+                
+                // 根据节点类型提取名称（需要显式转换为 Java 类型）
+                String nodeType = record.get("type").isNull() ? null : record.get("type").asString();
+                Map<String, Object> nodeData = new HashMap<>();
+                nodeData.put("courtName", record.get("courtName").isNull() ? null : record.get("courtName").asString());
+                nodeData.put("partyName", record.get("partyName").isNull() ? null : record.get("partyName").asString());
+                nodeData.put("caseName", record.get("caseName").isNull() ? null : record.get("caseName").asString());
+                nodeData.put("caseNumber", record.get("caseNumber").isNull() ? null : record.get("caseNumber").asString());
+                nodeData.put("articleNumber", record.get("articleNumber").isNull() ? null : record.get("articleNumber").asString());
+                nodeData.put("lawName", record.get("lawName").isNull() ? null : record.get("lawName").asString());
+                nodeData.put("judgeName", record.get("judgeName").isNull() ? null : record.get("judgeName").asString());
+                nodeData.put("documentNumber", record.get("documentNumber").isNull() ? null : record.get("documentNumber").asString());
+                nodeData.put("agreementNumber", record.get("agreementNumber").isNull() ? null : record.get("agreementNumber").asString());
+                nodeData.put("evidenceNumber", record.get("evidenceNumber").isNull() ? null : record.get("evidenceNumber").asString());
+                nodeData.put("reasoning", record.get("reasoning").isNull() ? null : record.get("reasoning").asString());
+                nodeData.put("factDescription", record.get("factDescription").isNull() ? null : record.get("factDescription").asString());
+                nodeData.put("name", record.get("name").isNull() ? null : record.get("name").asString());
+                nodeData.put("summary", record.get("summary"));
+                node.put("name", extractNodeName(nodeType, nodeData));
+                node.put("type", nodeType);
+                node.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
                 node.put("labels", record.get("labels").asList());
                 nodes.add(node);
             }
@@ -485,12 +579,12 @@ public class GraphNeo4jService {
      */
     public void deleteEpisode(String graphId, String episodeUuid) {
         String cypher = 
-            "MATCH (e:Episode {group_id: $group_id, uuid: $uuid}) " +
+            "MATCH (e:Episode {graph_id: $graph_id, uuid: $uuid}) " +
             "DETACH DELETE e";
         
         try (Session session = neo4jDriver.session()) {
             session.run(cypher, 
-                Values.parameters("group_id", graphId, "uuid", episodeUuid));
+                Values.parameters("graph_id", graphId, "uuid", episodeUuid));
         }
     }
     
@@ -509,16 +603,25 @@ public class GraphNeo4jService {
             String source, String sourceDescription, String content, 
             Map<String, Object> properties) {
         String cypher = 
-            "CREATE (e:Episode {group_id: $group_id, uuid: $uuid, name: $name, " +
+            "CREATE (e:Episode {graph_id: $graph_id, uuid: $uuid, name: $name, " +
             "source: $source, source_description: $source_description, " +
             "content: $content, created_at: timestamp(), valid_at: timestamp()}) " +
             "SET e += $props " +
             "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
             "e.source_description as source_description, e.content as content, " +
-            "e.created_at as created_at, e.valid_at as valid_at, e.group_id as group_id";
+            "e.created_at as created_at, e.valid_at as valid_at, e.graph_id as graph_id, " +
+            // V3.0.0 fields
+            "e.episode_type as episode_type, " +
+            "e.legal_process as legal_process, " +
+            "e.stage_label as stage_label, " +
+            "e.court_level as court_level, " +
+            "e.is_trial_stage as is_trial_stage, " +
+            "e.start_time as start_time, " +
+            "e.end_time as end_time, " +
+            "e.case_id as case_id";
         
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
         params.put("uuid", uuid);
         params.put("name", name);
         params.put("source", source != null ? source : "text");
@@ -538,7 +641,16 @@ public class GraphNeo4jService {
                 episode.put("content", record.get("content").asString());
                 episode.put("created_at", record.get("created_at").asLong());
                 episode.put("valid_at", record.get("valid_at").asLong());
-                episode.put("group_id", record.get("group_id").asString());
+                episode.put("graph_id", record.get("graph_id").asString());
+                // V3.0.0 fields
+                episode.put("episode_type", record.get("episode_type").asString(null));
+                episode.put("legal_process", record.get("legal_process").asString(null));
+                episode.put("stage_label", record.get("stage_label").asString(null));
+                episode.put("court_level", record.get("court_level").asString(null));
+                episode.put("is_trial_stage", record.get("is_trial_stage").asBoolean(false));
+                episode.put("start_time", record.get("start_time").asString(null));
+                episode.put("end_time", record.get("end_time").asString(null));
+                episode.put("case_id", record.get("case_id").asString(null));
                 return episode;
             }
         }
@@ -552,12 +664,12 @@ public class GraphNeo4jService {
      */
     public void deleteEntityNode(String graphId, String uuid) {
         String cypher = 
-            "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) " +
+            "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) " +
             "DETACH DELETE n";
         
         try (Session session = neo4jDriver.session()) {
             session.run(cypher, 
-                Values.parameters("group_id", graphId, "uuid", uuid));
+                Values.parameters("graph_id", graphId, "uuid", uuid));
         }
     }
     
@@ -568,26 +680,36 @@ public class GraphNeo4jService {
      */
     public Map<String, Long> getGraphStats(String graphId) {
         Map<String, Long> stats = new HashMap<>();
-        
+
         try (Session session = neo4jDriver.session()) {
-            // 查询节点数量
+            // V3.0.0: 统计节点数量（含 Entity 和 Episode）
             Result nodeResult = session.run(
-                "MATCH (n) WHERE n.group_id = $group_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) RETURN count(n) as nodeCount",
-                Values.parameters("group_id", graphId));
+                "MATCH (n) WHERE n.graph_id = $graph_id AND ((labels(n) = ['Entity']) OR (labels(n) = ['Episode'])) RETURN count(n) as nodeCount",
+                Values.parameters("graph_id", graphId));
             if (nodeResult.hasNext()) {
                 stats.put("nodeCount", nodeResult.next().get("nodeCount").asLong());
             } else {
                 stats.put("nodeCount", 0L);
             }
-            
+
             // 查询关系数量
             Result edgeResult = session.run(
-                "MATCH ()-[r:RELATES_TO]->() WHERE r.group_id = $group_id RETURN count(r) as edgeCount",
-                Values.parameters("group_id", graphId));
+                "MATCH ()-[r:RELATES_TO]->() WHERE r.graph_id = $graph_id RETURN count(r) as edgeCount",
+                Values.parameters("graph_id", graphId));
             if (edgeResult.hasNext()) {
                 stats.put("edgeCount", edgeResult.next().get("edgeCount").asLong());
             } else {
                 stats.put("edgeCount", 0L);
+            }
+
+            // V3.0.0: 统计 Episode 节点数量
+            Result episodeResult = session.run(
+                "MATCH (e:Episode {graph_id: $graph_id}) RETURN count(e) as episodeCount",
+                Values.parameters("graph_id", graphId));
+            if (episodeResult.hasNext()) {
+                stats.put("episodeCount", episodeResult.next().get("episodeCount").asLong());
+            } else {
+                stats.put("episodeCount", 0L);
             }
         }
         return stats;
@@ -600,8 +722,8 @@ public class GraphNeo4jService {
     public void clearGraphData(String graphId) {
         try (Session session = neo4jDriver.session()) {
             session.run(
-                "MATCH (n) WHERE n.group_id = $group_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) DETACH DELETE n",
-                Values.parameters("group_id", graphId));
+                "MATCH (n) WHERE n.graph_id = $graph_id AND (labels(n) = ['Entity'] OR labels(n) = ['Episode']) DETACH DELETE n",
+                Values.parameters("graph_id", graphId));
         }
     }
     
@@ -620,25 +742,25 @@ public class GraphNeo4jService {
         String cypher = 
             "CALL db.index.fulltext.queryRelationships('edgeFactIndex', $query) " +
             "YIELD relationship, score " +
-            "WHERE relationship.group_id = $group_id " +
+            "WHERE relationship.graph_id = $graph_id " +
             "WITH relationship, score " +
-            "MATCH (a:Entity {group_id: $group_id})-[r]-() " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r]-() " +
             "WHERE elementId(r) = elementId(relationship) " +
             "RETURN r.uuid as uuid, r.fact as fact, r.type as type, " +
-            "r.group_id as group_id, score " +
+            "r.graph_id as graph_id, score " +
             "LIMIT $limit";
         
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher, 
-                Values.parameters("query", query + "*", "group_id", graphId, "limit", limit));
+                Values.parameters("query", query + "*", "graph_id", graphId, "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> edge = new HashMap<>();
                 edge.put("uuid", record.get("uuid").asString());
                 edge.put("fact", record.get("fact").asString());
                 edge.put("type", record.get("type").asString());
-                edge.put("group_id", record.get("group_id").asString());
+                edge.put("graph_id", record.get("graph_id").asString());
                 edge.put("score", record.get("score").asDouble());
                 results.add(edge);
             }
@@ -661,24 +783,48 @@ public class GraphNeo4jService {
         String cypher = 
             "CALL db.index.fulltext.queryNodes('nodeNameIndex', $query) " +
             "YIELD node, score " +
-            "WHERE node.group_id = $group_id " +
+            "WHERE node.graph_id = $graph_id " +
             "RETURN node.uuid as uuid, node.name as name, node.summary as summary, " +
-            "node.type as type, node.group_id as group_id, score " +
+            "node.type as type, node.graph_id as graph_id, score, " +
+            "node.courtName as courtName, node.partyName as partyName, " +
+            "node.caseName as caseName, node.caseNumber as caseNumber, " +
+            "node.articleNumber as articleNumber, node.lawName as lawName, " +
+            "node.judgeName as judgeName, node.documentNumber as documentNumber, " +
+            "node.agreementNumber as agreementNumber, node.evidenceNumber as evidenceNumber, " +
+            "node.reasoning as reasoning, node.factDescription as factDescription " +
             "LIMIT $limit";
         
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher, 
-                Values.parameters("query", query + "*", "group_id", graphId, "limit", limit));
+                Values.parameters("query", query + "*", "graph_id", graphId, "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> node = new HashMap<>();
                 node.put("uuid", record.get("uuid").asString());
-                node.put("name", record.get("name").asString());
-                node.put("summary", record.get("summary").asString());
                 node.put("type", record.get("type").asString());
-                node.put("group_id", record.get("group_id").asString());
+                node.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                node.put("graph_id", record.get("graph_id").asString());
                 node.put("score", record.get("score").asDouble());
+                
+                // 根据类型提取名称
+                Map<String, Object> nodeData = new HashMap<>();
+                nodeData.put("courtName", record.get("courtName"));
+                nodeData.put("partyName", record.get("partyName"));
+                nodeData.put("caseName", record.get("caseName"));
+                nodeData.put("caseNumber", record.get("caseNumber"));
+                nodeData.put("articleNumber", record.get("articleNumber"));
+                nodeData.put("lawName", record.get("lawName"));
+                nodeData.put("judgeName", record.get("judgeName"));
+                nodeData.put("documentNumber", record.get("documentNumber"));
+                nodeData.put("agreementNumber", record.get("agreementNumber"));
+                nodeData.put("evidenceNumber", record.get("evidenceNumber"));
+                nodeData.put("reasoning", record.get("reasoning"));
+                nodeData.put("factDescription", record.get("factDescription"));
+                nodeData.put("name", record.get("name"));
+                nodeData.put("summary", record.get("summary"));
+                node.put("name", extractNodeName(record.get("type").asString(), nodeData));
+                
                 results.add(node);
             }
         } catch (Exception e) {
@@ -700,24 +846,48 @@ public class GraphNeo4jService {
         String cypher =
             "CALL db.index.vector.queryNodes('node_embedding_index', $k, $embedding) " +
             "YIELD node, score " +
-            "WHERE node.group_id = $group_id " +
+            "WHERE node.graph_id = $graph_id " +
             "RETURN node.uuid as uuid, node.name as name, node.type as type, " +
-            "node.summary as summary, score " +
+            "node.summary as summary, score, " +
+            "node.courtName as courtName, node.partyName as partyName, " +
+            "node.caseName as caseName, node.caseNumber as caseNumber, " +
+            "node.articleNumber as articleNumber, node.lawName as lawName, " +
+            "node.judgeName as judgeName, node.documentNumber as documentNumber, " +
+            "node.agreementNumber as agreementNumber, node.evidenceNumber as evidenceNumber, " +
+            "node.reasoning as reasoning, node.factDescription as factDescription " +
             "LIMIT $limit";
 
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "k", limit,
+                Values.parameters("graph_id", graphId, "k", limit,
                                   "embedding", toFloatList(embedding), "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> node = new HashMap<>();
                 node.put("uuid", record.get("uuid").asString());
-                node.put("name", record.get("name").asString());
                 node.put("type", record.get("type").asString());
-                node.put("summary", record.get("summary").asString());
+                node.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
                 node.put("score", record.get("score").asDouble());
+                
+                // 根据类型提取名称
+                Map<String, Object> nodeData = new HashMap<>();
+                nodeData.put("courtName", record.get("courtName"));
+                nodeData.put("partyName", record.get("partyName"));
+                nodeData.put("caseName", record.get("caseName"));
+                nodeData.put("caseNumber", record.get("caseNumber"));
+                nodeData.put("articleNumber", record.get("articleNumber"));
+                nodeData.put("lawName", record.get("lawName"));
+                nodeData.put("judgeName", record.get("judgeName"));
+                nodeData.put("documentNumber", record.get("documentNumber"));
+                nodeData.put("agreementNumber", record.get("agreementNumber"));
+                nodeData.put("evidenceNumber", record.get("evidenceNumber"));
+                nodeData.put("reasoning", record.get("reasoning"));
+                nodeData.put("factDescription", record.get("factDescription"));
+                nodeData.put("name", record.get("name"));
+                nodeData.put("summary", record.get("summary"));
+                node.put("name", extractNodeName(record.get("type").asString(), nodeData));
+                
                 results.add(node);
             }
         } catch (Exception e) {
@@ -737,14 +907,14 @@ public class GraphNeo4jService {
         String cypher =
             "CALL db.index.vector.queryRelationships('edge_embedding_index', $k, $embedding) " +
             "YIELD relationship, score " +
-            "WHERE relationship.group_id = $group_id " +
+            "WHERE relationship.graph_id = $graph_id " +
             "RETURN relationship.uuid as uuid, relationship.fact as fact, relationship.type as type, " +
             "score LIMIT $limit";
 
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "k", limit,
+                Values.parameters("graph_id", graphId, "k", limit,
                                   "embedding", toFloatList(embedding), "limit", limit));
             while (result.hasNext()) {
                 Record record = result.next();
@@ -833,11 +1003,11 @@ public class GraphNeo4jService {
      */
     public void invalidateNodesByName(String graphId, List<String> entityNames) {
         String cypher =
-            "MATCH (n:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
             "WHERE n.name IN $names AND n.invalid_at IS NULL " +
             "SET n.invalid_at = timestamp()";
         try (Session session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId, "names", entityNames));
+            session.run(cypher, Values.parameters("graph_id", graphId, "names", entityNames));
             log.info("失效节点：graphId={}, names={}", graphId, entityNames);
         }
     }
@@ -849,11 +1019,11 @@ public class GraphNeo4jService {
      */
     public void invalidateEdgesByNodes(String graphId, List<String> nodeUuids) {
         String cypher =
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO]->(b:Entity {graph_id: $graph_id}) " +
             "WHERE (a.uuid IN $uuids OR b.uuid IN $uuids) AND r.invalid_at IS NULL " +
             "SET r.invalid_at = timestamp()";
         try (Session session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId, "uuids", nodeUuids));
+            session.run(cypher, Values.parameters("graph_id", graphId, "uuids", nodeUuids));
             log.info("失效边：graphId={}, nodeUuids={}", graphId, nodeUuids);
         }
     }
@@ -865,7 +1035,7 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getValidNodes(String graphId) {
         String cypher =
-            "MATCH (n:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
             "WHERE n.invalid_at IS NULL " +
             "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
             "n.valid_at as valid_at";
@@ -880,7 +1050,7 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getValidNodesAt(String graphId, long referenceTime) {
         String cypher =
-            "MATCH (n:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
             "WHERE n.valid_at <= $refTime AND (n.invalid_at IS NULL OR n.invalid_at > $refTime) " +
             "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
             "n.valid_at as valid_at, n.invalid_at as invalid_at";
@@ -895,7 +1065,7 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getValidEdgesAt(String graphId, long referenceTime) {
         String cypher =
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO]->(b:Entity {graph_id: $graph_id}) " +
             "WHERE r.valid_at <= $refTime AND (r.invalid_at IS NULL OR r.invalid_at > $refTime) " +
             "RETURN r.uuid as uuid, r.fact as fact, r.type as type, " +
             "a.uuid as source, b.uuid as target, r.valid_at as valid_at";
@@ -903,7 +1073,7 @@ public class GraphNeo4jService {
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "refTime", referenceTime));
+                Values.parameters("graph_id", graphId, "refTime", referenceTime));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -919,7 +1089,7 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getFactVersions(String graphId, String entityName) {
         String cypher =
-            "MATCH (n:Entity {group_id: $group_id, name: $name}) " +
+            "MATCH (n:Entity {graph_id: $graph_id, name: $name}) " +
             "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary, " +
             "n.valid_at as valid_at, n.invalid_at as invalid_at " +
             "ORDER BY n.valid_at DESC";
@@ -927,7 +1097,7 @@ public class GraphNeo4jService {
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "name", entityName));
+                Values.parameters("graph_id", graphId, "name", entityName));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -940,7 +1110,7 @@ public class GraphNeo4jService {
     private List<Map<String, Object>> executeNodeQuery(String cypher, String graphId) {
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            Result result = session.run(cypher, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -952,7 +1122,7 @@ public class GraphNeo4jService {
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "refTime", refTime));
+                Values.parameters("graph_id", graphId, "refTime", refTime));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -982,24 +1152,24 @@ public class GraphNeo4jService {
     // ==================== 克隆与导出方法 ====================
 
     /**
-     * 克隆图谱数据（将源 group_id 的节点/边复制到目标 group_id）
+     * 克隆图谱数据（将源 graph_id 的节点/边复制到目标 graph_id）
      * @param sourceGraphId 源图谱ID
      * @param targetGraphId 目标图谱ID
      */
     public void cloneGraphData(String sourceGraphId, String targetGraphId) {
         // 1. 克隆节点
         String cloneNodesCypher =
-            "MATCH (n:Entity {group_id: $source_id}) " +
-            "CREATE (m:Entity) SET m = properties(n), m.group_id = $target_id";
+            "MATCH (n:Entity {graph_id: $source_id}) " +
+            "CREATE (m:Entity) SET m = properties(n), m.graph_id = $target_id";
         try (Session session = neo4jDriver.session()) {
             session.run(cloneNodesCypher, Values.parameters("source_id", sourceGraphId, "target_id", targetGraphId));
         }
 
         // 2. 克隆边
         String cloneEdgesCypher =
-            "MATCH (a:Entity {group_id: $source_id})-[r:RELATES_TO]->(b:Entity {group_id: $source_id}) " +
-            "MATCH (na:Entity {group_id: $target_id, uuid: a.uuid}) " +
-            "MATCH (nb:Entity {group_id: $target_id, uuid: b.uuid}) " +
+            "MATCH (a:Entity {graph_id: $source_id})-[r:RELATES_TO]->(b:Entity {graph_id: $source_id}) " +
+            "MATCH (na:Entity {graph_id: $target_id, uuid: a.uuid}) " +
+            "MATCH (nb:Entity {graph_id: $target_id, uuid: b.uuid}) " +
             "CREATE (na)-[nr:RELATES_TO]->(nb) SET nr = properties(r), nr.uuid = apoc.create.uuid()";
         try (Session session = neo4jDriver.session()) {
             session.run(cloneEdgesCypher, Values.parameters("source_id", sourceGraphId, "target_id", targetGraphId));
@@ -1015,7 +1185,7 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getNodesByGraphId(String graphId) {
         String cypher =
-            "MATCH (n:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
             "RETURN n.uuid as uuid, n.name as name, n.type as type, n.summary as summary";
         return executeNodeQuery(cypher, graphId);
     }
@@ -1027,12 +1197,12 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getEdgesByGraphId(String graphId) {
         String cypher =
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO]->(b:Entity {graph_id: $graph_id}) " +
             "RETURN r.uuid as uuid, r.fact as fact, r.type as type, " +
             "a.uuid as source, b.uuid as target";
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            Result result = session.run(cypher, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -1057,7 +1227,7 @@ public class GraphNeo4jService {
                                                 long skip, long limit) {
         StringBuilder cypher = new StringBuilder();
         cypher.append("MATCH (n) ");
-        cypher.append("WHERE n.group_id = $group_id ");
+        cypher.append("WHERE n.graph_id = $graph_id ");
 
         if (labels != null && !labels.isEmpty()) {
             String labelMatch = labels.stream()
@@ -1067,7 +1237,7 @@ public class GraphNeo4jService {
         }
 
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
 
         if (createdAfter != null) {
             cypher.append("AND n.created_at >= $createdAfter ");
@@ -1109,11 +1279,11 @@ public class GraphNeo4jService {
                                                 Long createdAfter, Long createdBefore,
                                                 long skip, long limit) {
         StringBuilder cypher = new StringBuilder();
-        cypher.append("MATCH (a:Entity {group_id: $group_id})-[r]->(b:Entity {group_id: $group_id}) ");
+        cypher.append("MATCH (a:Entity {graph_id: $graph_id})-[r]->(b:Entity {graph_id: $graph_id}) ");
 
         List<String> conditions = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
 
         if (edgeTypes != null && !edgeTypes.isEmpty()) {
             conditions.add("type(r) IN $edgeTypes");
@@ -1259,7 +1429,7 @@ public class GraphNeo4jService {
      */
     public List<Map<String, Object>> getRecentEpisodes(String graphId, int lastN) {
         String cypher =
-            "MATCH (e:Episode {group_id: $group_id}) " +
+            "MATCH (e:Episode {graph_id: $graph_id}) " +
             "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
             "e.source_description as source_description, e.content as content, " +
             "e.created_at as created_at, e.valid_at as valid_at " +
@@ -1269,7 +1439,7 @@ public class GraphNeo4jService {
         List<Map<String, Object>> episodes = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher,
-                Values.parameters("group_id", graphId, "lastN", lastN));
+                Values.parameters("graph_id", graphId, "lastN", lastN));
             while (result.hasNext()) {
                 Record record = result.next();
                 Map<String, Object> ep = new HashMap<>();
@@ -1296,7 +1466,7 @@ public class GraphNeo4jService {
      */
     public long countNodes(String graphId, List<String> labels) {
         StringBuilder cypher = new StringBuilder();
-        cypher.append("MATCH (n) WHERE n.group_id = $group_id ");
+        cypher.append("MATCH (n) WHERE n.graph_id = $graph_id ");
         if (labels != null && !labels.isEmpty()) {
             String labelMatch = labels.stream()
                 .map(l -> "'" + l + "'")
@@ -1307,7 +1477,7 @@ public class GraphNeo4jService {
 
         try (Session session = neo4jDriver.session()) {
             Result result = session.run(cypher.toString(),
-                Values.parameters("group_id", graphId));
+                Values.parameters("graph_id", graphId));
             if (result.hasNext()) {
                 return result.next().get("count").asLong();
             }
@@ -1323,14 +1493,14 @@ public class GraphNeo4jService {
      */
     public long countEdges(String graphId, List<String> edgeTypes) {
         StringBuilder cypher = new StringBuilder();
-        cypher.append("MATCH ()-[r]->() WHERE r.group_id = $group_id ");
+        cypher.append("MATCH ()-[r]->() WHERE r.graph_id = $graph_id ");
         if (edgeTypes != null && !edgeTypes.isEmpty()) {
             cypher.append("AND type(r) IN $edgeTypes ");
         }
         cypher.append("RETURN count(r) as count");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("group_id", graphId);
+        params.put("graph_id", graphId);
         if (edgeTypes != null && !edgeTypes.isEmpty()) {
             params.put("edgeTypes", edgeTypes);
         }
@@ -1342,5 +1512,68 @@ public class GraphNeo4jService {
             }
         }
         return 0L;
+    }
+    
+    /**
+     * 根据节点类型提取对应的名称属性
+     * 不同类型的节点使用不同的 name 属性
+     */
+    private String extractNodeName(String type, Map<String, Object> nodeMap) {
+        if (type == null) {
+            return null;
+        }
+        
+        return switch (type) {
+            case "Court" -> (String) nodeMap.get("courtName");
+            case "Party" -> (String) nodeMap.get("partyName");
+            case "Case" -> (String) nodeMap.getOrDefault("caseName", nodeMap.get("caseNumber"));
+            case "LegalProvision" -> {
+                String articleNumber = (String) nodeMap.get("articleNumber");
+                String lawName = (String) nodeMap.get("lawName");
+                yield articleNumber != null && lawName != null 
+                    ? lawName + " " + articleNumber 
+                    : articleNumber != null ? articleNumber : lawName;
+            }
+            case "Judge" -> (String) nodeMap.get("judgeName");
+            case "JudgmentDocument" -> (String) nodeMap.get("documentNumber");
+            case "MediationAgreement" -> (String) nodeMap.get("agreementNumber");
+            case "CommercialMediationOrganization" -> (String) nodeMap.get("name");
+            case "Mediator" -> (String) nodeMap.get("name");
+            case "Evidence" -> (String) nodeMap.get("evidenceNumber");
+            case "CaseReasoning" -> {
+                String reasoning = (String) nodeMap.get("reasoning");
+                yield reasoning != null && reasoning.length() > 50 
+                    ? reasoning.substring(0, 50) + "..." 
+                    : reasoning;
+            }
+            case "CaseFact" -> {
+                String description = (String) nodeMap.get("factDescription");
+                yield description != null && description.length() > 50 
+                    ? description.substring(0, 50) + "..." 
+                    : description;
+            }
+            default -> {
+                String name = (String) nodeMap.get("name");
+                if (name == null || name.isBlank()) {
+                    String summary = (String) nodeMap.get("summary");
+                    name = summary != null && summary.length() > 50 
+                        ? summary.substring(0, 50) + "..." 
+                        : summary;
+                }
+                yield name;
+            }
+        };
+    }
+    
+    /**
+     * 获取所有类型专属的名称字段列表，用于在写入节点时排除 properties 中可能传入的同名字段
+     */
+    private List<String> getAllTypeNameFields() {
+        return List.of(
+            "courtName", "partyName", "caseName", "caseNumber",
+            "articleNumber", "lawName", "judgeName", "documentNumber",
+            "agreementNumber", "evidenceNumber", "reasoning", "factDescription",
+            "name"
+        );
     }
 }
