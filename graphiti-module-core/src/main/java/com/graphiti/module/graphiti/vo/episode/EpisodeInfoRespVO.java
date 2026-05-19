@@ -49,4 +49,30 @@ public class EpisodeInfoRespVO implements Serializable {
 
     @Schema(description = "是否已处理")
     private Boolean processed;
+
+    // ==================== V3.0.0 新增字段 ====================
+
+    @Schema(description = "Episode 类型代码 (V3): EP_TRIAL_1ST, EP_MEDIATION_NEGOTIATION, etc.")
+    private String episodeType;
+
+    @Schema(description = "法律程序 (V3): litigation|mediation|arbitration|execution")
+    private String legalProcess;
+
+    @Schema(description = "阶段标签 (V3): 立案|庭审|调解|判决|执行")
+    private String stageLabel;
+
+    @Schema(description = "审级 (V3): 一审|二审|再审|null")
+    private String courtLevel;
+
+    @Schema(description = "是否审判阶段 (V3)")
+    private Boolean isTrialStage;
+
+    @Schema(description = "开始时间 (V3), ISO-8601 格式")
+    private String startTime;
+
+    @Schema(description = "结束时间 (V3), ISO-8601 格式")
+    private String endTime;
+
+    @Schema(description = "关联案件 ID (V3)")
+    private String caseId;
 }

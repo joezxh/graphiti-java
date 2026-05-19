@@ -83,10 +83,32 @@ public class EpisodeServiceImpl implements EpisodeService {
         if (content == null || content.isEmpty()) {
             throw new BusinessException(1011, "事件内容不能为空");
         }
-        
+
+        // V3.0.0 新增字段提取
+        String episodeType = (String) episodeData.get("episode_type");
+        String legalProcess = (String) episodeData.get("legal_process");
+        String stageLabel = (String) episodeData.get("stage_label");
+        String courtLevel = (String) episodeData.get("court_level");
+        Boolean isTrialStage = episodeData.get("is_trial_stage") != null
+            ? (Boolean) episodeData.get("is_trial_stage") : false;
+        String startTime = (String) episodeData.get("start_time");
+        String endTime = (String) episodeData.get("end_time");
+        String caseId = (String) episodeData.get("case_id");
+
+        // V3.0.0: 将 V3 字段注入 properties Map（GraphNeo4jService.createEpisode 使用 SET e += $props，会自动写入）
+        Map<String, Object> v3Props = new HashMap<>(properties);
+        v3Props.put("episode_type", episodeType);
+        v3Props.put("legal_process", legalProcess);
+        v3Props.put("stage_label", stageLabel);
+        v3Props.put("court_level", courtLevel);
+        v3Props.put("is_trial_stage", isTrialStage);
+        v3Props.put("start_time", startTime);
+        v3Props.put("end_time", endTime);
+        v3Props.put("case_id", caseId);
+
         // 创建事件
         Map<String, Object> createdEpisode = graphNeo4jService.createEpisode(
-            graphId, uuid, name != null ? name : "", source, sourceDescription, content, properties);
+            graphId, uuid, name != null ? name : "", source, sourceDescription, content, v3Props);
         
         if (createdEpisode == null) {
             throw new BusinessException(500, "创建事件失败");
@@ -110,7 +132,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         EpisodeInfoRespVO respVO = new EpisodeInfoRespVO();
         respVO.setUuid((String) row.get("uuid"));
         respVO.setName((String) row.get("name"));
-        respVO.setGroupId((String) row.get("group_id"));
+        respVO.setGroupId((String) row.get("graph_id"));
         respVO.setSource((String) row.get("source"));
         respVO.setSourceDescription((String) row.get("source_description"));
         respVO.setContent((String) row.get("content"));
@@ -129,7 +151,26 @@ public class EpisodeServiceImpl implements EpisodeService {
         if (processed != null) {
             respVO.setProcessed((Boolean) processed);
         }
-        
+
+        // V3.0.0 字段映射
+        respVO.setEpisodeType((String) row.get("episode_type"));
+        respVO.setLegalProcess((String) row.get("legal_process"));
+        respVO.setStageLabel((String) row.get("stage_label"));
+        respVO.setCourtLevel((String) row.get("court_level"));
+        Object isTrialStage = row.get("is_trial_stage");
+        if (isTrialStage != null) {
+            respVO.setIsTrialStage((Boolean) isTrialStage);
+        }
+        Object startTime = row.get("start_time");
+        if (startTime != null) {
+            respVO.setStartTime(startTime.toString());
+        }
+        Object endTime = row.get("end_time");
+        if (endTime != null) {
+            respVO.setEndTime(endTime.toString());
+        }
+        respVO.setCaseId((String) row.get("case_id"));
+
         return respVO;
     }
     
