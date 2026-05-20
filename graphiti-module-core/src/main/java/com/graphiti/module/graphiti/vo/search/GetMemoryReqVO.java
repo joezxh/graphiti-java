@@ -20,7 +20,7 @@ public class GetMemoryReqVO implements Serializable {
     @Valid
     private List<MessageQueryVO> messages;
 
-    @Schema(description = "限定的 group_id 列表（图谱 ID）")
+    @Schema(description = "限定的 graph_id 列表（图谱 ID）")
     private List<String> groupIds;
 
     @Schema(description = "最大返回事实数", example = "10")

@@ -488,7 +488,7 @@ public class SearchServiceImpl implements SearchService {
         vo.setFact((String) edge.get("fact"));
         vo.setSourceNodeUuid((String) edge.get("source"));
         vo.setTargetNodeUuid((String) edge.get("target"));
-        vo.setGroupId((String) edge.get("group_id"));
+        vo.setGroupId((String) edge.get("graph_id"));
 
         Object score = edge.get("score");
         if (score != null) {

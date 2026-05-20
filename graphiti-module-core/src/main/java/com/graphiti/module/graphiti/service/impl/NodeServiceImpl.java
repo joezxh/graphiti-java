@@ -141,7 +141,7 @@ public class NodeServiceImpl implements NodeService {
         props.remove("uuid");
         props.remove("name");
         props.remove("type");
-        props.remove("group_id");
+        props.remove("graph_id");
         props.remove("label");
         respVO.setProperties(props);
 
@@ -164,7 +164,7 @@ public class NodeServiceImpl implements NodeService {
         props.remove("name");
         props.remove("type");
         props.remove("summary");
-        props.remove("group_id");
+        props.remove("graph_id");
         respVO.setProperties(props);
         
         return respVO;
@@ -206,7 +206,7 @@ public class NodeServiceImpl implements NodeService {
         props.remove("source");
         props.remove("target");
         props.remove("type");
-        props.remove("group_id");
+        props.remove("graph_id");
         respVO.setProperties(props);
         return respVO;
     }

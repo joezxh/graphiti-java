@@ -286,8 +286,8 @@ public class DataImportServiceImpl implements DataImportService {
         if (edge == null) {
             throw new BusinessException(404, "边不存在");
         }
-        // getEdgeByUuidOnly 不返回 graphId，需要从 edge 的 group_id 获取
-        Object groupId = edge.get("group_id");
+        // getEdgeByUuidOnly 不返回 graphId，需要从 edge 的 graph_id 获取
+        Object groupId = edge.get("graph_id");
         if (groupId != null) {
             graphNeo4jService.deleteEdge(groupId.toString(), edgeUuid);
         } else {
@@ -309,7 +309,7 @@ public class DataImportServiceImpl implements DataImportService {
         if (episode == null) {
             throw new BusinessException(404, "Episode 不存在");
         }
-        String graphId = (String) episode.get("group_id");
+        String graphId = (String) episode.get("graph_id");
         graphNeo4jService.deleteEpisode(graphId != null ? graphId : "", episodeUuid);
     }
 

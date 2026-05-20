@@ -94,17 +94,41 @@
                   </div>
                   
                   <div v-show="isTreeExpanded('classes')" class="tree-children">
-                    <div
-                      v-for="cls in schemaClasses"
-                      :key="cls.id"
-                      class="tree-node tree-node-leaf"
-                      :class="{ selected: selectedClass?.id === cls.id }"
-                      @click="selectClass(cls)"
-                    >
-                      <span class="tree-icon type-icon">◉</span>
-                      <span class="tree-label">{{ cls.localName }}</span>
-                      <span class="tree-badge">{{ cls.propertyCount }}</span>
-                    </div>
+                    <!-- 递归类树节点 -->
+                    <template v-for="clsNode in classTree" :key="clsNode.id">
+                      <div class="tree-node" :class="{ 'tree-node-leaf': clsNode.children.length === 0 }" @click="clsNode.children.length > 0 ? toggleClassNode(clsNode) : handleClassTreeNodeClick(clsNode)">
+                        <span class="tree-icon" :class="{ active: activeTreeItem === `class-${clsNode.id}` }">{{ clsNode.children.length > 0 ? (isClassNodeExpanded(clsNode) ? '📂' : '📁') : '◉' }}</span>
+                        <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${clsNode.id}` }">{{ clsNode.localName }}</span>
+                        <span class="tree-badge">{{ clsNode.propertyCount }}</span>
+                      </div>
+                      <div v-if="clsNode.children.length > 0 && isClassNodeExpanded(clsNode)" class="tree-children">
+                        <template v-for="child1 in clsNode.children" :key="child1.id">
+                          <div class="tree-node" :class="{ 'tree-node-leaf': child1.children.length === 0 }" :style="{ paddingLeft: '28px' }" @click="child1.children.length > 0 ? toggleClassNode(child1) : handleClassTreeNodeClick(child1)">
+                            <span class="tree-icon" :class="{ active: activeTreeItem === `class-${child1.id}` }">{{ child1.children.length > 0 ? (isClassNodeExpanded(child1) ? '📂' : '📁') : '◉' }}</span>
+                            <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${child1.id}` }">{{ child1.localName }}</span>
+                            <span class="tree-badge">{{ child1.propertyCount }}</span>
+                          </div>
+                          <div v-if="child1.children.length > 0 && isClassNodeExpanded(child1)" class="tree-children">
+                            <template v-for="child2 in child1.children" :key="child2.id">
+                              <div class="tree-node" :class="{ 'tree-node-leaf': child2.children.length === 0 }" :style="{ paddingLeft: '28px' }" @click="child2.children.length > 0 ? toggleClassNode(child2) : handleClassTreeNodeClick(child2)">
+                                <span class="tree-icon" :class="{ active: activeTreeItem === `class-${child2.id}` }">{{ child2.children.length > 0 ? (isClassNodeExpanded(child2) ? '📂' : '📁') : '◉' }}</span>
+                                <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${child2.id}` }">{{ child2.localName }}</span>
+                                <span class="tree-badge">{{ child2.propertyCount }}</span>
+                              </div>
+                              <div v-if="child2.children.length > 0 && isClassNodeExpanded(child2)" class="tree-children">
+                                <template v-for="child3 in child2.children" :key="child3.id">
+                                  <div class="tree-node tree-node-leaf" :style="{ paddingLeft: '28px' }" @click="handleClassTreeNodeClick(child3)">
+                                    <span class="tree-icon type-icon" :class="{ active: activeTreeItem === `class-${child3.id}` }">◉</span>
+                                    <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${child3.id}` }">{{ child3.localName }}</span>
+                                    <span class="tree-badge">{{ child3.propertyCount }}</span>
+                                  </div>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
                   </div>
                   
                   <div class="tree-node tree-node-leaf">
@@ -115,26 +139,26 @@
                 </div>
                 
                 <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #3fb950;">◉</span>
-                  <span class="tree-label">实例数据</span>
+                  <span class="tree-icon type-icon" style="color: #3fb950;" :class="{ active: activeTreeItem === 'instances' }">◉</span>
+                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'instances' }" @click="handleInstancesClick">实例数据</span>
                   <span class="tree-badge">{{ formatNumber(graphData?.nodeCount || 0) }}</span>
                 </div>
                 
                 <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #d29922;">◆</span>
-                  <span class="tree-label">边</span>
+                  <span class="tree-icon type-icon" style="color: #d29922;" :class="{ active: activeTreeItem === 'edges' }">◆</span>
+                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'edges' }" @click="handleEdgesClick">边</span>
                   <span class="tree-badge">{{ formatNumber(graphData?.edgeCount || 0) }}</span>
                 </div>
                 
                 <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #f85149;">◇</span>
-                  <span class="tree-label">事件流</span>
+                  <span class="tree-icon type-icon" style="color: #f85149;" :class="{ active: activeTreeItem === 'episodes' }">◇</span>
+                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'episodes' }" @click="handleEpisodesClick">剧集</span>
                   <span class="tree-badge">{{ graphData?.episodeCount || 0 }}</span>
                 </div>
                 
                 <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #8b949e;">○</span>
-                  <span class="tree-label">社区</span>
+                  <span class="tree-icon type-icon" style="color: #8b949e;" :class="{ active: activeTreeItem === 'communities' }">○</span>
+                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'communities' }" @click="handleCommunitiesClick">社区</span>
                   <span class="tree-badge">{{ graphData?.communityCount || 0 }}</span>
                 </div>
               </div>
@@ -285,6 +309,9 @@
 
         <!-- Canvas -->
         <div class="canvas-wrapper">
+          <div v-if="loading" class="canvas-loading">
+            <a-spin size="large" tip="加载中..." />
+          </div>
           <GraphCanvas
             ref="graphCanvasRef"
             :graph-id="graphId"
@@ -304,7 +331,53 @@
 
       <!-- Right Panel -->
       <aside class="ide-panel" :class="{ collapsed: !showPanel }">
-        <template v-if="selectedNode || selectedClass">
+        <!-- V3.0.0: Episode 详情面板 -->
+        <template v-if="treeViewMode === 'episodes' && selectedEpisode">
+          <div class="panel-header">
+            <span class="panel-title">事件详情</span>
+            <a-button type="text" size="small" @click="selectedEpisode = null">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <div class="panel-content">
+            <a-descriptions :column="2" bordered size="small">
+              <a-descriptions-item label="名称" :span="2">
+                {{ selectedEpisode.name }}
+              </a-descriptions-item>
+              <a-descriptions-item label="类型">
+                <a-tag :color="getEpisodeColor(selectedEpisode.episodeType)">
+                  {{ selectedEpisode.episodeType || '-' }}
+                </a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="法律程序">
+                <a-tag>{{ selectedEpisode.legalProcess || '-' }}</a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="阶段">
+                {{ selectedEpisode.stageLabel || '-' }}
+              </a-descriptions-item>
+              <a-descriptions-item label="审级">
+                <a-tag v-if="selectedEpisode.courtLevel" color="purple">{{ selectedEpisode.courtLevel }}</a-tag>
+                <span v-else>-</span>
+              </a-descriptions-item>
+              <a-descriptions-item label="审判阶段">
+                <a-tag :color="selectedEpisode.isTrialStage ? 'green' : 'default'">
+                  {{ selectedEpisode.isTrialStage ? '是' : '否' }}
+                </a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="开始时间" :span="2">
+                {{ formatEpisodeTime(selectedEpisode.startTime) }}
+              </a-descriptions-item>
+              <a-descriptions-item label="结束时间" :span="2">
+                {{ formatEpisodeTime(selectedEpisode.endTime) }}
+              </a-descriptions-item>
+              <a-descriptions-item label="内容" :span="2">
+                <div class="episode-content">{{ selectedEpisode.content }}</div>
+              </a-descriptions-item>
+            </a-descriptions>
+          </div>
+        </template>
+
+        <template v-else-if="selectedNode || selectedClass">
           <div class="panel-header">
             <span class="panel-title">
               {{ selectedNode ? '节点详情' : '类详情' }}
@@ -650,6 +723,13 @@ import type {
   SidebarTab
 } from '@/api/graph'
 import type { DetailPanelTab } from '@/types/graph-ide'
+import {
+  LEGAL_PROCESS_LABELS,
+  LEGAL_DOMAIN_COLORS,
+  EPISODE_TYPE_COLORS,
+  type EpisodeV3,
+  type CommunityV3,
+} from '@/types/legal-graph-v3'
 import GraphCanvas from '@/components/Graph/GraphCanvas.vue'
 import CascadeEditModal from '@/components/Graph/CascadeEditModal.vue'
 import NodeEditModal from '@/components/Graph/NodeEditModal.vue'
@@ -681,6 +761,9 @@ const expandedTrees = reactive<Record<string, boolean>>({
   ontology: true,
   classes: true
 })
+
+// 类树节点展开状态（key 为类 ID，值为是否展开）
+const expandedClassNodes = reactive<Record<number, boolean>>({})
 
 // Canvas
 const graphCanvasRef = ref()
@@ -720,6 +803,28 @@ const edges = ref<GraphIDEEdge[]>([])
 const schemaClasses = ref<SchemaClass[]>([])
 const nodeRelations = ref<Array<{ id: string; type: string; targetId: string; targetName: string }>>([])
 
+// Deduplicate nodes and edges by uuid, preserving insertion order
+const dedupeNodes = (list: GraphIDENode[]): GraphIDENode[] => {
+  return [...new Map(list.map(n => [n.uuid, n])).values()]
+}
+const dedupeEdges = (list: GraphIDEEdge[]): GraphIDEEdge[] => {
+  return [...new Map(list.map(e => [e.uuid, e])).values()]
+}
+
+// Tree sidebar state
+type TreeViewMode = 'instances' | 'edges' | 'episodes' | 'communities' | null
+const activeTreeItem = ref<string | null>(null)   // 当前激活的树节点 key
+const treeViewMode = ref<TreeViewMode>(null)       // 特殊视图模式
+
+// V3.0.0: 选中的 Episode 详情
+const selectedEpisode = ref<EpisodeV3 | null>(null)
+
+// V3.0.0: 社区树数据
+const communityTreeData = ref<any[]>([])
+
+// V3.0.0: 社区多维度过滤
+const communityFilterDimension = ref<string>('domain')
+
 // Class instances
 const classInstances = ref<ClassInstance[]>([])
 const classInstanceTotal = ref(0)
@@ -758,6 +863,46 @@ const filteredSchemaClasses = computed(() => {
   )
 })
 
+// 构建类的层级树结构（父子关系）
+interface ClassTreeNode extends SchemaClass {
+  children: ClassTreeNode[]
+}
+
+const classTree = computed<ClassTreeNode[]>(() => {
+  const nodes: ClassTreeNode[] = schemaClasses.value.map(cls => ({
+    ...cls,
+    children: []
+  }))
+
+  const idToNode = new Map<number, ClassTreeNode>()
+  nodes.forEach(n => idToNode.set(n.id, n))
+
+  const roots: ClassTreeNode[] = []
+  nodes.forEach(node => {
+    if (!node.parentClassIds || node.parentClassIds.length === 0) {
+      roots.push(node)
+    } else {
+      node.parentClassIds.forEach(pid => {
+        const parent = idToNode.get(pid)
+        if (parent) {
+          parent.children.push(node)
+        } else {
+          // 父类不在当前 definition 中，当作根节点
+          roots.push(node)
+        }
+      })
+    }
+  })
+
+  const sortNodes = (arr: ClassTreeNode[]) => {
+    arr.sort((a, b) => a.localName.localeCompare(b.localName))
+    arr.forEach(n => sortNodes(n.children))
+  }
+  sortNodes(roots)
+
+  return roots
+})
+
 const displayProperties = computed(() => {
   if (selectedNode.value?.properties) return selectedNode.value.properties
   if (selectedClass.value?.properties) {
@@ -780,6 +925,60 @@ const formatValue = (value: any): string => {
   if (value === null || value === undefined) return '-'
   if (typeof value === 'object') return JSON.stringify(value)
   return String(value)
+}
+
+// V3.0.0: 根据法律领域获取社区颜色
+const getCommunityColor = (domain?: string): string => {
+  if (!domain) return '#999'
+  return LEGAL_DOMAIN_COLORS[domain] || '#999'
+}
+
+// V3.0.0: 根据 Episode 类型获取颜色
+const getEpisodeColor = (type?: string): string => {
+  if (!type) return 'blue'
+  return EPISODE_TYPE_COLORS[type] || 'blue'
+}
+
+// V3.0.0: 格式化 Episode 时间
+const formatEpisodeTime = (timeStr?: string): string => {
+  if (!timeStr) return ''
+  try {
+    const d = new Date(timeStr)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  } catch {
+    return timeStr
+  }
+}
+
+// V3.0.0: 构建社区树形数据
+const buildCommunityTree = (communities: any[]): any[] => {
+  if (!communities || !communities.length) return []
+  const map = new Map<string, any>()
+  communities.forEach((c: any) => {
+    map.set(c.uuid, {
+      key: c.uuid,
+      title: c.name,
+      color: getCommunityColor(c.legalDomain),
+      legalDomain: c.legalDomain,
+      jurisdiction: c.jurisdiction,
+      practiceType: c.practiceType,
+      isLeaf: true,
+      children: [],
+    })
+  })
+  const roots: any[] = []
+  communities.forEach((c: any) => {
+    const node = map.get(c.uuid)
+    if (c.parentCommunityUuid && map.has(c.parentCommunityUuid)) {
+      const parent = map.get(c.parentCommunityUuid)
+      parent.isLeaf = false
+      parent.children = parent.children || []
+      parent.children.push(node)
+    } else {
+      roots.push(node)
+    }
+  })
+  return roots
 }
 
 const getNodeColor = (type: string): string => {
@@ -806,6 +1005,15 @@ const toggleTree = (key: string) => {
 
 const isTreeExpanded = (key: string): boolean => {
   return expandedTrees[key] === true
+}
+
+const toggleClassNode = (cls: ClassTreeNode) => {
+  const key = cls.id
+  expandedClassNodes[key] = !expandedClassNodes[key]
+}
+
+const isClassNodeExpanded = (cls: ClassTreeNode): boolean => {
+  return expandedClassNodes[cls.id] === true
 }
 
 const selectClass = async (cls: SchemaClass) => {
@@ -854,9 +1062,9 @@ const expandNeighbors = async () => {
   if (contextMenu.node) {
     try {
       const result = await graphApi.expandNeighbors(effectiveGraphId.value, contextMenu.node.uuid)
-      nodes.value = [...nodes.value, ...result.nodes]
-      edges.value = [...edges.value, ...result.edges]
-      message.success(`已展开 ${result.nodes.length} 个邻居节点`)
+    nodes.value = dedupeNodes([...(nodes.value || []), ...(data.nodes || [])])
+    edges.value = dedupeEdges([...(edges.value || []), ...(data.edges || [])])
+    message.success(`已展开 ${result.nodes.length} 个邻居节点`)
     } catch (error) {
       message.error('展开邻居失败')
     }
@@ -1023,8 +1231,8 @@ const loadGraphData = async () => {
       page: 1,
       pageSize: 500
     })
-    nodes.value = data.nodes || []
-    edges.value = data.edges || []
+    nodes.value = dedupeNodes(data.nodes || [])
+    edges.value = dedupeEdges(data.edges || [])
   } catch (error) {
     console.error('加载图谱数据失败:', error)
   } finally {
@@ -1142,6 +1350,189 @@ const addInstanceToCanvas = (instance: ClassInstance) => {
 // Handle graph selection change
 const handleGraphChange = (value: string) => {
   router.push(`/graph/ide/${value}`)
+}
+
+// ===== 左侧资源树点击处理 =====
+
+// 获取类及其所有子类名称
+const getClassAndDescendants = (cls: ClassTreeNode): string[] => {
+  const types: string[] = [cls.localName]
+  const collectChildren = (node: ClassTreeNode) => {
+    for (const child of node.children) {
+      types.push(child.localName)
+      collectChildren(child)
+    }
+  }
+  collectChildren(cls)
+  return types
+}
+
+// 类树节点点击 - 过滤显示该类及子类的所有节点
+const handleClassTreeNodeClick = async (cls: ClassTreeNode) => {
+  const itemKey = `class-${cls.id}`
+  const isActive = activeTreeItem.value === itemKey
+
+  if (isActive) {
+    // 再次点击取消激活，恢复全图
+    activeTreeItem.value = null
+    treeViewMode.value = null
+    await loadGraphData()
+    return
+  }
+
+  activeTreeItem.value = itemKey
+  treeViewMode.value = 'instances'
+  loading.value = true
+  try {
+    const types = getClassAndDescendants(cls)
+    const data = await graphApi.getVisualizationByTypes(effectiveGraphId.value, types, {
+      page: 1,
+      pageSize: 500
+    })
+    nodes.value = dedupeNodes(data.nodes || [])
+    edges.value = dedupeEdges(data.edges || [])
+    // 右侧面板显示类信息
+    selectedClass.value = schemaClasses.value.find(c => c.id === cls.id) || null
+    selectedNode.value = null
+    showPanel.value = true
+    currentDetailTab.value = 'info'
+  } catch (error) {
+    console.error('加载类数据失败:', error)
+    message.error('加载数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 实例数据点击
+const handleInstancesClick = async () => {
+  const itemKey = 'instances'
+  const isActive = activeTreeItem.value === itemKey
+
+  if (isActive) {
+    activeTreeItem.value = null
+    treeViewMode.value = null
+    await loadGraphData()
+    return
+  }
+
+  activeTreeItem.value = itemKey
+  treeViewMode.value = 'instances'
+  loading.value = true
+  try {
+    const data = await graphApi.getVisualization(effectiveGraphId.value, {
+      page: 1,
+      pageSize: 500
+    })
+    nodes.value = dedupeNodes(data.nodes || [])
+    edges.value = dedupeEdges(data.edges || [])
+    selectedNode.value = null
+    selectedClass.value = null
+    showPanel.value = false
+  } catch (error) {
+    console.error('加载实例数据失败:', error)
+    message.error('加载数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 边点击
+const handleEdgesClick = async () => {
+  const itemKey = 'edges'
+  const isActive = activeTreeItem.value === itemKey
+
+  if (isActive) {
+    activeTreeItem.value = null
+    treeViewMode.value = null
+    await loadGraphData()
+    return
+  }
+
+  activeTreeItem.value = itemKey
+  treeViewMode.value = 'edges'
+  loading.value = true
+  try {
+    const data = await graphApi.getEdgesVisualization(effectiveGraphId.value, 500)
+    nodes.value = dedupeNodes(data.nodes || [])
+    edges.value = dedupeEdges(data.edges || [])
+    selectedNode.value = null
+    selectedClass.value = null
+    showPanel.value = false
+  } catch (error) {
+    console.error('加载边数据失败:', error)
+    message.error('加载数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 事件流点击
+const handleEpisodesClick = async () => {
+  const itemKey = 'episodes'
+  const isActive = activeTreeItem.value === itemKey
+
+  if (isActive) {
+    activeTreeItem.value = null
+    treeViewMode.value = null
+    selectedEpisode.value = null
+    await loadGraphData()
+    return
+  }
+
+  activeTreeItem.value = itemKey
+  treeViewMode.value = 'episodes'
+  selectedEpisode.value = null
+  loading.value = true
+  try {
+    const data = await graphApi.getEpisodesVisualization(effectiveGraphId.value, 100)
+    nodes.value = dedupeNodes(data.nodes || [])
+    edges.value = dedupeEdges(data.edges || [])
+    selectedNode.value = null
+    selectedClass.value = null
+    showPanel.value = false
+  } catch (error) {
+    console.error('加载事件流数据失败:', error)
+    message.error('加载数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 社区点击
+const handleCommunitiesClick = async () => {
+  const itemKey = 'communities'
+  const isActive = activeTreeItem.value === itemKey
+
+  if (isActive) {
+    activeTreeItem.value = null
+    treeViewMode.value = null
+    selectedEpisode.value = null
+    await loadGraphData()
+    return
+  }
+
+  activeTreeItem.value = itemKey
+  treeViewMode.value = 'communities'
+  selectedEpisode.value = null
+  loading.value = true
+  try {
+    // V3.0.0: 调用可视化 API（已有 V3 字段）
+    const data = await graphApi.getCommunitiesVisualization(effectiveGraphId.value, 100)
+    nodes.value = dedupeNodes(data.nodes || [])
+    edges.value = dedupeEdges(data.edges || [])
+    // V3.0.0: 构建社区树
+    const communities = (data.nodes || []).filter((n: any) => n.type === 'Community')
+    communityTreeData.value = buildCommunityTree(communities)
+    selectedNode.value = null
+    selectedClass.value = null
+    showPanel.value = false
+  } catch (error) {
+    console.error('加载社区数据失败:', error)
+    message.error('加载数据失败')
+  } finally {
+    loading.value = false
+  }
 }
 
 const loadAllData = async () => {
@@ -1586,6 +1977,17 @@ watch(currentDetailTab, (newTab) => {
     flex: 1;
     overflow-y: auto;
     padding: 16px;
+
+    // V3.0.0: Episode 内容样式
+    .episode-content {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #c9d1d9;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
   }
 
   .panel-footer {
@@ -1989,5 +2391,30 @@ watch(currentDetailTab, (newTab) => {
     border-color: #f85149;
     color: #f85149;
   }
+}
+
+// 树节点激活状态
+.tree-icon.active {
+  color: #58a6ff !important;
+}
+
+.tree-label-active {
+  color: #58a6ff !important;
+  font-weight: 500;
+}
+
+// Canvas loading overlay
+.canvas-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 17, 23, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: 8px;
 }
 </style>

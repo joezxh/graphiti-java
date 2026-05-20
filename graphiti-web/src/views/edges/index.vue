@@ -70,26 +70,95 @@
       </a-table>
     </a-card>
 
-    <!-- 创建边模态框 -->
+    <!-- 创建边模态框 (V3.0.0: 包含关系类型选择和权重控制) -->
     <a-modal
       v-model:open="createVisible"
       :title="$t('edges.createEdge')"
       @ok="handleCreate"
       :confirm-loading="creating"
+      width="600px"
     >
-      <a-form :model="createForm" layout="vertical">
-        <a-form-item :label="$t('edges.sourceNode')" required>
-          <a-input v-model:value="createForm.sourceNodeUuid" :placeholder="t('edges.pleaseInputSource')" />
+      <a-form :model="formState" layout="vertical">
+        <a-form-item :label="$t('edges.sourceNode')" name="sourceNodeUuid" :rules="[{ required: true, message: '请输入源节点UUID' }]">
+          <a-input v-model:value="formState.sourceNodeUuid" placeholder="请输入源节点UUID" />
         </a-form-item>
-        <a-form-item :label="$t('edges.targetNode')" required>
-          <a-input v-model:value="createForm.targetNodeUuid" :placeholder="t('edges.pleaseInputTarget')" />
+        <a-form-item :label="$t('edges.targetNode')" name="targetNodeUuid" :rules="[{ required: true, message: '请输入目标节点UUID' }]">
+          <a-input v-model:value="formState.targetNodeUuid" placeholder="请输入目标节点UUID" />
         </a-form-item>
         <a-form-item :label="$t('edges.name')">
-          <a-input v-model:value="createForm.name" :placeholder="t('edges.pleaseInputFact')" />
+          <a-input v-model:value="formState.name" placeholder="请输入关系名称(可选)" />
         </a-form-item>
+
+        <!-- 关系类型选择 (V3.0.0: 元数据驱动) -->
+        <a-form-item
+          label="关系类型"
+          name="relationshipType"
+          :rules="[{ required: true, message: '请选择关系类型' }]"
+        >
+          <a-select
+            v-model:value="formState.relationshipType"
+            placeholder="请选择关系类型"
+            show-search
+            :filter-option="(input: string, option: any) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())"
+            @change="onRelationshipTypeChange"
+          >
+            <a-select-option
+              v-for="meta in relationshipMetaList"
+              :key="meta.relationshipType"
+              :value="meta.relationshipType"
+              :label="`${meta.relationshipType}`"
+            >
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span
+                  :style="{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    backgroundColor: RELATIONSHIP_COLORS[meta.relationshipType] || '#999',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                  }"
+                />
+                <span>{{ meta.relationshipType }}</span>
+              </div>
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <!-- 关系元数据说明 (V3.0.0) -->
+        <a-form-item v-if="selectedRelationshipMeta" :style="{ marginBottom: 0 }">
+          <a-alert
+            v-if="selectedRelationshipMeta.description"
+            :message="selectedRelationshipMeta.description"
+            type="info"
+            show-icon
+            :style="{ marginTop: -8 }"
+          />
+        </a-form-item>
+
+        <!-- 关系权重 (V3.0.0) -->
+        <a-form-item
+          label="关系权重"
+          name="weight"
+          extra="权重越高表示该关系在图谱推理中越重要"
+        >
+          <a-input-number
+            v-model:value="formState.weight"
+            :min="0"
+            :max="1"
+            :step="0.0001"
+            :precision="4"
+            style="width: 200px"
+          />
+          <span style="margin-left: 8px; color: #999; font-size: 12px">
+            默认: {{ selectedRelationshipMeta?.defaultWeight?.toFixed(4) || '1.0000' }}
+          </span>
+        </a-form-item>
+
         <a-form-item :label="$t('edges.fact')">
           <a-textarea
-            v-model:value="createForm.fact"
+            v-model:value="formState.fact"
             :placeholder="t('edges.pleaseInputFact')"
             :rows="3"
           />
@@ -119,12 +188,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { graphApi } from '@/api/graph'
 import { edgeApi, type EdgeListItem, type EdgeDetailResp, type CreateEdgeReq } from '@/api/edge'
+import { RELATIONSHIP_COLORS, type RelationshipMeta } from '@/types/legal-graph-v3'
+
+/** V3.0.0: 关系类型元数据列表 */
+const relationshipMetaList = ref<RelationshipMeta[]>([])
+
+/** V3.0.0: 当前选中的关系元数据 */
+const selectedRelationshipMeta = computed<RelationshipMeta | null>(() => {
+  const type = formState.value.relationshipType
+  if (!type) return null
+  return relationshipMetaList.value.find(m => m.relationshipType === type) || null
+})
+
+/** V3.0.0: 加载关系元数据 */
+const loadRelationshipMetadata = async () => {
+  if (!selectedGraphId.value) return
+  try {
+    const res = await graphApi.getRelationshipMetadata(selectedGraphId.value)
+    relationshipMetaList.value = res.data || res || []
+  } catch (err) {
+    console.warn('Failed to load relationship metadata:', err)
+  }
+}
+
+/** V3.0.0: 关系类型变更时自动填充默认值 */
+const onRelationshipTypeChange = (type: string) => {
+  const meta = selectedRelationshipMeta.value
+  if (meta && meta.defaultWeight != null && !formState.value.weight) {
+    formState.value.weight = meta.defaultWeight
+  }
+}
 
 const { t } = useI18n()
 
@@ -151,14 +250,16 @@ const columns = [
   { title: t('common.actions'), key: 'action', width: 150 }
 ]
 
-// 创建边
+// 创建边 (V3.0.0: 使用 formState 兼容 relationshipType 和 weight)
 const createVisible = ref(false)
 const creating = ref(false)
-const createForm = reactive<CreateEdgeReq>({
+const formState = reactive<CreateEdgeReq & { relationshipType?: string; weight?: number }>({
   sourceNodeUuid: '',
   targetNodeUuid: '',
   name: '',
-  fact: ''
+  fact: '',
+  relationshipType: '',
+  weight: 1.0
 })
 
 // 详情
@@ -199,10 +300,12 @@ const handleTableChange = (pag: any) => {
 }
 
 const showCreateModal = () => {
-  createForm.sourceNodeUuid = ''
-  createForm.targetNodeUuid = ''
-  createForm.name = ''
-  createForm.fact = ''
+  formState.sourceNodeUuid = ''
+  formState.targetNodeUuid = ''
+  formState.name = ''
+  formState.fact = ''
+  formState.relationshipType = ''
+  formState.weight = 1.0
   createVisible.value = true
 }
 
@@ -211,13 +314,13 @@ const handleCreate = async () => {
     message.error(t('edges.selectGraph'))
     return
   }
-  if (!createForm.sourceNodeUuid || !createForm.targetNodeUuid) {
+  if (!formState.sourceNodeUuid || !formState.targetNodeUuid) {
     message.error(t('edges.pleaseInputSource') + ' ' + t('edges.pleaseInputTarget'))
     return
   }
   creating.value = true
   try {
-    await edgeApi.create(selectedGraphId.value, createForm)
+    await edgeApi.create(selectedGraphId.value, formState)
     message.success(t('common.createSuccess'))
     createVisible.value = false
     loadEdges()
@@ -259,8 +362,11 @@ const formatDate = (date: string | undefined): string => {
   return new Date(date).toLocaleString('zh-CN')
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadGraphs()
+  if (selectedGraphId.value) {
+    loadRelationshipMetadata()  // V3: 加载关系元数据
+  }
 })
 </script>
 

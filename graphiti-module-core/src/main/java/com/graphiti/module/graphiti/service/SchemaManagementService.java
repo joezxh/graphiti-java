@@ -399,7 +399,7 @@ public class SchemaManagementService {
         }
 
         // 检查是否有节点使用这个类
-        String cypher = "MATCH (n:Entity) WHERE n.group_id = $graphId AND n.type = $className " +
+        String cypher = "MATCH (n:Entity) WHERE n.graph_id = $graphId AND n.type = $className " +
                         "AND n.invalid_at IS NULL RETURN count(n) as cnt LIMIT 1";
         Result result = session.run(cypher,
                 org.neo4j.driver.Values.parameters(
@@ -453,9 +453,17 @@ public class SchemaManagementService {
         if (changes.getNewIsRequired() != null && changes.getNewIsRequired()
                 && (changes.getOldIsRequired() == null || !changes.getOldIsRequired())) {
             // 检查有多少节点缺少此属性
-            String cypher = "MATCH (n:Entity) WHERE n.group_id = $graphId AND n.type = $className " +
+            String cypher = "MATCH (n:Entity) WHERE n.graph_id = $graphId AND n.type = $className " +
                             "AND n.invalid_at IS NULL AND (NOT exists(n." + propName + ") OR n." + propName + " IS NULL) " +
-                            "RETURN n.uuid as uuid, n.name as name, n." + propName + " as value LIMIT 100";
+                            "RETURN n.uuid as uuid, n.type as type, n." + propName + " as value, " +
+                            "n.courtName as courtName, n.partyName as partyName, " +
+                            "n.caseName as caseName, n.caseNumber as caseNumber, " +
+                            "n.articleNumber as articleNumber, n.lawName as lawName, " +
+                            "n.judgeName as judgeName, n.documentNumber as documentNumber, " +
+                            "n.agreementNumber as agreementNumber, n.evidenceNumber as evidenceNumber, " +
+                            "n.reasoning as reasoning, n.factDescription as factDescription, " +
+                            "n.name as genericName, n.summary as summary " +
+                            "LIMIT 100";
 
             Result result = session.run(cypher,
                     org.neo4j.driver.Values.parameters(
@@ -465,9 +473,25 @@ public class SchemaManagementService {
 
             while (result.hasNext()) {
                 Record record = result.next();
+                Map<String, Object> nodeData = new HashMap<>();
+                nodeData.put("courtName", record.get("courtName").isNull() ? null : record.get("courtName").asString());
+                nodeData.put("partyName", record.get("partyName").isNull() ? null : record.get("partyName").asString());
+                nodeData.put("caseName", record.get("caseName").isNull() ? null : record.get("caseName").asString());
+                nodeData.put("caseNumber", record.get("caseNumber").isNull() ? null : record.get("caseNumber").asString());
+                nodeData.put("articleNumber", record.get("articleNumber").isNull() ? null : record.get("articleNumber").asString());
+                nodeData.put("lawName", record.get("lawName").isNull() ? null : record.get("lawName").asString());
+                nodeData.put("judgeName", record.get("judgeName").isNull() ? null : record.get("judgeName").asString());
+                nodeData.put("documentNumber", record.get("documentNumber").isNull() ? null : record.get("documentNumber").asString());
+                nodeData.put("agreementNumber", record.get("agreementNumber").isNull() ? null : record.get("agreementNumber").asString());
+                nodeData.put("evidenceNumber", record.get("evidenceNumber").isNull() ? null : record.get("evidenceNumber").asString());
+                nodeData.put("reasoning", record.get("reasoning").isNull() ? null : record.get("reasoning").asString());
+                nodeData.put("factDescription", record.get("factDescription").isNull() ? null : record.get("factDescription").asString());
+                nodeData.put("name", record.get("genericName").isNull() ? null : record.get("genericName").asString());
+                nodeData.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                
                 violations.add(SchemaChangeValidateRespVO.Violation.builder()
                         .nodeUuid(record.get("uuid").asString())
-                        .nodeName(record.get("name").asString())
+                        .nodeName(extractNodeName(record.get("type").asString(), nodeData))
                         .violationType("MISSING_REQUIRED")
                         .reason("节点缺少必填属性 '" + propName + "'")
                         .currentValue(null)
@@ -478,9 +502,17 @@ public class SchemaManagementService {
 
         // 检查正则表达式变更
         if (changes.getNewPattern() != null && !changes.getNewPattern().equals(property.getPattern())) {
-            String cypher = "MATCH (n:Entity) WHERE n.group_id = $graphId AND n.type = $className " +
+            String cypher = "MATCH (n:Entity) WHERE n.graph_id = $graphId AND n.type = $className " +
                             "AND n.invalid_at IS NULL AND exists(n." + propName + ") AND n." + propName + " IS NOT NULL " +
-                            "RETURN n.uuid as uuid, n.name as name, n." + propName + " as value LIMIT 100";
+                            "RETURN n.uuid as uuid, n.type as type, n." + propName + " as value, " +
+                            "n.courtName as courtName, n.partyName as partyName, " +
+                            "n.caseName as caseName, n.caseNumber as caseNumber, " +
+                            "n.articleNumber as articleNumber, n.lawName as lawName, " +
+                            "n.judgeName as judgeName, n.documentNumber as documentNumber, " +
+                            "n.agreementNumber as agreementNumber, n.evidenceNumber as evidenceNumber, " +
+                            "n.reasoning as reasoning, n.factDescription as factDescription, " +
+                            "n.name as genericName, n.summary as summary " +
+                            "LIMIT 100";
 
             Result result = session.run(cypher,
                     org.neo4j.driver.Values.parameters(
@@ -500,9 +532,25 @@ public class SchemaManagementService {
                 Record record = result.next();
                 String value = record.get("value").asString();
                 if (value != null && !newPattern.matcher(value).matches()) {
+                    Map<String, Object> nodeData = new HashMap<>();
+                    nodeData.put("courtName", record.get("courtName").isNull() ? null : record.get("courtName").asString());
+                    nodeData.put("partyName", record.get("partyName").isNull() ? null : record.get("partyName").asString());
+                    nodeData.put("caseName", record.get("caseName").isNull() ? null : record.get("caseName").asString());
+                    nodeData.put("caseNumber", record.get("caseNumber").isNull() ? null : record.get("caseNumber").asString());
+                    nodeData.put("articleNumber", record.get("articleNumber").isNull() ? null : record.get("articleNumber").asString());
+                    nodeData.put("lawName", record.get("lawName").isNull() ? null : record.get("lawName").asString());
+                    nodeData.put("judgeName", record.get("judgeName").isNull() ? null : record.get("judgeName").asString());
+                    nodeData.put("documentNumber", record.get("documentNumber").isNull() ? null : record.get("documentNumber").asString());
+                    nodeData.put("agreementNumber", record.get("agreementNumber").isNull() ? null : record.get("agreementNumber").asString());
+                    nodeData.put("evidenceNumber", record.get("evidenceNumber").isNull() ? null : record.get("evidenceNumber").asString());
+                    nodeData.put("reasoning", record.get("reasoning").isNull() ? null : record.get("reasoning").asString());
+                    nodeData.put("factDescription", record.get("factDescription").isNull() ? null : record.get("factDescription").asString());
+                    nodeData.put("name", record.get("genericName").isNull() ? null : record.get("genericName").asString());
+                    nodeData.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                    
                     violations.add(SchemaChangeValidateRespVO.Violation.builder()
                             .nodeUuid(record.get("uuid").asString())
-                            .nodeName(record.get("name").asString())
+                            .nodeName(extractNodeName(record.get("type").asString(), nodeData))
                             .violationType("PATTERN_VIOLATION")
                             .reason("节点属性值不满足新正则表达式: " + changes.getNewPattern())
                             .currentValue(value)
@@ -539,7 +587,7 @@ public class SchemaManagementService {
         }
 
         // 检查有多少节点有该属性
-        String cypher = "MATCH (n:Entity) WHERE n.group_id = $graphId AND n.type = $className " +
+        String cypher = "MATCH (n:Entity) WHERE n.graph_id = $graphId AND n.type = $className " +
                         "AND n.invalid_at IS NULL AND exists(n." + property.getLocalName() + ") " +
                         "RETURN count(n) as cnt LIMIT 1";
 
@@ -588,9 +636,17 @@ public class SchemaManagementService {
         }
 
         // 检查有多少现有节点缺少此必填属性
-        String cypher = "MATCH (n:Entity) WHERE n.group_id = $graphId AND n.type = $className " +
+        String cypher = "MATCH (n:Entity) WHERE n.graph_id = $graphId AND n.type = $className " +
                         "AND n.invalid_at IS NULL AND (NOT exists(n." + property.getLocalName() + ") OR n." + property.getLocalName() + " IS NULL) " +
-                        "RETURN n.uuid as uuid, n.name as name LIMIT 100";
+                        "RETURN n.uuid as uuid, n.type as type, " +
+                        "n.courtName as courtName, n.partyName as partyName, " +
+                        "n.caseName as caseName, n.caseNumber as caseNumber, " +
+                        "n.articleNumber as articleNumber, n.lawName as lawName, " +
+                        "n.judgeName as judgeName, n.documentNumber as documentNumber, " +
+                        "n.agreementNumber as agreementNumber, n.evidenceNumber as evidenceNumber, " +
+                        "n.reasoning as reasoning, n.factDescription as factDescription, " +
+                        "n.name as genericName, n.summary as summary " +
+                        "LIMIT 100";
 
         Result result = session.run(cypher,
                 org.neo4j.driver.Values.parameters(
@@ -600,9 +656,25 @@ public class SchemaManagementService {
 
         while (result.hasNext()) {
             Record record = result.next();
+            Map<String, Object> nodeData = new HashMap<>();
+            nodeData.put("courtName", record.get("courtName").isNull() ? null : record.get("courtName").asString());
+            nodeData.put("partyName", record.get("partyName").isNull() ? null : record.get("partyName").asString());
+            nodeData.put("caseName", record.get("caseName").isNull() ? null : record.get("caseName").asString());
+            nodeData.put("caseNumber", record.get("caseNumber").isNull() ? null : record.get("caseNumber").asString());
+            nodeData.put("articleNumber", record.get("articleNumber").isNull() ? null : record.get("articleNumber").asString());
+            nodeData.put("lawName", record.get("lawName").isNull() ? null : record.get("lawName").asString());
+            nodeData.put("judgeName", record.get("judgeName").isNull() ? null : record.get("judgeName").asString());
+            nodeData.put("documentNumber", record.get("documentNumber").isNull() ? null : record.get("documentNumber").asString());
+            nodeData.put("agreementNumber", record.get("agreementNumber").isNull() ? null : record.get("agreementNumber").asString());
+            nodeData.put("evidenceNumber", record.get("evidenceNumber").isNull() ? null : record.get("evidenceNumber").asString());
+            nodeData.put("reasoning", record.get("reasoning").isNull() ? null : record.get("reasoning").asString());
+            nodeData.put("factDescription", record.get("factDescription").isNull() ? null : record.get("factDescription").asString());
+            nodeData.put("name", record.get("genericName").isNull() ? null : record.get("genericName").asString());
+            nodeData.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+            
             violations.add(SchemaChangeValidateRespVO.Violation.builder()
                     .nodeUuid(record.get("uuid").asString())
-                    .nodeName(record.get("name").asString())
+                    .nodeName(extractNodeName(record.get("type").asString(), nodeData))
                     .violationType("MISSING_REQUIRED")
                     .reason("新必填属性 '" + property.getLocalName() + "' 将在这些节点上缺失")
                     .currentValue(null)
@@ -679,15 +751,28 @@ public class SchemaManagementService {
         try (Session session = neo4jDriver.session()) {
             // 构建基础查询
             StringBuilder cypherBuilder = new StringBuilder();
-            cypherBuilder.append("MATCH (n:Entity {group_id: $graphId, type: $classType}) ");
+            cypherBuilder.append("MATCH (n:Entity {graph_id: $graphId, type: $classType}) ");
             
             Map<String, Object> params = new HashMap<>();
             params.put("graphId", graphId);
             params.put("classType", classType);
             
-            // 如果有关键词搜索，添加 WHERE 条件
+            // 如果有关键词搜索，添加 WHERE 条件（搜索类型特定的名称字段）
             if (keyword != null && !keyword.trim().isEmpty()) {
-                cypherBuilder.append("WHERE n.name CONTAINS $keyword ");
+                cypherBuilder.append("AND (");
+                cypherBuilder.append("n.courtName CONTAINS $keyword OR ");
+                cypherBuilder.append("n.partyName CONTAINS $keyword OR ");
+                cypherBuilder.append("n.caseName CONTAINS $keyword OR ");
+                cypherBuilder.append("n.caseNumber CONTAINS $keyword OR ");
+                cypherBuilder.append("n.lawName CONTAINS $keyword OR ");
+                cypherBuilder.append("n.articleNumber CONTAINS $keyword OR ");
+                cypherBuilder.append("n.judgeName CONTAINS $keyword OR ");
+                cypherBuilder.append("n.documentNumber CONTAINS $keyword OR ");
+                cypherBuilder.append("n.agreementNumber CONTAINS $keyword OR ");
+                cypherBuilder.append("n.evidenceNumber CONTAINS $keyword OR ");
+                cypherBuilder.append("n.name CONTAINS $keyword OR ");
+                cypherBuilder.append("n.summary CONTAINS $keyword");
+                cypherBuilder.append(") ");
                 params.put("keyword", keyword.trim());
             }
             
@@ -698,8 +783,15 @@ public class SchemaManagementService {
             
             // 查询分页数据
             String dataCypher = cypherBuilder.toString() 
-                    + "RETURN n.uuid as uuid, n.name as name, n.type as type, "
-                    + "n.summary as summary, n.created_at as createdAt, n.updated_at as updatedAt "
+                    + "RETURN n.uuid as uuid, n.type as type, n.summary as summary, "
+                    + "n.created_at as createdAt, n.updated_at as updatedAt, "
+                    + "n.courtName as courtName, n.partyName as partyName, "
+                    + "n.caseName as caseName, n.caseNumber as caseNumber, "
+                    + "n.articleNumber as articleNumber, n.lawName as lawName, "
+                    + "n.judgeName as judgeName, n.documentNumber as documentNumber, "
+                    + "n.agreementNumber as agreementNumber, n.evidenceNumber as evidenceNumber, "
+                    + "n.reasoning as reasoning, n.factDescription as factDescription, "
+                    + "n.name as genericName "
                     + "ORDER BY n.created_at DESC "
                     + "SKIP $skip LIMIT $limit";
             params.put("skip", skip);
@@ -712,8 +804,25 @@ public class SchemaManagementService {
                 Record record = dataResult.next();
                 Map<String, Object> instance = new HashMap<>();
                 instance.put("uuid", record.get("uuid").asString());
-                instance.put("name", record.get("name").asString());
                 instance.put("type", record.get("type").asString());
+                
+                // 根据类型提取名称（需要显式转换为 Java 类型，避免 Neo4j Value 类型）
+                Map<String, Object> nodeData = new HashMap<>();
+                nodeData.put("courtName", record.get("courtName").isNull() ? null : record.get("courtName").asString());
+                nodeData.put("partyName", record.get("partyName").isNull() ? null : record.get("partyName").asString());
+                nodeData.put("caseName", record.get("caseName").isNull() ? null : record.get("caseName").asString());
+                nodeData.put("caseNumber", record.get("caseNumber").isNull() ? null : record.get("caseNumber").asString());
+                nodeData.put("articleNumber", record.get("articleNumber").isNull() ? null : record.get("articleNumber").asString());
+                nodeData.put("lawName", record.get("lawName").isNull() ? null : record.get("lawName").asString());
+                nodeData.put("judgeName", record.get("judgeName").isNull() ? null : record.get("judgeName").asString());
+                nodeData.put("documentNumber", record.get("documentNumber").isNull() ? null : record.get("documentNumber").asString());
+                nodeData.put("agreementNumber", record.get("agreementNumber").isNull() ? null : record.get("agreementNumber").asString());
+                nodeData.put("evidenceNumber", record.get("evidenceNumber").isNull() ? null : record.get("evidenceNumber").asString());
+                nodeData.put("reasoning", record.get("reasoning").isNull() ? null : record.get("reasoning").asString());
+                nodeData.put("factDescription", record.get("factDescription").isNull() ? null : record.get("factDescription").asString());
+                nodeData.put("name", record.get("genericName").isNull() ? null : record.get("genericName").asString());
+                nodeData.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                instance.put("name", extractNodeName(record.get("type").asString(), nodeData));
                 
                 if (record.get("summary").isNull()) {
                     instance.put("summary", null);
@@ -754,5 +863,118 @@ public class SchemaManagementService {
             log.error("获取类实例失败: graphId={}, classType={}", graphId, classType, e);
             throw new RuntimeException("获取类实例失败: " + e.getMessage(), e);
         }
+    }
+    
+    /**
+     * 根据节点类型提取对应的名称属性
+     * 不同类型的节点使用不同的 name 属性
+     */
+    private String extractNodeName(String type, Map<String, Object> nodeMap) {
+        if (type == null) {
+            return null;
+        }
+        
+        return switch (type) {
+            case "Court" -> (String) nodeMap.get("courtName");
+            case "Party" -> (String) nodeMap.get("partyName");
+            case "Case" -> (String) nodeMap.getOrDefault("caseName", nodeMap.get("caseNumber"));
+            case "LegalProvision" -> {
+                String articleNumber = (String) nodeMap.get("articleNumber");
+                String lawName = (String) nodeMap.get("lawName");
+                yield articleNumber != null && lawName != null 
+                    ? lawName + " " + articleNumber 
+                    : articleNumber != null ? articleNumber : lawName;
+            }
+            case "Judge" -> (String) nodeMap.get("judgeName");
+            case "JudgmentDocument" -> (String) nodeMap.get("documentNumber");
+            case "MediationAgreement" -> (String) nodeMap.get("agreementNumber");
+            case "CommercialMediationOrganization" -> (String) nodeMap.get("name");
+            case "Mediator" -> (String) nodeMap.get("name");
+            case "Evidence" -> (String) nodeMap.get("evidenceNumber");
+            case "CaseReasoning" -> {
+                String reasoning = (String) nodeMap.get("reasoning");
+                yield reasoning != null && reasoning.length() > 50 
+                    ? reasoning.substring(0, 50) + "..." 
+                    : reasoning;
+            }
+            case "CaseFact" -> {
+                String description = (String) nodeMap.get("factDescription");
+                yield description != null && description.length() > 50 
+                    ? description.substring(0, 50) + "..." 
+                    : description;
+            }
+            default -> {
+                String name = (String) nodeMap.get("name");
+                if (name == null || name.isBlank()) {
+                    String summary = (String) nodeMap.get("summary");
+                    name = summary != null && summary.length() > 50 
+                        ? summary.substring(0, 50) + "..." 
+                        : summary;
+                }
+                yield name;
+            }
+        };
+    }
+
+    /**
+     * V3.0.0: 获取 Episode 类型元数据列表
+     * 从 Neo4j 查询已有 Episode 节点，按 V3 字段分组统计
+     */
+    public List<Map<String, Object>> getEpisodeTypes(String graphId) {
+        String cypher = 
+            "MATCH (e:Episode {graph_id: $graphId}) " +
+            "WHERE e.episode_type IS NOT NULL " +
+            "RETURN e.episode_type as typeCode, e.legal_process as legalProcess, " +
+            "       e.stage_label as stageLabel, e.court_level as courtLevel, " +
+            "       e.is_trial_stage as isTrialStage, count(*) as count " +
+            "ORDER BY count DESC";
+        
+        List<Map<String, Object>> result = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result rs = session.run(cypher, org.neo4j.driver.Values.parameters("graphId", graphId));
+            while (rs.hasNext()) {
+                Record record = rs.next();
+                Map<String, Object> row = new HashMap<>();
+                row.put("typeCode", record.get("typeCode").isNull() ? null : record.get("typeCode").asString());
+                row.put("legalProcess", record.get("legalProcess").isNull() ? null : record.get("legalProcess").asString());
+                row.put("stageLabel", record.get("stageLabel").isNull() ? null : record.get("stageLabel").asString());
+                row.put("courtLevel", record.get("courtLevel").isNull() ? null : record.get("courtLevel").asString());
+                row.put("isTrialStage", record.get("isTrialStage").isNull() ? null : record.get("isTrialStage").asBoolean());
+                row.put("count", record.get("count").asLong());
+                result.add(row);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * V3.0.0: 获取关系类型元数据
+     * 从 Neo4j 查询已有关系的类型和统计信息
+     */
+    public List<Map<String, Object>> getRelationshipMetadata(String graphId) {
+        String cypher = 
+            "MATCH (a)-[r]->(b) " +
+            "WHERE a.graph_id = $graphId AND r.invalid_at IS NULL " +
+            "RETURN type(r) as relationshipType, labels(a)[0] as sourceType, " +
+            "       labels(b)[0] as targetType, count(*) as count, " +
+            "       head(collect(r.fact)) as sampleFact " +
+            "ORDER BY count DESC " +
+            "LIMIT 50";
+        
+        List<Map<String, Object>> result = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result rs = session.run(cypher, org.neo4j.driver.Values.parameters("graphId", graphId));
+            while (rs.hasNext()) {
+                Record record = rs.next();
+                Map<String, Object> row = new HashMap<>();
+                row.put("relationshipType", record.get("relationshipType").asString());
+                row.put("sourceType", record.get("sourceType").isNull() ? null : record.get("sourceType").asString());
+                row.put("targetType", record.get("targetType").isNull() ? null : record.get("targetType").asString());
+                row.put("count", record.get("count").asLong());
+                row.put("sampleFact", record.get("sampleFact").isNull() ? null : record.get("sampleFact").asString());
+                result.add(row);
+            }
+        }
+        return result;
     }
 }

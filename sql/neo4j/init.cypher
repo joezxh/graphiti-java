@@ -231,7 +231,6 @@ MERGE (comm0:Community {
   jurisdiction: 'JURISDICTION_CN',
   practice_type: 'PRACTICE_JUDICIAL',
   key_provisions: [],
-  parent_community_uuid: null,
   created_at: datetime()
 });
 
@@ -377,7 +376,7 @@ MERGE (ep1:Episode {
   episode_type: '股权变动',
   episode_stage: '起因',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2020-03-30T00:00:00'),
   end_time: datetime('2020-03-30T23:59:59'),
@@ -397,7 +396,7 @@ MERGE (ep2:Episode {
   episode_type: '股东争议',
   episode_stage: '发展',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2021-01-01T00:00:00'),
   end_time: datetime('2022-01-01T00:00:00'),
@@ -417,7 +416,7 @@ MERGE (ep3:Episode {
   episode_type: '立案',
   episode_stage: '诉讼启动',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2022-01-01T00:00:00'),
   end_time: datetime('2022-01-01T00:00:00'),
@@ -477,7 +476,7 @@ MERGE (ep6:Episode {
   episode_type: 'EP_APPEAL',
   episode_stage: '二审启动',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2023-06-01T00:00:00'),
   end_time: datetime('2023-06-30T00:00:00'),
@@ -539,7 +538,7 @@ MERGE (ep9:Episode {
   episode_type: '立案',
   episode_stage: '诉讼启动',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2020-06-08T00:00:00'),
   end_time: datetime('2020-06-08T00:00:00'),
@@ -559,7 +558,7 @@ MERGE (ep10:Episode {
   episode_type: '管辖权处理',
   episode_stage: '程序推进',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2020-09-01T00:00:00'),
   end_time: datetime('2020-11-01T00:00:00'),
@@ -579,7 +578,7 @@ MERGE (ep11:Episode {
   episode_type: '裁定',
   episode_stage: '管辖确定',
   legal_process: 'litigation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2020-11-01T00:00:00'),
   end_time: datetime('2020-12-28T00:00:00'),
@@ -601,7 +600,7 @@ MERGE (ep12:Episode {
   episode_type: 'EP_MEDIATION_ACCEPT',
   episode_stage: '调解启动',
   legal_process: 'mediation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2024-04-01T00:00:00'),
   end_time: datetime('2024-04-01T00:00:00'),
@@ -621,7 +620,7 @@ MERGE (ep13:Episode {
   episode_type: 'EP_MEDIATION_NEGOTIATION',
   episode_stage: '调解进行',
   legal_process: 'mediation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2024-04-01T00:00:00'),
   end_time: datetime('2024-06-15T00:00:00'),
@@ -641,7 +640,7 @@ MERGE (ep14:Episode {
   episode_type: 'EP_MEDIATION_CONFIRM',
   episode_stage: '调解完成',
   legal_process: 'mediation',
-  court_level: null,
+
   is_trial_stage: false,
   start_time: datetime('2024-06-15T00:00:00'),
   end_time: datetime('2024-06-20T00:00:00'),

@@ -31,7 +31,7 @@ public class CascadeEditService {
     public CascadePreviewRespVO preview(String graphId, CascadeFilterReqVO filter) {
         try (Session session = neo4jDriver.session()) {
             // 构建 WHERE 条件
-            StringBuilder whereClause = new StringBuilder("WHERE n.group_id = $graphId AND n.invalid_at IS NULL ");
+            StringBuilder whereClause = new StringBuilder("WHERE n.graph_id = $graphId AND n.invalid_at IS NULL ");
             Map<String, Object> params = new HashMap<>();
             params.put("graphId", graphId);
             
@@ -112,7 +112,7 @@ public class CascadeEditService {
     public CascadeExecuteRespVO execute(String graphId, CascadeExecuteReqVO executeReq) {
         try (Session session = neo4jDriver.session()) {
             // 构建 WHERE 条件
-            StringBuilder whereClause = new StringBuilder("WHERE n.group_id = $graphId AND n.invalid_at IS NULL ");
+            StringBuilder whereClause = new StringBuilder("WHERE n.graph_id = $graphId AND n.invalid_at IS NULL ");
             Map<String, Object> params = new HashMap<>();
             params.put("graphId", graphId);
             

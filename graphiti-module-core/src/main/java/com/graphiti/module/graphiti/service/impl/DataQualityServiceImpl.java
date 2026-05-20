@@ -27,14 +27,14 @@ public class DataQualityServiceImpl implements DataQualityService {
     public Map<String, Object> deduplicateNodes(String graphId) {
         // 查找同名同类型的重复节点，保留最新创建的，其余标记为重复
         String findDups =
-            "MATCH (n:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
             "WITH n.name as name, n.type as type, collect(n) as nodes " +
             "WHERE size(nodes) > 1 " +
             "RETURN name, type, nodes";
 
         int mergedCount = 0;
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(findDups, Values.parameters("group_id", graphId));
+            Result result = session.run(findDups, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 Record record = result.next();
                 List<org.neo4j.driver.types.Node> nodes = record.get("nodes").asList(v -> v.asNode());
@@ -61,14 +61,14 @@ public class DataQualityServiceImpl implements DataQualityService {
     public Map<String, Object> deduplicateEdges(String graphId) {
         // 查找相同源目标+类型的重复边，合并为一个
         String findDups =
-            "MATCH (a:Entity {group_id: $group_id})-[r:RELATES_TO]->(b:Entity {group_id: $group_id}) " +
+            "MATCH (a:Entity {graph_id: $graph_id})-[r:RELATES_TO]->(b:Entity {graph_id: $graph_id}) " +
             "WITH a.uuid as src, b.uuid as tgt, r.type as type, collect(r) as edges " +
             "WHERE size(edges) > 1 " +
             "RETURN src, tgt, type, edges";
 
         int mergedCount = 0;
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(findDups, Values.parameters("group_id", graphId));
+            Result result = session.run(findDups, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 Record record = result.next();
                 List<org.neo4j.driver.types.Relationship> edges = record.get("edges").asList(v -> v.asRelationship());
@@ -94,8 +94,8 @@ public class DataQualityServiceImpl implements DataQualityService {
         // 简化的实体解析：基于 Levenshtein 距离（使用 CONTAINS 近似）
         // 查找名称相似度高的节点，标记为同一实体
         String findSimilar =
-            "MATCH (n:Entity {group_id: $group_id}) " +
-            "MATCH (m:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
+            "MATCH (m:Entity {graph_id: $graph_id}) " +
             "WHERE n <> m AND n.name <> m.name AND (" +
             "  n.name CONTAINS m.name OR m.name CONTAINS n.name" +
             ") " +
@@ -103,17 +103,17 @@ public class DataQualityServiceImpl implements DataQualityService {
 
         int resolvedCount = 0;
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(findSimilar, Values.parameters("group_id", graphId));
+            Result result = session.run(findSimilar, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 Record record = result.next();
                 String n1 = record.get("n1").asString();
                 String n2 = record.get("n2").asString();
                 // 创建 SAME_AS 关系标记实体解析
                 String mergeCypher =
-                    "MATCH (a:Entity {group_id: $group_id, uuid: $n1}) " +
-                    "MATCH (b:Entity {group_id: $group_id, uuid: $n2}) " +
+                    "MATCH (a:Entity {graph_id: $graph_id, uuid: $n1}) " +
+                    "MATCH (b:Entity {graph_id: $graph_id, uuid: $n2}) " +
                     "MERGE (a)-[:SAME_AS]->(b)";
-                session.run(mergeCypher, Values.parameters("group_id", graphId, "n1", n1, "n2", n2));
+                session.run(mergeCypher, Values.parameters("graph_id", graphId, "n1", n1, "n2", n2));
                 resolvedCount++;
             }
         }
@@ -127,13 +127,13 @@ public class DataQualityServiceImpl implements DataQualityService {
     @Override
     public List<Map<String, Object>> findOrphanNodes(String graphId) {
         String cypher =
-            "MATCH (n:Entity {group_id: $group_id}) " +
+            "MATCH (n:Entity {graph_id: $graph_id}) " +
             "WHERE NOT (n)-[:RELATES_TO]-() " +
             "RETURN n.uuid as uuid, n.name as name, n.type as type";
 
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            Result result = session.run(cypher, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -151,15 +151,15 @@ public class DataQualityServiceImpl implements DataQualityService {
                 String uuid = (String) orphan.get("uuid");
                 if (deleteOrphans) {
                     String deleteCypher =
-                        "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) DELETE n";
-                    session.run(deleteCypher, Values.parameters("group_id", graphId, "uuid", uuid));
+                        "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) DELETE n";
+                    session.run(deleteCypher, Values.parameters("graph_id", graphId, "uuid", uuid));
                 } else {
                     // 添加一个自环标记为孤立节点
                     String selfLoopCypher =
-                        "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) " +
+                        "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) " +
                         "CREATE (n)-[:RELATES_TO {uuid: $relUuid, type: 'ISOLATED', fact: '孤立节点'}]->(n)";
                     session.run(selfLoopCypher, Values.parameters(
-                        "group_id", graphId,
+                        "graph_id", graphId,
                         "uuid", uuid,
                         "relUuid", java.util.UUID.randomUUID().toString().replace("-", "")
                     ));
@@ -180,32 +180,32 @@ public class DataQualityServiceImpl implements DataQualityService {
     private void mergeNodeRelationships(String graphId, String keepUuid, String dupUuid) {
         // 将重复节点的所有关系转移到保留节点
         String transferCypher =
-            "MATCH (dup:Entity {group_id: $group_id, uuid: $dupUuid}) " +
-            "MATCH (keep:Entity {group_id: $group_id, uuid: $keepUuid}) " +
-            "MATCH (dup)-[r:RELATES_TO]->(other:Entity {group_id: $group_id}) " +
+            "MATCH (dup:Entity {graph_id: $graph_id, uuid: $dupUuid}) " +
+            "MATCH (keep:Entity {graph_id: $graph_id, uuid: $keepUuid}) " +
+            "MATCH (dup)-[r:RELATES_TO]->(other:Entity {graph_id: $graph_id}) " +
             "WHERE other <> dup " +
             "CREATE (keep)-[nr:RELATES_TO]->(other) SET nr = properties(r) " +
             "DELETE r";
         try (Session session = neo4jDriver.session()) {
-            session.run(transferCypher, Values.parameters("group_id", graphId, "dupUuid", dupUuid, "keepUuid", keepUuid));
+            session.run(transferCypher, Values.parameters("graph_id", graphId, "dupUuid", dupUuid, "keepUuid", keepUuid));
         }
 
         String transferIncomingCypher =
-            "MATCH (dup:Entity {group_id: $group_id, uuid: $dupUuid}) " +
-            "MATCH (keep:Entity {group_id: $group_id, uuid: $keepUuid}) " +
-            "MATCH (other:Entity {group_id: $group_id})-[r:RELATES_TO]->(dup) " +
+            "MATCH (dup:Entity {graph_id: $graph_id, uuid: $dupUuid}) " +
+            "MATCH (keep:Entity {graph_id: $graph_id, uuid: $keepUuid}) " +
+            "MATCH (other:Entity {graph_id: $graph_id})-[r:RELATES_TO]->(dup) " +
             "WHERE other <> dup " +
             "CREATE (other)-[nr:RELATES_TO]->(keep) SET nr = properties(r) " +
             "DELETE r";
         try (Session session = neo4jDriver.session()) {
-            session.run(transferIncomingCypher, Values.parameters("group_id", graphId, "dupUuid", dupUuid, "keepUuid", keepUuid));
+            session.run(transferIncomingCypher, Values.parameters("graph_id", graphId, "dupUuid", dupUuid, "keepUuid", keepUuid));
         }
     }
 
     private void deleteDuplicateNode(String graphId, String uuid) {
-        String cypher = "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) DETACH DELETE n";
+        String cypher = "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) DETACH DELETE n";
         try (Session session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId, "uuid", uuid));
+            session.run(cypher, Values.parameters("graph_id", graphId, "uuid", uuid));
         }
     }
 

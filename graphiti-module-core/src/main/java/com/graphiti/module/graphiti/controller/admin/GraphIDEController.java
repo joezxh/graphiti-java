@@ -2,6 +2,7 @@ package com.graphiti.module.graphiti.controller.admin;
 
 import com.graphiti.common.response.CommonResult;
 import com.graphiti.module.graphiti.service.CascadeEditService;
+import com.graphiti.module.graphiti.service.CommunityService;
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.GraphVisualizationService;
 import com.graphiti.module.graphiti.service.SchemaManagementService;
@@ -16,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Graph IDE 控制器
@@ -34,6 +37,7 @@ public class GraphIDEController {
     private final SchemaManagementService schemaManagementService;
     private final CascadeEditService cascadeEditService;
     private final GraphNeo4jService graphNeo4jService;
+    private final CommunityService communityService;
 
     // ==================== 可视化接口 ====================
 
@@ -48,6 +52,62 @@ public class GraphIDEController {
             @RequestParam(required = false) String keyword) {
         return CommonResult.success(
                 graphVisualizationService.getVisualizationData(graphId, layout, page, pageSize, classType, keyword)
+        );
+    }
+
+    @Operation(summary = "按类型获取实例数据", description = "获取指定类别的所有实例节点，不超过500个")
+    @GetMapping("/{graphId}/visualization/instances")
+    public CommonResult<GraphVisualizationRespVO> getInstances(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "类类型名称") String classType,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "500") Integer pageSize) {
+        return CommonResult.success(
+                graphVisualizationService.getInstances(graphId, classType, page, pageSize)
+        );
+    }
+
+    @Operation(summary = "按多个类别获取可视化数据", description = "获取指定类别及子类的所有节点和边，用于类树节点点击过滤")
+    @GetMapping("/{graphId}/visualization/by-types")
+    public CommonResult<GraphVisualizationRespVO> getVisualizationByTypes(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "类别名称列表，逗号分隔") String classTypes,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "500") Integer pageSize,
+            @RequestParam(required = false) String keyword) {
+        List<String> types = Arrays.asList(classTypes.split(","));
+        return CommonResult.success(
+                graphVisualizationService.getVisualizationDataByTypes(graphId, null, page, pageSize, types, keyword)
+        );
+    }
+
+    @Operation(summary = "获取所有边数据", description = "获取图谱中的所有边和关联实体，不超过500个")
+    @GetMapping("/{graphId}/visualization/edges")
+    public CommonResult<GraphVisualizationRespVO> getEdges(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam(required = false, defaultValue = "500") Integer limit) {
+        return CommonResult.success(
+                graphVisualizationService.getEdges(graphId, limit)
+        );
+    }
+
+    @Operation(summary = "获取事件流可视化数据", description = "获取事件流中的节点和关系")
+    @GetMapping("/{graphId}/visualization/episodes")
+    public CommonResult<GraphVisualizationRespVO> getEpisodesVisualization(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam(required = false, defaultValue = "100") Integer limit) {
+        return CommonResult.success(
+                graphVisualizationService.getEpisodesVisualization(graphId, limit)
+        );
+    }
+
+    @Operation(summary = "获取社区可视化数据", description = "获取社区中的所有实体与边数据")
+    @GetMapping("/{graphId}/visualization/communities")
+    public CommonResult<GraphVisualizationRespVO> getCommunityVisualization(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam(required = false, defaultValue = "100") Integer limit) {
+        return CommonResult.success(
+                graphVisualizationService.getCommunityVisualization(graphId, limit)
         );
     }
 
@@ -228,5 +288,54 @@ public class GraphIDEController {
             @PathVariable @Parameter(description = "图谱ID") String graphId,
             @RequestBody @Valid CascadeExecuteReqVO executeReq) {
         return CommonResult.success(cascadeEditService.execute(graphId, executeReq));
+    }
+
+    // ==================== V3.0.0 社区与元数据接口 ====================
+
+    /**
+     * V3.0.0: 获取社区层级结构（PARENT_OF 树）
+     */
+    @GetMapping("/{graphId}/communities/hierarchy")
+    @Operation(summary = "获取社区层级结构", description = "获取社区的层级关系，用于前端树形展示")
+    public CommonResult<List<Map<String, Object>>> getCommunityHierarchy(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam(required = false) @Parameter(description = "维度过滤: domain|jurisdiction|practice") String dimension) {
+        List<Map<String, Object>> communities = communityService.listCommunities(graphId);
+        return CommonResult.success(communities);
+    }
+
+    /**
+     * V3.0.0: 按法律领域过滤社区
+     */
+    @GetMapping("/{graphId}/communities/by-domain")
+    @Operation(summary = "按法律领域过滤社区", description = "返回指定法律领域下的所有社区")
+    public CommonResult<List<Map<String, Object>>> getCommunitiesByDomain(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "法律领域代码") String domain) {
+        List<Map<String, Object>> communities = communityService.listCommunities(graphId);
+        List<Map<String, Object>> filtered = communities.stream()
+                .filter(c -> domain.equals(c.get("legalDomain")))
+                .collect(Collectors.toList());
+        return CommonResult.success(filtered);
+    }
+
+    /**
+     * V3.0.0: 获取 Episode 类型元数据
+     */
+    @GetMapping("/{graphId}/episode-types")
+    @Operation(summary = "获取 Episode 类型元数据", description = "获取图谱中已有 Episode 的类型分组统计")
+    public CommonResult<List<Map<String, Object>>> getEpisodeTypes(
+            @PathVariable @Parameter(description = "图谱ID") String graphId) {
+        return CommonResult.success(schemaManagementService.getEpisodeTypes(graphId));
+    }
+
+    /**
+     * V3.0.0: 获取关系类型元数据
+     */
+    @GetMapping("/{graphId}/relationships/metadata")
+    @Operation(summary = "获取关系类型元数据", description = "获取图谱中已有关系的类型和统计信息")
+    public CommonResult<List<Map<String, Object>>> getRelationshipMetadata(
+            @PathVariable @Parameter(description = "图谱ID") String graphId) {
+        return CommonResult.success(schemaManagementService.getRelationshipMetadata(graphId));
     }
 }

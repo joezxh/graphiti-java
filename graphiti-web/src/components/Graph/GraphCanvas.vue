@@ -513,20 +513,17 @@ watch(
     
     // Clear previous selection
     if (oldNode) {
-      chartInstance.dispatchAction({
-        type: 'downplay',
-        dataIndex: props.nodes.findIndex(n => n.uuid === oldNode.uuid)
-      })
+      const oldIndex = props.nodes.findIndex(n => n.uuid === oldNode.uuid)
+      if (oldIndex >= 0) {
+        chartInstance.dispatchAction({ type: 'downplay', dataIndex: oldIndex })
+      }
     }
-    
+
     // Highlight new selection
     if (newNode) {
       const nodeIndex = props.nodes.findIndex(n => n.uuid === newNode.uuid)
       if (nodeIndex >= 0) {
-        chartInstance.dispatchAction({
-          type: 'highlight',
-          dataIndex: nodeIndex
-        })
+        chartInstance.dispatchAction({ type: 'highlight', dataIndex: nodeIndex })
         
         // Also center the view on the selected node
         const option = chartInstance.getOption() as any

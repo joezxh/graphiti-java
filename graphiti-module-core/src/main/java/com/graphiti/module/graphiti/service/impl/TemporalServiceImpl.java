@@ -92,12 +92,12 @@ public class TemporalServiceImpl implements TemporalService {
 
         String cypher =
             "MATCH ()-[r:RELATES_TO]->() " +
-            "WHERE r.group_id = $group_id AND r.uuid IN $uuids " +
+            "WHERE r.graph_id = $graph_id AND r.uuid IN $uuids " +
             "SET r.invalid_at = $expiredAt, r.expired_at = $expiredAt";
 
         try (Session session = graphNeo4jService.getNeo4jDriver().session()) {
             session.run(cypher, Values.parameters(
-                "group_id", graphId,
+                "graph_id", graphId,
                 "uuids", expiredEdges,
                 "expiredAt", expiredAt
             ));

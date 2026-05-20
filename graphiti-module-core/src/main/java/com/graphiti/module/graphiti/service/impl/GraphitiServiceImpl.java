@@ -101,12 +101,12 @@ public class GraphitiServiceImpl implements GraphitiService {
         // 逻辑删除
         entity.setDeleted(true);
         graphMetadataMapper.updateById(entity);
-        // TODO: 同时删除 Neo4j 中对应的图谱数据（根据 group_id）
+        // TODO: 同时删除 Neo4j 中对应的图谱数据（根据 graph_id）
         log.info("已删除图谱元数据：graphId={}", graphId);
     }
     @Override
     public void clearGraph(String graphId) {
-        // TODO: 清空 Neo4j 中对应的图谱数据（根据 group_id），但保留 MySQL 元数据
+        // TODO: 清空 Neo4j 中对应的图谱数据（根据 graph_id），但保留 MySQL 元数据
         log.info("已清空图谱数据：graphId={}", graphId);
         // 同时重置节点和边数量
         GraphMetadataDO entity = getGraphMetadataByGraphId(graphId);
@@ -176,7 +176,7 @@ public class GraphitiServiceImpl implements GraphitiService {
         newEntity.setDeleted(false);
         graphMetadataMapper.insert(newEntity);
 
-        // 3. 克隆 Neo4j 数据（将原 group_id 的节点/边复制到新 group_id）
+        // 3. 克隆 Neo4j 数据（将原 graph_id 的节点/边复制到新 graph_id）
         graphNeo4jService.cloneGraphData(graphId, newGraphId);
 
         log.info("图谱克隆成功：source={}, target={}", graphId, newGraphId);

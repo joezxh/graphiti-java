@@ -35,9 +35,9 @@ public class Neo4jDriverAdapter implements GraphDriverService {
 
     @Override
     public void deleteNode(String graphId, String uuid) {
-        String cypher = "MATCH (n:Entity {group_id: $group_id, uuid: $uuid}) DETACH DELETE n";
+        String cypher = "MATCH (n:Entity {graph_id: $graph_id, uuid: $uuid}) DETACH DELETE n";
         try (var session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId, "uuid", uuid));
+            session.run(cypher, Values.parameters("graph_id", graphId, "uuid", uuid));
         }
     }
 

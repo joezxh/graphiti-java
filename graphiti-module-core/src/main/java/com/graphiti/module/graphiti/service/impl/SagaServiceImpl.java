@@ -32,13 +32,13 @@ public class SagaServiceImpl implements SagaService {
 
         // 2. 按 valid_at 排序获取所有 Episode
         String getEpisodes =
-            "MATCH (e:Episode {group_id: $group_id}) " +
+            "MATCH (e:Episode {graph_id: $graph_id}) " +
             "RETURN e.uuid as uuid, e.name as name, e.valid_at as valid_at " +
             "ORDER BY e.valid_at ASC";
 
         List<Map<String, Object>> episodes = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(getEpisodes, Values.parameters("group_id", graphId));
+            Result result = session.run(getEpisodes, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 episodes.add(result.next().asMap());
             }
@@ -52,12 +52,12 @@ public class SagaServiceImpl implements SagaService {
                 String nextUuid = (String) episodes.get(i + 1).get("uuid");
 
                 String createLink =
-                    "MATCH (current:Episode {group_id: $group_id, uuid: $current}) " +
-                    "MATCH (next:Episode {group_id: $group_id, uuid: $next}) " +
+                    "MATCH (current:Episode {graph_id: $graph_id, uuid: $current}) " +
+                    "MATCH (next:Episode {graph_id: $graph_id, uuid: $next}) " +
                     "CREATE (current)-[:NEXT_EPISODE]->(next)";
 
                 session.run(createLink, Values.parameters(
-                    "group_id", graphId,
+                    "graph_id", graphId,
                     "current", currentUuid,
                     "next", nextUuid
                 ));
@@ -78,11 +78,11 @@ public class SagaServiceImpl implements SagaService {
 
         // 获取前一个 Episode
         String prevCypher =
-            "MATCH (prev:Episode {group_id: $group_id})-[:NEXT_EPISODE]->(current:Episode {group_id: $group_id, uuid: $uuid}) " +
+            "MATCH (prev:Episode {graph_id: $graph_id})-[:NEXT_EPISODE]->(current:Episode {graph_id: $graph_id, uuid: $uuid}) " +
             "RETURN prev.uuid as uuid, prev.name as name, prev.valid_at as valid_at";
 
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(prevCypher, Values.parameters("group_id", graphId, "uuid", episodeUuid));
+            Result result = session.run(prevCypher, Values.parameters("graph_id", graphId, "uuid", episodeUuid));
             if (result.hasNext()) {
                 context.put("previous", result.next().asMap());
             }
@@ -90,11 +90,11 @@ public class SagaServiceImpl implements SagaService {
 
         // 获取后一个 Episode
         String nextCypher =
-            "MATCH (current:Episode {group_id: $group_id, uuid: $uuid})-[:NEXT_EPISODE]->(next:Episode {group_id: $group_id}) " +
+            "MATCH (current:Episode {graph_id: $graph_id, uuid: $uuid})-[:NEXT_EPISODE]->(next:Episode {graph_id: $graph_id}) " +
             "RETURN next.uuid as uuid, next.name as name, next.valid_at as valid_at";
 
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(nextCypher, Values.parameters("group_id", graphId, "uuid", episodeUuid));
+            Result result = session.run(nextCypher, Values.parameters("graph_id", graphId, "uuid", episodeUuid));
             if (result.hasNext()) {
                 context.put("next", result.next().asMap());
             }
@@ -102,11 +102,11 @@ public class SagaServiceImpl implements SagaService {
 
         // 获取当前 Episode
         String currentCypher =
-            "MATCH (e:Episode {group_id: $group_id, uuid: $uuid}) " +
+            "MATCH (e:Episode {graph_id: $graph_id, uuid: $uuid}) " +
             "RETURN e.uuid as uuid, e.name as name, e.valid_at as valid_at";
 
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(currentCypher, Values.parameters("group_id", graphId, "uuid", episodeUuid));
+            Result result = session.run(currentCypher, Values.parameters("graph_id", graphId, "uuid", episodeUuid));
             if (result.hasNext()) {
                 context.put("current", result.next().asMap());
             }
@@ -118,13 +118,13 @@ public class SagaServiceImpl implements SagaService {
     @Override
     public List<Map<String, Object>> getSagaTimeline(String graphId) {
         String cypher =
-            "MATCH (e:Episode {group_id: $group_id}) " +
+            "MATCH (e:Episode {graph_id: $graph_id}) " +
             "RETURN e.uuid as uuid, e.name as name, e.valid_at as valid_at, e.content as content " +
             "ORDER BY e.valid_at ASC";
 
         List<Map<String, Object>> results = new ArrayList<>();
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, Values.parameters("group_id", graphId));
+            Result result = session.run(cypher, Values.parameters("graph_id", graphId));
             while (result.hasNext()) {
                 results.add(result.next().asMap());
             }
@@ -135,11 +135,11 @@ public class SagaServiceImpl implements SagaService {
     @Override
     public void clearSaga(String graphId) {
         String cypher =
-            "MATCH (e:Episode {group_id: $group_id})-[r:NEXT_EPISODE]->() " +
+            "MATCH (e:Episode {graph_id: $graph_id})-[r:NEXT_EPISODE]->() " +
             "DELETE r";
 
         try (Session session = neo4jDriver.session()) {
-            session.run(cypher, Values.parameters("group_id", graphId));
+            session.run(cypher, Values.parameters("graph_id", graphId));
             log.info("已清除图谱 {} 的 Saga 链", graphId);
         }
     }

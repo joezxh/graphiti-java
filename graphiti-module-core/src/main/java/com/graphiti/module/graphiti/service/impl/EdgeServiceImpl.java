@@ -141,7 +141,7 @@ public class EdgeServiceImpl implements EdgeService {
         props.remove("source");
         props.remove("target");
         props.remove("type");
-        props.remove("group_id");
+        props.remove("graph_id");
         respVO.setProperties(props);
         
         return respVO;
@@ -163,7 +163,7 @@ public class EdgeServiceImpl implements EdgeService {
         props.remove("source");
         props.remove("target");
         props.remove("type");
-        props.remove("group_id");
+        props.remove("graph_id");
         respVO.setProperties(props);
         
         return respVO;

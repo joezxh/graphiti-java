@@ -60,6 +60,35 @@
           <template v-if="column.key === 'createdAt'">
             {{ formatDate(record.createdAt) }}
           </template>
+          <template v-if="column.key === 'episodeType'">
+            <a-tag v-if="record.episodeType" :color="getEpisodeColor(record.episodeType)">
+              {{ record.episodeType }}
+            </a-tag>
+            <span v-else style="color: #999">-</span>
+          </template>
+          <template v-if="column.key === 'legalProcess'">
+            <a-tag v-if="record.legalProcess" :color="getLegalProcessColor(record.legalProcess)">
+              {{ record.legalProcess }}
+            </a-tag>
+            <span v-else style="color: #999">-</span>
+          </template>
+          <template v-if="column.key === 'courtLevel'">
+            <a-tag v-if="record.courtLevel" color="purple">{{ record.courtLevel }}</a-tag>
+            <span v-else>-</span>
+          </template>
+          <template v-if="column.key === 'isTrialStage'">
+            <a-tag :color="record.isTrialStage ? 'green' : 'default'" size="small">
+              {{ record.isTrialStage ? '是' : '否' }}
+            </a-tag>
+          </template>
+          <template v-if="column.key === 'timeRange'">
+            <span v-if="record.startTime || record.endTime">
+              {{ formatEpisodeTime(record.startTime) }}
+              <template v-if="record.startTime && record.endTime"> ~ </template>
+              {{ formatEpisodeTime(record.endTime) }}
+            </span>
+            <span v-else>-</span>
+          </template>
           <template v-if="column.key === 'action'">
             <a-space>
               <a-button type="link" size="small" @click="viewMentions(record)">
@@ -126,8 +155,37 @@ import { ReloadOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { graphApi } from '@/api/graph'
 import { episodeApi, type EpisodeListItem, type EpisodeMentions } from '@/api/episode'
+import { EPISODE_TYPE_COLORS, type EpisodeV3 } from '@/types/legal-graph-v3'
 
 const { t } = useI18n()
+
+/** V3.0.0: 根据 Episode 类型获取颜色 */
+const getEpisodeColor = (type?: string): string => {
+  if (!type) return 'default'
+  return EPISODE_TYPE_COLORS[type] || 'default'
+}
+
+/** V3.0.0: 获取法律程序颜色 */
+const getLegalProcessColor = (process?: string): string => {
+  const map: Record<string, string> = {
+    litigation: 'blue',
+    mediation: 'pink',
+    arbitration: 'orange',
+    execution: 'gray',
+  }
+  return map[process || ''] || 'default'
+}
+
+/** V3.0.0: 格式化 Episode 时间 */
+const formatEpisodeTime = (timeStr?: string): string => {
+  if (!timeStr) return ''
+  try {
+    const d = new Date(timeStr)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  } catch {
+    return timeStr
+  }
+}
 
 const graphOptions = ref<any[]>([])
 const selectedGraphId = ref<string | undefined>(undefined)
@@ -147,6 +205,11 @@ const columns = [
   { title: t('common.name'), dataIndex: 'name', key: 'name', width: 150 },
   { title: t('common.source'), key: 'source' },
   { title: t('episodes.contentPreview'), key: 'content' },
+  { title: '类型', dataIndex: 'episodeType', key: 'episodeType', width: 140 },
+  { title: '法律程序', dataIndex: 'legalProcess', key: 'legalProcess', width: 100 },
+  { title: '审级', dataIndex: 'courtLevel', key: 'courtLevel', width: 80 },
+  { title: '审判阶段', dataIndex: 'isTrialStage', key: 'isTrialStage', width: 90 },
+  { title: '时间', key: 'timeRange', width: 180 },
   { title: t('common.createdAt'), key: 'createdAt', width: 160 },
   { title: t('common.actions'), key: 'action', width: 150 }
 ]

@@ -317,6 +317,58 @@ export const graphApi = {
     return request.get(`/graph/${graphId}/visualization`, { params })
   },
 
+  // 按多个类别获取可视化数据（父类+子类节点过滤）
+  async getVisualizationByTypes(
+    graphId: string,
+    classTypes: string[],
+    params?: { page?: number; pageSize?: number; keyword?: string }
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization/by-types`, {
+      params: { classTypes: classTypes.join(','), ...params }
+    })
+  },
+
+  // 按类别获取实例数据（不超过500个）
+  async getInstancesVisualization(
+    graphId: string,
+    classType: string,
+    params?: { page?: number; pageSize?: number }
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization/instances`, {
+      params: { classType, ...params }
+    })
+  },
+
+  // 获取所有边数据（不超过500个）
+  async getEdgesVisualization(
+    graphId: string,
+    limit?: number
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization/edges`, {
+      params: { limit: limit || 500 }
+    })
+  },
+
+  // 获取事件流可视化数据
+  async getEpisodesVisualization(
+    graphId: string,
+    limit?: number
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization/episodes`, {
+      params: { limit: limit || 100 }
+    })
+  },
+
+  // 获取社区可视化数据
+  async getCommunitiesVisualization(
+    graphId: string,
+    limit?: number
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization/communities`, {
+      params: { limit: limit || 100 }
+    })
+  },
+
   // 获取图谱元数据
   async getGraphMetadata(graphId: string): Promise<GraphMetadata> {
     return request.get(`/graph/${graphId}/metadata`)
@@ -506,7 +558,51 @@ export const graphApi = {
     }>
   }> {
     return request.post(`/graph/${graphId}/ontology/validate-change`, data)
-  }
+  },
+
+  // ============================================================
+  // 法律知识图谱 V3.0.0 API
+  // ============================================================
+
+  // V3: 获取社区层级结构（PARENT_OF 树）
+  async getCommunityHierarchy(
+    graphId: string,
+    dimension?: string
+  ): Promise<any[]> {
+    return request.get(`/graph/${graphId}/communities/hierarchy`, {
+      params: dimension ? { dimension } : undefined
+    })
+  },
+
+  // V3: 按法律领域过滤社区
+  async getCommunitiesByDomain(
+    graphId: string,
+    domain: string
+  ): Promise<any[]> {
+    return request.get(`/graph/${graphId}/communities/by-domain`, {
+      params: { domain }
+    })
+  },
+
+  // V3: 获取社区类型元数据（ont_community_type）
+  async getCommunityTypes(graphId: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/community-types`)
+  },
+
+  // V3: 获取 Episode 类型元数据（ont_episode_type）
+  async getEpisodeTypes(graphId: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/episode-types`)
+  },
+
+  // V3: 获取关系类型元数据（ont_relationship_meta）
+  async getRelationshipMetadata(graphId: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/relationships/metadata`)
+  },
+
+  // V3: 获取实体分类元数据（ont_entity_category）
+  async getEntityCategories(graphId: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/entity-categories`)
+  },
 }
 
 // 获取图谱统计信息
