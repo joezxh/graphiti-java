@@ -20,6 +20,8 @@ export type OntologyTabType =
   | 'property-list'
   | 'property-editor'
   | 'constraint-list'
+  | 'domain-rule-list'  // 域规则列表
+  | 'definition-editor'
   | 'instance-table'
   | 'instance-editor'
   | 'version-history'

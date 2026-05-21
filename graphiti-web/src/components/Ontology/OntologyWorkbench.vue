@@ -25,6 +25,9 @@
           <a-menu @click="handleAddMenuClick">
             <a-menu-divider />
             <a-menu-item-group title="定义管理">
+              <a-menu-item key="definition-editor">
+                <span>📋</span> 本体定义
+              </a-menu-item>
               <a-menu-item key="class-editor">
                 <span>◉</span> 新建类
               </a-menu-item>
@@ -33,6 +36,9 @@
               </a-menu-item>
               <a-menu-item key="constraint-list">
                 <span>◇</span> 新建约束
+              </a-menu-item>
+              <a-menu-item key="domain-rule-list">
+                <span>⚙️</span> 域规则列表
               </a-menu-item>
             </a-menu-item-group>
             <a-menu-divider />
@@ -101,6 +107,15 @@
         v-else-if="store.activeTab.type === 'constraint-list'"
         :graph-id="graphId"
       />
+      <DomainRuleListPanel
+        v-else-if="store.activeTab.type === 'domain-rule-list'"
+        :graph-id="graphId"
+      />
+      <DefinitionEditor
+        v-else-if="store.activeTab.type === 'definition-editor'"
+        :graph-id="graphId"
+        @saved="handleSaved"
+      />
       <InstanceDataTable
         v-else-if="store.activeTab.type === 'instance-table'"
         :graph-id="graphId"
@@ -165,13 +180,11 @@ const OntologyVisualizer = defineAsyncComponent(() => import('./OntologyVisualiz
 const ClassListPanel = defineAsyncComponent(() => import('./ClassListPanel.vue'))
 const PropertyListPanel = defineAsyncComponent(() => import('./PropertyListPanel.vue'))
 const ConstraintListPanel = defineAsyncComponent(() => import('./ConstraintListPanel.vue'))
+const DomainRuleListPanel = defineAsyncComponent(() => import('./DomainRuleListPanel.vue'))
+const DefinitionEditor = defineAsyncComponent(() => import('./DefinitionEditor.vue'))
 const DataImportExportModal = defineAsyncComponent(() => import('./DataImportExportModal.vue'))
 
 const props = defineProps<{ graphId: string; selectedClassId?: number | null }>()
-
-const emit = defineEmits<{
-  (e: 'class-selected', classId: number): void
-}>()
 
 const store = useOntologyStore()
 const showAddMenu = ref(false)
@@ -186,9 +199,11 @@ function quickAdd(type: OntologyTabType, title: string) {
 function handleAddMenuClick({ key }: { key: string }) {
   showAddMenu.value = false
   const menuMap: Record<string, { type: OntologyTabType; title: string }> = {
+    'definition-editor': { type: 'definition-editor', title: '本体定义' },
     'class-editor': { type: 'class-editor', title: '新建类' },
     'property-editor': { type: 'property-editor', title: '新建属性' },
     'constraint-list': { type: 'constraint-list', title: '约束列表' },
+    'domain-rule-list': { type: 'domain-rule-list', title: '域规则列表' },
     'instance-table': { type: 'instance-table', title: '实例数据' },
     'version-history': { type: 'version-history', title: '版本历史' },
     'consistency-check': { type: 'consistency-check', title: '一致性检查' },

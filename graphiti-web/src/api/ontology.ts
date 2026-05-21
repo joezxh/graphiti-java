@@ -118,6 +118,49 @@ export interface OntologyFullVO {
   constraints: OntConstraintVO[]
 }
 
+/** 域规则 */
+export interface DomainRuleVO {
+  id?: number
+  definitionId?: number
+  ruleName: string
+  ruleCode: string
+  spelExpression: string
+  applicableClassIds?: number[]
+  severity?: string
+  errorMessage?: string
+  description?: string
+  enabled?: boolean
+  createdAt?: string
+  updatedAt?: string
+  lastTestResult?: {
+    passed: boolean
+    testData: string
+    result: any
+    error: string | null
+    testedAt: string
+  }
+}
+
+/** 推理类型 */
+export interface InferredTypeVO {
+  className?: string
+  classUri: string
+  confidence?: number
+  reason?: string
+}
+
+/** 验证任务 */
+export interface ValidationTaskVO {
+  taskId: string
+  graphId: string
+  status: string
+  checkType?: string
+  result?: any
+  errorMessage?: string
+  createdAt?: string
+  completedAt?: string
+}
+
 // ============================================================
 // API 定义
 // ============================================================
@@ -230,6 +273,13 @@ export const ontologyApi = {
   },
 
   /**
+   * 更新约束
+   */
+  async updateConstraint(graphId: string, constraintId: number, data: Partial<OntConstraintVO>): Promise<OntConstraintVO> {
+    return request.put<OntConstraintVO>(`/ontology/${graphId}/constraints/${constraintId}`, data)
+  },
+
+  /**
    * 删除约束
    */
   async deleteConstraint(graphId: string, constraintId: number): Promise<void> {
@@ -259,6 +309,96 @@ export const ontologyApi = {
    */
   async checkConsistency(graphId: string): Promise<any> {
     return request.get(`/ontology/${graphId}/consistency`)
+  },
+
+  // ==================== 域规则管理 ====================
+
+  /**
+   * 列出域规则
+   */
+  async listDomainRules(graphId: string): Promise<DomainRuleVO[]> {
+    return request.get<DomainRuleVO[]>(`/ontology/${graphId}/domain-rules`)
+  },
+
+  /**
+   * 创建域规则
+   */
+  async createDomainRule(graphId: string, data: Partial<DomainRuleVO>): Promise<DomainRuleVO> {
+    return request.post<DomainRuleVO>(`/ontology/${graphId}/domain-rules`, data)
+  },
+
+  /**
+   * 更新域规则
+   */
+  async updateDomainRule(graphId: string, ruleId: number, data: Partial<DomainRuleVO>): Promise<DomainRuleVO> {
+    return request.put<DomainRuleVO>(`/ontology/${graphId}/domain-rules/${ruleId}`, data)
+  },
+
+  /**
+   * 删除域规则
+   */
+  async deleteDomainRule(graphId: string, ruleId: number): Promise<void> {
+    return request.delete(`/ontology/${graphId}/domain-rules/${ruleId}`)
+  },
+
+  /**
+   * 启用/禁用域规则
+   */
+  async toggleDomainRule(graphId: string, ruleId: number, enabled: boolean): Promise<void> {
+    return request.patch(`/ontology/${graphId}/domain-rules/${ruleId}/toggle`, null, { params: { enabled } })
+  },
+
+  /**
+   * 测试域规则
+   */
+  async testDomainRule(graphId: string, spelExpression: string, testProperties: Record<string, any>): Promise<{ passed: boolean; result: any; error: string | null }> {
+    return request.post(`/ontology/${graphId}/domain-rules/test`, { spelExpression, testProperties })
+  },
+
+  // ==================== 图谱完整性检查（L6） ====================
+
+  /**
+   * 提交完整性检查
+   */
+  async submitIntegrityCheck(graphId: string, checkTypes?: string[]): Promise<{ taskId: string }> {
+    return request.post(`/ontology/${graphId}/validate/integrity`, checkTypes ? { checkTypes } : {})
+  },
+
+  /**
+   * 查询验证任务状态
+   */
+  async getValidationTaskStatus(taskId: string): Promise<ValidationTaskVO> {
+    return request.get<ValidationTaskVO>(`/ontology/validate/tasks/${taskId}`)
+  },
+
+  /**
+   * 列出验证任务
+   */
+  async listValidationTasks(graphId: string): Promise<ValidationTaskVO[]> {
+    return request.get<ValidationTaskVO[]>(`/ontology/${graphId}/validate/tasks`)
+  },
+
+  // ==================== 推理类型推断 ====================
+
+  /**
+   * 推理类型推断
+   */
+  async inferTypes(graphId: string, properties: Record<string, any>): Promise<InferredTypeVO[]> {
+    return request.post(`/ontology/${graphId}/reasoners/infer-types`, { properties })
+  },
+
+  /**
+   * 获取属性 domain
+   */
+  async getPropertyDomains(graphId: string, propertyUri: string): Promise<string[]> {
+    return request.get(`/ontology/${graphId}/properties/${encodeURIComponent(propertyUri)}/domains`)
+  },
+
+  /**
+   * 获取属性 range
+   */
+  async getPropertyRanges(graphId: string, propertyUri: string): Promise<string[]> {
+    return request.get(`/ontology/${graphId}/properties/${encodeURIComponent(propertyUri)}/ranges`)
   }
 }
 
