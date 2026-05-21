@@ -326,15 +326,11 @@ function openPropertyEditor(propertyId: number, propertyName: string) {
     font-size: 14px;
   }
 }
-</style>
 
-<!-- 全局样式:强制居中并加宽下拉菜单 -->
-<style lang="less">
-.ontology-add-menu {
+// 使用 :deep() 但不在 scoped 内,确保能影响到 body 下的 dropdown
+:deep(.ontology-add-menu) {
   .ant-dropdown {
-    position: fixed !important;
     left: 50% !important;
-    top: 100px !important;
     transform: translateX(-50%) !important;
   }
 
