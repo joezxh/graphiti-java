@@ -51,13 +51,9 @@
         <a-select
           v-model:value="form.applicableClassIds"
           mode="multiple"
-          placeholder="选择适用的本体类 (留空表示全部类)"
+          placeholder="选择适用的本体类 (留空表示应用于全部类)"
           allow-clear
         >
-          <a-select-option :value="null" style="font-weight: bold; color: #5e6ad2">
-            🌐 全部类 (应用于所有节点)
-          </a-select-option>
-          <a-select-divider />
           <a-select-option
             v-for="cls in classList"
             :key="cls.id"
@@ -156,7 +152,7 @@ const form = reactive({
   ruleName: '',
   ruleCode: '',
   spelExpression: '',
-  applicableClassIds: [] as (number | null)[],
+  applicableClassIds: [] as number[],
   severity: 'ERROR',
   errorMessage: '',
   description: ''
@@ -238,8 +234,7 @@ async function handleSave() {
 
     const data = {
       ...form,
-      definitionId: props.ruleData?.definitionId,
-      applicableClassIds: form.applicableClassIds.filter(id => id !== null) as number[]
+      definitionId: props.ruleData?.definitionId
     }
 
     if (isEdit.value) {
