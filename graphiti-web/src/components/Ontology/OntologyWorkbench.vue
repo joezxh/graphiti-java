@@ -326,42 +326,62 @@ function openPropertyEditor(propertyId: number, propertyName: string) {
     font-size: 14px;
   }
 }
+</style>
 
-:deep(.ontology-add-menu) {
+<!-- 全局样式:强制居中并加宽下拉菜单 -->
+<style lang="less">
+.ontology-add-menu {
   .ant-dropdown {
     position: fixed !important;
     left: 50% !important;
-    top: 120px !important;
+    top: 100px !important;
     transform: translateX(-50%) !important;
   }
 
   .ant-dropdown-menu {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    min-width: 480px;
-    max-width: 600px;
+    background: #161b22 !important;
+    border: 1px solid #30363d !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+    min-width: 480px !important;
+    max-width: 600px !important;
+    padding: 8px 0 !important;
 
     .ant-dropdown-menu-item-group-title {
-      color: #6e7681;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 8px 12px 4px;
+      color: #6e7681 !important;
+      font-size: 11px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      padding: 8px 16px 4px !important;
+      font-weight: 600 !important;
     }
 
     .ant-dropdown-menu-item {
-      color: #e6edf3;
-      font-size: 13px;
-      padding: 6px 12px;
+      color: #e6edf3 !important;
+      font-size: 13px !important;
+      padding: 10px 16px !important;
+      min-height: 40px !important;
 
       &:hover {
-        background: #21262d;
-        color: #58a6ff;
+        background: #21262d !important;
+        color: #58a6ff !important;
       }
 
-      span { margin-right: 8px; }
+      span { 
+        margin-right: 10px !important;
+        font-size: 14px !important;
+      }
+    }
+
+    .ant-dropdown-menu-item-group-list {
+      .ant-dropdown-menu-item {
+        padding-left: 24px !important;
+      }
+    }
+
+    .ant-menu-item-divider {
+      margin: 8px 0 !important;
+      background-color: #30363d !important;
     }
   }
 }
