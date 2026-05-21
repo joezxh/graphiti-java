@@ -1,0 +1,404 @@
+/**
+ * 属性编辑器 — 本体工作台内嵌形式
+ * [基本信息] [定义域/值域] [约束条件] [使用统计]
+ */
+<template>
+  <div class="property-editor">
+    <div class="editor-toolbar">
+      <a-space>
+        <a-button type="primary" :loading="saving" @click="handleSave">
+          <template #icon><SaveOutlined /></template>
+          保存
+        </a-button>
+        <a-divider type="vertical" />
+        <a-button danger :disabled="!propertyId" :loading="deleting" @click="handleDelete">
+          <template #icon><DeleteOutlined /></template>
+          删除
+        </a-button>
+      </a-space>
+      <div class="toolbar-right">
+        <a-tag v-if="propertyId" color="purple">ID: {{ propertyId }}</a-tag>
+        <a-tag v-if="form.localName" color="purple">{{ form.localName }}</a-tag>
+      </div>
+    </div>
+
+    <a-tabs v-model:activeKey="activeTab" class="property-editor-tabs">
+      <a-tab-pane key="basic" tab="基本信息">
+        <div class="tab-content">
+          <a-form :model="form" layout="vertical" class="basic-form">
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item label="属性名称（localName）" required>
+                  <a-input v-model:value="form.localName" placeholder="如 name, age" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label="完整URI（propertyUri）">
+                  <a-input v-model:value="form.propertyUri" placeholder="http://graphiti.io/ontology/name" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item label="属性类型" required>
+                  <a-select v-model:value="form.propertyType">
+                    <a-select-option value="DATATYPE">数据类型属性（DatatypeProperty）</a-select-option>
+                    <a-select-option value="OBJECT">对象属性（ObjectProperty）</a-select-option>
+                    <a-select-option value="ANNOTATION">注解属性（AnnotationProperty）</a-select-option>
+                    <a-select-option value="TRANSITIVE">可传递属性（TransitiveProperty）</a-select-option>
+                    <a-select-option value="SYMMETRIC">对称属性（SymmetricProperty）</a-select-option>
+                    <a-select-option value="FUNCTIONAL">函数属性（FunctionalProperty）</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label="父属性">
+                  <a-select v-model:value="form.parentPropertyId" placeholder="选择父属性" allow-clear :options="propertyOptions" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-form-item label="逆属性（inverseOf）">
+              <a-select v-model:value="form.inverseOfId" placeholder="选择逆属性" allow-clear :options="propertyOptions" />
+            </a-form-item>
+
+            <a-form-item label="描述">
+              <a-textarea v-model:value="form.description" :rows="3" />
+            </a-form-item>
+
+            <a-form-item label="示例">
+              <a-textarea v-model:value="form.example" :rows="2" />
+            </a-form-item>
+          </a-form>
+        </div>
+      </a-tab-pane>
+
+      <a-tab-pane key="domain-range" tab="定义域/值域">
+        <div class="tab-content">
+          <a-form :model="form" layout="vertical" class="basic-form">
+            <a-form-item label="定义域（domain）— 哪些类可以使用此属性">
+              <a-select v-model:value="form.domainClassId" placeholder="选择类" allow-clear :options="classOptions">
+                <template #suffixIcon><ApiOutlined /></template>
+              </a-select>
+            </a-form-item>
+
+            <a-divider />
+
+            <a-form-item v-if="form.propertyType === 'DATATYPE'" label="值域数据类型（range — DataType）">
+              <a-select v-model:value="form.rangeDataType" placeholder="选择数据类型">
+                <a-select-option value="string">字符串（string）</a-select-option>
+                <a-select-option value="integer">整数（integer）</a-select-option>
+                <a-select-option value="float">浮点数（float）</a-select-option>
+                <a-select-option value="boolean">布尔值（boolean）</a-select-option>
+                <a-select-option value="date">日期（date）</a-select-option>
+                <a-select-option value="datetime">日期时间（datetime）</a-select-option>
+                <a-select-option value="json">JSON</a-select-option>
+              </a-select>
+            </a-form-item>
+
+            <a-form-item v-else-if="form.propertyType === 'OBJECT'" label="值域类（range — Object）">
+              <a-select v-model:value="form.rangeClassId" placeholder="选择目标类" allow-clear :options="classOptions">
+                <template #suffixIcon><ApiOutlined /></template>
+              </a-select>
+            </a-form-item>
+
+            <a-form-item label="默认值">
+              <a-input v-model:value="form.defaultValue" placeholder="默认属性值" />
+            </a-form-item>
+          </a-form>
+        </div>
+      </a-tab-pane>
+
+      <a-tab-pane key="constraints" tab="约束条件">
+        <div class="tab-content">
+          <a-form :model="form" layout="vertical" class="basic-form">
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="最小基数（minCardinality）">
+                  <a-input-number v-model:value="form.minCardinality" :min="0" style="width: 100%" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="最大基数（maxCardinality）">
+                  <a-input-number v-model:value="form.maxCardinality" :min="0" style="width: 100%" placeholder="无限制填0" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="必填">
+                  <a-switch v-model:checked="form.isRequired" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="允许多值（isMultiple）">
+                  <a-switch v-model:checked="form.isMultiple" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="正则约束（pattern）">
+                  <a-input v-model:value="form.pattern" placeholder="^[A-Za-z]+$" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item label="最小值">
+                  <a-input-number v-model:value="form.minValue" style="width: 100%" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="最大值">
+                  <a-input-number v-model:value="form.maxValue" style="width: 100%" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-form-item label="枚举值（allowedValues）">
+              <a-select
+                v-model:value="form.allowedValues"
+                mode="tags"
+                placeholder="输入枚举值后回车确认"
+                style="width: 100%"
+              />
+            </a-form-item>
+          </a-form>
+        </div>
+      </a-tab-pane>
+
+      <a-tab-pane key="stats" tab="使用统计">
+        <div class="tab-content">
+          <a-row :gutter="16" class="stats-row">
+            <a-col :span="8">
+              <a-statistic title="使用此属性的类数量" :value="usingClassCount" />
+            </a-col>
+            <a-col :span="8">
+              <a-statistic title="关联约束数量" :value="constraintCount" />
+            </a-col>
+          </a-row>
+
+          <div class="using-classes">
+            <div class="section-title">使用此属性的类</div>
+            <div v-if="usingClasses.length === 0" class="empty-tip">暂无使用记录</div>
+            <div v-else class="class-tags">
+              <span v-for="cls in usingClasses" :key="cls.id" class="class-tag" @click="openClass(cls)">
+                {{ cls.localName }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </a-tab-pane>
+    </a-tabs>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { message } from 'ant-design-vue'
+import { SaveOutlined, DeleteOutlined, ApiOutlined } from '@ant-design/icons-vue'
+import { useOntologyStore } from '@/store/modules/ontology'
+import { ontologyApi } from '@/api/ontology'
+
+const props = defineProps<{
+  graphId: string
+  propertyId?: number
+}>()
+
+const emit = defineEmits<{ (e: 'saved'): void }>()
+
+const store = useOntologyStore()
+const saving = ref(false)
+const deleting = ref(false)
+const activeTab = ref('basic')
+
+const form = reactive({
+  id: undefined as number | undefined,
+  localName: '',
+  propertyUri: '',
+  propertyType: 'DATATYPE' as 'DATATYPE' | 'OBJECT' | 'ANNOTATION' | 'TRANSITIVE' | 'SYMMETRIC' | 'FUNCTIONAL',
+  parentPropertyId: undefined as number | undefined,
+  inverseOfId: undefined as number | undefined,
+  domainClassId: undefined as number | undefined,
+  rangeClassId: undefined as number | undefined,
+  rangeDataType: 'string',
+  defaultValue: '',
+  minCardinality: 0,
+  maxCardinality: undefined as number | undefined,
+  isRequired: false,
+  isMultiple: false,
+  pattern: '',
+  minValue: undefined as number | undefined,
+  maxValue: undefined as number | undefined,
+  allowedValues: [] as string[],
+  description: '',
+  example: ''
+})
+
+const classOptions = computed(() => store.classes.map(c => ({ label: c.localName, value: c.id })))
+const propertyOptions = computed(() => store.properties.map(p => ({ label: p.localName, value: p.id })))
+
+const usingClasses = computed(() => {
+  if (!props.propertyId) return []
+  return store.classes.filter(c =>
+    store.properties.some(p => p.id === props.propertyId && p.domainClassId === c.id)
+  )
+})
+
+const usingClassCount = computed(() => usingClasses.value.length)
+
+const constraintCount = computed(() =>
+  store.constraints.filter(c => c.propertyId === props.propertyId).length
+)
+
+async function loadData() {
+  if (!props.propertyId) return
+  const prop = store.properties.find(p => p.id === props.propertyId)
+  if (!prop) return
+  Object.assign(form, {
+    id: prop.id,
+    localName: prop.localName,
+    propertyUri: prop.propertyUri || '',
+    propertyType: prop.propertyType,
+    parentPropertyId: prop.parentPropertyId,
+    inverseOfId: prop.inverseOfId,
+    domainClassId: prop.domainClassId,
+    rangeClassId: prop.rangeClassId,
+    rangeDataType: prop.rangeDataType || 'string',
+    defaultValue: prop.defaultValue || '',
+    minCardinality: prop.minCardinality || 0,
+    maxCardinality: prop.maxCardinality,
+    isRequired: prop.isRequired || false,
+    isMultiple: prop.isMultiple || false,
+    pattern: prop.pattern || '',
+    minValue: prop.minValue,
+    maxValue: prop.maxValue,
+    allowedValues: prop.allowedValues ? (Array.isArray(prop.allowedValues) ? prop.allowedValues : []) : [],
+    description: prop.description || '',
+    example: prop.example || ''
+  })
+}
+
+async function handleSave() {
+  if (!form.localName.trim()) { message.error('请填写属性名称'); return }
+  saving.value = true
+  try {
+    const data = {
+      localName: form.localName,
+      propertyUri: form.propertyUri || undefined,
+      propertyType: form.propertyType,
+      parentPropertyId: form.parentPropertyId,
+      inverseOfId: form.inverseOfId,
+      domainClassId: form.domainClassId,
+      rangeClassId: form.rangeClassId,
+      rangeDataType: form.rangeDataType || undefined,
+      defaultValue: form.defaultValue || undefined,
+      minCardinality: form.minCardinality,
+      maxCardinality: form.maxCardinality,
+      isRequired: form.isRequired,
+      isMultiple: form.isMultiple,
+      pattern: form.pattern || undefined,
+      minValue: form.minValue,
+      maxValue: form.maxValue,
+      allowedValues: form.allowedValues.length > 0 ? form.allowedValues : undefined,
+      description: form.description || undefined,
+      example: form.example || undefined
+    }
+    if (props.propertyId) {
+      await ontologyApi.updateProperty(props.graphId, props.propertyId, data)
+    } else {
+      await ontologyApi.createProperty(props.graphId, data)
+    }
+    message.success('属性已保存')
+    await store.loadFullOntology(props.graphId)
+    emit('saved')
+  } catch (e: any) {
+    message.error(e.message || '保存失败')
+  } finally {
+    saving.value = false
+  }
+}
+
+async function handleDelete() {
+  if (!props.propertyId) return
+  if (!confirm('确定删除此属性？')) return
+  deleting.value = true
+  try {
+    await ontologyApi.deleteProperty(props.graphId, props.propertyId)
+    message.success('属性已删除')
+    await store.loadFullOntology(props.graphId)
+    emit('saved')
+  } catch (e: any) {
+    message.error(e.message || '删除失败')
+  } finally {
+    deleting.value = false
+  }
+}
+
+function openClass(cls: any) {
+  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
+}
+
+onMounted(() => loadData())
+watch(() => props.propertyId, () => loadData())
+</script>
+
+<style scoped lang="less">
+.property-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    flex-shrink: 0;
+
+    .toolbar-right { display: flex; gap: 8px; align-items: center; }
+  }
+
+  .property-editor-tabs {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    :deep(.ant-tabs-content) { height: 100%; flex: 1; }
+    :deep(.ant-tabs-tabpane) { height: 100%; overflow-y: auto; }
+    :deep(.ant-tabs-nav) {
+      margin: 0;
+      padding: 0 16px;
+      background: #161b22;
+      .ant-tabs-tab { color: #8b949e; font-size: 13px; &.ant-tabs-tab-active { color: #e6edf3; } &:hover { color: #e6edf3; } }
+    }
+  }
+
+  .tab-content { padding: 20px; }
+  .basic-form { max-width: 800px; }
+
+  .stats-row { margin-bottom: 32px; }
+
+  .using-classes {
+    .section-title { font-size: 14px; font-weight: 600; color: #e6edf3; margin-bottom: 12px; }
+    .class-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .class-tag {
+      padding: 4px 12px;
+      background: rgba(88, 166, 255, 0.15);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      border-radius: 4px;
+      font-size: 13px;
+      color: #58a6ff;
+      cursor: pointer;
+      &:hover { background: rgba(88, 166, 255, 0.25); }
+    }
+    .empty-tip { color: #6e7681; font-size: 13px; }
+  }
+}
+</style>

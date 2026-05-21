@@ -95,13 +95,17 @@ public class EpisodeServiceImpl implements EpisodeService {
         String endTime = (String) episodeData.get("end_time");
         String caseId = (String) episodeData.get("case_id");
 
-        // V3.0.0: 将 V3 字段注入 properties Map（GraphNeo4jService.createEpisode 使用 SET e += $props，会自动写入）
+        // V3.1.0: 将 V3 字段注入 properties Map（GraphNeo4jService.createEpisode 使用 SET e += $props，会自动写入）
         Map<String, Object> v3Props = new HashMap<>(properties);
         v3Props.put("episode_type", episodeType);
-        v3Props.put("legal_process", legalProcess);
+        // 优先使用新字段，兼容旧字段作为 fallback
+        v3Props.put("process_type", episodeData.getOrDefault("process_type",
+            episodeData.getOrDefault("legal_process", "business_process")));
         v3Props.put("stage_label", stageLabel);
-        v3Props.put("court_level", courtLevel);
-        v3Props.put("is_trial_stage", isTrialStage);
+        v3Props.put("stage_level", episodeData.getOrDefault("stage_level",
+            episodeData.get("court_level")));
+        v3Props.put("is_review_stage", episodeData.getOrDefault("is_review_stage",
+            episodeData.getOrDefault("is_trial_stage", false)));
         v3Props.put("start_time", startTime);
         v3Props.put("end_time", endTime);
         v3Props.put("case_id", caseId);
@@ -170,6 +174,14 @@ public class EpisodeServiceImpl implements EpisodeService {
             respVO.setEndTime(endTime.toString());
         }
         respVO.setCaseId((String) row.get("case_id"));
+
+        // V3.1.0 通用化字段映射
+        respVO.setProcessType((String) row.get("process_type"));
+        respVO.setStageLevel((String) row.get("stage_level"));
+        Object isReviewStage = row.get("is_review_stage");
+        if (isReviewStage != null) {
+            respVO.setIsReviewStage((Boolean) isReviewStage);
+        }
 
         return respVO;
     }

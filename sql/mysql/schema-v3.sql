@@ -42,14 +42,17 @@ CREATE TABLE ont_episode_type (
     type_code VARCHAR(32) NOT NULL,
     type_name VARCHAR(128) NOT NULL,
     type_name_en VARCHAR(64),
-    legal_process VARCHAR(32),
-        -- litigation: 诉讼 | mediation: 调解 | arbitration: 仲裁 | execution: 执行
-    stage_label VARCHAR(32),
+    -- ========== 通用化字段 (Phase 4 新增) ==========
+    `process_type` VARCHAR(32) DEFAULT NULL COMMENT '业务流程类型：business_process|workflow|lifecycle',
+    `stage_level` VARCHAR(32) DEFAULT NULL COMMENT '阶段级别（通用，可配置）',
+    `is_review_stage` TINYINT(1) DEFAULT 0 COMMENT '是否审查/评议阶段',
+
+    -- ========== 向后兼容字段 (Phase 3 删除) ==========
+    `legal_process` VARCHAR(32) DEFAULT NULL COMMENT '[向后兼容] 已迁移到 process_type',
+    `stage_label` VARCHAR(32),
         -- 立案 | 庭审 | 调解 | 判决 | 执行
-    court_level VARCHAR(32),
-        -- 一审 | 二审 | 再审 | 死刑复核（仅审判程序有值，ADR类为空）
-    is_trial_stage TINYINT(1) DEFAULT 0,
-        -- 是否审判阶段（庭审类为 1）
+    `court_level` VARCHAR(32) DEFAULT NULL COMMENT '[向后兼容] 已迁移到 stage_level',
+    `is_trial_stage` TINYINT(1) DEFAULT 0 COMMENT '[向后兼容] 已迁移到 is_review_stage',
     description TEXT,
     sort_order INT DEFAULT 0,
     metadata JSON,
@@ -58,8 +61,10 @@ CREATE TABLE ont_episode_type (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_episode_type_code (definition_id, type_code),
     INDEX idx_episode_type_definition (definition_id),
-    INDEX idx_episode_type_legal_process (legal_process),
-    INDEX idx_episode_type_court_level (court_level),
+    INDEX idx_episode_type_process_type (process_type),
+    INDEX idx_episode_type_stage_level (stage_level),
+    INDEX idx_episode_type_legal_process (legal_process),      -- [向后兼容] Phase 3 删除
+    INDEX idx_episode_type_court_level (court_level),           -- [向后兼容] Phase 3 删除
     INDEX idx_episode_type_sort (sort_order),
     CONSTRAINT fk_episode_type_definition FOREIGN KEY (definition_id) REFERENCES ont_definition(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci

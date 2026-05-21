@@ -54,162 +54,65 @@
           <div class="sidebar-tabs">
             <button
               class="sidebar-tab"
-              :class="{ active: sidebarTab === 'explorer' }"
-              @click="sidebarTab = 'explorer'"
+              :class="{ active: sidebarTab === 'ontology' }"
+              @click="sidebarTab = 'ontology'"
             >
-              资源
+              本体
             </button>
             <button
               class="sidebar-tab"
-              :class="{ active: sidebarTab === 'schema' }"
-              @click="sidebarTab = 'schema'"
+              :class="{ active: sidebarTab === 'episodes' }"
+              @click="sidebarTab = 'episodes'"
             >
-              Schema
+              剧集
+            </button>
+            <button
+              class="sidebar-tab"
+              :class="{ active: sidebarTab === 'communities' }"
+              @click="sidebarTab = 'communities'"
+            >
+              社区
             </button>
           </div>
         </div>
 
         <div class="sidebar-content">
-          <!-- Explorer Tab -->
-          <div v-if="sidebarTab === 'explorer'" class="explorer-tree">
-            <div class="tree-section">
-              <div class="tree-node tree-node-root" @click="toggleTree('graph')">
-                <span class="tree-icon">{{ isTreeExpanded('graph') ? '📂' : '📁' }}</span>
-                <span class="tree-label">{{ graphData?.name || '图谱' }}</span>
-                <span class="tree-badge">{{ formatNumber(graphData?.nodeCount || 0) }}</span>
-              </div>
-              
-              <div v-show="isTreeExpanded('graph')" class="tree-children">
-                <!-- Ontology -->
-                <div class="tree-node" @click="toggleTree('ontology')">
-                  <span class="tree-icon">{{ isTreeExpanded('ontology') ? '📂' : '📁' }}</span>
-                  <span class="tree-label">本体定义</span>
-                </div>
-                
-                <div v-show="isTreeExpanded('ontology')" class="tree-children">
-                  <div class="tree-node" @click="toggleTree('classes')">
-                    <span class="tree-icon">{{ isTreeExpanded('classes') ? '📂' : '📁' }}</span>
-                    <span class="tree-label">类</span>
-                    <span class="tree-badge">{{ schemaClasses.length }}</span>
-                  </div>
-                  
-                  <div v-show="isTreeExpanded('classes')" class="tree-children">
-                    <!-- 递归类树节点 -->
-                    <template v-for="clsNode in classTree" :key="clsNode.id">
-                      <div class="tree-node" :class="{ 'tree-node-leaf': clsNode.children.length === 0 }" @click="clsNode.children.length > 0 ? toggleClassNode(clsNode) : handleClassTreeNodeClick(clsNode)">
-                        <span class="tree-icon" :class="{ active: activeTreeItem === `class-${clsNode.id}` }">{{ clsNode.children.length > 0 ? (isClassNodeExpanded(clsNode) ? '📂' : '📁') : '◉' }}</span>
-                        <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${clsNode.id}` }">{{ clsNode.localName }}</span>
-                        <span class="tree-badge">{{ clsNode.propertyCount }}</span>
-                      </div>
-                      <div v-if="clsNode.children.length > 0 && isClassNodeExpanded(clsNode)" class="tree-children">
-                        <template v-for="child1 in clsNode.children" :key="child1.id">
-                          <div class="tree-node" :class="{ 'tree-node-leaf': child1.children.length === 0 }" :style="{ paddingLeft: '28px' }" @click="child1.children.length > 0 ? toggleClassNode(child1) : handleClassTreeNodeClick(child1)">
-                            <span class="tree-icon" :class="{ active: activeTreeItem === `class-${child1.id}` }">{{ child1.children.length > 0 ? (isClassNodeExpanded(child1) ? '📂' : '📁') : '◉' }}</span>
-                            <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${child1.id}` }">{{ child1.localName }}</span>
-                            <span class="tree-badge">{{ child1.propertyCount }}</span>
-                          </div>
-                          <div v-if="child1.children.length > 0 && isClassNodeExpanded(child1)" class="tree-children">
-                            <template v-for="child2 in child1.children" :key="child2.id">
-                              <div class="tree-node" :class="{ 'tree-node-leaf': child2.children.length === 0 }" :style="{ paddingLeft: '28px' }" @click="child2.children.length > 0 ? toggleClassNode(child2) : handleClassTreeNodeClick(child2)">
-                                <span class="tree-icon" :class="{ active: activeTreeItem === `class-${child2.id}` }">{{ child2.children.length > 0 ? (isClassNodeExpanded(child2) ? '📂' : '📁') : '◉' }}</span>
-                                <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${child2.id}` }">{{ child2.localName }}</span>
-                                <span class="tree-badge">{{ child2.propertyCount }}</span>
-                              </div>
-                              <div v-if="child2.children.length > 0 && isClassNodeExpanded(child2)" class="tree-children">
-                                <template v-for="child3 in child2.children" :key="child3.id">
-                                  <div class="tree-node tree-node-leaf" :style="{ paddingLeft: '28px' }" @click="handleClassTreeNodeClick(child3)">
-                                    <span class="tree-icon type-icon" :class="{ active: activeTreeItem === `class-${child3.id}` }">◉</span>
-                                    <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === `class-${child3.id}` }">{{ child3.localName }}</span>
-                                    <span class="tree-badge">{{ child3.propertyCount }}</span>
-                                  </div>
-                                </template>
-                              </div>
-                            </template>
-                          </div>
-                        </template>
-                      </div>
-                    </template>
-                  </div>
-                  
-                  <div class="tree-node tree-node-leaf">
-                    <span class="tree-icon type-icon" style="color: #a371f7;">◈</span>
-                    <span class="tree-label">关系类型</span>
-                    <span class="tree-badge">{{ graphData?.edgeCount ? 1 : 0 }}</span>
-                  </div>
-                </div>
-                
-                <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #3fb950;" :class="{ active: activeTreeItem === 'instances' }">◉</span>
-                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'instances' }" @click="handleInstancesClick">实例数据</span>
-                  <span class="tree-badge">{{ formatNumber(graphData?.nodeCount || 0) }}</span>
-                </div>
-                
-                <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #d29922;" :class="{ active: activeTreeItem === 'edges' }">◆</span>
-                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'edges' }" @click="handleEdgesClick">边</span>
-                  <span class="tree-badge">{{ formatNumber(graphData?.edgeCount || 0) }}</span>
-                </div>
-                
-                <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #f85149;" :class="{ active: activeTreeItem === 'episodes' }">◇</span>
-                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'episodes' }" @click="handleEpisodesClick">剧集</span>
-                  <span class="tree-badge">{{ graphData?.episodeCount || 0 }}</span>
-                </div>
-                
-                <div class="tree-node tree-node-leaf">
-                  <span class="tree-icon type-icon" style="color: #8b949e;" :class="{ active: activeTreeItem === 'communities' }">○</span>
-                  <span class="tree-label" :class="{ 'tree-label-active': activeTreeItem === 'communities' }" @click="handleCommunitiesClick">社区</span>
-                  <span class="tree-badge">{{ graphData?.communityCount || 0 }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Schema Tab -->
-          <div v-if="sidebarTab === 'schema'" class="schema-tree">
-            <div class="search-box">
-              <a-input
-                v-model:value="schemaSearch"
-                placeholder="搜索类..."
-                size="small"
-                allow-clear
-              >
-                <template #prefix><SearchOutlined /></template>
-              </a-input>
-            </div>
-            
-            <div class="class-list">
-              <div
-                v-for="cls in filteredSchemaClasses"
-                :key="cls.id"
-                class="class-item"
-                :class="{ selected: selectedClass?.id === cls.id }"
-                @click="selectClass(cls)"
-              >
-                <div class="class-icon" :style="{ background: getClassColor(cls.localName) }">
-                  {{ cls.localName.charAt(0) }}
-                </div>
-                <div class="class-info">
-                  <div class="class-name">{{ cls.localName }}</div>
-                  <div class="class-count">{{ cls.propertyCount }} 个属性</div>
-                </div>
-              </div>
-              
-              <div v-if="filteredSchemaClasses.length === 0" class="empty-tip">
-                暂无类定义
-              </div>
-            </div>
-            
-            <a-button type="link" class="add-class-btn" @click="showSchemaEditor = true">
-              <template #icon><PlusOutlined /></template>
-              添加类
-            </a-button>
-          </div>
+          <!-- Ontology Tab: 本体树 -->
+          <OntologyObjectExplorer
+            v-if="sidebarTab === 'ontology'"
+            :graph-id="effectiveGraphId"
+            :ontology-mode="ontologyMode"
+            @open-tab="handleOntologyOpenTab"
+            @class-selected="handleOntClassSelected"
+            @open-episode="handleEpisodeNodeClick"
+            @open-community="handleCommunityNodeClick"
+          />
+          <!-- Episodes Tab: 剧集树 -->
+          <EpisodeExplorer
+            v-else-if="sidebarTab === 'episodes'"
+            :graph-id="effectiveGraphId"
+            @open-episode="handleEpisodeNodeClick"
+          />
+          <!-- Communities Tab: 社区树 -->
+          <CommunityExplorer
+            v-else-if="sidebarTab === 'communities'"
+            :graph-id="effectiveGraphId"
+            @open-community="handleCommunityNodeClick"
+          />
         </div>
       </aside>
 
       <!-- Canvas Area -->
       <div class="ide-canvas">
+        <!-- Ontology Workbench (shown when ontology tab is active and class mode) -->
+        <OntologyWorkbench
+          v-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
+          :graph-id="effectiveGraphId"
+          :selected-class-id="selectedOntClassId"
+          @class-selected="handleOntClassSelected"
+        />
+        <!-- Graph Canvas (shown for episodes/communities sidebar tabs, or episodes/communities ontology mode) -->
+        <template v-else>
         <!-- Toolbar -->
         <div class="canvas-toolbar">
           <div class="toolbar-group">
@@ -327,12 +230,13 @@
             @node-contextmenu="handleNodeContextMenu"
           />
         </div>
+        </template>
       </div>
 
       <!-- Right Panel -->
       <aside class="ide-panel" :class="{ collapsed: !showPanel }">
         <!-- V3.0.0: Episode 详情面板 -->
-        <template v-if="treeViewMode === 'episodes' && selectedEpisode">
+        <template v-if="ontologyMode === 'episodes' && selectedEpisode">
           <div class="panel-header">
             <span class="panel-title">事件详情</span>
             <a-button type="text" size="small" @click="selectedEpisode = null">
@@ -349,19 +253,19 @@
                   {{ selectedEpisode.episodeType || '-' }}
                 </a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="法律程序">
-                <a-tag>{{ selectedEpisode.legalProcess || '-' }}</a-tag>
+              <a-descriptions-item label="流程类型">
+                <a-tag>{{ selectedEpisode.processType || selectedEpisode.legalProcess || '-' }}</a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="阶段">
                 {{ selectedEpisode.stageLabel || '-' }}
               </a-descriptions-item>
-              <a-descriptions-item label="审级">
-                <a-tag v-if="selectedEpisode.courtLevel" color="purple">{{ selectedEpisode.courtLevel }}</a-tag>
+              <a-descriptions-item label="阶段级别">
+                <a-tag v-if="selectedEpisode.stageLevel || selectedEpisode.courtLevel" color="purple">{{ selectedEpisode.stageLevel || selectedEpisode.courtLevel }}</a-tag>
                 <span v-else>-</span>
               </a-descriptions-item>
-              <a-descriptions-item label="审判阶段">
-                <a-tag :color="selectedEpisode.isTrialStage ? 'green' : 'default'">
-                  {{ selectedEpisode.isTrialStage ? '是' : '否' }}
+              <a-descriptions-item label="审查阶段">
+                <a-tag :color="selectedEpisode.isReviewStage || selectedEpisode.isTrialStage ? 'green' : 'default'">
+                  {{ (selectedEpisode.isReviewStage || selectedEpisode.isTrialStage) ? '是' : '否' }}
                 </a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="开始时间" :span="2">
@@ -374,6 +278,75 @@
                 <div class="episode-content">{{ selectedEpisode.content }}</div>
               </a-descriptions-item>
             </a-descriptions>
+          </div>
+        </template>
+
+        <!-- V3.0.0: Community 详情面板 -->
+        <template v-else-if="ontologyMode === 'communities' && selectedCommunityDetail">
+          <div class="panel-header">
+            <span class="panel-title">社区详情</span>
+            <a-button type="text" size="small" @click="selectedCommunityDetail = null">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <div class="panel-content">
+            <a-descriptions :column="2" bordered size="small">
+              <a-descriptions-item label="名称" :span="2">
+                {{ selectedCommunityDetail.name }}
+              </a-descriptions-item>
+              <a-descriptions-item label="类型">
+                <a-tag :color="getCommunityColor(selectedCommunityDetail.communityType)">
+                  {{ selectedCommunityDetail.communityType || '-' }}
+                </a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="法律领域">
+                <a-tag>{{ selectedCommunityDetail.legalDomain || '-' }}</a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="辖区">
+                {{ selectedCommunityDetail.jurisdiction || '-' }}
+              </a-descriptions-item>
+              <a-descriptions-item label="实践类型">
+                {{ selectedCommunityDetail.practiceType || '-' }}
+              </a-descriptions-item>
+              <a-descriptions-item label="成员数">
+                <strong>{{ selectedCommunityDetail.memberCount || 0 }}</strong>
+              </a-descriptions-item>
+              <a-descriptions-item label="摘要" :span="2">
+                <div class="community-content">{{ selectedCommunityDetail.summary || '-' }}</div>
+              </a-descriptions-item>
+              <a-descriptions-item label="描述" :span="2">
+                <div class="community-content">{{ selectedCommunityDetail.description || '-' }}</div>
+              </a-descriptions-item>
+            </a-descriptions>
+
+            <!-- 子社区列表 -->
+            <div v-if="selectedCommunityDetail.subCommunities && selectedCommunityDetail.subCommunities.length > 0" class="detail-section" style="margin-top: 16px;">
+              <div class="section-title">子社区 ({{ selectedCommunityDetail.subCommunities.length }})</div>
+              <div class="property-list">
+                <div v-for="sub in selectedCommunityDetail.subCommunities" :key="sub.uuid" class="property-item">
+                  <span class="property-value">{{ sub.name || sub.uuid }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成员节点列表 -->
+            <div v-if="selectedCommunityDetail.members && selectedCommunityDetail.members.length > 0" class="detail-section" style="margin-top: 16px;">
+              <div class="section-title">成员节点 ({{ selectedCommunityDetail.members.length }})</div>
+              <div class="property-list">
+                <div v-for="member in selectedCommunityDetail.members.slice(0, 10)" :key="member.uuid" class="property-item" @click="navigateToNode(member.uuid)" style="cursor:pointer">
+                  <span class="property-key">{{ member.type || 'Entity' }}</span>
+                  <span class="property-value">{{ member.name || member.uuid }}</span>
+                </div>
+                <div v-if="selectedCommunityDetail.members.length > 10" class="property-item">
+                  <span class="property-value" style="color: #8b949e; text-align: center">还有 {{ selectedCommunityDetail.members.length - 10 }} 个成员...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <a-popconfirm title="确定要删除此社区吗？" ok-text="确定" cancel-text="取消" @confirm="deleteSelectedCommunity">
+              <a-button danger block>删除社区</a-button>
+            </a-popconfirm>
           </div>
         </template>
 
@@ -571,14 +544,6 @@
             >
               编辑
             </a-button>
-            <a-button
-              v-if="selectedClass"
-              type="primary"
-              block
-              @click="showSchemaEditor = true"
-            >
-              编辑 Schema
-            </a-button>
             <a-popconfirm
               title="确定要删除吗？"
               ok-text="确定"
@@ -666,14 +631,6 @@
       @success="handleNodeEditSuccess"
     />
 
-    <SchemaEditorModal
-      v-model:visible="showSchemaEditor"
-      :graph-id="graphId"
-      :selected-class="selectedClass"
-      :classes="schemaClasses"
-      @success="handleSchemaSuccess"
-    />
-
     <AddEdgeModal
       v-if="addingEdgeSource"
       v-model:visible="showAddEdgeModal"
@@ -719,12 +676,11 @@ import type {
   SchemaClass,
   ClassInstance,
   LayoutType,
-  EditTool,
-  SidebarTab
+  EditTool
 } from '@/api/graph'
 import type { DetailPanelTab } from '@/types/graph-ide'
+import { communityTypeApi, type OntCommunityTypeVO } from '@/api/metadata'
 import {
-  LEGAL_PROCESS_LABELS,
   LEGAL_DOMAIN_COLORS,
   EPISODE_TYPE_COLORS,
   type EpisodeV3,
@@ -733,8 +689,11 @@ import {
 import GraphCanvas from '@/components/Graph/GraphCanvas.vue'
 import CascadeEditModal from '@/components/Graph/CascadeEditModal.vue'
 import NodeEditModal from '@/components/Graph/NodeEditModal.vue'
-import SchemaEditorModal from '@/components/Graph/SchemaEditorModal.vue'
 import AddEdgeModal from '@/components/Graph/AddEdgeModal.vue'
+import OntologyObjectExplorer from '@/components/Ontology/OntologyObjectExplorer.vue'
+import OntologyWorkbench from '@/components/Ontology/OntologyWorkbench.vue'
+import EpisodeExplorer from '@/components/Ontology/EpisodeExplorer.vue'
+import CommunityExplorer from '@/components/Ontology/CommunityExplorer.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -744,6 +703,7 @@ const graphId = computed(() => route.params.id as string)
 const selectedGraphId = ref<string>('')
 const graphList = ref<Array<{ graphId: string; name: string }>>([])
 const loadingGraphs = ref(false)
+const communityTypes = ref<OntCommunityTypeVO[]>([])
 
 // Computed effective graph ID
 const effectiveGraphId = computed(() => graphId.value || selectedGraphId.value)
@@ -754,16 +714,9 @@ const syncing = ref(false)
 const showSettings = ref(false)
 
 // Sidebar
-const sidebarTab = ref<SidebarTab>('explorer')
-const schemaSearch = ref('')
-const expandedTrees = reactive<Record<string, boolean>>({
-  graph: true,
-  ontology: true,
-  classes: true
-})
-
-// 类树节点展开状态（key 为类 ID，值为是否展开）
-const expandedClassNodes = reactive<Record<number, boolean>>({})
+const sidebarTab = ref<'ontology' | 'episodes' | 'communities'>('ontology')
+const ontologyMode = ref<'class' | 'episodes' | 'communities'>('class')
+const selectedOntClassId = ref<number | null>(null) // 当前在本体视图中选中的类ID（用于右侧详情面板）
 
 // Canvas
 const graphCanvasRef = ref()
@@ -790,7 +743,6 @@ const contextMenu = reactive({
 // Modals
 const showCascadeModal = ref(false)
 const showNodeEditModal = ref(false)
-const showSchemaEditor = ref(false)
 const showAddEdgeModal = ref(false)
 const showPropertyForm = ref(false)
 const editingNode = ref<GraphIDENode | null>(null)
@@ -811,19 +763,11 @@ const dedupeEdges = (list: GraphIDEEdge[]): GraphIDEEdge[] => {
   return [...new Map(list.map(e => [e.uuid, e])).values()]
 }
 
-// Tree sidebar state
-type TreeViewMode = 'instances' | 'edges' | 'episodes' | 'communities' | null
-const activeTreeItem = ref<string | null>(null)   // 当前激活的树节点 key
-const treeViewMode = ref<TreeViewMode>(null)       // 特殊视图模式
-
-// V3.0.0: 选中的 Episode 详情
+// V3.0.0: 选中的 Episode 详情（剧集视图时使用）
 const selectedEpisode = ref<EpisodeV3 | null>(null)
 
-// V3.0.0: 社区树数据
-const communityTreeData = ref<any[]>([])
-
-// V3.0.0: 社区多维度过滤
-const communityFilterDimension = ref<string>('domain')
+// V3.0.0: 社区详情（社区视图时使用）
+const selectedCommunityDetail = ref<any | null>(null)
 
 // Class instances
 const classInstances = ref<ClassInstance[]>([])
@@ -854,55 +798,6 @@ const detailTabs = [
   { key: 'instances' as DetailPanelTab, label: '实例' }
 ]
 
-// Computed
-const filteredSchemaClasses = computed(() => {
-  if (!schemaSearch.value) return schemaClasses.value
-  const keyword = schemaSearch.value.toLowerCase()
-  return schemaClasses.value.filter(c =>
-    c.localName.toLowerCase().includes(keyword)
-  )
-})
-
-// 构建类的层级树结构（父子关系）
-interface ClassTreeNode extends SchemaClass {
-  children: ClassTreeNode[]
-}
-
-const classTree = computed<ClassTreeNode[]>(() => {
-  const nodes: ClassTreeNode[] = schemaClasses.value.map(cls => ({
-    ...cls,
-    children: []
-  }))
-
-  const idToNode = new Map<number, ClassTreeNode>()
-  nodes.forEach(n => idToNode.set(n.id, n))
-
-  const roots: ClassTreeNode[] = []
-  nodes.forEach(node => {
-    if (!node.parentClassIds || node.parentClassIds.length === 0) {
-      roots.push(node)
-    } else {
-      node.parentClassIds.forEach(pid => {
-        const parent = idToNode.get(pid)
-        if (parent) {
-          parent.children.push(node)
-        } else {
-          // 父类不在当前 definition 中，当作根节点
-          roots.push(node)
-        }
-      })
-    }
-  })
-
-  const sortNodes = (arr: ClassTreeNode[]) => {
-    arr.sort((a, b) => a.localName.localeCompare(b.localName))
-    arr.forEach(n => sortNodes(n.children))
-  }
-  sortNodes(roots)
-
-  return roots
-})
-
 const displayProperties = computed(() => {
   if (selectedNode.value?.properties) return selectedNode.value.properties
   if (selectedClass.value?.properties) {
@@ -927,9 +822,15 @@ const formatValue = (value: any): string => {
   return String(value)
 }
 
-// V3.0.0: 根据法律领域获取社区颜色
+// V3.0.0: 根据法律领域获取社区颜色（优先从元数据读取）
 const getCommunityColor = (domain?: string): string => {
   if (!domain) return '#999'
+  // 优先从 communityTypes 元数据中读取颜色
+  const found = communityTypes.value.find(t => t.typeName === domain || t.typeCode === domain)
+  if (found?.metadata && typeof found.metadata === 'object' && 'color' in found.metadata) {
+    return (found.metadata as { color: string }).color
+  }
+  // 回退到固定颜色映射
   return LEGAL_DOMAIN_COLORS[domain] || '#999'
 }
 
@@ -993,34 +894,6 @@ const getNodeColor = (type: string): string => {
     Category: '#84cc16'
   }
   return colors[type] || '#6e7681'
-}
-
-const getClassColor = (name: string): string => {
-  return getNodeColor(name)
-}
-
-const toggleTree = (key: string) => {
-  expandedTrees[key] = !expandedTrees[key]
-}
-
-const isTreeExpanded = (key: string): boolean => {
-  return expandedTrees[key] === true
-}
-
-const toggleClassNode = (cls: ClassTreeNode) => {
-  const key = cls.id
-  expandedClassNodes[key] = !expandedClassNodes[key]
-}
-
-const isClassNodeExpanded = (cls: ClassTreeNode): boolean => {
-  return expandedClassNodes[cls.id] === true
-}
-
-const selectClass = async (cls: SchemaClass) => {
-  selectedClass.value = cls
-  selectedNode.value = null
-  showPanel.value = true
-  currentDetailTab.value = 'info'
 }
 
 const handleNodeClick = (node: GraphIDENode) => {
@@ -1170,7 +1043,9 @@ const handleSearch = () => {
 const handleSync = async () => {
   syncing.value = true
   try {
-    await loadAllData()
+    // 重新加载 schemaClasses，确保 ontology 视图使用最新的类列表
+    await loadSchemaClasses()
+    await loadGraphData()
     message.success('同步完成')
   } catch (error) {
     message.error('同步失败')
@@ -1195,10 +1070,6 @@ const handleNodeEditSuccess = (updatedNode: GraphIDENode) => {
 
 const handleAddEdgeSuccess = (newEdge: GraphIDEEdge) => {
   edges.value.push(newEdge)
-}
-
-const handleSchemaSuccess = () => {
-  loadSchemaClasses()
 }
 
 // Load data
@@ -1246,6 +1117,17 @@ const loadSchemaClasses = async () => {
     schemaClasses.value = await graphApi.getSchemaClasses(effectiveGraphId.value)
   } catch (error) {
     console.error('加载类列表失败:', error)
+  }
+}
+
+// 加载社区类型元数据
+const loadCommunityTypes = async () => {
+  if (!effectiveGraphId.value) return
+  try {
+    const res = await communityTypeApi.list(effectiveGraphId.value, 0)
+    communityTypes.value = res.data || []
+  } catch (error) {
+    console.error('加载社区类型失败:', error)
   }
 }
 
@@ -1352,187 +1234,97 @@ const handleGraphChange = (value: string) => {
   router.push(`/graph/ide/${value}`)
 }
 
-// ===== 左侧资源树点击处理 =====
+// 本体管理控制台：打开Tab
+import { useOntologyStore } from '@/store/modules/ontology'
+const ontologyStore = useOntologyStore()
 
-// 获取类及其所有子类名称
-const getClassAndDescendants = (cls: ClassTreeNode): string[] => {
-  const types: string[] = [cls.localName]
-  const collectChildren = (node: ClassTreeNode) => {
-    for (const child of node.children) {
-      types.push(child.localName)
-      collectChildren(child)
-    }
-  }
-  collectChildren(cls)
-  return types
+const handleOntologyOpenTab = (payload: { type: string; title: string; classId?: number; propertyId?: number; classType?: string }) => {
+  ontologyStore.openTab({
+    id: payload.classId ? `class-editor-${payload.classId}` :
+        payload.propertyId ? `property-editor-${payload.propertyId}` :
+        `tab-${payload.type}-${Date.now()}`,
+    type: payload.type as any,
+    title: payload.title,
+    classId: payload.classId,
+    propertyId: payload.propertyId,
+    classType: payload.classType
+  })
+  ontologyMode.value = 'class'
 }
 
-// 类树节点点击 - 过滤显示该类及子类的所有节点
-const handleClassTreeNodeClick = async (cls: ClassTreeNode) => {
-  const itemKey = `class-${cls.id}`
-  const isActive = activeTreeItem.value === itemKey
-
-  if (isActive) {
-    // 再次点击取消激活，恢复全图
-    activeTreeItem.value = null
-    treeViewMode.value = null
-    await loadGraphData()
-    return
-  }
-
-  activeTreeItem.value = itemKey
-  treeViewMode.value = 'instances'
-  loading.value = true
-  try {
-    const types = getClassAndDescendants(cls)
-    const data = await graphApi.getVisualizationByTypes(effectiveGraphId.value, types, {
-      page: 1,
-      pageSize: 500
-    })
-    nodes.value = dedupeNodes(data.nodes || [])
-    edges.value = dedupeEdges(data.edges || [])
-    // 右侧面板显示类信息
-    selectedClass.value = schemaClasses.value.find(c => c.id === cls.id) || null
-    selectedNode.value = null
-    showPanel.value = true
-    currentDetailTab.value = 'info'
-  } catch (error) {
-    console.error('加载类数据失败:', error)
-    message.error('加载数据失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// 实例数据点击
-const handleInstancesClick = async () => {
-  const itemKey = 'instances'
-  const isActive = activeTreeItem.value === itemKey
-
-  if (isActive) {
-    activeTreeItem.value = null
-    treeViewMode.value = null
-    await loadGraphData()
-    return
-  }
-
-  activeTreeItem.value = itemKey
-  treeViewMode.value = 'instances'
-  loading.value = true
-  try {
-    const data = await graphApi.getVisualization(effectiveGraphId.value, {
-      page: 1,
-      pageSize: 500
-    })
-    nodes.value = dedupeNodes(data.nodes || [])
-    edges.value = dedupeEdges(data.edges || [])
-    selectedNode.value = null
-    selectedClass.value = null
-    showPanel.value = false
-  } catch (error) {
-    console.error('加载实例数据失败:', error)
-    message.error('加载数据失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// 边点击
-const handleEdgesClick = async () => {
-  const itemKey = 'edges'
-  const isActive = activeTreeItem.value === itemKey
-
-  if (isActive) {
-    activeTreeItem.value = null
-    treeViewMode.value = null
-    await loadGraphData()
-    return
-  }
-
-  activeTreeItem.value = itemKey
-  treeViewMode.value = 'edges'
-  loading.value = true
-  try {
-    const data = await graphApi.getEdgesVisualization(effectiveGraphId.value, 500)
-    nodes.value = dedupeNodes(data.nodes || [])
-    edges.value = dedupeEdges(data.edges || [])
-    selectedNode.value = null
-    selectedClass.value = null
-    showPanel.value = false
-  } catch (error) {
-    console.error('加载边数据失败:', error)
-    message.error('加载数据失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// 事件流点击
-const handleEpisodesClick = async () => {
-  const itemKey = 'episodes'
-  const isActive = activeTreeItem.value === itemKey
-
-  if (isActive) {
-    activeTreeItem.value = null
-    treeViewMode.value = null
-    selectedEpisode.value = null
-    await loadGraphData()
-    return
-  }
-
-  activeTreeItem.value = itemKey
-  treeViewMode.value = 'episodes'
+// 点击剧集节点 → 切换到图谱视图显示剧集数据
+const handleEpisodeNodeClick = async (payload?: { stageNode?: any; processNode?: any }) => {
+  sidebarTab.value = 'episodes'
+  ontologyMode.value = 'episodes'
   selectedEpisode.value = null
+  showPanel.value = false
   loading.value = true
+
   try {
     const data = await graphApi.getEpisodesVisualization(effectiveGraphId.value, 100)
     nodes.value = dedupeNodes(data.nodes || [])
     edges.value = dedupeEdges(data.edges || [])
-    selectedNode.value = null
-    selectedClass.value = null
-    showPanel.value = false
+
+    if (payload?.stageNode?.episodes?.length) {
+      const first = payload.stageNode.episodes[0]
+      const detail = await graphApi.getEpisodeDetail(effectiveGraphId.value, first.uuid)
+      selectedEpisode.value = detail
+      showPanel.value = true
+    }
   } catch (error) {
-    console.error('加载事件流数据失败:', error)
-    message.error('加载数据失败')
+    console.error('加载剧集数据失败:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 社区点击
-const handleCommunitiesClick = async () => {
-  const itemKey = 'communities'
-  const isActive = activeTreeItem.value === itemKey
-
-  if (isActive) {
-    activeTreeItem.value = null
-    treeViewMode.value = null
-    selectedEpisode.value = null
-    await loadGraphData()
-    return
-  }
-
-  activeTreeItem.value = itemKey
-  treeViewMode.value = 'communities'
-  selectedEpisode.value = null
+// 点击社区节点 → 切换到图谱视图显示社区数据
+const handleCommunityNodeClick = async (node?: any) => {
+  sidebarTab.value = 'communities'
+  ontologyMode.value = 'communities'
+  selectedCommunityDetail.value = null
+  showPanel.value = false
   loading.value = true
+
   try {
-    // V3.0.0: 调用可视化 API（已有 V3 字段）
     const data = await graphApi.getCommunitiesVisualization(effectiveGraphId.value, 100)
     nodes.value = dedupeNodes(data.nodes || [])
     edges.value = dedupeEdges(data.edges || [])
-    // V3.0.0: 构建社区树
-    const communities = (data.nodes || []).filter((n: any) => n.type === 'Community')
-    communityTreeData.value = buildCommunityTree(communities)
-    selectedNode.value = null
-    selectedClass.value = null
-    showPanel.value = false
+
+    if (node?.children?.length) {
+      const first = node.children[0]
+      if (first.uuid) {
+        const detail = await graphApi.getCommunityDetail(effectiveGraphId.value, first.uuid)
+        selectedCommunityDetail.value = detail
+        showPanel.value = true
+      }
+    }
   } catch (error) {
     console.error('加载社区数据失败:', error)
-    message.error('加载数据失败')
   } finally {
     loading.value = false
   }
+}
+
+// 事件流点击（顶级节点）
+// 本体树中选中某个类 → 打开类列表标签页 + 右侧面板显示类统计信息
+const handleOntClassSelected = async (classId: number) => {
+  selectedOntClassId.value = classId
+  const schemaClass = schemaClasses.value.find(c => c.id === classId)
+  if (!schemaClass) return
+
+  selectedClass.value = schemaClass
+  selectedNode.value = null
+  showPanel.value = true
+  currentDetailTab.value = 'info'
+
+  // 打开类列表标签页（显示类管理界面）
+  ontologyStore.openTab({
+    id: 'class-list-panel',
+    type: 'class-list',
+    title: '类列表'
+  })
+  ontologyMode.value = 'class'
 }
 
 const loadAllData = async () => {
@@ -1556,6 +1348,7 @@ onMounted(async () => {
   if (effectiveGraphId.value) {
     await loadAllData()
   }
+  await loadCommunityTypes()
   document.addEventListener('click', handleDocumentClick)
 })
 
@@ -1729,130 +1522,58 @@ watch(currentDetailTab, (newTab) => {
     overflow-y: auto;
     padding: 12px;
   }
-}
 
-// Explorer Tree
-.explorer-tree {
-  .tree-node {
+  :global(.ide-sidebar .tree-node) {
     display: flex;
     align-items: center;
+    gap: 6px;
     padding: 6px 8px;
     border-radius: 6px;
     cursor: pointer;
-    gap: 6px;
     font-size: 13px;
     transition: background 0.15s;
-
-    &:hover {
-      background: #21262d;
-    }
-
-    &.selected {
-      background: rgba(88, 166, 255, 0.15);
-      border: 1px solid rgba(88, 166, 255, 0.3);
-    }
-
-    .tree-icon {
-      width: 16px;
-      font-size: 12px;
-      flex-shrink: 0;
-    }
-
-    .tree-label {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .tree-badge {
-      font-size: 11px;
-      color: #6e7681;
-      background: #21262d;
-      padding: 2px 6px;
-      border-radius: 10px;
-    }
-
-    .type-icon {
-      color: #58a6ff;
-    }
   }
 
-  .tree-children {
+  :global(.ide-sidebar .tree-node:hover) {
+    background: #21262d;
+  }
+
+  :global(.ide-sidebar .tree-node.tree-label-active) {
+    color: #58a6ff;
+  }
+
+  :global(.ide-sidebar .tree-node .tree-icon) {
+    width: 16px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  :global(.ide-sidebar .tree-node .tree-icon.active) {
+    color: #58a6ff;
+  }
+
+  :global(.ide-sidebar .tree-node .tree-label) {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  :global(.ide-sidebar .tree-node .tree-badge) {
+    font-size: 11px;
+    color: #6e7681;
+    background: #21262d;
+    padding: 2px 6px;
+    border-radius: 10px;
+  }
+
+  :global(.ide-sidebar .tree-children) {
     padding-left: 20px;
   }
 }
 
-// Schema Tree
-.schema-tree {
-  .search-box {
-    margin-bottom: 12px;
-  }
-
-  .class-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .class-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: 1px solid transparent;
-
-    &:hover {
-      background: #21262d;
-    }
-
-    &.selected {
-      background: rgba(88, 166, 255, 0.15);
-      border-color: #58a6ff;
-    }
-
-    .class-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .class-info {
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .class-name {
-      font-size: 13px;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .class-count {
-      font-size: 11px;
-      color: #6e7681;
-    }
-  }
-
-  .add-class-btn {
-    width: 100%;
-    margin-top: 12px;
-    color: #58a6ff;
-  }
-}
-
+// Explorer Tree — all tree nodes share .tree-node / .tree-children defined inside .ide-sidebar
 // Canvas
 .ide-canvas {
   flex: 1;
@@ -2208,6 +1929,25 @@ watch(currentDetailTab, (newTab) => {
   margin-top: 12px;
   display: flex;
   justify-content: center;
+}
+
+// Community detail content
+.community-content {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #c9d1d9;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+// Empty tree tip (inside sidebar tree)
+.empty-tree-tip {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #6e7681;
+  font-style: italic;
 }
 
 .empty-tip {

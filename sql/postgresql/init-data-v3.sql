@@ -260,6 +260,304 @@ VALUES
  'MATCH (ma:MediationAgreement)-[:AFFIRMED_BY]->(jd:JudgmentDocument)',
  13);
 
+-- 五领域通用分类体系初始数据
+-- Phase 6: 社区系统通用化改造
+-- ============================================================
+
+-- 1. 顶层领域（domain）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_ROOT', '知识领域', 'domain', NULL, 0, '{"color": "#607D8B"}', 'ACTIVE'),
+  (1, 'DOMAIN_LEGAL', '法律', 'domain', 'DOMAIN_ROOT', 1, '{"color": "#1565C0"}', 'ACTIVE'),
+  (1, 'DOMAIN_FINANCE', '金融', 'domain', 'DOMAIN_ROOT', 10, '{"color": "#2E7D32"}', 'ACTIVE'),
+  (1, 'DOMAIN_ENTERPRISE', '企业管理', 'domain', 'DOMAIN_ROOT', 20, '{"color": "#E65100"}', 'ACTIVE'),
+  (1, 'DOMAIN_MEDICAL', '医疗', 'domain', 'DOMAIN_ROOT', 30, '{"color": "#C62828"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_GOV', '社会治理', 'domain', 'DOMAIN_ROOT', 40, '{"color": "#6A1B9A"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 2. 法律子领域
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_CIVIL', '民商事', 'domain', 'DOMAIN_LEGAL', 1, '{"color": "#1976D2"}', 'ACTIVE'),
+  (1, 'DOMAIN_CRIMINAL', '刑事法律', 'domain', 'DOMAIN_LEGAL', 2, '{"color": "#D32F2F"}', 'ACTIVE'),
+  (1, 'DOMAIN_ADMIN', '行政法律', 'domain', 'DOMAIN_LEGAL', 3, '{"color": "#F57C00"}', 'ACTIVE'),
+  (1, 'DOMAIN_IP', '知识产权', 'domain', 'DOMAIN_LEGAL', 4, '{"color": "#7B1FA2"}', 'ACTIVE'),
+  (1, 'DOMAIN_LABOR', '劳动法律', 'domain', 'DOMAIN_LEGAL', 5, '{"color": "#388E3C"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 3. 金融子领域
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_BANKING', '银行与信贷', 'domain', 'DOMAIN_FINANCE', 1, '{"color": "#1B5E20"}', 'ACTIVE'),
+  (1, 'DOMAIN_SECURITIES', '证券与投资', 'domain', 'DOMAIN_FINANCE', 2, '{"color": "#004D40"}', 'ACTIVE'),
+  (1, 'DOMAIN_INSURANCE', '保险业务', 'domain', 'DOMAIN_FINANCE', 3, '{"color": "#006064"}', 'ACTIVE'),
+  (1, 'DOMAIN_RISK', '风险管控', 'domain', 'DOMAIN_FINANCE', 4, '{"color": "#263238"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 4. 企业管理子领域
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_HR', '人力资源', 'domain', 'DOMAIN_ENTERPRISE', 1, '{"color": "#E65100"}', 'ACTIVE'),
+  (1, 'DOMAIN_FINANCE_MGMT', '财务管理', 'domain', 'DOMAIN_ENTERPRISE', 2, '{"color": "#BF360C"}', 'ACTIVE'),
+  (1, 'DOMAIN_COMPLIANCE', '企业合规', 'domain', 'DOMAIN_ENTERPRISE', 3, '{"color": "#E64A19"}', 'ACTIVE'),
+  (1, 'DOMAIN_GOVERNANCE', '公司治理', 'domain', 'DOMAIN_ENTERPRISE', 4, '{"color": "#D84315"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 5. 医疗子领域
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_CLINICAL', '临床诊疗', 'domain', 'DOMAIN_MEDICAL', 1, '{"color": "#B71C1C"}', 'ACTIVE'),
+  (1, 'DOMAIN_DRUG', '药品与器械', 'domain', 'DOMAIN_MEDICAL', 2, '{"color": "#880E4F"}', 'ACTIVE'),
+  (1, 'DOMAIN_PUBLIC_HEALTH', '公共卫生', 'domain', 'DOMAIN_MEDICAL', 3, '{"color": "#4A148C"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 6. 社会治理一级分类（10 个）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', '婚恋家庭纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 1, '{"color": "#AD1457"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR', '劳动人事争议纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 2, '{"color": "#6A1B9A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT', '侵权责任纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 3, '{"color": "#4527A0"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR', '邻里关系纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 4, '{"color": "#283593"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', '房屋物业纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 5, '{"color": "#1565C0"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND', '山林土地水利纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 6, '{"color": "#00838F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', '消费服务纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 7, '{"color": "#00695C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', '经济金融活动纠纷', 'domain', 'DOMAIN_SOCIAL_GOV', 8, '{"color": "#2E7D32"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION', '行政纠纷与信访维权', 'domain', 'DOMAIN_SOCIAL_GOV', 9, '{"color": "#558B2F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_SERVICE', '咨询与公证服务', 'domain', 'DOMAIN_SOCIAL_GOV', 10, '{"color": "#F9A825"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 7. 婚恋家庭纠纷二级分类（11 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_01', '夫妻关系矛盾纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 1, '{"color": "#F48FB1"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_02', '离异夫妻矛盾纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 2, '{"color": "#F06292"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_03', '未婚恋爱纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 3, '{"color": "#EC407A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_04', '同居关系纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 4, '{"color": "#E91E63"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_05', '分家、继承与赡养纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 5, '{"color": "#D81B60"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_06', '父母子女矛盾纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 6, '{"color": "#C2185B"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_07', '兄弟姐妹矛盾纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 7, '{"color": "#AD1457"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_08', '家庭其它成员矛盾纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 8, '{"color": "#880E4F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_09', '婚姻自主权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 9, '{"color": "#7B1FA2"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_10', '宣告失踪、死亡纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 10, '{"color": "#6A1B9A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE_11', '认定无民事行为能力纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_MARRIAGE', 11, '{"color": "#4A148C"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 8. 劳动人事争议纠纷二级分类（8 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_01', '劳动报酬追索纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 1, '{"color": "#CE93D8"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_02', '经济补偿与赔偿纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 2, '{"color": "#BA68C8"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_03', '福利待遇纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 3, '{"color": "#AB47BC"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_04', '招聘录用纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 4, '{"color": "#9C27B0"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_05', '人事任免纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 5, '{"color": "#8E24AA"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_06', '劳动合同纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 6, '{"color": "#7B1FA2"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_07', '临时用工纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 7, '{"color": "#6A1B9A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LABOR_08', '竞业限制纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LABOR', 8, '{"color": "#4A148C"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 9. 侵权责任纠纷二级分类（18 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_01', '医疗医美损害责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 1, '{"color": "#B39DDB"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_02', '人身安全与健康权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 2, '{"color": "#9575CD"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_03', '姓名权、肖像权、声音权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 3, '{"color": "#7E57C2"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_04', '名誉权、荣誉权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 4, '{"color": "#673AB7"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_05', '隐私和个人信息保护纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 5, '{"color": "#5E35B1"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_06', '财物返还及损害赔偿纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 6, '{"color": "#512DA8"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_07', '网络侵权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 7, '{"color": "#4527A0"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_08', '群众性活动纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 8, '{"color": "#311B92"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_09', '学校及教育机构纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 9, '{"color": "#283593"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_10', '交通事故责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 10, '{"color": "#1A237E"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_11', '医疗事故责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 11, '{"color": "#1565C0"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_12', '性骚扰损害责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 12, '{"color": "#0D47A1"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_13', '环境与生态环境责任纠纷及公益诉讼', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 13, '{"color": "#0277BD"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_14', '食品药品安全责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 14, '{"color": "#00838F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_15', '饲养动物损害责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 15, '{"color": "#00695C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_16', '国家赔偿纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 16, '{"color": "#2E7D32"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_17', '口角琐事纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 17, '{"color": "#558B2F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_TORT_18', '知识产权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_TORT', 18, '{"color": "#827717"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 10. 邻里关系纠纷二级分类（5 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR_01', '相邻用水、排水、通行、通风、采光纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR', 1, '{"color": "#80DEEA"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR_02', '相邻土地利用与建筑物纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR', 2, '{"color": "#4DD0E1"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR_03', '相邻污染损害防免纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR', 3, '{"color": "#26C6DA"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR_04', '高空抛物责任纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR', 4, '{"color": "#00BCD4"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR_05', '邻里口角琐事纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_NEIGHBOR', 5, '{"color": "#00ACC1"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 11. 房屋物业纠纷二级分类（7 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_01', '物业管理纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 1, '{"color": "#4FC3F7"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_02', '业主与业委会纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 2, '{"color": "#29B6F6"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_03', '不动产登记纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 3, '{"color": "#03A9F4"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_04', '车位车库使用权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 4, '{"color": "#039BE5"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_05', '居住权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 5, '{"color": "#0288D1"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_06', '房屋买卖与租赁纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 6, '{"color": "#0277BD"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_PROPERTY_07', '建筑质量损害纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_PROPERTY', 7, '{"color": "#01579B"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 12. 山林土地水利纠纷二级分类（6 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND_01', '土地承包经营权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LAND', 1, '{"color": "#AED581"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND_02', '宅基地使用权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LAND', 2, '{"color": "#9CCC65"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND_03', '取水、养殖、捕捞权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LAND', 3, '{"color": "#8BC34A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND_04', '建设用地使用权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LAND', 4, '{"color": "#7CB342"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND_05', '探矿权、采矿权纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LAND', 5, '{"color": "#689F38"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_LAND_06', '侵害集体经济组织权益纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_LAND', 6, '{"color": "#558B2F"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 13. 消费服务纠纷二级分类（12 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_01', '商品买卖与质量纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 1, '{"color": "#FFCC80"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_02', '交通出行服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 2, '{"color": "#FFB74D"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_03', '住宿餐饮服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 3, '{"color": "#FFA726"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_04', '邮政快递与跑腿服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 4, '{"color": "#FF9800"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_05', '通信与网络服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 5, '{"color": "#FB8C00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_06', '公用事业服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 6, '{"color": "#F57C00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_07', '旅游服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 7, '{"color": "#EF6C00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_08', '家政服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 8, '{"color": "#E65100"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_09', '养老服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 9, '{"color": "#BF360C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_10', '美容保健服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 10, '{"color": "#D84315"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_11', '培训服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 11, '{"color": "#BF360C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_CONSUMER_12', '房地产服务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_CONSUMER', 12, '{"color": "#E64A19"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 14. 经济金融活动纠纷二级分类（12 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_01', '借贷担保纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 1, '{"color": "#A5D6A7"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_02', '储蓄存款纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 2, '{"color": "#81C784"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_03', '投资、信托理财纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 3, '{"color": "#66BB6A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_04', '证券、基金、期货纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 4, '{"color": "#4CAF50"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_05', '保险理赔纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 5, '{"color": "#43A047"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_06', '票据与信用证纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 6, '{"color": "#388E3C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_07', '政府类债务纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 7, '{"color": "#2E7D32"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_08', '非法融资纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 8, '{"color": "#1B5E20"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_09', '公司企业生产经营纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 9, '{"color": "#1B5E20"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_10', '拖欠企业账款纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 10, '{"color": "#2E7D32"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_11', '房地产纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 11, '{"color": "#388E3C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC_12', '涉众经济金融纠纷', 'domain', 'DOMAIN_SOCIAL_DISPUTE_ECONOMIC', 12, '{"color": "#43A047"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 15. 行政纠纷与信访维权二级分类（26 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_01', '公安治安管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 1, '{"color": "#C5E1A5"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_02', '道路交通管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 2, '{"color": "#AED581"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_03', '劳动和社会保障行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 3, '{"color": "#9CCC65"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_04', '民政行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 4, '{"color": "#8BC34A"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_05', '工商行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 5, '{"color": "#7CB342"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_06', '规划、拆迁、房屋登记等城乡建设行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 6, '{"color": "#689F38"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_07', '教育行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 7, '{"color": "#558B2F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_08', '卫生行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 8, '{"color": "#33691E"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_09', '食品药品安全行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 9, '{"color": "#827717"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_10', '税务行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 10, '{"color": "#F9A825"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_11', '环境保护行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 11, '{"color": "#F57F17"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_12', '金融行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 12, '{"color": "#FFD600"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_13', '海关行政管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 13, '{"color": "#FFEA00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_14', '乡政府管理', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 14, '{"color": "#FFC400"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_15', '村（社区、居）务管理纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 15, '{"color": "#FFB300"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_16', '行政复议纠纷', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 16, '{"color": "#FFA000"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_17', '纪检监察举报申诉', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 17, '{"color": "#FF8F00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_18', '综合行政执法举报投诉', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 18, '{"color": "#FF6F00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_19', '市场监督执法举报投诉', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 19, '{"color": "#FF6F00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_20', '涉诉涉法举报申诉', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 20, '{"color": "#E65100"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_21', '其他投诉举报', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 21, '{"color": "#BF360C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_22', '检举控告类事项', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 22, '{"color": "#D84315"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_23', '建议意见类事项', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 23, '{"color": "#BF360C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_24', '申诉求决类事项', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 24, '{"color": "#BF360C"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_25', '涉法涉诉信访', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 25, '{"color": "#E65100"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_ADMIN_PETITION_26', '涉军维权事项', 'domain', 'DOMAIN_SOCIAL_ADMIN_PETITION', 26, '{"color": "#BF360C"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 16. 咨询与公证服务二级分类（12 项）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'DOMAIN_SOCIAL_CONSULT_LEGAL', '法律咨询', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 1, '{"color": "#FFF9C4"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_PSYCH', '心理咨询', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 2, '{"color": "#FFF59D"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_PETITION', '信访咨询', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 3, '{"color": "#FFF176"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_POLICE', '涉警咨询', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 4, '{"color": "#FFEE58"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_NOTARY', '公证咨询', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 5, '{"color": "#FFD54F"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_LEGAL_AID', '法律援助咨询', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 6, '{"color": "#FFCA28"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_SERVICE_NOTARY', '公证服务', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 7, '{"color": "#FFC107"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_SERVICE_APPRAISAL', '司法鉴定', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 8, '{"color": "#FFB300"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_SERVICE_LEGAL_AID', '法律援助', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 9, '{"color": "#FFA000"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_SERVICE_WORK_INJURY', '工伤认定', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 10, '{"color": "#FF8F00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_CONSULT_OTHER', '其他咨询与服务', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 11, '{"color": "#FF6F00"}', 'ACTIVE'),
+  (1, 'DOMAIN_SOCIAL_SUGGESTION', '意见建议', 'domain', 'DOMAIN_SOCIAL_CONSULT_SERVICE', 12, '{"color": "#E65100"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 17. 区域分类（region）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'REGION_ROOT', '全球/通用', 'region', NULL, 0, '{"color": "#9E9E9E"}', 'ACTIVE'),
+  (1, 'REGION_CN', '中国', 'region', NULL, 1, '{"color": "#D32F2F"}', 'ACTIVE'),
+  (1, 'REGION_US', '美国', 'region', NULL, 2, '{"color": "#1565C0"}', 'ACTIVE'),
+  (1, 'REGION_EU', '欧洲', 'region', NULL, 3, '{"color": "#1976D2"}', 'ACTIVE'),
+  (1, 'REGION_INTERNATIONAL', '国际', 'region', NULL, 4, '{"color": "#7B1FA2"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 18. 场景分类（scenario）
+INSERT INTO ont_community_type (definition_id, type_code, type_name, category, parent_type_code, sort_order, metadata, status)
+VALUES
+  (1, 'SCENARIO_ROOT', '通用场景', 'scenario', NULL, 0, '{"color": "#607D8B"}', 'ACTIVE'),
+  (1, 'SCENARIO_JUDICIAL', '司法实践', 'scenario', NULL, 1, '{"color": "#1565C0"}', 'ACTIVE'),
+  (1, 'SCENARIO_COMPLIANCE', '合规管理', 'scenario', NULL, 2, '{"color": "#2E7D32"}', 'ACTIVE'),
+  (1, 'SCENARIO_RISK', '风险管控', 'scenario', NULL, 3, '{"color": "#E65100"}', 'ACTIVE'),
+  (1, 'SCENARIO_LIFECYCLE', '生命周期', 'scenario', NULL, 4, '{"color": "#C62828"}', 'ACTIVE'),
+  (1, 'SCENARIO_LAW_REGULATE', '依法调解', 'scenario', NULL, 5, '{"color": "#6A1B9A"}', 'ACTIVE'),
+  (1, 'SCENARIO_FEEDBACK', '反馈处置', 'scenario', NULL, 6, '{"color": "#00838F"}', 'ACTIVE'),
+  (1, 'SCENARIO_GOVERNANCE', '综合治理', 'scenario', NULL, 7, '{"color": "#558B2F"}', 'ACTIVE'),
+  (1, 'SCENARIO_PREVENTION', '预防预警', 'scenario', NULL, 8, '{"color": "#F9A825"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
 RAISE NOTICE 'V3.0.0 元数据初始化完成: ont_community_type, ont_episode_type, ont_entity_category, ont_relationship_meta';
 
 END $$;
+
+-- ============================================================
+-- Episode 类型初始数据（通用 + 社会治理 + 法律）
+-- Phase 7: 社区系统通用化改造
+-- ============================================================
+
+-- 1. 通用流程类型（lifecycle/workflow，跨领域适用）
+INSERT INTO ont_episode_type (definition_id, type_code, type_name, process_type, stage_label, stage_level, is_review_stage, sort_order, metadata, status)
+VALUES
+  (1, 'EP_INITIATION', '发起/启动', 'lifecycle', '启动', NULL, FALSE, 1, '{"color": "#4CAF50"}', 'ACTIVE'),
+  (1, 'EP_EVALUATION', '评估/审查', 'lifecycle', '审查', NULL, TRUE, 2, '{"color": "#FF9800"}', 'ACTIVE'),
+  (1, 'EP_EXECUTION', '执行/实施', 'lifecycle', '执行', NULL, FALSE, 3, '{"color": "#2196F3"}', 'ACTIVE'),
+  (1, 'EP_RESOLUTION', '解决/终结', 'lifecycle', '终结', NULL, FALSE, 4, '{"color": "#9C27B0"}', 'ACTIVE'),
+  (1, 'EP_WORKFLOW_START', '流程启动', 'workflow', '启动', NULL, FALSE, 10, '{"color": "#00BCD4"}', 'ACTIVE'),
+  (1, 'EP_WORKFLOW_NODE', '流程节点', 'workflow', '流转', NULL, FALSE, 11, '{"color": "#3F51B5"}', 'ACTIVE'),
+  (1, 'EP_WORKFLOW_END', '流程结束', 'workflow', '结束', NULL, FALSE, 12, '{"color": "#795548"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 2. 社会治理领域 Episode 类型
+INSERT INTO ont_episode_type (definition_id, type_code, type_name, process_type, stage_label, stage_level, is_review_stage, sort_order, metadata, status)
+VALUES
+  (1, 'EP_REPORT_RECEIVE', '事件接收', 'lifecycle', '接收', NULL, FALSE, 20, '{"color": "#E91E63"}', 'ACTIVE'),
+  (1, 'EP_TRIAGE_ASSESS', '事件分流评估', 'workflow', '评估', NULL, TRUE, 21, '{"color": "#FF5722"}', 'ACTIVE'),
+  (1, 'EP_MEDIATION', '调解处理', 'workflow', '调解', NULL, FALSE, 22, '{"color": "#9C27B0"}', 'ACTIVE'),
+  (1, 'EP_COORDINATION', '协调处置', 'workflow', '协调', NULL, FALSE, 23, '{"color": "#673AB7"}', 'ACTIVE'),
+  (1, 'EP_FEEDBACK', '结果反馈', 'lifecycle', '反馈', NULL, FALSE, 24, '{"color": "#2196F3"}', 'ACTIVE'),
+  (1, 'EP_FOLLOW_UP', '跟踪回访', 'lifecycle', '回访', NULL, FALSE, 25, '{"color": "#00BCD4"}', 'ACTIVE'),
+  (1, 'EP_CLOSE', '事件办结', 'lifecycle', '办结', NULL, FALSE, 26, '{"color": "#4CAF50"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;
+
+-- 3. 法律领域 Episode 类型（带 stage_level，体现领域特色）
+INSERT INTO ont_episode_type (definition_id, type_code, type_name, process_type, stage_label, stage_level, is_review_stage, sort_order, metadata, status)
+VALUES
+  (1, 'EP_FILING', '立案', 'business_process', '立案', NULL, FALSE, 30, '{"color": "#1976D2"}', 'ACTIVE'),
+  (1, 'EP_TRIAL_1ST', '一审庭审', 'business_process', '庭审', '一审', TRUE, 31, '{"color": "#F57C00"}', 'ACTIVE'),
+  (1, 'EP_JUDGMENT_1ST', '一审判决', 'business_process', '判决', '一审', TRUE, 32, '{"color": "#D32F2F"}', 'ACTIVE'),
+  (1, 'EP_APPEAL', '上诉', 'business_process', '上诉', '二审', TRUE, 33, '{"color": "#7B1FA2"}', 'ACTIVE'),
+  (1, 'EP_TRIAL_2ND', '二审庭审', 'business_process', '庭审', '二审', TRUE, 34, '{"color": "#F57C00"}', 'ACTIVE'),
+  (1, 'EP_JUDGMENT_2ND', '二审判决', 'business_process', '判决', '二审', TRUE, 35, '{"color": "#D32F2F"}', 'ACTIVE'),
+  (1, 'EP_EXECUTION_LEGAL', '执行', 'business_process', '执行', NULL, FALSE, 36, '{"color": "#388E3C"}', 'ACTIVE')
+ON CONFLICT (definition_id, type_code) DO NOTHING;

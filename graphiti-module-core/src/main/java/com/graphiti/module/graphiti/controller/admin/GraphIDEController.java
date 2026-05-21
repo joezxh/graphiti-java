@@ -293,15 +293,26 @@ public class GraphIDEController {
     // ==================== V3.0.0 社区与元数据接口 ====================
 
     /**
-     * V3.0.0: 获取社区层级结构（PARENT_OF 树）
+     * V3.1.0: 获取 Episode 层级树
+     * 按 process_type 一级分组，stage_label 二级分组，每组返回 count
+     */
+    @GetMapping("/{graphId}/episodes/hierarchy")
+    @Operation(summary = "获取剧集层级树", description = "按流程类型和阶段二级分层的剧集统计树")
+    public CommonResult<List<Map<String, Object>>> getEpisodeHierarchy(
+            @PathVariable @Parameter(description = "图谱ID") String graphId) {
+        return CommonResult.success(schemaManagementService.getEpisodeHierarchy(graphId));
+    }
+
+    /**
+     * V3.1.0: 获取社区层级树（含数量）
+     * 按 domain_type 一级分组，community_type 二级分组，每组返回 count
      */
     @GetMapping("/{graphId}/communities/hierarchy")
-    @Operation(summary = "获取社区层级结构", description = "获取社区的层级关系，用于前端树形展示")
+    @Operation(summary = "获取社区层级树（含数量）", description = "按领域类型和社区类型二级分层的社区统计树")
     public CommonResult<List<Map<String, Object>>> getCommunityHierarchy(
             @PathVariable @Parameter(description = "图谱ID") String graphId,
-            @RequestParam(required = false) @Parameter(description = "维度过滤: domain|jurisdiction|practice") String dimension) {
-        List<Map<String, Object>> communities = communityService.listCommunities(graphId);
-        return CommonResult.success(communities);
+            @RequestParam(required = false) @Parameter(description = "维度过滤: domain|region|scenario") String dimension) {
+        return CommonResult.success(communityService.getCommunityHierarchy(graphId, dimension));
     }
 
     /**
@@ -317,6 +328,17 @@ public class GraphIDEController {
                 .filter(c -> domain.equals(c.get("legalDomain")))
                 .collect(Collectors.toList());
         return CommonResult.success(filtered);
+    }
+
+    /**
+     * V3.0.0: 获取单个社区详情
+     */
+    @GetMapping("/{graphId}/communities/{communityUuid}")
+    @Operation(summary = "获取社区详情", description = "根据 UUID 获取社区的完整信息")
+    public CommonResult<Map<String, Object>> getCommunityDetail(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @PathVariable @Parameter(description = "社区UUID") String communityUuid) {
+        return CommonResult.success(communityService.getCommunityDetail(graphId, communityUuid));
     }
 
     /**

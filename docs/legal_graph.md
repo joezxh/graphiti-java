@@ -1,82 +1,199 @@
-以下是一个针对法律行业中法条与裁判文书使用本体论管理时，涉及**社区、Episode（聚集）、实体、关系**的设计方案，结合本体论构建、数据转换及技术实现思路，供参考：
+# 多领域知识图谱 — 本体论设计
 
-**一、总体设计目标**
-构建一个基于本体论的法律知识图谱，将法条、裁判文书中的核心要素（社区、聚集、实体、关系）进行结构化建模和转换，实现法律知识的智能检索、关联分析和可视化展示。
+## 概述
 
-**二、核心要素定义与转换设计**
+Graphiti-Java 是一个通用知识图谱平台，支持多领域（Multi-Domain）的知识图谱构建。现已从法律领域专用改造为**通用领域适配**，可服务于：
 
-1. **社区（Community）**
-    - **定义**：指法律领域中具有共同属性或主题的群体或类别，例如法律领域分类（民法、刑法、商法等）、司法管辖区（国家/地区法律体系）、法律应用场景（司法实践、学术研究、企业合规等）。
-    - **转换设置**：
-        - 在本体中定义“Community”类，并建立层级结构（如：顶级社区为“法律领域”，下设子社区如“民法社区”“刑法社区”）。
-        - 为每个社区定义属性，如名称、描述、管辖范围、关联的法律体系等。
-        - 将法条和裁判文书根据所属法律领域或管辖区域归类到对应的社区节点下，建立“属于”（belongsTo）关系。
-2. **Episode（聚集）**
-    - **定义**：指围绕某一法律事件、案例或主题的聚集单元，包含相关的法条、案例、事件描述及关联实体。
-    - **转换设置**：
-        - 在本体中创建“Episode”类，作为知识聚集的容器，每个Episode对应一个法律事件或主题（如“合同纠纷处理”“侵权责任认定”）。
-        - 提取法条和裁判文书中的事件信息（如案件争议焦点、法条适用场景），通过事件抽取技术（如NLP中的事件检测与分类）生成Episode实例。
-        - 为每个Episode定义属性：事件名称、时间范围、涉及的法律问题、关键实体列表等。
-        - 建立Episode与实体、法条、案例的关联关系，如“涉及法条”“相关案例”“核心实体”等。
-3. **实体（Entity）**
-    - **定义**：法律领域中的关键对象，包括法条条文、案例、当事人（如原告、被告）、法律概念（如“过错责任”“合同违约”）、机构（法院、立法机关）等。
-    - **转换设置**：
-        - 定义实体类及其属性：
-            - 法条实体：编号、名称、颁布日期、效力层级、内容摘要等。
-            - 案例实体：案号、法院、判决日期、案件类型、争议焦点、判决结果等。
-            - 当事人实体：名称、身份信息、在案件中的角色等。
-            - 法律概念实体：定义、同义词、层级关系等。
-        - 使用命名实体识别（NER）技术从法条和裁判文书中自动抽取实体，并结合规则库进行消歧（如区分同名实体）。
-        - 为每个实体建立唯一ID，并关联到所属的社区和Episode。
-4. **关系（Relationship）**
-    - **定义**：连接实体、社区、Episode之间的语义关联，揭示法律知识的内在逻辑。
-    - **转换设置**：
-        - 预定义核心关系类型，例如：
-            - “依据”：案例依据某法条判决。
-            - “涉及”：案例涉及某个法律概念或当事人。
-            - “属于”：法条属于某法律领域或社区。
-            - “关联”：两个案例因类似事实或法条适用而关联。
-            - “包含”：某个法律概念是更广泛概念的子类。
-        - 通过关系抽取技术（如基于规则的句法分析、机器学习模型）从文本中提取关系，例如从“根据《民法典》第X条，判决被告赔偿...”中提取“依据”关系。
-        - 在知识图谱中，用有向边表示关系，标注关系类型及权重（如根据案例引用频率确定关系强度）。
+- 法律知识图谱
+- 金融风险图谱
+- 企业管理图谱
+- 医疗知识图谱
+- 社会综合治理图谱
 
-**三、技术实现步骤**
+**核心改造原则**：
+- 移除所有领域硬编码逻辑
+- 领域分类由 LLM 推断 + 用户可覆盖
+- 前后端下拉选项由元数据表驱动
 
-1. **数据预处理**：
-    - 对法条和裁判文书进行清洗、分词、词性标注，处理文本中的噪声和格式问题。
-2. **本体构建**：
-    - 使用本体建模工具（如Protege）定义法律领域的本体模型，包括类、属性、关系及约束规则。
-3. **实体与关系抽取**：
-    - 结合BERT、CRF等模型进行命名实体识别和关系抽取，识别法律文本中的实体及实体对之间的关系。
-    - 使用规则引擎处理结构化较强的法条信息（如从条款编号直接提取实体属性）。
-4. **知识融合与消歧**：
-    - 通过实体对齐技术（如基于属性匹配或向量相似度计算）解决同名不同义或同义不同名问题（如“《民法典》”与“《中华人民共和国民法典》”的消歧）。
-5. **图数据库存储**：
-    - 采用图数据库（如Neo4j）存储本体数据，以节点表示实体/社区/Episode，边表示关系，支持高效图查询（如路径搜索、子图匹配）。
-6. **动态更新与维护**：
-    - 监控法律数据源（如新颁布的法规、裁判文书），通过增量更新机制实时捕获变化，更新图谱中的实体和关系。
-    - 引入版本控制，记录法律知识的变更历史。
+---
 
-**四、应用场景示例**
+## 核心概念
 
-1. **智能检索**：用户可通过社区（如“刑法社区”）或Episode（如“金融诈骗案件”）快速检索相关法律条文和案例。
-2. **关联分析**：通过关系网络分析案例的法律依据链条，或识别不同法律概念之间的层级关系。
-3. **可视化展示**：用图可视化工具呈现知识图谱，帮助用户直观理解法律知识的关联结构。
+### 1. 社区（Community）
 
-**五、挑战与优化方向**
+指知识图谱中具有共同属性或主题的实体聚集单元。
 
-1. **数据质量**：需通过人工审核和自动校验机制（如与权威数据库比对）确保抽取的实体和关系的准确性。
-2. **动态性**：法律知识的更新需实时同步到图谱，可结合事件监测技术自动触发更新流程。
-3. **可解释性**：为关系标注来源（如裁判文书中的引用位置），增强推理结果的可信度。
+**属性字段（V3.1.0 通用化）**：
 
-**六、工具与技术栈推荐**
+| 字段 | 说明 | 示例 |
+|------|------|------|
+| `domain_type` | 领域类型 | DOMAIN_LEGAL / DOMAIN_FINANCE |
+| `sub_domain_type` | 子领域 | DOMAIN_SOCIAL_DISPUTE_MARRIAGE |
+| `region` | 区域 | REGION_CN / REGION_US |
+| `scenario_type` | 场景类型 | SCENARIO_JUDICIAL / SCENARIO_COMPLIANCE |
+| `community_type` | 社区类型 | top_level / sub_level |
+| `inference_confidence` | LLM 推断置信度 | 0.85 |
+| `user_overridden` | 用户是否覆盖了推断结果 | false |
 
-- 本体建模：Protege、OWL
-- NLP处理：spaCy、BERT模型
-- 图数据库：Neo4j
-- 知识图谱框架：KG-Core、TensorFlow/KG
+**向后兼容字段（V3.0.0，已废弃，迁移后自动映射）**：
 
-通过以上设计，可将法律行业中的法条与裁判文书转化为结构化的本体论知识网络，实现更智能的法律信息管理和应用。
+| 旧字段 | 替换为 |
+|--------|--------|
+| `legal_domain` | `domain_type` |
+| `jurisdiction` | `region` |
+| `practice_type` | `scenario_type` |
 
-希望这个方案能满足您的需求！如果需要更详细的技术细节或特定环节的扩展，请随时提出。
+### 2. 剧集（Episode）
 
+围绕某一事件或主题的聚集单元，包含相关实体和关系。
+
+**属性字段（V3.1.0 通用化）**：
+
+| 字段 | 说明 | 示例 |
+|------|------|------|
+| `episode_type` | Episode 类型代码 | EP_TRIAL / EP_MEDIATION |
+| `process_type` | 流程类型 | business_process / workflow / lifecycle |
+| `stage_level` | 阶段级别 | 一审 / 二审 / 初诊 |
+| `stage_label` | 阶段标签 | 立案 / 庭审 / 调解 |
+| `is_review_stage` | 是否为审查/评议阶段 | true / false |
+
+**向后兼容字段（V3.0.0，已废弃）**：
+
+| 旧字段 | 替换为 |
+|--------|--------|
+| `legal_process` | `process_type` |
+| `court_level` | `stage_level` |
+| `is_trial_stage` | `is_review_stage` |
+
+### 3. 实体（Entity）
+
+知识图谱中的核心节点对象。
+
+### 4. 关系（Relationship）
+
+连接实体、社区、剧集之间的语义关联。
+
+---
+
+## 五大领域分类体系
+
+### 顶层领域
+
+| type_code | type_name | 说明 |
+|-----------|-----------|------|
+| DOMAIN_ROOT | 知识领域 | 顶层虚拟节点 |
+| DOMAIN_LEGAL | 法律 | 处理法律纠纷、诉讼、合规、判决 |
+| DOMAIN_FINANCE | 金融 | 处理银行、证券、保险、风险、信贷 |
+| DOMAIN_ENTERPRISE | 企业管理 | 处理人力资源、财务、合规、治理 |
+| DOMAIN_MEDICAL | 医疗 | 处理诊疗、药品、公共卫生 |
+| DOMAIN_SOCIAL_GOV | 社会治理 | 处理社会综合治理事件 |
+
+### 法律子领域
+
+| type_code | type_name |
+|-----------|-----------|
+| DOMAIN_CIVIL | 民商事 |
+| DOMAIN_CRIMINAL | 刑事法律 |
+| DOMAIN_ADMIN | 行政法律 |
+| DOMAIN_IP | 知识产权 |
+| DOMAIN_LABOR | 劳动法律 |
+
+### 金融子领域
+
+| type_code | type_name |
+|-----------|-----------|
+| DOMAIN_BANKING | 银行与信贷 |
+| DOMAIN_SECURITIES | 证券与投资 |
+| DOMAIN_INSURANCE | 保险业务 |
+| DOMAIN_RISK | 风险管控 |
+
+### 企业管理子领域
+
+| type_code | type_name |
+|-----------|-----------|
+| DOMAIN_HR | 人力资源 |
+| DOMAIN_FINANCE_MGMT | 财务管理 |
+| DOMAIN_COMPLIANCE | 企业合规 |
+| DOMAIN_GOVERNANCE | 公司治理 |
+
+### 医疗子领域
+
+| type_code | type_name |
+|-----------|-----------|
+| DOMAIN_CLINICAL | 临床诊疗 |
+| DOMAIN_DRUG | 药品与器械 |
+| DOMAIN_PUBLIC_HEALTH | 公共卫生 |
+
+### 社会治理子领域
+
+| type_code | type_name |
+|-----------|-----------|
+| DOMAIN_SOCIAL_DISPUTE_MARRIAGE | 婚恋家庭纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_LABOR | 劳动人事争议纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_TORT | 侵权责任纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_NEIGHBOR | 邻里关系纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_PROPERTY | 房屋物业纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_LAND | 山林土地水利纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_CONSUMER | 消费服务纠纷 |
+| DOMAIN_SOCIAL_DISPUTE_ECONOMIC | 经济金融活动纠纷 |
+| DOMAIN_SOCIAL_ADMIN_PETITION | 行政纠纷与信访维权 |
+| DOMAIN_SOCIAL_CONSULT_SERVICE | 咨询与公证服务 |
+
+---
+
+## 迁移说明
+
+### Neo4j 迁移脚本
+
+执行 `sql/migrations/v004_community_generic_rename.cypher` 将旧字段名迁移为新字段名：
+
+```cypher
+// Community
+MATCH (c:Community)
+SET c.domain_type = c.legal_domain
+SET c.region = COALESCE(c.jurisdiction, 'REGION_CN')
+SET c.scenario_type = COALESCE(c.practice_type, 'SCENARIO_ROOT')
+REMOVE c.legal_domain, c.jurisdiction, c.practice_type
+
+// Episode
+MATCH (e:Episode)
+SET e.process_type = e.legal_process
+SET e.stage_level = e.court_level
+SET e.is_review_stage = e.is_trial_stage
+REMOVE e.legal_process, e.court_level, e.is_trial_stage
+```
+
+### MySQL/PostgreSQL 表字段重命名
+
+执行 `sql/migrations/v004_episode_type_column_rename.sql`（PostgreSQL）或 `sql/migrations/v004_episode_type_column_rename_mysql.sql`（MySQL）。
+
+### 回滚
+
+如需回滚，执行 `sql/migrations/v004_rollback.cypher`。
+
+---
+
+## 技术栈
+
+- **后端**：Java + Spring Boot + MyBatis-Plus
+- **图数据库**：Neo4j
+- **LLM 服务**：可配置的 LLM Client
+- **前端**：Vue 3 + TypeScript + Ant Design Vue
+- **本体论**：OWL 风格本体定义，存储于 MySQL
+
+## 相关文档
+
+- 设计文档：`docs/superpowers/specs/2026-05-20-community-generic-design.md`
+- 实现计划：`docs/superpowers/plans/2026-05-20-community-generic-implementation.md`
+- 法律图谱 V3 设计：`docs/superpowers/specs/2026-05-20-legal-graph-v3-design.md`
+
+## 支持的领域
+
+本系统支持五大领域：
+- 法律（DOMAIN_LEGAL）
+- 金融（DOMAIN_FINANCE）
+- 企业管理（DOMAIN_ENTERPRISE）
+- 医疗（DOMAIN_MEDICAL）
+- 社会治理（DOMAIN_SOCIAL_GOV）
+
+各领域详情见 ont_community_type 表。

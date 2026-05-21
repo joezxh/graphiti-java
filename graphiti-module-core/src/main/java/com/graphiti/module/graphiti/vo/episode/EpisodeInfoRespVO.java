@@ -75,4 +75,15 @@ public class EpisodeInfoRespVO implements Serializable {
 
     @Schema(description = "关联案件 ID (V3)")
     private String caseId;
+
+    // ==================== V3.1.0 通用化字段（兼容旧字段）====================
+
+    @Schema(description = "通用化流程类型 (V3.1): 替代 legal_process")
+    private String processType;
+
+    @Schema(description = "通用化阶段级别 (V3.1): 替代 court_level")
+    private String stageLevel;
+
+    @Schema(description = "是否为审核阶段 (V3.1): 替代 is_trial_stage")
+    private Boolean isReviewStage;
 }

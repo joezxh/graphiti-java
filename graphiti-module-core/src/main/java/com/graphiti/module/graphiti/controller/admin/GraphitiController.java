@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * 图谱管理控制器
@@ -269,6 +270,71 @@ public class GraphitiController {
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
             @RequestParam("query") @Parameter(description = "搜索关键词") String query) {
         return CommonResult.success(communityService.searchCommunities(graphId, query));
+    }
+
+    @Operation(summary = "删除社区", description = "根据 UUID 删除指定的社区节点",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @DeleteMapping("/{graphId}/communities/{communityUuid}")
+    public CommonResult<Boolean> deleteCommunity(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("communityUuid") @Parameter(description = "社区UUID", required = true) String communityUuid) {
+        communityService.deleteCommunity(graphId, communityUuid);
+        return CommonResult.success(true);
+    }
+
+    @Operation(summary = "获取社区列表", description = "分页获取图谱中的社区节点列表",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/communities/list")
+    public CommonResult<Map<String, Object>> listCommunities(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestParam(value = "domain", required = false) @Parameter(description = "法律领域过滤") String domain,
+            @RequestParam(value = "type", required = false) @Parameter(description = "社区类型过滤") String type,
+            @RequestParam(value = "keyword", required = false) @Parameter(description = "名称关键词") String keyword,
+            @RequestParam(value = "skip", defaultValue = "0") @Parameter(description = "跳过数量") int skip,
+            @RequestParam(value = "limit", defaultValue = "20") @Parameter(description = "返回数量") int limit) {
+        List<Map<String, Object>> all = communityService.listCommunities(graphId);
+        // 过滤
+        Stream<Map<String, Object>> stream = all.stream();
+        if (domain != null && !domain.isEmpty()) {
+            stream = stream.filter(c -> domain.equals(c.get("domainType")) || domain.equals(c.get("legalDomain")));
+        }
+        if (type != null && !type.isEmpty()) {
+            stream = stream.filter(c -> type.equals(c.get("communityType")));
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            String kw = keyword.toLowerCase();
+            stream = stream.filter(c -> {
+                String name = String.valueOf(c.getOrDefault("name", ""));
+                String summary = String.valueOf(c.getOrDefault("summary", ""));
+                return name.toLowerCase().contains(kw) || summary.toLowerCase().contains(kw);
+            });
+        }
+        List<Map<String, Object>> filtered = stream.toList();
+        int total = filtered.size();
+        int end = Math.min(skip + limit, total);
+        List<Map<String, Object>> page = skip < total ? filtered.subList(skip, end) : List.of();
+        return CommonResult.success(Map.of("communities", page, "totalCount", total));
+    }
+
+    @Operation(summary = "创建社区", description = "在指定图谱中创建新的社区节点",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/communities")
+    public CommonResult<Map<String, Object>> createCommunity(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody @Parameter(description = "社区信息") Map<String, Object> body) {
+        Map<String, Object> community = communityService.createCommunity(graphId, body);
+        return CommonResult.success(community);
+    }
+
+    @Operation(summary = "更新社区", description = "更新指定社区节点的信息",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PutMapping("/{graphId}/communities/{communityUuid}")
+    public CommonResult<Map<String, Object>> updateCommunity(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("communityUuid") @Parameter(description = "社区UUID", required = true) String communityUuid,
+            @RequestBody @Parameter(description = "更新信息") Map<String, Object> body) {
+        Map<String, Object> community = communityService.updateCommunity(graphId, communityUuid, body);
+        return CommonResult.success(community);
     }
 
     // ==================== 克隆与导出 ====================

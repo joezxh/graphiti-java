@@ -603,6 +603,75 @@ export const graphApi = {
   async getEntityCategories(graphId: string): Promise<any[]> {
     return request.get(`/graph/${graphId}/entity-categories`)
   },
+
+  // V3: 获取 Episode 层级树（用于 IDE 树形菜单）
+  async getEpisodeHierarchy(graphId: string): Promise<any[]> {
+    return request.get(`/graph/${graphId}/episodes/hierarchy`)
+  },
+
+  // V3: 获取单个社区详情
+  async getCommunityDetail(graphId: string, communityUuid: string): Promise<any> {
+    return request.get(`/graph/${graphId}/communities/${communityUuid}`)
+  },
+
+  // V3: 获取单个 Episode 详情
+  async getEpisodeDetail(graphId: string, episodeUuid: string): Promise<any> {
+    return request.get(`/graph/episode/${graphId}/${episodeUuid}`)
+  },
+
+  // V3: 删除社区
+  async deleteCommunity(graphId: string, communityUuid: string): Promise<void> {
+    return request.delete(`/graph/${graphId}/communities/${communityUuid}`)
+  },
+
+  // V3: 社区列表（支持过滤和分页）
+  async listCommunities(graphId: string, params?: {
+    domain?: string
+    type?: string
+    keyword?: string
+    skip?: number
+    limit?: number
+  }): Promise<{ communities: any[]; totalCount: number }> {
+    return request.get(`/graph/${graphId}/communities/list`, { params })
+  },
+
+  // V3: 创建社区
+  async createCommunity(graphId: string, data: {
+    name: string
+    communityType?: string
+    // V3.0.0 旧字段（向后兼容）
+    legalDomain?: string
+    jurisdiction?: string
+    practiceType?: string
+    // V3.1.0 通用化新字段
+    domainType?: string
+    subDomainType?: string
+    region?: string
+    scenarioType?: string
+    summary?: string
+    description?: string
+  }): Promise<any> {
+    return request.post(`/graph/${graphId}/communities`, data)
+  },
+
+  // V3: 更新社区
+  async updateCommunity(graphId: string, communityUuid: string, data: {
+    name?: string
+    communityType?: string
+    // V3.0.0 旧字段（向后兼容）
+    legalDomain?: string
+    jurisdiction?: string
+    practiceType?: string
+    // V3.1.0 通用化新字段
+    domainType?: string
+    subDomainType?: string
+    region?: string
+    scenarioType?: string
+    summary?: string
+    description?: string
+  }): Promise<any> {
+    return request.put(`/graph/${graphId}/communities/${communityUuid}`, data)
+  },
 }
 
 // 获取图谱统计信息

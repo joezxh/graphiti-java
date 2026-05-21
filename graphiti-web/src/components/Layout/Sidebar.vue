@@ -36,12 +36,6 @@
           </template>
           {{ $t('nav.graphIDE') }}
         </a-menu-item>
-        <a-menu-item key="/business-info">
-          <template #icon>
-            <ControlOutlined />
-          </template>
-          {{ $t('nav.businessInfo') }}
-        </a-menu-item>
         <a-menu-item key="/graph/temporal">
           <template #icon>
             <HistoryOutlined />
@@ -54,12 +48,6 @@
           </template>
           {{ $t('nav.communityDetection') }}
         </a-menu-item>
-        <a-menu-item key="/ontology">
-          <template #icon>
-            <ApartmentOutlined />
-          </template>
-          {{ $t('nav.ontologyConfig') }}
-        </a-menu-item>
       </a-sub-menu>
 
       <a-sub-menu key="data-management">
@@ -67,18 +55,7 @@
           <DatabaseOutlined />
         </template>
         <template #title>{{ $t('nav.dataManagement') }}</template>
-        <a-menu-item key="/data/import">
-          <template #icon>
-            <ImportOutlined />
-          </template>
-          {{ $t('nav.dataImport') }}
-        </a-menu-item>
-        <a-menu-item key="/data/export">
-          <template #icon>
-            <ExportOutlined />
-          </template>
-          {{ $t('nav.dataExport') }}
-        </a-menu-item>
+
         <a-menu-item key="/data/entities">
           <template #icon>
             <NodeIndexOutlined />
@@ -96,6 +73,30 @@
             <FileTextOutlined />
           </template>
           {{ $t('nav.episodeManagement') }}
+        </a-menu-item>
+        <a-menu-item key="/data/import">
+          <template #icon>
+            <ImportOutlined />
+          </template>
+          {{ $t('nav.dataImport') }}
+        </a-menu-item>
+        <a-menu-item key="/data/export">
+          <template #icon>
+            <ExportOutlined />
+          </template>
+          {{ $t('nav.dataExport') }}
+        </a-menu-item>
+        <a-menu-item key="/data/community-episode">
+          <template #icon>
+            <ClusterOutlined />
+          </template>
+          {{ $t('nav.communityEpisodeManagement') }}
+        </a-menu-item>
+        <a-menu-item key="/legal-kg">
+          <template #icon>
+            <AuditOutlined />
+          </template>
+          {{ $t('nav.legalKnowledgeGraph') }}
         </a-menu-item>
       </a-sub-menu>
 
@@ -121,12 +122,6 @@
             <MessageOutlined />
           </template>
           {{ $t('nav.promptManagement') }}
-        </a-menu-item>
-        <a-menu-item key="/legal-kg">
-          <template #icon>
-            <AuditOutlined />
-          </template>
-          {{ $t('nav.legalKnowledgeGraph') }}
         </a-menu-item>
       </a-sub-menu>
 
@@ -182,7 +177,6 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   DashboardOutlined,
   ShareAltOutlined,
-  ApartmentOutlined,
   DatabaseOutlined,
   SearchOutlined,
   AppstoreOutlined,
@@ -204,7 +198,6 @@ import {
   // SafetyOutlined, // 未使用
   AuditOutlined,
   MessageOutlined,
-  ControlOutlined,
   CodeOutlined
 } from '@ant-design/icons-vue'
 

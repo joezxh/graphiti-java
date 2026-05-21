@@ -187,7 +187,7 @@ export type EditTool = 'select' | 'pan' | 'add-node' | 'add-edge'
 /**
  * 侧边栏标签
  */
-export type SidebarTab = 'explorer' | 'schema'
+export type SidebarTab = 'explorer' | 'schema' | 'ontology'
 
 /**
  * 详情面板标签
