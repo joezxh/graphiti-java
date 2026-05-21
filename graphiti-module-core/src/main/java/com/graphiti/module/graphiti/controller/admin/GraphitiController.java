@@ -13,6 +13,7 @@ import com.graphiti.module.graphiti.service.TemporalService;
 import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
 import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
 import com.graphiti.module.graphiti.vo.graph.CreateGraphReqVO;
+import com.graphiti.module.graphiti.vo.graph.GraphDeletePreviewRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphInfoRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphListRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
@@ -155,9 +156,20 @@ public class GraphitiController {
     }
 
     /**
+     * 获取图谱删除预览
+     */
+    @Operation(summary = "获取图谱删除预览", description = "获取图谱删除前的完整统计信息，供用户确认",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/delete-preview")
+    public CommonResult<GraphDeletePreviewRespVO> getDeletePreview(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(graphitiService.getGraphDeletePreview(graphId));
+    }
+
+    /**
      * 删除图谱
      */
-    @Operation(summary = "删除图谱", description = "逻辑删除指定的图谱",
+    @Operation(summary = "删除图谱", description = "级联删除图谱的所有数据：Neo4j节点/边/社区 + MySQL元数据（逻辑删除）",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
     @DeleteMapping("/{graphId}")
     public CommonResult<Void> delete(

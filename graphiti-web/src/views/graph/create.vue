@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue"
+import { ref, reactive, computed, getCurrentInstance } from "vue"
 import { useRouter } from "vue-router"
 import { message } from "ant-design-vue"
 import { ArrowLeftOutlined } from "@ant-design/icons-vue"
@@ -63,21 +63,26 @@ const formState = reactive({
   description: ""
 })
 
-const formRules = {
-  name: [
-    { required: true, message: "graph.enterGraphName", trigger: "blur" },
-    { min: 2, max: 50, message: "graph.graphNameLength", trigger: "blur" }
-  ]
-}
+const formRules = computed(() => {
+  const { proxy } = getCurrentInstance()!
+  return {
+    name: [
+      { required: true, message: proxy.$t("graph.enterGraphName"), trigger: "blur" },
+      { min: 2, max: 50, message: proxy.$t("graph.graphNameLength"), trigger: "blur" }
+    ]
+  }
+})
 
 const handleSubmit = async () => {
   submitting.value = true
   try {
     await graphApi.create(formState as Graph)
-    message.success("graph.createSuccess")
+    const { proxy } = getCurrentInstance()!
+    message.success(proxy.$t("graph.createSuccess") as string)
     router.push("/graph/list")
   } catch (err: any) {
-    message.error(err.message || "common.error")
+    const { proxy } = getCurrentInstance()!
+    message.error(err.message || proxy.$t("common.error") as string)
   } finally {
     submitting.value = false
   }

@@ -1,6 +1,7 @@
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.graph.CreateGraphReqVO;
+import com.graphiti.module.graphiti.vo.graph.GraphDeletePreviewRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphInfoRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphListRespVO;
 import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
@@ -49,6 +50,12 @@ public interface GraphitiService {
      * @param graphId 图谱ID
      */
     void deleteGraph(String graphId);
+    /**
+     * 获取图谱删除预览信息
+     * @param graphId 图谱ID
+     * @return GraphDeletePreviewRespVO
+     */
+    GraphDeletePreviewRespVO getGraphDeletePreview(String graphId);
     /**
      * 清空图谱数据（删除 Neo4j 中的数据，保留 MySQL 元数据）
      * @param graphId 图谱ID

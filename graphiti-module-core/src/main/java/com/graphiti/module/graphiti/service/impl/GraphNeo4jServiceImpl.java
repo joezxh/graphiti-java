@@ -1210,6 +1210,47 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
         return 0L;
     }
 
+    @Override
+    public long countCommunitiesByGraphId(String graphId) {
+        String cypher = "MATCH (c:Community {graph_id: $graph_id}) RETURN count(c) as count";
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, Values.parameters("graph_id", graphId));
+            if (result.hasNext()) {
+                return result.next().get("count").asLong();
+            }
+        }
+        return 0L;
+    }
+
+    @Override
+    public void clearAllRelationships(String graphId) {
+        try (Session session = neo4jDriver.session()) {
+            // 删除所有 RELATES_TO 关系
+            session.run(
+                "MATCH ()-[r:RELATES_TO {graph_id: $graph_id}]->() DELETE r",
+                Values.parameters("graph_id", graphId));
+            // 删除所有 MENTIONS 关系
+            session.run(
+                "MATCH ()-[r:MENTIONS {graph_id: $graph_id}]->() DELETE r",
+                Values.parameters("graph_id", graphId));
+            // 删除所有 HAS_COMMUNITY 关系
+            session.run(
+                "MATCH ()-[r:HAS_COMMUNITY {graph_id: $graph_id}]->() DELETE r",
+                Values.parameters("graph_id", graphId));
+        }
+        log.info("已清除图谱所有关系数据：graphId={}", graphId);
+    }
+
+    @Override
+    public void deleteAllCommunities(String graphId) {
+        String cypher =
+            "MATCH (c:Community {graph_id: $graph_id}) DETACH DELETE c";
+        try (Session session = neo4jDriver.session()) {
+            session.run(cypher, Values.parameters("graph_id", graphId));
+        }
+        log.info("已删除图谱所有社区节点：graphId={}", graphId);
+    }
+
     private String extractNodeName(String type, Map<String, Object> nodeMap) {
         if (type == null) {
             return null;

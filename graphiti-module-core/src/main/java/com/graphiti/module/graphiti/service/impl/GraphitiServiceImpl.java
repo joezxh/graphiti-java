@@ -98,11 +98,43 @@ public class GraphitiServiceImpl implements GraphitiService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteGraph(String graphId) {
         GraphMetadataDO entity = getGraphMetadataByGraphId(graphId);
-        // 逻辑删除
+        // 1. 清除 Neo4j 中所有关系（RELATES_TO, MENTIONS, HAS_COMMUNITY）
+        graphNeo4jService.clearAllRelationships(graphId);
+        // 2. 删除 Neo4j 中所有社区节点
+        graphNeo4jService.deleteAllCommunities(graphId);
+        // 3. 删除 Neo4j 中所有实体节点和事件节点
+        graphNeo4jService.clearGraphData(graphId);
+        // 4. 逻辑删除 MySQL 元数据
         entity.setDeleted(true);
+        entity.setUpdateTime(LocalDateTime.now());
         graphMetadataMapper.updateById(entity);
-        // TODO: 同时删除 Neo4j 中对应的图谱数据（根据 graph_id）
-        log.info("已删除图谱元数据：graphId={}", graphId);
+        log.info("图谱已完整删除：graphId={}, name={}", graphId, entity.getName());
+    }
+
+    @Override
+    public GraphDeletePreviewRespVO getGraphDeletePreview(String graphId) {
+        GraphMetadataDO entity = getGraphMetadataByGraphId(graphId);
+        Map<String, Long> neo4jStats = graphNeo4jService.getGraphStats(graphId);
+        long entityNodeCount = neo4jStats.getOrDefault("nodeCount", 0L);
+        long episodeCount = neo4jStats.getOrDefault("episodeCount", 0L);
+        long relationshipCount = neo4jStats.getOrDefault("edgeCount", 0L);
+        long communityNodeCount = graphNeo4jService.countCommunitiesByGraphId(graphId);
+
+        long totalDataCount = entityNodeCount + episodeCount + relationshipCount + communityNodeCount;
+
+        GraphDeletePreviewRespVO vo = new GraphDeletePreviewRespVO();
+        vo.setGraphId(entity.getGraphId());
+        vo.setName(entity.getName());
+        vo.setDescription(entity.getDescription());
+        vo.setNodeCount(entity.getNodeCount());
+        vo.setEdgeCount(entity.getEdgeCount());
+        vo.setEntityNodeCount(entityNodeCount);
+        vo.setEpisodeCount(episodeCount);
+        vo.setRelationshipCount(relationshipCount);
+        vo.setCommunityNodeCount(communityNodeCount);
+        vo.setHasData(totalDataCount > 0);
+        vo.setTotalDataCount(totalDataCount);
+        return vo;
     }
     @Override
     public void clearGraph(String graphId) {

@@ -71,7 +71,7 @@
     <!-- 创建/编辑模态框 -->
     <a-modal
       v-model:open="modalVisible"
-      :title="modalTitle"
+      :title="$t(modalTitle)"
       @ok="handleModalOk"
       @cancel="handleModalCancel"
     >
@@ -102,7 +102,10 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 import { graphApi, type Graph } from '@/api/graph'
+
+const { t } = useI18n()
 
 const router = useRouter()
 
@@ -122,51 +125,53 @@ const formState = reactive({
   description: ''
 })
 
-const formRules = {
-  name: [
-    { required: true, message: 'graph.enterGraphName' },
-    { min: 2, max: 50, message: 'graph.graphNameLength' }
-  ]
-}
+const formRules = computed(() => {
+  return {
+    name: [
+      { required: true, message: t('graph.enterGraphName') },
+      { min: 2, max: 50, message: t('graph.graphNameLength') }
+    ]
+  }
+})
 
 // 表格列定义
-const columns = [
+const columns = computed(() => [
   {
-    title: 'graph.graphName',
+    title: t('graph.graphName'),
     key: 'name',
     dataIndex: 'name',
     width: '25%'
   },
   {
-    title: 'common.description',
+    title: t('common.description'),
     key: 'description',
     dataIndex: 'description',
     width: '35%',
     ellipsis: true
   },
   {
-    title: 'graph.nodeCount',
+    title: t('graph.nodeCount'),
     key: 'nodeCount',
     width: '10%',
     align: 'center'
   },
   {
-    title: 'graph.edgeCount',
+    title: t('graph.edgeCount'),
     key: 'edgeCount',
     width: '10%',
     align: 'center'
   },
   {
-    title: 'graph.createTime',
+    title: t('graph.createTime'),
     key: 'createdAt',
     width: '15%'
   },
   {
-    title: 'common.action',
+    title: t('common.action'),
     key: 'action',
     width: '15%'
   }
-]
+])
 
 // 过滤后的图谱列表
 const filteredGraphs = computed(() => {
@@ -185,7 +190,7 @@ const loadGraphs = async () => {
     const res = await graphApi.getList()
     graphs.value = res || []
   } catch (error) {
-    message.error('graph.loadFailed')
+    message.error(t('graph.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -225,10 +230,10 @@ const editGraph = (record: Graph) => {
 const deleteGraph = async (id: string) => {
   try {
     await graphApi.delete(id)
-    message.success('graph.deleteSuccess')
+      message.success(t('graph.deleteSuccess'))
     loadGraphs()
   } catch (error) {
-    message.error('graph.deleteFailed')
+    message.error(t('graph.deleteFailed'))
   }
 }
 
@@ -239,10 +244,10 @@ const handleModalOk = async () => {
 
     if (isEdit.value && editingId.value) {
       await graphApi.update(editingId.value, formState)
-      message.success('graph.updateSuccess')
+      message.success(t('graph.updateSuccess'))
     } else {
       await graphApi.create(formState)
-      message.success('graph.createSuccess')
+      message.success(t('graph.createSuccess'))
     }
 
     modalVisible.value = false

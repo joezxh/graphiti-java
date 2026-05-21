@@ -235,4 +235,19 @@ public interface GraphNeo4jService {
      * 统计边数量
      */
     long countEdges(String graphId, List<String> edgeTypes);
+
+    /**
+     * 统计社区节点数量
+     */
+    long countCommunitiesByGraphId(String graphId);
+
+    /**
+     * 删除图谱所有关系（RELATES_TO 和 MENTIONS）
+     */
+    void clearAllRelationships(String graphId);
+
+    /**
+     * 删除图谱所有社区节点
+     */
+    void deleteAllCommunities(String graphId);
 }
