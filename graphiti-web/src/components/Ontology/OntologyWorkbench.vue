@@ -17,7 +17,11 @@
       />
 
       <!-- 新建下拉菜单 -->
-      <a-dropdown v-model:open="showAddMenu" :trigger="['click']" overlay-class-name="ontology-add-menu">
+      <a-dropdown 
+        v-model:open="showAddMenu" 
+        :trigger="['click']" 
+        overlay-class-name="ontology-add-menu"
+      >
         <div v-if="!store.activeTabId" class="add-menu-trigger">
           <PlusOutlined /> 新建
         </div>
@@ -324,11 +328,20 @@ function openPropertyEditor(propertyId: number, propertyName: string) {
 }
 
 :deep(.ontology-add-menu) {
+  .ant-dropdown {
+    position: fixed !important;
+    left: 50% !important;
+    top: 120px !important;
+    transform: translateX(-50%) !important;
+  }
+
   .ant-dropdown-menu {
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    min-width: 480px;
+    max-width: 600px;
 
     .ant-dropdown-menu-item-group-title {
       color: #6e7681;
