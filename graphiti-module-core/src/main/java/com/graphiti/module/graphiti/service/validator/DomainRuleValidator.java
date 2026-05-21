@@ -7,6 +7,8 @@ import com.graphiti.module.graphiti.dal.mysql.ont.OntDomainRuleMapper;
 import com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -36,9 +38,9 @@ public class DomainRuleValidator {
     }
 
     private boolean isApplicable(OntDomainRuleDO rule, OntClassDO classDef) {
-        if (rule.getApplicableClassIds() == null || rule.getApplicableClassIds().isBlank()) return true;
+        if (rule.getApplicableClassIds() == null || rule.getApplicableClassIds().isEmpty()) return true;
         try {
-            List<Long> ids = objectMapper.readValue(rule.getApplicableClassIds(), List.class);
+            List<Long> ids = rule.getApplicableClassIds();//, new TypeReference<List<Long>>() {});
             return ids.contains(classDef.getId());
         } catch (Exception e) {
             return true;

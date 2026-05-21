@@ -391,3 +391,39 @@ VALUES
 ON CONFLICT (definition_id, type_code) DO UPDATE
   SET type_name = EXCLUDED.type_name, process_type = EXCLUDED.process_type,
       stage_label = EXCLUDED.stage_label, updated_at = NOW();
+
+
+CREATE TABLE ont_domain_rule (
+                                 id BIGSERIAL PRIMARY KEY,
+                                 definition_id BIGINT NOT NULL,
+                                 rule_name VARCHAR(255) NOT NULL,
+                                 rule_code VARCHAR(100) NOT NULL UNIQUE,
+                                 spel_expression TEXT NOT NULL,
+                                 applicable_class_ids JSONB,
+                                 severity VARCHAR(50) DEFAULT 'WARNING',
+                                 error_message TEXT,
+                                 description TEXT,
+                                 enabled BOOLEAN DEFAULT true,
+                                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 索引
+CREATE INDEX idx_ont_domain_rule_definition_id ON ont_domain_rule(definition_id);
+CREATE INDEX idx_ont_domain_rule_enabled ON ont_domain_rule(enabled);
+CREATE INDEX idx_ont_domain_rule_rule_code ON ont_domain_rule(rule_code);
+
+-- 注释
+COMMENT ON TABLE ont_domain_rule IS '领域规则定义表';
+COMMENT ON COLUMN ont_domain_rule.id IS '主键ID';
+COMMENT ON COLUMN ont_domain_rule.definition_id IS '本体定义ID';
+COMMENT ON COLUMN ont_domain_rule.rule_name IS '规则名称';
+COMMENT ON COLUMN ont_domain_rule.rule_code IS '规则编码（唯一）';
+COMMENT ON COLUMN ont_domain_rule.spel_expression IS 'SpEL表达式';
+COMMENT ON COLUMN ont_domain_rule.applicable_class_ids IS '适用的类ID列表（JSON数组）';
+COMMENT ON COLUMN ont_domain_rule.severity IS '严重级别：ERROR/WARNING/INFO';
+COMMENT ON COLUMN ont_domain_rule.error_message IS '错误提示信息';
+COMMENT ON COLUMN ont_domain_rule.description IS '规则描述';
+COMMENT ON COLUMN ont_domain_rule.enabled IS '是否启用';
+COMMENT ON COLUMN ont_domain_rule.created_at IS '创建时间';
+COMMENT ON COLUMN ont_domain_rule.updated_at IS '更新时间';

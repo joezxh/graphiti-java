@@ -1,8 +1,6 @@
 package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.dal.dataobject.ont.OntDomainRuleDO;
 import com.graphiti.module.graphiti.dal.mysql.ont.OntDomainRuleMapper;
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 public class DomainRuleServiceImpl implements DomainRuleService {
 
     private final OntDomainRuleMapper domainRuleMapper;
-    private final ObjectMapper objectMapper;
     private final ExpressionParser spelParser = new SpelExpressionParser();
 
     @Override
@@ -50,12 +47,7 @@ public class DomainRuleServiceImpl implements DomainRuleService {
         entity.setErrorMessage(reqVO.getErrorMessage());
         entity.setDescription(reqVO.getDescription());
         entity.setEnabled(reqVO.getEnabled() != null ? reqVO.getEnabled() : true);
-        
-        try {
-            entity.setApplicableClassIds(objectMapper.writeValueAsString(reqVO.getApplicableClassIds()));
-        } catch (JsonProcessingException e) {
-            throw new BusinessException(500, "适用类ID序列化失败: " + e.getMessage());
-        }
+        entity.setApplicableClassIds(reqVO.getApplicableClassIds());
         
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
@@ -81,11 +73,7 @@ public class DomainRuleServiceImpl implements DomainRuleService {
         if (reqVO.getErrorMessage() != null) existing.setErrorMessage(reqVO.getErrorMessage());
         if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
         if (reqVO.getApplicableClassIds() != null) {
-            try {
-                existing.setApplicableClassIds(objectMapper.writeValueAsString(reqVO.getApplicableClassIds()));
-            } catch (JsonProcessingException e) {
-                throw new BusinessException(500, "适用类ID序列化失败: " + e.getMessage());
-            }
+            existing.setApplicableClassIds(reqVO.getApplicableClassIds());
         }
         
         existing.setUpdatedAt(LocalDateTime.now());
@@ -163,17 +151,8 @@ public class DomainRuleServiceImpl implements DomainRuleService {
         vo.setCreatedAt(entity.getCreatedAt());
         vo.setUpdatedAt(entity.getUpdatedAt());
         
-        // 解析 JSON 字符串为 List
-        if (entity.getApplicableClassIds() != null && !entity.getApplicableClassIds().isBlank()) {
-            try {
-                vo.setApplicableClassIds(objectMapper.readValue(entity.getApplicableClassIds(), List.class));
-            } catch (JsonProcessingException e) {
-                log.error("解析适用类ID失败: {}", e.getMessage());
-                vo.setApplicableClassIds(Collections.emptyList());
-            }
-        } else {
-            vo.setApplicableClassIds(Collections.emptyList());
-        }
+        // applicableClassIds 现在由 PgJsonbTypeHandler 自动处理，无须额外解析
+        vo.setApplicableClassIds(entity.getApplicableClassIds());
         
         return vo;
     }
