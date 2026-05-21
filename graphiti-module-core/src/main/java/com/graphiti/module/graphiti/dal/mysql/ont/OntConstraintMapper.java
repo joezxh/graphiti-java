@@ -15,4 +15,10 @@ public interface OntConstraintMapper extends BaseMapper<OntConstraintDO> {
 
     @Select("SELECT * FROM ont_constraint WHERE class_id = #{classId}")
     List<OntConstraintDO> selectByClassId(@Param("classId") Long classId);
+
+    @Select("SELECT COUNT(*) FROM ont_constraint WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_constraint WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

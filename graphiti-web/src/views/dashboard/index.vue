@@ -258,14 +258,14 @@ const goToGraphList = () => {
 const goToGraphDetail = (graphId?: string) => {
   const id = graphId || recentGraphs.value[0]?.graphId
   if (id) {
-    router.push({ path: '/graph/detail', query: { graphId } })
+    router.push(`/graph/ide/${id}`)
   } else {
     message.info('dashboard.pleaseCreateFirst')
   }
 }
 
 const goToDetail = (graphId: string) => {
-  router.push({ path: '/graph/detail', query: { graphId } })
+  router.push(`/graph/ide/${graphId}`)
 }
 
 const goToInferenceLog = () => {

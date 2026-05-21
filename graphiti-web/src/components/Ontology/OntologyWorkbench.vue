@@ -197,7 +197,7 @@ const editingInstance = ref<any>()
 
 function quickAdd(type: OntologyTabType, title: string) {
   store.openTab({ id: `tab-${type}-${Date.now()}`, type, title })
-  showAddMenu.value = false
+  // 注意: 不再在这里关闭菜单,由调用方(handleAddMenuClick)负责关闭
 }
 
 async function handleAddMenuClick({ key }: { key: string }) {

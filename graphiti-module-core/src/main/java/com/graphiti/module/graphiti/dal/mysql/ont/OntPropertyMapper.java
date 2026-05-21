@@ -19,4 +19,10 @@ public interface OntPropertyMapper extends BaseMapper<OntPropertyDO> {
 
     @Select("SELECT * FROM ont_property WHERE definition_id = #{definitionId} AND property_uri = #{propertyUri} LIMIT 1")
     Optional<OntPropertyDO> selectByUri(@Param("definitionId") Long definitionId, @Param("propertyUri") String propertyUri);
+
+    @Select("SELECT COUNT(*) FROM ont_property WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_property WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

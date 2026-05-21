@@ -54,14 +54,7 @@
               <a-divider type="vertical" />
               <a @click="editGraph(record)">{{ $t('common.edit') }}</a>
               <a-divider type="vertical" />
-              <a-popconfirm
-                :title="$t('graph.confirmDelete')"
-                :ok-text="$t('common.confirm')"
-                :cancel-text="$t('common.cancel')"
-                @confirm="deleteGraph(record.graphId)"
-              >
-                <a class="danger-link">{{ $t('common.delete') }}</a>
-              </a-popconfirm>
+              <a class="danger-link" @click="handleDeleteClick(record.graphId)">{{ $t('common.delete') }}</a>
             </a-space>
           </template>
         </template>
@@ -94,6 +87,145 @@
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <!-- 删除确认模态框 -->
+    <a-modal
+      v-model:open="deleteModalVisible"
+      :title="t('graph.deleteConfirmTitle')"
+      :confirm-loading="deleteLoading"
+      width="720px"
+      @ok="handleDeleteConfirm"
+      @cancel="deleteModalVisible = false"
+      :ok-text="t('common.confirm')"
+      :cancel-text="t('common.cancel')"
+    >
+      <div class="delete-confirm-content" v-if="deletePreview">
+        <a-alert
+          :message="t('graph.deleteWarning')"
+          type="warning"
+          show-icon
+          style="margin-bottom: 12px;"
+        />
+        <p class="delete-graph-name">
+          <strong>{{ deletePreview.name }}</strong>
+        </p>
+        <p class="delete-graph-desc" v-if="deletePreview.description">
+          {{ deletePreview.description }}
+        </p>
+
+        <!-- Neo4j 图谱数据 -->
+        <div class="data-section compact">
+          <div class="section-title">
+            <span>{{ t('graph.neo4jDataSection') }}</span>
+            <span class="section-badge" :class="getNeo4jDataCount > 0 ? 'badge-warning' : 'badge-success'">
+              {{ t('common.total') }}: {{ getNeo4jDataCount }}
+            </span>
+          </div>
+          <a-descriptions :column="3" bordered size="small">
+            <a-descriptions-item :label="t('graph.entityNodes')">
+              <span :class="deletePreview.entityNodeCount > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.entityNodeCount }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.episodes')">
+              <span :class="deletePreview.episodeCount > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.episodeCount }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.relationships')">
+              <span :class="deletePreview.relationshipCount > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.relationshipCount }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.communities')">
+              <span :class="deletePreview.communityNodeCount > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.communityNodeCount }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.totalNodes')">
+              {{ deletePreview.nodeCount }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.totalEdges')">
+              {{ deletePreview.edgeCount }}
+            </a-descriptions-item>
+          </a-descriptions>
+        </div>
+
+        <!-- 本体元数据 -->
+        <div class="data-section compact">
+          <div class="section-title">
+            <span>{{ t('graph.ontologySection') }}</span>
+            <span class="section-badge" :class="getOntologyDataCount > 0 ? 'badge-warning' : 'badge-success'">
+              {{ t('common.total') }}: {{ getOntologyDataCount }}
+            </span>
+          </div>
+          <a-descriptions :column="3" bordered size="small">
+            <a-descriptions-item :label="t('graph.ontDefinitions')">
+              <span :class="(deletePreview.ontDefinitionCount || 0) > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.ontDefinitionCount || 0 }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontClasses')">
+              <span :class="(deletePreview.ontClassCount || 0) > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.ontClassCount || 0 }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontProperties')">
+              <span :class="(deletePreview.ontPropertyCount || 0) > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.ontPropertyCount || 0 }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontConstraints')">
+              <span :class="(deletePreview.ontConstraintCount || 0) > 0 ? 'data-count-warning' : ''">
+                {{ deletePreview.ontConstraintCount || 0 }}
+              </span>
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontMappings')">
+              {{ deletePreview.ontMappingCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontClassInheritance')">
+              {{ deletePreview.ontClassInheritanceCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontEntityCategories')">
+              {{ deletePreview.ontEntityCategoryCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontEpisodeTypes')">
+              {{ deletePreview.ontEpisodeTypeCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontRelationshipMeta')">
+              {{ deletePreview.ontRelationshipMetaCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontCommunityTypes')">
+              {{ deletePreview.ontCommunityTypeCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontVersionHistory')">
+              {{ deletePreview.ontVersionHistoryCount || 0 }}
+            </a-descriptions-item>
+            <a-descriptions-item :label="t('graph.ontDrafts')">
+              {{ deletePreview.ontDraftCount || 0 }}
+            </a-descriptions-item>
+          </a-descriptions>
+        </div>
+
+        <!-- 汇总警告 -->
+        <div class="delete-summary" v-if="deletePreview.totalDataCount > 0">
+          <a-alert
+            :message="t('graph.deleteTotalWarning', { count: deletePreview.totalDataCount })"
+            type="error"
+            show-icon
+            style="margin-top: 12px;"
+          />
+        </div>
+        <div class="delete-summary" v-else>
+          <a-alert
+            :message="t('graph.deleteEmptyHint')"
+            type="info"
+            show-icon
+            style="margin-top: 12px;"
+          />
+        </div>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -103,7 +235,7 @@ import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import { useI18n } from 'vue-i18n'
-import { graphApi, type Graph } from '@/api/graph'
+import { graphApi, type Graph, type GraphDeletePreview } from '@/api/graph'
 
 const { t } = useI18n()
 
@@ -118,6 +250,12 @@ const modalTitle = ref('graph.newGraph')
 const isEdit = ref(false)
 const editingId = ref<string | null>(null)
 const formRef = ref()
+
+// 删除确认相关状态
+const deleteModalVisible = ref(false)
+const deletePreview = ref<GraphDeletePreview | null>(null)
+const deleteLoading = ref(false)
+const deletingId = ref<string | null>(null)
 
 // 表单状态
 const formState = reactive({
@@ -183,6 +321,23 @@ const filteredGraphs = computed(() => {
   )
 })
 
+// 计算 Neo4j 图谱数据总数
+const getNeo4jDataCount = computed(() => {
+  if (!deletePreview.value) return 0
+  const p = deletePreview.value
+  return (p.entityNodeCount || 0) + (p.episodeCount || 0) + (p.relationshipCount || 0) + (p.communityNodeCount || 0)
+})
+
+// 计算本体元数据总数
+const getOntologyDataCount = computed(() => {
+  if (!deletePreview.value) return 0
+  const p = deletePreview.value
+  return (p.ontDefinitionCount || 0) + (p.ontClassCount || 0) + (p.ontPropertyCount || 0) +
+    (p.ontConstraintCount || 0) + (p.ontMappingCount || 0) + (p.ontClassInheritanceCount || 0) +
+    (p.ontVersionHistoryCount || 0) + (p.ontEntityCategoryCount || 0) + (p.ontEpisodeTypeCount || 0) +
+    (p.ontRelationshipMetaCount || 0) + (p.ontCommunityTypeCount || 0) + (p.ontDraftCount || 0)
+})
+
 // 加载图谱列表
 const loadGraphs = async () => {
   loading.value = true
@@ -213,7 +368,7 @@ const showCreateModal = () => {
 
 // 查看图谱详情
 const viewGraphDetail = (record: Graph) => {
-  router.push(`/graph/detail/${record.graphId}`)
+  router.push(`/graph/ide/${record.graphId}`)
 }
 
 // 编辑图谱
@@ -226,14 +381,32 @@ const editGraph = (record: Graph) => {
   modalVisible.value = true
 }
 
-// 删除图谱
-const deleteGraph = async (id: string) => {
+// 删除图谱 - 第一步：获取预览并展示确认框
+const handleDeleteClick = async (id: string) => {
+  deletingId.value = id
   try {
-    await graphApi.delete(id)
-      message.success(t('graph.deleteSuccess'))
+    deletePreview.value = await graphApi.getDeletePreview(id)
+    deleteModalVisible.value = true
+  } catch (error) {
+    message.error(t('graph.deletePreviewFailed'))
+  }
+}
+
+// 删除图谱 - 第二步：确认后执行删除
+const handleDeleteConfirm = async () => {
+  if (!deletingId.value) return
+  deleteLoading.value = true
+  try {
+    await graphApi.delete(deletingId.value)
+    message.success(t('graph.deleteSuccess'))
+    deleteModalVisible.value = false
+    deletePreview.value = null
+    deletingId.value = null
     loadGraphs()
   } catch (error) {
     message.error(t('graph.deleteFailed'))
+  } finally {
+    deleteLoading.value = false
   }
 }
 
@@ -370,12 +543,119 @@ onMounted(() => {
       }
     }
     
-    .ant-pagination-prev, .ant-pagination-next {
+      .ant-pagination-prev, .ant-pagination-next {
       .ant-pagination-item-link {
         background: rgba(15, 16, 17, 0.8);
         border-color: #23252a;
         color: #f7f8f8;
       }
+    }
+  }
+}
+
+.delete-confirm-content {
+  .delete-graph-name {
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #000000;
+  }
+
+  .delete-graph-desc {
+    font-size: 13px;
+    color: #000000;
+    margin-bottom: 12px;
+  }
+
+  .delete-summary {
+    margin-top: 8px;
+  }
+
+  .delete-hint {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #8a8f98;
+  }
+
+  .data-count-warning {
+    color: #ff6b6b;
+    font-weight: 600;
+  }
+
+  .data-section.compact {
+    margin-bottom: 10px;
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: #000000;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #23252a;
+    }
+
+    .section-badge {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .badge-warning {
+      background: rgba(255, 107, 107, 0.15);
+      color: #ff6b6b;
+    }
+
+    .badge-success {
+      background: rgba(63, 185, 80, 0.15);
+      color: #3fb950;
+    }
+  }
+
+  :deep(.ant-descriptions) {
+    background: rgba(15, 16, 17, 0.6);
+    border-color: #23252a;
+    color: #000000;
+
+    .ant-descriptions-item-label {
+      background: rgba(15, 16, 17, 0.4);
+      border-color: #23252a;
+      color: #000000;
+    }
+
+    .ant-descriptions-item-content {
+      background: rgba(15, 16, 17, 0.4);
+      border-color: #23252a;
+      color: #000000;
+    }
+  }
+
+  :deep(.ant-alert-warning) {
+    background: rgba(255, 183, 77, 0.1);
+    border-color: rgba(255, 183, 77, 0.3);
+
+    .ant-alert-message {
+      color: #ffb74d;
+    }
+  }
+
+  :deep(.ant-alert-error) {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: rgba(255, 107, 107, 0.3);
+
+    .ant-alert-message {
+      color: #ff8a8a;
+    }
+  }
+
+  :deep(.ant-alert-info) {
+    background: rgba(94, 106, 210, 0.1);
+    border-color: rgba(94, 106, 210, 0.3);
+
+    .ant-alert-message {
+      color: #7b7ff0;
     }
   }
 }

@@ -16,6 +16,8 @@ public interface OntologyClassService {
 
     OntologyFullVO getFullOntology(String graphId);
 
+    void rollbackVersion(String graphId, Long historyId);
+
     // ==================== 类管理 ====================
 
     OntClassVO createClass(String graphId, OntClassVO reqVO);

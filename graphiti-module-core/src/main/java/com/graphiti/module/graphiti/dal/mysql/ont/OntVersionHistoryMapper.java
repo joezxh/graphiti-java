@@ -12,4 +12,10 @@ public interface OntVersionHistoryMapper extends BaseMapper<OntVersionHistoryDO>
 
     @Select("SELECT * FROM ont_version_history WHERE definition_id = #{definitionId} ORDER BY changed_at DESC")
     List<OntVersionHistoryDO> selectByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @Select("SELECT COUNT(*) FROM ont_version_history WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_version_history WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

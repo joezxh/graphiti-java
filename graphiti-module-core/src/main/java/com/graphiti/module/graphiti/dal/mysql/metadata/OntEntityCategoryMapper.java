@@ -24,4 +24,10 @@ public interface OntEntityCategoryMapper extends BaseMapper<OntEntityCategoryDO>
 
     @Select("SELECT * FROM ont_entity_category WHERE definition_id = #{definitionId} AND parent_category_code = #{parentCode} AND status = 'ACTIVE' ORDER BY sort_order")
     List<OntEntityCategoryDO> selectByParentCode(@Param("definitionId") Long definitionId, @Param("parentCode") String parentCode);
+
+    @Select("SELECT COUNT(*) FROM ont_entity_category WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_entity_category WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

@@ -17,4 +17,10 @@ public interface OntMappingMapper extends BaseMapper<OntMappingDO> {
     @Select("SELECT * FROM ont_mapping WHERE definition_id = #{definitionId} AND source_ontology = #{sourceOntology}")
     List<OntMappingDO> selectBySourceOntology(@Param("definitionId") Long definitionId,
                                               @Param("sourceOntology") String sourceOntology);
+
+    @Select("SELECT COUNT(*) FROM ont_mapping WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_mapping WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

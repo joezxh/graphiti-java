@@ -46,6 +46,8 @@
             <a-select-option value="RANGE">值域约束</a-select-option>
             <a-select-option value="PATTERN">正则约束</a-select-option>
             <a-select-option value="REQUIRED">必填约束</a-select-option>
+            <a-select-option value="ENUM">枚举约束</a-select-option>
+            <a-select-option value="NOT_NULL">非空约束</a-select-option>
             <a-select-option value="CUSTOM">自定义约束</a-select-option>
           </a-select>
         </a-form-item>
@@ -56,7 +58,7 @@
           <a-select v-model:value="form.propertyId" placeholder="选择属性" allow-clear :options="propertyOptions" />
         </a-form-item>
         <a-form-item label="约束值">
-          <a-input v-model:value="form.value" />
+          <ConstraintValueEditor v-model:model-value="form.value" :type="form.constraintType" />
         </a-form-item>
         <a-form-item label="严重程度">
           <a-select v-model:value="form.severity">
@@ -82,6 +84,7 @@ import { message } from 'ant-design-vue'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
+import ConstraintValueEditor from './ConstraintValueEditor.vue'
 
 const props = defineProps<{ graphId: string }>()
 const store = useOntologyStore()

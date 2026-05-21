@@ -33,4 +33,10 @@ public interface OntCommunityTypeMapper extends BaseMapper<OntCommunityTypeDO> {
      */
     @Select("SELECT * FROM ont_community_type WHERE definition_id = #{definitionId} AND type_code = #{typeCode} LIMIT 1")
     OntCommunityTypeDO findByCode(@Param("definitionId") Long definitionId, @Param("typeCode") String typeCode);
+
+    @Select("SELECT COUNT(*) FROM ont_community_type WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_community_type WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

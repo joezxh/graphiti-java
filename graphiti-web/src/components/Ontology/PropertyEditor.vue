@@ -63,6 +63,10 @@
               <a-select v-model:value="form.inverseOfId" placeholder="选择逆属性" allow-clear :options="propertyOptions" />
             </a-form-item>
 
+            <a-form-item label="等价属性（equivalentTo）">
+              <a-select v-model:value="form.equivalentTo" mode="multiple" placeholder="选择等价属性" allow-clear :options="propertyOptions" />
+            </a-form-item>
+
             <a-form-item label="描述">
               <a-textarea v-model:value="form.description" :rows="3" />
             </a-form-item>
@@ -169,6 +173,43 @@
         </div>
       </a-tab-pane>
 
+      <a-tab-pane key="inheritance" tab="继承关系">
+        <div class="tab-content">
+          <div class="inheritance-section">
+            <div class="section-title">父属性链</div>
+            <div v-if="propertyAncestors.length === 0" class="empty-tip">无父属性（顶级属性）</div>
+            <div v-else class="inheritance-path">
+              <span v-for="(p, idx) in propertyAncestors" :key="p.id" class="path-item">
+                <span class="path-node" :class="{ current: p.id === propertyId }" @click="openProperty(p.id, p.localName)">
+                  {{ p.localName }}
+                </span>
+                <span v-if="idx < propertyAncestors.length - 1" class="path-arrow">→</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="inheritance-section" style="margin-top: 24px;">
+            <div class="section-title">子属性</div>
+            <div v-if="childProperties.length === 0" class="empty-tip">无子属性</div>
+            <div v-else class="property-tags">
+              <span v-for="p in childProperties" :key="p.id" class="property-tag" @click="openProperty(p.id, p.localName)">
+                {{ p.localName }}
+              </span>
+            </div>
+          </div>
+
+          <div class="inheritance-section" style="margin-top: 24px;">
+            <div class="section-title">等价属性</div>
+            <div v-if="equivalentProperties.length === 0" class="empty-tip">无等价属性</div>
+            <div v-else class="property-tags">
+              <span v-for="p in equivalentProperties" :key="p.id" class="property-tag equivalent" @click="openProperty(p.id, p.localName)">
+                {{ p.localName }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </a-tab-pane>
+
       <a-tab-pane key="stats" tab="使用统计">
         <div class="tab-content">
           <a-row :gutter="16" class="stats-row">
@@ -221,6 +262,7 @@ const form = reactive({
   propertyType: 'DATATYPE' as 'DATATYPE' | 'OBJECT' | 'ANNOTATION' | 'TRANSITIVE' | 'SYMMETRIC' | 'FUNCTIONAL',
   parentPropertyId: undefined as number | undefined,
   inverseOfId: undefined as number | undefined,
+  equivalentTo: [] as number[],
   domainClassId: undefined as number | undefined,
   rangeClassId: undefined as number | undefined,
   rangeDataType: 'string',
@@ -253,6 +295,16 @@ const constraintCount = computed(() =>
   store.constraints.filter(c => c.propertyId === props.propertyId).length
 )
 
+function parseEquivalentTo(equivalentTo: any): number[] {
+  if (!Array.isArray(equivalentTo)) return []
+  const ids: number[] = []
+  for (const uri of equivalentTo) {
+    const found = store.properties.find(p => p.propertyUri === uri || p.localName === uri)
+    if (found) ids.push(found.id)
+  }
+  return ids
+}
+
 async function loadData() {
   if (!props.propertyId) return
   const prop = store.properties.find(p => p.id === props.propertyId)
@@ -264,6 +316,7 @@ async function loadData() {
     propertyType: prop.propertyType,
     parentPropertyId: prop.parentPropertyId,
     inverseOfId: prop.inverseOfId,
+    equivalentTo: parseEquivalentTo(prop.equivalentTo),
     domainClassId: prop.domainClassId,
     rangeClassId: prop.rangeClassId,
     rangeDataType: prop.rangeDataType || 'string',
@@ -291,6 +344,12 @@ async function handleSave() {
       propertyType: form.propertyType,
       parentPropertyId: form.parentPropertyId,
       inverseOfId: form.inverseOfId,
+      equivalentTo: form.equivalentTo?.length
+        ? form.equivalentTo.map((id: number) => {
+            const p = store.properties.find(x => x.id === id)
+            return p?.propertyUri || `http://graphiti.io/${p?.localName || id}`
+          }).filter(Boolean)
+        : undefined,
       domainClassId: form.domainClassId,
       rangeClassId: form.rangeClassId,
       rangeDataType: form.rangeDataType || undefined,
@@ -337,8 +396,42 @@ async function handleDelete() {
   }
 }
 
+const propertyAncestors = computed(() => {
+  if (!props.propertyId) return []
+  const path: any[] = []
+  let current = store.properties.find(p => p.id === props.propertyId)
+  while (current) {
+    path.unshift(current)
+    if (current.parentPropertyId) {
+      current = store.properties.find(p => p.id === current!.parentPropertyId)
+    } else {
+      break
+    }
+  }
+  return path
+})
+
+const childProperties = computed(() =>
+  store.properties.filter(p => p.parentPropertyId === props.propertyId)
+)
+
+const equivalentProperties = computed(() => {
+  if (!props.propertyId) return []
+  const prop = store.properties.find(p => p.id === props.propertyId)
+  if (!prop?.equivalentTo?.length) return []
+  return store.properties.filter(p =>
+    prop.equivalentTo!.some((ref: string) =>
+      p.propertyUri === ref || p.localName === ref
+    )
+  )
+})
+
 function openClass(cls: any) {
   store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
+}
+
+function openProperty(propertyId: number, propertyName: string) {
+  store.openTab({ id: `property-editor-${propertyId}`, type: 'property-editor', title: `属性: ${propertyName}`, propertyId })
 }
 
 onMounted(() => loadData())
@@ -399,6 +492,60 @@ watch(() => props.propertyId, () => loadData())
       &:hover { background: rgba(88, 166, 255, 0.25); }
     }
     .empty-tip { color: #6e7681; font-size: 13px; }
+  }
+
+  .inheritance-section {
+    .section-title { font-size: 14px; font-weight: 600; color: #e6edf3; margin-bottom: 12px; }
+    .empty-tip { color: #6e7681; font-size: 13px; }
+
+    .inheritance-path {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px;
+      background: #161b22;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+
+      .path-node {
+        padding: 4px 12px;
+        background: #21262d;
+        border-radius: 4px;
+        font-size: 13px;
+        color: #8b949e;
+        cursor: pointer;
+
+        &.current { background: rgba(88, 166, 255, 0.2); color: #58a6ff; border: 1px solid #58a6ff; }
+        &:hover { background: #30363d; }
+      }
+      .path-arrow { color: #6e7681; }
+    }
+
+    .property-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .property-tag {
+        padding: 4px 12px;
+        background: rgba(163, 113, 247, 0.15);
+        border: 1px solid rgba(163, 113, 247, 0.3);
+        border-radius: 4px;
+        font-size: 13px;
+        color: #a371f7;
+        cursor: pointer;
+        transition: all 0.15s;
+
+        &:hover { background: rgba(163, 113, 247, 0.25); }
+        &.equivalent {
+          background: rgba(88, 166, 255, 0.15);
+          border-color: rgba(88, 166, 255, 0.3);
+          color: #58a6ff;
+          &:hover { background: rgba(88, 166, 255, 0.25); }
+        }
+      }
+    }
   }
 }
 </style>

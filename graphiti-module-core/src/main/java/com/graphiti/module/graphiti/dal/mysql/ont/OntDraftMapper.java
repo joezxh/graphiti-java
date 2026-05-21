@@ -18,4 +18,10 @@ public interface OntDraftMapper extends BaseMapper<OntDraftDO> {
 
     @Select("SELECT * FROM ont_draft WHERE graph_id = #{graphId} AND draft_type = #{draftType} ORDER BY created_at DESC")
     List<OntDraftDO> selectByGraphIdAndDraftType(@Param("graphId") String graphId, @Param("draftType") String draftType);
+
+    @Select("SELECT COUNT(*) FROM ont_draft WHERE graph_id = #{graphId}")
+    long countByGraphId(@Param("graphId") String graphId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_draft WHERE graph_id = #{graphId}")
+    int deleteByGraphId(@Param("graphId") String graphId);
 }

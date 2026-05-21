@@ -18,4 +18,10 @@ public interface OntRelationshipMetaMapper extends BaseMapper<OntRelationshipMet
 
     @Select("SELECT * FROM ont_relationship_meta WHERE definition_id = #{definitionId} AND relationship_type = #{relationshipType} LIMIT 1")
     OntRelationshipMetaDO selectByType(@Param("definitionId") Long definitionId, @Param("relationshipType") String relationshipType);
+
+    @Select("SELECT COUNT(*) FROM ont_relationship_meta WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_relationship_meta WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

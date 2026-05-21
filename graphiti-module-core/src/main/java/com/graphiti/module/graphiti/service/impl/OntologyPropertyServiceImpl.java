@@ -75,8 +75,31 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         if (reqVO.getRangeClassId() != null) existing.setRangeClassId(reqVO.getRangeClassId());
         if (reqVO.getRangeDataType() != null) existing.setRangeDataType(reqVO.getRangeDataType());
         if (reqVO.getIsRequired() != null) existing.setIsRequired(reqVO.getIsRequired());
+        if (reqVO.getIsMultiple() != null) existing.setIsMultiple(reqVO.getIsMultiple());
         if (reqVO.getPattern() != null) existing.setPattern(reqVO.getPattern());
         if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
+        if (reqVO.getExample() != null) existing.setExample(reqVO.getExample());
+        if (reqVO.getMinCardinality() != null) existing.setMinCardinality(reqVO.getMinCardinality());
+        if (reqVO.getMaxCardinality() != null) existing.setMaxCardinality(reqVO.getMaxCardinality());
+        if (reqVO.getDefaultValue() != null) existing.setDefaultValue(reqVO.getDefaultValue());
+        if (reqVO.getMinValue() != null) existing.setMinValue(reqVO.getMinValue());
+        if (reqVO.getMaxValue() != null) existing.setMaxValue(reqVO.getMaxValue());
+        if (reqVO.getParentPropertyId() != null) existing.setParentPropertyId(reqVO.getParentPropertyId());
+        if (reqVO.getInverseOfId() != null) existing.setInverseOfId(reqVO.getInverseOfId());
+        if (reqVO.getEquivalentTo() != null) {
+            try {
+                existing.setEquivalentTo(objectMapper.writeValueAsString(reqVO.getEquivalentTo()));
+            } catch (Exception e) {
+                log.warn("序列化 equivalentTo 失败", e);
+            }
+        }
+        if (reqVO.getAllowedValues() != null) {
+            try {
+                existing.setAllowedValues(objectMapper.writeValueAsString(reqVO.getAllowedValues()));
+            } catch (Exception e) {
+                log.warn("序列化 allowedValues 失败", e);
+            }
+        }
 
         propertyMapper.updateById(existing);
         recordHistory(existing.getDefinitionId(), "PROPERTY_MODIFIED", "PROPERTY", propertyId,
@@ -167,6 +190,30 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
             null, entity, "新增约束: " + reqVO.getConstraintType(), null);
 
         return toConstraintVO(entity);
+    }
+
+    @Override
+    @Transactional
+    public OntConstraintVO updateConstraint(String graphId, Long constraintId, OntConstraintVO reqVO) {
+        OntConstraintDO existing = constraintMapper.selectById(constraintId);
+        if (existing == null) throw new BusinessException(1003, "约束不存在");
+
+        OntConstraintDO before = cloneDO(existing);
+
+        if (reqVO.getClassId() != null) existing.setClassId(reqVO.getClassId());
+        if (reqVO.getPropertyId() != null) existing.setPropertyId(reqVO.getPropertyId());
+        if (reqVO.getConstraintType() != null) existing.setConstraintType(reqVO.getConstraintType());
+        if (reqVO.getValue() != null) existing.setValue(reqVO.getValue());
+        if (reqVO.getErrorMessage() != null) existing.setErrorMessage(reqVO.getErrorMessage());
+        if (reqVO.getSeverity() != null) existing.setSeverity(reqVO.getSeverity());
+        if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
+
+        constraintMapper.updateById(existing);
+
+        recordHistory(existing.getDefinitionId(), "CONSTRAINT_MODIFIED", "CONSTRAINT", constraintId,
+            before, existing, "更新约束: " + existing.getConstraintType(), null);
+
+        return toConstraintVO(existing);
     }
 
     @Override
@@ -347,6 +394,14 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
     private OntPropertyDO cloneDO(OntPropertyDO src) {
         try {
             return objectMapper.readValue(objectMapper.writeValueAsString(src), OntPropertyDO.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private OntConstraintDO cloneDO(OntConstraintDO src) {
+        try {
+            return objectMapper.readValue(objectMapper.writeValueAsString(src), OntConstraintDO.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

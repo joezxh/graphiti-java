@@ -45,12 +45,6 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'graph.createGraph', requiresAuth: true }
       },
       {
-        path: 'graph/detail/:id',
-        name: 'GraphDetail',
-        component: () => import('@/views/graph/detail.vue'),
-        meta: { title: 'nav.graphDetail', requiresAuth: true }
-      },
-      {
         path: 'data/import',
         name: 'DataImport',
         component: () => import('@/views/data/import.vue'),

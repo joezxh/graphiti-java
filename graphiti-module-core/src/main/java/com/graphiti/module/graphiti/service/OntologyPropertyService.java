@@ -29,6 +29,8 @@ public interface OntologyPropertyService {
 
     OntConstraintVO createConstraint(String graphId, OntConstraintVO reqVO);
 
+    OntConstraintVO updateConstraint(String graphId, Long constraintId, OntConstraintVO reqVO);
+
     void deleteConstraint(String graphId, Long constraintId);
 
     // ==================== 版本历史 ====================

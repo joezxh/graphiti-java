@@ -69,6 +69,47 @@ public class OntologyClassServiceImpl implements OntologyClassService {
     }
 
     @Override
+    @Transactional
+    public void rollbackVersion(String graphId, Long historyId) {
+        OntVersionHistoryDO history = versionHistoryMapper.selectById(historyId);
+        if (history == null) throw new BusinessException(1003, "版本历史记录不存在");
+        if (history.getBeforeState() == null) throw new BusinessException(1004, "无法回滚：该记录没有保存变更前的状态");
+
+        String entityType = history.getEntityType();
+        Long defId = history.getDefinitionId();
+        Long entityId = history.getEntityId();
+
+        try {
+            if ("CLASS".equals(entityType)) {
+                OntClassDO restoreData = objectMapper.readValue(history.getBeforeState(), OntClassDO.class);
+                restoreData.setId(entityId);
+                restoreData.setDefinitionId(defId);
+                classMapper.updateById(restoreData);
+                recordHistory(defId, "CLASS_ROLLBACK", "CLASS", entityId,
+                    null, restoreData, "回滚到历史版本: " + history.getVersion(), null);
+            } else if ("PROPERTY".equals(entityType)) {
+                OntPropertyDO restoreData = objectMapper.readValue(history.getBeforeState(), OntPropertyDO.class);
+                restoreData.setId(entityId);
+                restoreData.setDefinitionId(defId);
+                propertyMapper.updateById(restoreData);
+                recordHistory(defId, "PROPERTY_ROLLBACK", "PROPERTY", entityId,
+                    null, restoreData, "回滚到历史版本: " + history.getVersion(), null);
+            } else if ("CONSTRAINT".equals(entityType)) {
+                OntConstraintDO restoreData = objectMapper.readValue(history.getBeforeState(), OntConstraintDO.class);
+                restoreData.setId(entityId);
+                restoreData.setDefinitionId(defId);
+                constraintMapper.updateById(restoreData);
+                recordHistory(defId, "CONSTRAINT_ROLLBACK", "CONSTRAINT", entityId,
+                    null, restoreData, "回滚到历史版本: " + history.getVersion(), null);
+            } else {
+                throw new BusinessException(1005, "不支持的实体类型回滚: " + entityType);
+            }
+        } catch (Exception e) {
+            throw new BusinessException(1006, "回滚失败: " + e.getMessage());
+        }
+    }
+
+    @Override
     public OntologyFullVO getFullOntology(String graphId) {
         OntDefinitionDO definition = resolveDefinition(graphId);
         if (definition == null) {
@@ -121,6 +162,20 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         entity.setExample(reqVO.getExample());
         entity.setDomainHint(reqVO.getDomainHint());
         entity.setMetadata(reqVO.getMetadata());
+        if (reqVO.getEquivalentTo() != null && !reqVO.getEquivalentTo().isEmpty()) {
+            try {
+                entity.setEquivalentTo(objectMapper.writeValueAsString(reqVO.getEquivalentTo()));
+            } catch (Exception e) {
+                log.warn("序列化 equivalentTo 失败", e);
+            }
+        }
+        if (reqVO.getDisjointWith() != null && !reqVO.getDisjointWith().isEmpty()) {
+            try {
+                entity.setDisjointWith(objectMapper.writeValueAsString(reqVO.getDisjointWith()));
+            } catch (Exception e) {
+                log.warn("序列化 disjointWith 失败", e);
+            }
+        }
 
         classMapper.insert(entity);
         recordHistory(defId, "CLASS_ADDED", "CLASS", entity.getId(),
@@ -142,6 +197,20 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
         if (reqVO.getParentClassId() != null) existing.setParentClassId(reqVO.getParentClassId());
         if (reqVO.getDomainHint() != null) existing.setDomainHint(reqVO.getDomainHint());
+        if (reqVO.getEquivalentTo() != null) {
+            try {
+                existing.setEquivalentTo(objectMapper.writeValueAsString(reqVO.getEquivalentTo()));
+            } catch (Exception e) {
+                log.warn("序列化 equivalentTo 失败", e);
+            }
+        }
+        if (reqVO.getDisjointWith() != null) {
+            try {
+                existing.setDisjointWith(objectMapper.writeValueAsString(reqVO.getDisjointWith()));
+            } catch (Exception e) {
+                log.warn("序列化 disjointWith 失败", e);
+            }
+        }
 
         classMapper.updateById(existing);
         recordHistory(existing.getDefinitionId(), "CLASS_MODIFIED", "CLASS", classId,

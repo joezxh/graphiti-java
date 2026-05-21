@@ -91,8 +91,10 @@ import { ref, computed, reactive } from 'vue'
 import { message } from 'ant-design-vue'
 import { CheckOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
+import { ontologyApi } from '@/api/ontology'
+import { graphApi } from '@/api/graph'
 
-defineProps<{ graphId: string }>()
+const props = defineProps<{ graphId: string }>()
 const store = useOntologyStore()
 const validating = ref(false)
 const errorKeyword = ref('')
@@ -135,16 +137,105 @@ function severityColor(s?: string) { return { ERROR: 'red', WARNING: 'orange', I
 async function handleValidate() {
   validating.value = true
   try {
+    // 1. 收集待验证的类
+    const classTypes = config.scope === 'class' && config.classType
+      ? [config.classType]
+      : store.classes.map(c => c.localName)
+
+    // 2. 加载实例数据并构建验证请求
+    const nodes: { nodeType: string; properties: Record<string, any> }[] = []
+    let loadCount = 0
+    const maxInstances = 100 // 每类最多验证100条
+
+    for (const classType of classTypes) {
+      try {
+        const result = await graphApi.getClassInstances(props.graphId, classType, {
+          page: 1,
+          pageSize: maxInstances
+        })
+        for (const inst of result.data || []) {
+          nodes.push({
+            nodeType: classType,
+            properties: inst.properties || {}
+          })
+          loadCount++
+        }
+      } catch (e) {
+        console.warn(`加载类 ${classType} 实例失败`, e)
+      }
+    }
+
+    if (nodes.length === 0) {
+      message.warning('未找到可验证的实例数据')
+      validating.value = false
+      return
+    }
+
+    // 3. 调用批量验证 API
+    const resp = await ontologyApi.validateBatch(props.graphId, { nodes, edges: [] })
+
+    // 4. 解析结果
     const allErrors: ValidationError[] = []
-    store.classes.forEach(cls => {
-      store.properties.filter(p => p.domainClassId === cls.id && p.isRequired).forEach(prop => {
-        allErrors.push({ id: `${cls.id}-${prop.id}-req`, nodeUuid: `sim-${cls.localName}-1`, nodeName: `[模拟] ${cls.localName} 实例`, field: prop.localName, type: 'REQUIRED', message: `属性 ${prop.localName} 为必填`, severity: 'ERROR' })
-      })
-    })
-    const total = 100
-    validationResult.value = { total, passed: Math.max(0, total - allErrors.length), failed: allErrors.filter(e => e.severity === 'ERROR').length, warnings: allErrors.filter(e => e.severity === 'WARNING').length, errors: allErrors }
-    message.success('验证完成（模拟数据）')
-  } catch (e: any) { message.error(e.message || '验证失败') } finally { validating.value = false }
+    let passed = 0
+    let failed = 0
+    let warnings = 0
+
+    for (let i = 0; i < nodes.length; i++) {
+      const nodeResult = resp.nodeResults?.[i]
+      if (!nodeResult) continue
+
+      if (nodeResult.passed) {
+        passed++
+      } else {
+        failed++
+      }
+
+      // 收集错误
+      if (nodeResult.errors) {
+        for (const err of nodeResult.errors) {
+          allErrors.push({
+            id: `err-${i}-${err.code}`,
+            nodeUuid: nodes[i].nodeType,
+            nodeName: `${nodes[i].nodeType} #${i + 1}`,
+            field: err.field || '-',
+            type: err.code || 'ERROR',
+            message: err.message || '验证失败',
+            severity: err.level >= 2 ? 'ERROR' : 'WARNING'
+          })
+        }
+      }
+
+      // 收集警告
+      if (nodeResult.warnings) {
+        for (const warn of nodeResult.warnings) {
+          warnings++
+          allErrors.push({
+            id: `warn-${i}`,
+            nodeUuid: nodes[i].nodeType,
+            nodeName: `${nodes[i].nodeType} #${i + 1}`,
+            field: '-',
+            type: 'WARNING',
+            message: warn.message || warn.suggestion || '警告',
+            severity: 'WARNING'
+          })
+        }
+      }
+    }
+
+    validationResult.value = {
+      total: nodes.length,
+      passed,
+      failed,
+      warnings,
+      errors: allErrors
+    }
+
+    message.success(`验证完成：共 ${nodes.length} 个实例`)
+  } catch (e: any) {
+    message.error(e.message || '验证失败')
+  } finally {
+    validating.value = false
+  }
 }
 
 function handleRefresh() { validationResult.value = null; errorKeyword.value = '' }

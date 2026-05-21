@@ -18,4 +18,10 @@ public interface OntClassMapper extends BaseMapper<OntClassDO> {
 
     @Select("SELECT * FROM ont_class WHERE definition_id = #{definitionId} AND parent_class_id = #{parentId}")
     List<OntClassDO> selectByParentId(@Param("definitionId") Long definitionId, @Param("parentId") Long parentId);
+
+    @Select("SELECT COUNT(*) FROM ont_class WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_class WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

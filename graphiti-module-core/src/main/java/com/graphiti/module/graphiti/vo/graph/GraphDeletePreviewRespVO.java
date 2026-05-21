@@ -33,9 +33,35 @@ public class GraphDeletePreviewRespVO implements Serializable {
     private Long communityNodeCount;
 
     /**
+     * 本体定义统计
+     */
+    private Long ontDefinitionCount;
+    private Long ontClassCount;
+    private Long ontPropertyCount;
+    private Long ontConstraintCount;
+    private Long ontMappingCount;
+    private Long ontClassInheritanceCount;
+    private Long ontVersionHistoryCount;
+    private Long ontEntityCategoryCount;
+    private Long ontEpisodeTypeCount;
+    private Long ontRelationshipMetaCount;
+    private Long ontCommunityTypeCount;
+    private Long ontDraftCount;
+
+    /**
      * 是否存在待删除数据
      */
     private Boolean hasData;
+
+    /**
+     * Neo4j 总数据量
+     */
+    private Long neo4jDataCount;
+
+    /**
+     * 本体定义总数据量
+     */
+    private Long ontologyDataCount;
 
     /**
      * 总数据量（用于前端展示警告）

@@ -36,4 +36,10 @@ public interface OntEpisodeTypeMapper extends BaseMapper<OntEpisodeTypeDO> {
             "description, sort_order, metadata, status, created_at, updated_at " +
             "FROM ont_episode_type WHERE definition_id = #{definitionId} AND type_code = #{typeCode} LIMIT 1")
     OntEpisodeTypeDO selectByTypeCode(@Param("definitionId") Long definitionId, @Param("typeCode") String typeCode);
+
+    @Select("SELECT COUNT(*) FROM ont_episode_type WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_episode_type WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

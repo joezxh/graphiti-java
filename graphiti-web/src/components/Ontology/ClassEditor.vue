@@ -235,12 +235,13 @@
             <a-select-option value="CARDINALITY">基数约束</a-select-option>
             <a-select-option value="RANGE">值域约束</a-select-option>
             <a-select-option value="PATTERN">正则约束</a-select-option>
-            <a-select-option value="REQUIRED">必填约束</a-select-option>
+            <a-select-option value="NOT_NULL">非空约束</a-select-option>
+            <a-select-option value="ENUM">枚举约束</a-select-option>
             <a-select-option value="CUSTOM">自定义约束</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="约束值">
-          <a-input v-model:value="constraintForm.value" placeholder="约束值或表达式" />
+          <ConstraintValueEditor v-model:model-value="constraintForm.value" :type="constraintForm.constraintType" />
         </a-form-item>
         <a-form-item label="严重程度">
           <a-select v-model:value="constraintForm.severity">
@@ -267,6 +268,7 @@ import { SaveOutlined, DeleteOutlined, PlusOutlined, ExportOutlined } from '@ant
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
 import type { OntClassVO, OntPropertyVO, OntConstraintVO } from '@/api/ontology'
+import ConstraintValueEditor from './ConstraintValueEditor.vue'
 
 const props = defineProps<{
   graphId: string
@@ -371,6 +373,23 @@ async function loadData() {
   if (!props.classId) return
   const cls = store.classes.find(c => c.id === props.classId)
   if (!cls) return
+
+  // 将后端返回的 URI/localName 字符串数组转换为类ID数组
+  const equivIds: number[] = []
+  if (Array.isArray(cls.equivalentTo)) {
+    for (const uri of cls.equivalentTo) {
+      const found = store.classes.find(c => c.classUri === uri || c.localName === uri)
+      if (found) equivIds.push(found.id)
+    }
+  }
+  const disjointIds: number[] = []
+  if (Array.isArray(cls.disjointWith)) {
+    for (const name of cls.disjointWith) {
+      const found = store.classes.find(c => c.localName === name || c.classUri === name)
+      if (found) disjointIds.push(found.id)
+    }
+  }
+
   Object.assign(form, {
     id: cls.id,
     localName: cls.localName,
@@ -380,8 +399,8 @@ async function loadData() {
     domainHint: cls.domainHint || '',
     description: cls.description || '',
     example: cls.example || '',
-    equivalentTo: (cls.equivalentTo as number[]) || [],
-    disjointWith: (cls.disjointWith as number[]) || []
+    equivalentTo: equivIds,
+    disjointWith: disjointIds
   })
 }
 
@@ -396,6 +415,18 @@ async function handleSave() {
       localName: form.localName,
       classUri: form.classUri || undefined,
       parentClassId: form.parentClassIds[0] || undefined,
+      equivalentTo: form.equivalentTo?.length
+        ? form.equivalentTo.map((id: number) => {
+            const cls = store.classes.find(c => c.id === id)
+            return cls?.classUri || `http://graphiti.io/${cls?.localName || id}`
+          }).filter(Boolean)
+        : undefined,
+      disjointWith: form.disjointWith?.length
+        ? form.disjointWith.map((id: number) => {
+            const cls = store.classes.find(c => c.id === id)
+            return cls?.localName || String(id)
+          }).filter(Boolean)
+        : undefined,
       domainHint: form.domainHint || undefined,
       description: form.description || undefined,
       example: form.example || undefined

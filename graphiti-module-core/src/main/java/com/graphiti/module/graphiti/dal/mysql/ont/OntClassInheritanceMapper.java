@@ -19,4 +19,10 @@ public interface OntClassInheritanceMapper extends BaseMapper<OntClassInheritanc
 
     @Select("SELECT * FROM ont_class_inheritance WHERE parent_class_id = #{parentClassId}")
     List<OntClassInheritanceDO> selectByParentClassId(@Param("parentClassId") Long parentClassId);
+
+    @Select("SELECT COUNT(*) FROM ont_class_inheritance WHERE definition_id = #{definitionId}")
+    long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @org.apache.ibatis.annotations.Delete("DELETE FROM ont_class_inheritance WHERE definition_id = #{definitionId}")
+    int deleteByDefinitionId(@Param("definitionId") Long definitionId);
 }

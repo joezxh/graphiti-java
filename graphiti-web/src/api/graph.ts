@@ -149,6 +149,35 @@ export interface GraphStats {
   episodeTrend?: number
 }
 
+export interface GraphDeletePreview {
+  graphId: string
+  name: string
+  description?: string
+  nodeCount?: number
+  edgeCount?: number
+  entityNodeCount: number
+  episodeCount: number
+  relationshipCount: number
+  communityNodeCount: number
+  hasData: boolean
+  neo4jDataCount: number
+  ontologyDataCount: number
+  totalDataCount: number
+  // Ontology metadata
+  ontDefinitionCount?: number
+  ontClassCount?: number
+  ontPropertyCount?: number
+  ontConstraintCount?: number
+  ontMappingCount?: number
+  ontClassInheritanceCount?: number
+  ontVersionHistoryCount?: number
+  ontEntityCategoryCount?: number
+  ontEpisodeTypeCount?: number
+  ontRelationshipMetaCount?: number
+  ontCommunityTypeCount?: number
+  ontDraftCount?: number
+}
+
 export interface CreateGraphReq {
   name: string
   description?: string
@@ -185,6 +214,11 @@ export const graphApi = {
   // 删除图谱
   async delete(id: string): Promise<void> {
     return request.delete(`/graph/${id}`)
+  },
+
+  // 获取图谱删除预览
+  async getDeletePreview(id: string): Promise<GraphDeletePreview> {
+    return request.get(`/graph/${id}/delete-preview`)
   },
 
   // 获取节点列表

@@ -168,6 +168,16 @@ public class OntologyController {
         return CommonResult.success(propertyService.createConstraint(graphId, reqVO));
     }
 
+    @Operation(summary = "更新约束", description = "更新指定的本体约束",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PutMapping("/{graphId}/constraints/{constraintId}")
+    public CommonResult<OntConstraintVO> updateConstraint(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("constraintId") @Parameter(description = "约束ID", required = true) Long constraintId,
+            @RequestBody OntConstraintVO reqVO) {
+        return CommonResult.success(propertyService.updateConstraint(graphId, constraintId, reqVO));
+    }
+
     @Operation(summary = "删除约束", description = "删除指定的本体约束",
               security = {@SecurityRequirement(name = "Bearer Authentication")})
     @DeleteMapping("/{graphId}/constraints/{constraintId}")
@@ -186,6 +196,16 @@ public class OntologyController {
     public CommonResult<List<OntVersionHistoryVO>> getVersionHistory(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
         return CommonResult.success(propertyService.getVersionHistory(graphId));
+    }
+
+    @Operation(summary = "回滚版本", description = "根据版本历史记录回滚到指定版本",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/history/{historyId}/rollback")
+    public CommonResult<Void> rollbackVersion(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("historyId") @Parameter(description = "历史记录ID", required = true) Long historyId) {
+        classService.rollbackVersion(graphId, historyId);
+        return CommonResult.success(null);
     }
 
     // ==================== Schema.org 导入导出 ====================

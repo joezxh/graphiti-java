@@ -50,46 +50,103 @@ const searchText = ref('')
 let chart: echarts.ECharts | null = null
 
 function buildSeries(): any {
+  const categories = [
+    { name: '类', itemStyle: { color: '#58a6ff' } },
+    { name: '属性', itemStyle: { color: '#a371f7' } },
+    { name: '约束', itemStyle: { color: '#d29922' } }
+  ]
+
   if (vizMode.value === 'inheritance') {
+    // 继承树：仅展示类和继承关系，使用力导向布局让层次更清晰
     const classNodes = store.classes.map(cls => ({
-      id: `class-${cls.id}`, name: cls.localName, category: 0, symbolSize: 50,
-      itemStyle: { color: '#58a6ff', borderColor: '#30363d', borderWidth: 2, borderRadius: 8 }
+      id: `class-${cls.id}`, name: cls.localName, category: 0, symbolSize: 55,
+      itemStyle: { color: '#58a6ff', borderColor: '#30363d', borderWidth: 2 },
+      label: { show: true, fontSize: 13, fontWeight: 'bold' }
     }))
     const edges = store.classes.filter(cls => cls.parentClassId).map(cls => ({
       source: `class-${cls.parentClassId}`, target: `class-${cls.id}`,
-      lineStyle: { color: '#3fb950', width: 2, type: 'solid' }
+      lineStyle: { color: '#3fb950', width: 2 },
+      label: { show: true, formatter: '继承', fontSize: 10, color: '#3fb950' }
     }))
-    return { type: 'graph', layout: 'tree', orient: 'TB', symbol: 'roundRect', roam: true,
-      data: classNodes, links: edges, categories: [{ name: '类' }],
+    return {
+      type: 'graph', layout: 'force', roam: true,
+      data: classNodes, links: edges, categories,
       label: { show: true, position: 'bottom', fontSize: 12, color: '#e6edf3' },
-      lineStyle: { curveness: 0.5 } }
+      force: { repulsion: 300, edgeLength: [80, 150], gravity: 0.1 },
+      lineStyle: { curveness: 0.2 }
+    }
   }
 
   const allNodes: any[] = []
   const allLinks: any[] = []
 
+  // 类节点
   store.classes.forEach(cls => {
-    allNodes.push({ id: `class-${cls.id}`, name: cls.localName, category: 0, symbolSize: 45,
-      itemStyle: { color: '#58a6ff', borderColor: '#30363d', borderWidth: 2, borderRadius: 6 } })
+    allNodes.push({
+      id: `class-${cls.id}`, name: cls.localName, category: 0, symbolSize: 50,
+      itemStyle: { color: '#58a6ff', borderColor: '#30363d', borderWidth: 2 }
+    })
     if (cls.parentClassId) {
-      allLinks.push({ source: `class-${cls.parentClassId}`, target: `class-${cls.id}`,
-        lineStyle: { color: '#3fb950', width: 2, type: 'solid' } })
+      allLinks.push({
+        source: `class-${cls.parentClassId}`, target: `class-${cls.id}`,
+        lineStyle: { color: '#3fb950', width: 2 },
+        label: { show: vizMode.value === 'full', formatter: '继承', fontSize: 9, color: '#3fb950' }
+      })
     }
   })
 
+  // 属性节点 + 关系
   store.properties.forEach(prop => {
-    allNodes.push({ id: `prop-${prop.id}`, name: prop.localName, category: 1, symbolSize: 30,
-      itemStyle: { color: '#a371f7', borderColor: '#30363d', borderWidth: 1, borderRadius: 4 } })
+    allNodes.push({
+      id: `prop-${prop.id}`, name: prop.localName, category: 1, symbolSize: 32,
+      itemStyle: { color: '#a371f7', borderColor: '#30363d', borderWidth: 1 }
+    })
     if (prop.domainClassId) {
-      allLinks.push({ source: `class-${prop.domainClassId}`, target: `prop-${prop.id}`,
-        lineStyle: { color: '#d29922', width: 1, type: 'dashed' } })
+      allLinks.push({
+        source: `class-${prop.domainClassId}`, target: `prop-${prop.id}`,
+        lineStyle: { color: '#d29922', width: 1, type: 'dashed' },
+        label: { show: vizMode.value === 'full', formatter: 'domain', fontSize: 9, color: '#d29922' }
+      })
+    }
+    if (prop.rangeClassId) {
+      allLinks.push({
+        source: `prop-${prop.id}`, target: `class-${prop.rangeClassId}`,
+        lineStyle: { color: '#58a6ff', width: 1, type: 'dashed' },
+        label: { show: vizMode.value === 'full', formatter: 'range', fontSize: 9, color: '#58a6ff' }
+      })
     }
   })
 
-  return { type: 'graph', layout: vizMode.value === 'full' ? 'force' : 'circular', nodeScaleRatio: 1.5, roam: true,
-    data: allNodes, links: allLinks, categories: [{ name: '类' }, { name: '属性' }],
+  // 约束节点（仅完整模式）
+  if (vizMode.value === 'full') {
+    store.constraints.forEach(c => {
+      allNodes.push({
+        id: `constraint-${c.id}`, name: c.constraintType, category: 2, symbolSize: 24,
+        itemStyle: { color: '#d29922', borderColor: '#30363d', borderWidth: 1 }
+      })
+      if (c.classId) {
+        allLinks.push({
+          source: `class-${c.classId}`, target: `constraint-${c.id}`,
+          lineStyle: { color: '#f85149', width: 1, type: 'dotted' }
+        })
+      }
+      if (c.propertyId) {
+        allLinks.push({
+          source: `prop-${c.propertyId}`, target: `constraint-${c.id}`,
+          lineStyle: { color: '#f85149', width: 1, type: 'dotted' }
+        })
+      }
+    })
+  }
+
+  return {
+    type: 'graph', layout: vizMode.value === 'full' ? 'force' : 'circular',
+    roam: true, nodeScaleRatio: 1.5,
+    data: allNodes, links: allLinks, categories,
     label: { show: true, position: 'right', fontSize: 11, color: '#e6edf3' },
-    force: { repulsion: 200, edgeLength: [60, 120] }, lineStyle: { curveness: 0.3 } }
+    force: { repulsion: 250, edgeLength: [60, 140], gravity: 0.08 },
+    lineStyle: { curveness: 0.3, opacity: 0.7 }
+  }
 }
 
 function initChart() {
