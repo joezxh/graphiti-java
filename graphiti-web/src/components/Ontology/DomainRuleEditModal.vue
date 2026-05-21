@@ -49,6 +49,7 @@
 
       <a-form-item label="适用类" name="applicableClassIds">
         <a-select
+          v-if="classList"
           v-model:value="form.applicableClassIds"
           mode="multiple"
           placeholder="选择适用的本体类 (留空表示应用于全部类)"
@@ -62,6 +63,13 @@
             {{ cls.localName }} ({{ cls.classUri }})
           </a-select-option>
         </a-select>
+        <a-select
+          v-else
+          v-model:value="form.applicableClassIds"
+          mode="multiple"
+          placeholder="加载中..."
+          disabled
+        />
         <div class="form-help">
           💡 不选择任何类时,规则将应用于图谱中的所有节点
         </div>
