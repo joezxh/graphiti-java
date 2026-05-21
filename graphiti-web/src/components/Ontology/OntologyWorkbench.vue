@@ -166,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { defineAsyncComponent } from 'vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore, type OntologyTabType } from '@/store/modules/ontology'
@@ -200,8 +200,7 @@ function quickAdd(type: OntologyTabType, title: string) {
   showAddMenu.value = false
 }
 
-function handleAddMenuClick({ key }: { key: string }) {
-  showAddMenu.value = false
+async function handleAddMenuClick({ key }: { key: string }) {
   const menuMap: Record<string, { type: OntologyTabType; title: string }> = {
     'definition-editor': { type: 'definition-editor', title: '本体定义' },
     'class-editor': { type: 'class-editor', title: '新建类' },
@@ -215,6 +214,9 @@ function handleAddMenuClick({ key }: { key: string }) {
     'ontology-graph': { type: 'ontology-graph', title: '本体可视化' }
   }
   const item = menuMap[key]
+  // 先关闭菜单,等待 DOM 更新后再打开标签页
+  showAddMenu.value = false
+  await nextTick()
   if (item) quickAdd(item.type, item.title)
 }
 
@@ -326,11 +328,15 @@ function openPropertyEditor(propertyId: number, propertyName: string) {
     font-size: 14px;
   }
 }
+</style>
 
-// 使用 :deep() 但不在 scoped 内,确保能影响到 body 下的 dropdown
-:deep(.ontology-add-menu) {
+<!-- 全局样式:强制居中并加宽下拉菜单 -->
+<style lang="less">
+.ontology-add-menu {
   .ant-dropdown {
+    position: fixed !important;
     left: 50% !important;
+    top: 100px !important;
     transform: translateX(-50%) !important;
   }
 
