@@ -3,6 +3,7 @@
     :open="open"
     :title="isEdit ? '编辑域规则' : '新建域规则'"
     :width="800"
+    :destroy-on-close="true"
     @ok="handleSave"
     @cancel="handleCancel"
   >
@@ -49,7 +50,7 @@
 
       <a-form-item label="适用类" name="applicableClassIds">
         <a-select
-          v-if="classList"
+          v-if="classList && classList.length > 0"
           v-model:value="form.applicableClassIds"
           mode="multiple"
           placeholder="选择适用的本体类 (留空表示应用于全部类)"
@@ -135,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, nextTick } from 'vue'
 import { message } from 'ant-design-vue'
 import { ontologyApi } from '@/api/ontology'
 import type { DomainRuleVO, OntClassVO } from '@/api/ontology'
@@ -203,8 +204,10 @@ const templates = [
   { name: '枚举校验', expression: "#status in {'ACTIVE', 'PENDING', 'COMPLETED'}" }
 ]
 
-watch(() => props.open, (val) => {
+watch(() => props.open, async (val) => {
   if (val && props.ruleData) {
+    // 等待 DOM 更新后再填充表单
+    await nextTick()
     Object.assign(form, {
       ruleName: props.ruleData.ruleName || '',
       ruleCode: props.ruleData.ruleCode || '',
