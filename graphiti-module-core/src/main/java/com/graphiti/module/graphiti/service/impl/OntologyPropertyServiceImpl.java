@@ -6,6 +6,7 @@ import com.graphiti.common.exception.BusinessException;
 import com.graphiti.module.graphiti.dal.dataobject.ont.*;
 import com.graphiti.module.graphiti.dal.mysql.ont.*;
 import com.graphiti.module.graphiti.service.OntologyPropertyService;
+import com.graphiti.module.graphiti.service.OntologyReasoner;
 import com.graphiti.module.graphiti.vo.ontology.OntConstraintVO;
 import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
 import com.graphiti.module.graphiti.vo.ontology.OntVersionHistoryVO;
@@ -31,6 +32,7 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
     private final OntConstraintMapper constraintMapper;
     private final OntVersionHistoryMapper versionHistoryMapper;
     private final ObjectMapper objectMapper;
+    private final OntologyReasoner reasoner;
 
     // ==================== 属性管理 ====================
 
@@ -57,6 +59,7 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
 
         recordHistory(defId, "PROPERTY_ADDED", "PROPERTY", entity.getId(),
             null, entity, "新增属性: " + reqVO.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
 
         return toVO(entity);
     }
@@ -81,6 +84,7 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         propertyMapper.updateById(existing);
         recordHistory(existing.getDefinitionId(), "PROPERTY_MODIFIED", "PROPERTY", propertyId,
             before, existing, "更新属性: " + existing.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
 
         return toVO(existing);
     }
@@ -100,6 +104,7 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         recordHistory(existing.getDefinitionId(), "PROPERTY_DELETED", "PROPERTY", propertyId,
             existing, null, "删除属性: " + existing.getLocalName(), null);
         propertyMapper.deleteById(propertyId);
+        reasoner.shutdown(graphId); // 缓存失效
     }
 
     @Override

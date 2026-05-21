@@ -1,5 +1,6 @@
 package com.graphiti.module.graphiti.controller.admin;
 
+import com.graphiti.common.exception.BusinessException;
 import com.graphiti.common.response.CommonResult;
 import com.graphiti.module.graphiti.service.*;
 import com.graphiti.module.graphiti.vo.ontology.*;
@@ -27,6 +28,7 @@ public class OntologyController {
     private final OntologyPropertyService propertyService;
     private final OntologyReasoner reasoner;
     private final SchemaOrgImportService schemaOrgImportService;
+    private final ValidationTaskService validationTaskService;
     // ==================== 本体定义管理 ====================
 
     @Operation(summary = "获取本体定义", description = "获取指定图谱的活跃本体定义",
@@ -227,5 +229,109 @@ public class OntologyController {
     public CommonResult<ConsistencyResultVO> checkConsistency(
             @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
         return CommonResult.success(reasoner.checkConsistency(graphId));
+    }
+
+    // ==================== 域规则管理 ====================
+
+    private final DomainRuleService domainRuleService;
+
+    @Operation(summary = "列出域规则", description = "获取指定本体的所有域规则",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/domain-rules")
+    public CommonResult<List<DomainRuleVO>> listDomainRules(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        Long definitionId = getDefinitionId(graphId);
+        return CommonResult.success(domainRuleService.listRules(definitionId));
+    }
+
+    @Operation(summary = "创建域规则", description = "创建新的域规则（SpEL 表达式）",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/domain-rules")
+    public CommonResult<DomainRuleVO> createDomainRule(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody @Valid DomainRuleVO reqVO) {
+        Long definitionId = getDefinitionId(graphId);
+        reqVO.setDefinitionId(definitionId);
+        return CommonResult.success(domainRuleService.createRule(reqVO));
+    }
+
+    @Operation(summary = "更新域规则", description = "更新指定域规则的定义",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PutMapping("/{graphId}/domain-rules/{ruleId}")
+    public CommonResult<DomainRuleVO> updateDomainRule(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("ruleId") @Parameter(description = "规则ID", required = true) Long ruleId,
+            @RequestBody @Valid DomainRuleVO reqVO) {
+        return CommonResult.success(domainRuleService.updateRule(ruleId, reqVO));
+    }
+
+    @Operation(summary = "删除域规则", description = "删除指定的域规则",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @DeleteMapping("/{graphId}/domain-rules/{ruleId}")
+    public CommonResult<Void> deleteDomainRule(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("ruleId") @Parameter(description = "规则ID", required = true) Long ruleId) {
+        domainRuleService.deleteRule(ruleId);
+        return CommonResult.success(null);
+    }
+
+    @Operation(summary = "启用/禁用域规则", description = "切换域规则的启用状态",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PatchMapping("/{graphId}/domain-rules/{ruleId}/toggle")
+    public CommonResult<Void> toggleDomainRule(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @PathVariable("ruleId") @Parameter(description = "规则ID", required = true) Long ruleId,
+            @RequestParam("enabled") @Parameter(description = "是否启用", required = true) Boolean enabled) {
+        domainRuleService.toggleRule(ruleId, enabled);
+        return CommonResult.success(null);
+    }
+
+    @Operation(summary = "测试域规则", description = "测试 SpEL 表达式在给定属性数据上的执行结果",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/domain-rules/test")
+    public CommonResult<Map<String, Object>> testDomainRule(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody Map<String, Object> testRequest) {
+        String spelExpression = (String) testRequest.get("spelExpression");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> testProperties = (Map<String, Object>) testRequest.get("testProperties");
+        return CommonResult.success(domainRuleService.testRule(spelExpression, testProperties));
+    }
+
+    private Long getDefinitionId(String graphId) {
+        OntDefinitionVO definition = classService.getDefinition(graphId);
+        if (definition == null) {
+            throw new BusinessException(1002, "本体未定义: graphId=" + graphId);
+        }
+        return definition.getId();
+    }
+
+    // ==================== 图谱完整性检查（L6） ====================
+
+    @Operation(summary = "提交完整性检查", description = "异步执行图谱完整性检查（L6），返回 taskId",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @PostMapping("/{graphId}/validate/integrity")
+    public CommonResult<Map<String, String>> submitIntegrityCheck(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId,
+            @RequestBody(required = false) Map<String, List<String>> request) {
+        List<String> checkTypes = request != null ? request.get("checkTypes") : null;
+        String taskId = validationTaskService.submitIntegrityCheck(graphId, checkTypes);
+        return CommonResult.success(Map.of("taskId", taskId));
+    }
+
+    @Operation(summary = "查询验证任务状态", description = "根据 taskId 查询异步验证任务的结果",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/validate/tasks/{taskId}")
+    public CommonResult<ValidationTaskVO> getValidationTaskStatus(
+            @PathVariable("taskId") @Parameter(description = "任务ID", required = true) String taskId) {
+        return CommonResult.success(validationTaskService.getTaskStatus(taskId));
+    }
+
+    @Operation(summary = "列出验证任务", description = "列出指定图谱的所有验证任务",
+              security = {@SecurityRequirement(name = "Bearer Authentication")})
+    @GetMapping("/{graphId}/validate/tasks")
+    public CommonResult<List<ValidationTaskVO>> listValidationTasks(
+            @PathVariable("graphId") @Parameter(description = "图谱ID", required = true) String graphId) {
+        return CommonResult.success(validationTaskService.listTasks(graphId));
     }
 }

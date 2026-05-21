@@ -14,6 +14,7 @@ import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
 import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
 import com.graphiti.module.graphiti.dal.mysql.ont.OntVersionHistoryMapper;
 import com.graphiti.module.graphiti.service.OntologyClassService;
+import com.graphiti.module.graphiti.service.OntologyReasoner;
 import com.graphiti.module.graphiti.vo.ontology.ClassHierarchyVO;
 import com.graphiti.module.graphiti.vo.ontology.OntClassVO;
 import com.graphiti.module.graphiti.vo.ontology.OntConstraintVO;
@@ -39,6 +40,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
     private final OntConstraintMapper constraintMapper;
     private final OntVersionHistoryMapper versionHistoryMapper;
     private final ObjectMapper objectMapper;
+    private final OntologyReasoner reasoner;
 
     // ==================== 本体定义管理 ====================
 
@@ -125,6 +127,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         classMapper.insert(entity);
         recordHistory(defId, "CLASS_ADDED", "CLASS", entity.getId(),
             null, entity, "新增类: " + reqVO.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
 
         return toVO(entity);
     }
@@ -146,6 +149,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         classMapper.updateById(existing);
         recordHistory(existing.getDefinitionId(), "CLASS_MODIFIED", "CLASS", classId,
             before, existing, "更新类: " + existing.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
 
         return toVO(existing);
     }
@@ -166,6 +170,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
             existing, null, "删除类: " + existing.getLocalName(), null);
 
         classMapper.deleteById(classId);
+        reasoner.shutdown(graphId); // 缓存失效
     }
 
     @Override
