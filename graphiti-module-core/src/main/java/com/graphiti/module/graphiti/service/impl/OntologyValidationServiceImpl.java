@@ -11,6 +11,7 @@ import com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper;
 import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
 import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
 import com.graphiti.module.graphiti.service.OntologyValidationService;
+import com.graphiti.module.graphiti.service.validator.DomainRuleValidator;
 import com.graphiti.module.graphiti.vo.ontology.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class OntologyValidationServiceImpl implements OntologyValidationService 
     private final OntPropertyMapper propertyMapper;
     private final OntConstraintMapper constraintMapper;
     private final ObjectMapper objectMapper;
+    private final DomainRuleValidator domainRuleValidator;
 
     private static final String ERR_TYPE_NOT_FOUND      = "ONT001";
     private static final String ERR_REQUIRED_MISSING    = "ONT002";
@@ -70,6 +72,9 @@ public class OntologyValidationServiceImpl implements OntologyValidationService 
 
         // Layer 4: 约束规则校验
         errors.addAll(checkConstraints(defId, classDef, properties));
+
+        // Layer 5: 领域规则校验
+        errors.addAll(domainRuleValidator.validate(defId, classDef, properties));
 
         if (!errors.isEmpty()) {
             return ValidationResultVO.fail(4, errors);
@@ -312,6 +317,22 @@ public class OntologyValidationServiceImpl implements OntologyValidationService 
                     if (allowed != null && !allowed.contains(String.valueOf(propValue))) {
                         errors.add(ValidationErrorVO.of(4, ERR_CONSTRAINT_VIOLATED,
                             errorMsg + " (allowed: " + allowed + ")", prop.getLocalName(), propValue));
+                    }
+                }
+                case "CARDINALITY" -> {
+                    if (propValue instanceof List<?> list) {
+                        int min = ((Number) valueMap.getOrDefault("min", 0)).intValue();
+                        int max = ((Number) valueMap.getOrDefault("max", Integer.MAX_VALUE)).intValue();
+                        if (list.size() < min || list.size() > max) {
+                            errors.add(ValidationErrorVO.of(4, ERR_CONSTRAINT_VIOLATED,
+                                errorMsg + " (count: " + list.size() + ", expected: [" + min + "," + max + "])",
+                                prop.getLocalName(), propValue));
+                        }
+                    }
+                }
+                case "NOT_NULL" -> {
+                    if (propValue == null || (propValue instanceof String s && s.isBlank())) {
+                        errors.add(ValidationErrorVO.of(4, ERR_CONSTRAINT_VIOLATED, errorMsg, prop.getLocalName(), propValue));
                     }
                 }
             }

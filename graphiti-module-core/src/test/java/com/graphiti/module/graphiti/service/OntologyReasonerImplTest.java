@@ -1,9 +1,15 @@
 package com.graphiti.module.graphiti.service;
 
+import com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
+import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
 import com.graphiti.module.graphiti.service.impl.OntologyReasonerImpl;
 import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,9 +17,22 @@ class OntologyReasonerImplTest {
 
     private OntologyReasonerImpl reasoner;
 
+    @Mock
+    private OntDefinitionMapper definitionMapper;
+
+    @Mock
+    private OntClassMapper classMapper;
+
+    @Mock
+    private OntPropertyMapper propertyMapper;
+
+    @Mock
+    private OntConstraintMapper constraintMapper;
+
     @BeforeEach
     void setUp() {
-        reasoner = new OntologyReasonerImpl();
+        MockitoAnnotations.openMocks(this);
+        reasoner = new OntologyReasonerImpl(definitionMapper, classMapper, propertyMapper, constraintMapper);
     }
 
     @Test

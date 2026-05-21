@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@lombok.Builder
 public class ValidationErrorVO {
     private int layer;
     private String code;      // ONT001 - ONT005
@@ -18,3 +19,4 @@ public class ValidationErrorVO {
         return new ValidationErrorVO(layer, code, message, property, value);
     }
 }
+
