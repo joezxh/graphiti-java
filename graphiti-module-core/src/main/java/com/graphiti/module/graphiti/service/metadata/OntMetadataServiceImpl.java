@@ -167,15 +167,130 @@ public class OntMetadataServiceImpl implements OntMetadataService {
     }
 
     @Override
-    public List<OntEpisodeTypeRespVO> listEpisodeTypesByProcess(Long definitionId, String legalProcess) {
-        return episodeTypeMapper.selectByLegalProcess(definitionId, legalProcess)
-                .stream().map(this::toEpisodeTypeRespVO).collect(Collectors.toList());
+    public List<OntEpisodeTypeRespVO> listEpisodeTypesByProcessType(Long definitionId, String processType) {
+        return episodeTypeMapper.selectByDefinitionId(definitionId)
+                .stream()
+                .filter(t -> processType.equals(t.getProcessType()))
+                .map(this::toEpisodeTypeRespVO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<OntEpisodeTypeRespVO> listEpisodeTypesByProcessType(Long definitionId, String processType) {
-        return episodeTypeMapper.selectByProcessType(definitionId, processType)
-                .stream().map(this::toEpisodeTypeRespVO).collect(Collectors.toList());
+    public List<OntEpisodeTypeRespVO> getEpisodeTypeTree(Long definitionId) {
+        List<OntEpisodeTypeDO> all = episodeTypeMapper.selectByDefinitionId(definitionId);
+        if (all.isEmpty()) return List.of();
+        Map<String, List<OntEpisodeTypeDO>> parentMap = all.stream()
+            .filter(t -> t.getParentTypeCode() != null)
+            .collect(Collectors.groupingBy(OntEpisodeTypeDO::getParentTypeCode));
+        return all.stream()
+            .filter(t -> t.getParentTypeCode() == null)
+            .sorted(Comparator.comparing(OntEpisodeTypeDO::getSortOrder, Comparator.nullsLast(Integer::compareTo)))
+            .map(root -> buildTreeNode(root, parentMap))
+            .collect(Collectors.toList());
+    }
+
+    private OntEpisodeTypeRespVO buildTreeNode(OntEpisodeTypeDO node,
+            Map<String, List<OntEpisodeTypeDO>> parentMap) {
+        OntEpisodeTypeRespVO vo = toEpisodeTypeRespVO(node);
+        List<OntEpisodeTypeDO> children = parentMap.getOrDefault(node.getTypeCode(), List.of());
+        if (!children.isEmpty()) {
+            vo.setChildren(children.stream()
+                .sorted(Comparator.comparing(OntEpisodeTypeDO::getSortOrder, Comparator.nullsLast(Integer::compareTo)))
+                .map(child -> buildTreeNode(child, parentMap))
+                .collect(Collectors.toList()));
+        }
+        return vo;
+    }
+
+    @Override
+    public EpisodeTypeDeleteCheckVO checkDeleteEpisodeType(String graphId, Long id) {
+        OntEpisodeTypeDO type = episodeTypeMapper.selectById(id);
+        if (type == null) {
+            return EpisodeTypeDeleteCheckVO.builder().canDelete(false).reason("类型不存在").build();
+        }
+        List<OntEpisodeTypeDO> children = episodeTypeMapper.selectByParentTypeCode(
+            type.getDefinitionId(), type.getTypeCode());
+        if (!children.isEmpty()) {
+            return EpisodeTypeDeleteCheckVO.builder()
+                .canDelete(false)
+                .reason("该类型下存在 " + children.size() + " 个子类型，请先删除子类型")
+                .childCount((long) children.size())
+                .build();
+        }
+        long instanceCount = episodeTypeMapper.countEpisodeInstances(graphId, type.getTypeCode());
+        if (instanceCount > 0) {
+            return EpisodeTypeDeleteCheckVO.builder()
+                .canDelete(false)
+                .reason("该类型被 " + instanceCount + " 个 Episode 实例引用")
+                .instanceCount(instanceCount)
+                .build();
+        }
+        return EpisodeTypeDeleteCheckVO.builder().canDelete(true).build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteEpisodeType(String graphId, Long id) {
+        EpisodeTypeDeleteCheckVO check = checkDeleteEpisodeType(graphId, id);
+        if (!check.getCanDelete()) {
+            throw new RuntimeException(check.getReason());
+        }
+        episodeTypeMapper.deleteById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reorderEpisodeTypes(List<EpisodeTypeReorderItemVO> items) {
+        for (EpisodeTypeReorderItemVO item : items) {
+            OntEpisodeTypeDO entity = episodeTypeMapper.selectById(item.getId());
+            if (entity != null) {
+                entity.setSortOrder(item.getSortOrder());
+                if (item.getParentTypeCode() != null) {
+                    entity.setParentTypeCode(item.getParentTypeCode());
+                    if (item.getParentTypeCode().isEmpty()) {
+                        entity.setLevel(1);
+                    } else {
+                        OntEpisodeTypeDO parent = episodeTypeMapper.selectByTypeCode(
+                            entity.getDefinitionId(), item.getParentTypeCode());
+                        entity.setLevel(parent != null ? (parent.getLevel() != null ? parent.getLevel() + 1 : 2) : 1);
+                    }
+                }
+                episodeTypeMapper.updateById(entity);
+            }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public EpisodeTypeImportResultVO importEpisodeTypes(Long definitionId, List<OntEpisodeTypeReqVO> items) {
+        int success = 0;
+        List<String> errors = new ArrayList<>();
+        for (OntEpisodeTypeReqVO req : items) {
+            try {
+                req.setDefinitionId(definitionId);
+                OntEpisodeTypeDO existing = episodeTypeMapper.selectByTypeCode(definitionId, req.getTypeCode());
+                if (existing != null) {
+                    errors.add("类型编码已存在: " + req.getTypeCode());
+                    continue;
+                }
+                if (req.getParentTypeCode() != null && !req.getParentTypeCode().isEmpty()) {
+                    OntEpisodeTypeDO parent = episodeTypeMapper.selectByTypeCode(definitionId, req.getParentTypeCode());
+                    req.setLevel(parent != null ? (parent.getLevel() != null ? parent.getLevel() + 1 : 2) : 1);
+                } else {
+                    req.setLevel(1);
+                }
+                createEpisodeType(req);
+                success++;
+            } catch (Exception e) {
+                errors.add(req.getTypeCode() + ": " + e.getMessage());
+            }
+        }
+        return EpisodeTypeImportResultVO.builder()
+            .total(items.size())
+            .success(success)
+            .failed(items.size() - success)
+            .errors(errors)
+            .build();
     }
 
     @Override
@@ -200,14 +315,13 @@ public class OntMetadataServiceImpl implements OntMetadataService {
         if (reqVO.getSortOrder() != null) entity.setSortOrder(reqVO.getSortOrder());
         if (reqVO.getMetadata() != null) entity.setMetadata(reqVO.getMetadata());
         if (reqVO.getStatus() != null) entity.setStatus(reqVO.getStatus());
-        // 通用化字段
+        // 层级关系（V5 新增）
+        if (reqVO.getParentTypeCode() != null) entity.setParentTypeCode(reqVO.getParentTypeCode());
+        if (reqVO.getLevel() != null) entity.setLevel(reqVO.getLevel());
+        // 通用分类字段
         if (reqVO.getProcessType() != null) entity.setProcessType(reqVO.getProcessType());
         if (reqVO.getStageLevel() != null) entity.setStageLevel(reqVO.getStageLevel());
         if (reqVO.getIsReviewStage() != null) entity.setIsReviewStage(reqVO.getIsReviewStage());
-        // 向后兼容旧字段
-        if (reqVO.getLegalProcess() != null) entity.setLegalProcess(reqVO.getLegalProcess());
-        if (reqVO.getCourtLevel() != null) entity.setCourtLevel(reqVO.getCourtLevel());
-        if (reqVO.getIsTrialStage() != null) entity.setIsTrialStage(reqVO.getIsTrialStage());
     }
 
     private OntEpisodeTypeRespVO toEpisodeTypeRespVO(OntEpisodeTypeDO entity) {
@@ -225,14 +339,16 @@ public class OntMetadataServiceImpl implements OntMetadataService {
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
-                // 通用化字段
+                // 层级关系（V5 新增）
+                .parentTypeCode(entity.getParentTypeCode())
+                .level(entity.getLevel())
+                // 审计字段
+                .createdBy(entity.getCreatedBy())
+                .updatedBy(entity.getUpdatedBy())
+                // 通用分类字段
                 .processType(entity.getProcessType())
                 .stageLevel(entity.getStageLevel())
                 .isReviewStage(entity.getIsReviewStage())
-                // 向后兼容旧字段
-                .legalProcess(entity.getLegalProcess())
-                .courtLevel(entity.getCourtLevel())
-                .isTrialStage(entity.getIsTrialStage())
                 .build();
     }
 

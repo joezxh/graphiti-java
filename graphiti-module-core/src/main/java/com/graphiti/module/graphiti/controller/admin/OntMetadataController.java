@@ -1,7 +1,10 @@
 package com.graphiti.module.graphiti.controller.admin;
 
 import com.graphiti.common.response.CommonResult;
+import com.graphiti.module.graphiti.dal.mysql.metadata.OntEpisodeTypeMapper;
+import com.graphiti.module.graphiti.service.EpisodeService;
 import com.graphiti.module.graphiti.service.metadata.OntMetadataService;
+import com.graphiti.module.graphiti.vo.episode.EpisodeListRespVO;
 import com.graphiti.module.graphiti.vo.metadata.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +28,8 @@ import java.util.List;
 public class OntMetadataController {
 
     private final OntMetadataService ontMetadataService;
+    private final EpisodeService episodeService;
+    private final OntEpisodeTypeMapper episodeTypeMapper;
 
     // ==================== Community Type ====================
 
@@ -90,11 +95,19 @@ public class OntMetadataController {
     public CommonResult<List<OntEpisodeTypeRespVO>> listEpisodeTypes(
             @PathVariable @Parameter(description = "图谱ID") String graphId,
             @RequestParam @Parameter(description = "本体定义ID") Long definitionId,
-            @RequestParam(required = false) @Parameter(description = "法律程序") String legalProcess) {
-        if (legalProcess != null && !legalProcess.isBlank()) {
-            return CommonResult.success(ontMetadataService.listEpisodeTypesByProcess(definitionId, legalProcess));
+            @RequestParam(required = false) @Parameter(description = "业务流程类型") String processType) {
+        if (processType != null && !processType.isBlank()) {
+            return CommonResult.success(ontMetadataService.listEpisodeTypesByProcessType(definitionId, processType));
         }
         return CommonResult.success(ontMetadataService.listEpisodeTypes(definitionId));
+    }
+
+    @GetMapping("/episode-types/tree")
+    @Operation(summary = "获取剧集类型树", description = "获取层级化的剧集类型树")
+    public CommonResult<List<OntEpisodeTypeRespVO>> getEpisodeTypeTree(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "本体定义ID") Long definitionId) {
+        return CommonResult.success(ontMetadataService.getEpisodeTypeTree(definitionId));
     }
 
     @GetMapping("/episode-types/{id}")
@@ -102,7 +115,11 @@ public class OntMetadataController {
     public CommonResult<OntEpisodeTypeRespVO> getEpisodeType(
             @PathVariable @Parameter(description = "图谱ID") String graphId,
             @PathVariable @Parameter(description = "类型ID") Long id) {
-        return CommonResult.success(ontMetadataService.getEpisodeTypeById(id));
+        OntEpisodeTypeRespVO vo = ontMetadataService.getEpisodeTypeById(id);
+        if (vo != null) {
+            vo.setInstanceCount(episodeTypeMapper.countEpisodeInstances(graphId, vo.getTypeCode()));
+        }
+        return CommonResult.success(vo);
     }
 
     @PostMapping("/episode-types")
@@ -132,13 +149,52 @@ public class OntMetadataController {
         return CommonResult.success();
     }
 
+    @GetMapping("/episode-types/{id}/delete-check")
+    @Operation(summary = "检查剧集类型是否可以删除")
+    public CommonResult<EpisodeTypeDeleteCheckVO> checkDeleteEpisodeType(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @PathVariable @Parameter(description = "类型ID") Long id) {
+        return CommonResult.success(ontMetadataService.checkDeleteEpisodeType(graphId, id));
+    }
+
     @DeleteMapping("/episode-types/{id}")
     @Operation(summary = "删除剧集类型")
     public CommonResult<Void> deleteEpisodeType(
             @PathVariable @Parameter(description = "图谱ID") String graphId,
             @PathVariable @Parameter(description = "类型ID") Long id) {
-        ontMetadataService.deleteEpisodeType(id);
+        ontMetadataService.deleteEpisodeType(graphId, id);
         return CommonResult.success();
+    }
+
+    @PostMapping("/episode-types/reorder")
+    @Operation(summary = "批量更新剧集类型排序")
+    public CommonResult<Void> reorderEpisodeTypes(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestBody @Valid List<EpisodeTypeReorderItemVO> items) {
+        ontMetadataService.reorderEpisodeTypes(items);
+        return CommonResult.success();
+    }
+
+    @PostMapping("/episode-types/import")
+    @Operation(summary = "批量导入剧集类型")
+    public CommonResult<EpisodeTypeImportResultVO> importEpisodeTypes(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "本体定义ID") Long definitionId,
+            @RequestBody @Valid List<OntEpisodeTypeReqVO> items) {
+        return CommonResult.success(ontMetadataService.importEpisodeTypes(definitionId, items));
+    }
+
+    @GetMapping("/episode-types/{id}/instances")
+    @Operation(summary = "获取剧集类型下的实例列表")
+    public CommonResult<EpisodeListRespVO> getEpisodeTypeInstances(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @PathVariable @Parameter(description = "类型ID") Long id,
+            @RequestParam(defaultValue = "1") @Parameter(description = "页码") Integer page,
+            @RequestParam(defaultValue = "20") @Parameter(description = "每页数量") Integer pageSize,
+            @RequestParam(required = false) @Parameter(description = "搜索关键词") String keyword) {
+        // TODO: 按类型过滤的实例列表查询，暂用全量列表
+        EpisodeListRespVO result = episodeService.listEpisodes(graphId, pageSize, (page - 1) * pageSize);
+        return CommonResult.success(result);
     }
 
     // ==================== Entity Category ====================

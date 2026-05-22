@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 剧集类型响应 VO
