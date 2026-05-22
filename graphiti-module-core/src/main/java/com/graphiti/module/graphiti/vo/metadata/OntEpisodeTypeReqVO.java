@@ -9,17 +9,19 @@ import java.time.LocalDateTime;
  * 剧集类型请求 VO（创建/更新共用）
  */
 @Data
-@Schema(description = "创建/更新剧集类型请求")
+@Schema(description = "创建/更新剧集类型请求 V5")
 public class OntEpisodeTypeReqVO {
 
     @Schema(description = "主键ID（更新时必需）")
     private Long id;
 
     @Schema(description = "本体定义ID", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "本体定义ID不能为空")
     private Long definitionId;
 
     @Schema(description = "类型代码", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "类型代码不能为空")
+    @Size(max = 50, message = "类型代码最多50字符")
     private String typeCode;
 
     @Schema(description = "类型名称", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -29,28 +31,27 @@ public class OntEpisodeTypeReqVO {
     @Schema(description = "英文名称")
     private String typeNameEn;
 
-    // ========== 通用化字段 ==========
+    // ========== 层级关系（V5 新增）==========
+    @Schema(description = "父类型编码")
+    private String parentTypeCode;
+
+    @Schema(description = "层级深度（1-5）")
+    @Min(value = 1, message = "层级最小为1")
+    @Max(value = 5, message = "层级最大为5")
+    private Integer level;
+
+    // ========== 通用分类字段 ==========
     @Schema(description = "业务流程类型：business_process|workflow|lifecycle")
     private String processType;
 
-    @Schema(description = "阶段级别（通用，可配置。法律领域：一审/二审/再审；其他领域：可自定义）")
+    @Schema(description = "阶段标签：立案|庭审|调解|判决|执行")
+    private String stageLabel;
+
+    @Schema(description = "阶段级别（通用，可配置）")
     private String stageLevel;
 
     @Schema(description = "是否审查/评议阶段")
     private Boolean isReviewStage;
-
-    // ========== 向后兼容旧字段（Phase 3 迁移完成后删除）==========
-    @Schema(description = "[向后兼容] 法律程序: litigation|mediation|arbitration|execution")
-    private String legalProcess;
-
-    @Schema(description = "阶段标签: 立案|庭审|调解|判决|执行")
-    private String stageLabel;
-
-    @Schema(description = "[向后兼容] 审级: 一审|二审|再审|死刑复核")
-    private String courtLevel;
-
-    @Schema(description = "[向后兼容] 是否审判阶段")
-    private Boolean isTrialStage = false;
 
     @Schema(description = "描述")
     private String description;
@@ -61,6 +62,8 @@ public class OntEpisodeTypeReqVO {
     @Schema(description = "元数据 JSON")
     private String metadata;
 
-    @Schema(description = "状态: ACTIVE|INACTIVE")
+    @Schema(description = "状态: ACTIVE|INACTIVE|DEPRECATED", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "状态不能为空")
+    @Pattern(regexp = "ACTIVE|INACTIVE|DEPRECATED", message = "状态必须是 ACTIVE/INACTIVE/DEPRECATED")
     private String status = "ACTIVE";
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("ont_episode_type")
 public class OntEpisodeTypeDO implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -28,6 +28,13 @@ public class OntEpisodeTypeDO implements Serializable {
 
     @TableField("type_name_en")
     private String typeNameEn;
+
+    // ========== 层级关系（V5 新增）==========
+    @TableField("parent_type_code")
+    private String parentTypeCode;
+
+    @TableField("level")
+    private Integer level;
 
     @TableField("stage_label")
     private String stageLabel;
@@ -84,4 +91,14 @@ public class OntEpisodeTypeDO implements Serializable {
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
+
+    @TableField("created_by")
+    private String createdBy;
+
+    @TableField("updated_by")
+    private String updatedBy;
+
+    @Version
+    @TableField("version")
+    private Integer version;
 }
