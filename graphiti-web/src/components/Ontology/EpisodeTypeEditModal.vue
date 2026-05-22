@@ -1,11 +1,11 @@
 <template>
   <a-modal
-    v-model:open="visible"
+    :open="visible"
     :title="isEdit ? '编辑剧集类型' : '新建剧集类型'"
     :confirm-loading="submitting"
     :ok-text="isEdit ? '保存' : '创建'"
     @ok="handleSubmit"
-    @cancel="handleCancel"
+    @update:open="handleVisibleChange"
     width="560px"
   >
     <a-form
@@ -266,9 +266,9 @@ async function handleSubmit() {
   }
 }
 
-function handleCancel() {
-  emit('update:visible', false)
-  resetForm()
+function handleVisibleChange(val: boolean) {
+  emit('update:visible', val)
+  if (!val) resetForm()
 }
 
 watch(() => props.visible, (val: boolean) => {
