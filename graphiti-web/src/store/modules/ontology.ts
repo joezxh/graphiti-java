@@ -217,10 +217,11 @@ export const useOntologyStore = defineStore('ontology', () => {
         .filter(cls => (parentId == null ? cls.parentClassId == null : cls.parentClassId === parentId))
         .map(cls => {
           const children = buildClassTreeNodes(cls.id)
+          const isLeaf = children.length === 0
           return {
             key: `class-${cls.id}`,
             title: cls.localName,
-            icon: '◉',
+            icon: isLeaf ? '◉' : '📁',
             type: 'class' as const,
             classId: cls.id,
             classType: cls.localName,
