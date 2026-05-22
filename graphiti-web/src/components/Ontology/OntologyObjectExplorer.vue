@@ -3,33 +3,7 @@
  */
 <template>
   <div class="object-explorer">
-    <!-- 全局搜索 -->
-    <div class="explorer-search">
-      <a-input-search
-        v-model:value="searchKeyword"
-        placeholder="搜索本体..."
-        size="small"
-        allow-clear
-        @search="handleSearch"
-        @change="handleSearch"
-      >
-        <template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template>
-      </a-input-search>
-    </div>
-
-    <!-- 工具栏 -->
-    <div class="explorer-toolbar">
-      <a-tooltip title="刷新">
-        <a-button type="text" size="small" :loading="store.loading" @click="handleRefresh">
-          <template #icon><ReloadOutlined :spin="store.loading" /></template>
-        </a-button>
-      </a-tooltip>
-      <a-tooltip title="新建类">
-        <a-button type="text" size="small" @click="handleNewClass">
-          <template #icon><PlusOutlined /></template>
-        </a-button>
-      </a-tooltip>
-    </div>
+    <!-- 全局搜索 --><div class="explorer-search"><a-input-search v-model:value="searchKeyword" placeholder="搜索本体..." size="small" allow-clear @search="handleSearch" @change="handleSearch"><template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template></a-input-search></div><!-- 工具栏 --><div class="explorer-toolbar"><a-tooltip title="刷新"><a-button type="text" size="small" :loading="store.loading" @click="handleRefresh"><template #icon><ReloadOutlined :spin="store.loading" /></template></a-button></a-tooltip><a-tooltip title="新建类"><a-button type="text" size="small" @click="handleNewClass"><template #icon><PlusOutlined /></template></a-button></a-tooltip></div>
 
     <!-- 树形结构 -->
     <div class="explorer-tree">
@@ -47,7 +21,7 @@
         <template #title="node">
           <div class="tree-node-content" @contextmenu.prevent="handleContextMenu($event, node)">
             <span class="node-icon" :style="{ color: getNodeColor(node.type) }">
-              {{ getNodeIcon(node.type) }}
+              {{ node.children && node.children.length > 0 ? '📁' : getNodeIcon(node.type) }}
             </span>
             <span class="node-label">{{ node.title }}</span>
             <span v-if="node.count !== undefined" class="node-count">{{ node.count }}</span>
@@ -105,7 +79,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'open-tab', payload: { type: string; title: string; classId?: number; propertyId?: number; classType?: string }): void
+  (e: 'open-tab', payload: { type: string; title: string; classId?: number; propertyId?: number; constraintId?: number; classType?: string }): void
   (e: 'class-selected', classId: number): void
   (e: 'open-episode', payload?: { stageNode?: any; processNode?: any }): void
   (e: 'open-community', payload?: { node?: any }): void
@@ -180,7 +154,6 @@ function handleNodeSelect(keys: (string | number)[]) {
   switch (node.type) {
     case 'class':
       emit('open-tab', { type: 'class-editor', title: `类: ${node.title}`, classId: node.classId })
-      emit('class-selected', node.classId!)
       break
     case 'property':
       emit('open-tab', { type: 'property-editor', title: `属性: ${node.title}`, propertyId: node.propertyId })
@@ -194,9 +167,11 @@ function handleNodeSelect(keys: (string | number)[]) {
     case 'constraint-group':
       emit('open-tab', { type: 'constraint-list', title: '约束列表' })
       break
+    case 'constraint':
+      emit('open-tab', { type: 'constraint-editor', title: `约束: ${node.title}`, constraintId: node.constraintId })
+      break
     case 'instance-class':
       emit('open-tab', { type: 'instance-table', title: `实例: ${node.title}`, classType: node.classType })
-      emit('class-selected', store.classes.find(c => c.localName === node.classType)?.id!)
       break
     case 'version-history':
       emit('open-tab', { type: 'version-history', title: '版本历史' })

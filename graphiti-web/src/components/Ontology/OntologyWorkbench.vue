@@ -22,7 +22,7 @@
         :trigger="['click']" 
         overlay-class-name="ontology-add-menu"
       >
-        <div v-if="!store.activeTabId" class="add-menu-trigger">
+        <div v-show="!store.activeTabId" class="add-menu-trigger">
           <PlusOutlined /> 新建
         </div>
         <template #overlay>
@@ -111,6 +111,12 @@
         v-else-if="store.activeTab.type === 'constraint-list'"
         :graph-id="graphId"
       />
+      <ConstraintEditor
+        v-else-if="store.activeTab.type === 'constraint-editor'"
+        :graph-id="graphId"
+        :constraint-id="store.activeTab.constraintId"
+        @saved="handleSaved"
+      />
       <DomainRuleListPanel
         v-else-if="store.activeTab.type === 'domain-rule-list'"
         :graph-id="graphId"
@@ -184,6 +190,7 @@ const OntologyVisualizer = defineAsyncComponent(() => import('./OntologyVisualiz
 const ClassListPanel = defineAsyncComponent(() => import('./ClassListPanel.vue'))
 const PropertyListPanel = defineAsyncComponent(() => import('./PropertyListPanel.vue'))
 const ConstraintListPanel = defineAsyncComponent(() => import('./ConstraintListPanel.vue'))
+const ConstraintEditor = defineAsyncComponent(() => import('./ConstraintEditor.vue'))
 const DomainRuleListPanel = defineAsyncComponent(() => import('./DomainRuleListPanel.vue'))
 const DefinitionEditor = defineAsyncComponent(() => import('./DefinitionEditor.vue'))
 const DataImportExportModal = defineAsyncComponent(() => import('./DataImportExportModal.vue'))

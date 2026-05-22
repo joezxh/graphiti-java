@@ -718,13 +718,13 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
                 if (record.get("createdAt").isNull()) {
                     instance.put("createdAt", null);
                 } else {
-                    instance.put("createdAt", record.get("createdAt").asString());
+                    instance.put("createdAt", record.get("createdAt").asObject().toString());
                 }
 
                 if (record.get("updatedAt").isNull()) {
                     instance.put("updatedAt", null);
                 } else {
-                    instance.put("updatedAt", record.get("updatedAt").asString());
+                    instance.put("updatedAt", record.get("updatedAt").asObject().toString());
                 }
 
                 String propCypher = "MATCH (n:Entity {uuid: $uuid}) RETURN properties(n) as props";

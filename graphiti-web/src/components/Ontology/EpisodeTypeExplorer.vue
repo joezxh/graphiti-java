@@ -62,6 +62,7 @@
         :columns="listColumns"
         :pagination="false"
         size="small"
+        :scroll="{ x: 'max-content' }"
         :row-selection="{ selectedRowKeys: selectedKeys, onChange: handleRowSelect }"
         @row-click="handleRowClick"
       />
@@ -110,10 +111,10 @@ const typeTree = ref<OntEpisodeTypeVO[]>([])
 const loading = ref(false)
 
 const listColumns = [
-  { title: '类型名称', dataIndex: 'typeName', key: 'typeName' },
-  { title: '代码', dataIndex: 'typeCode', key: 'typeCode', width: 100 },
-  { title: '层级', dataIndex: 'level', key: 'level', width: 60 },
-  { title: '实例数', dataIndex: 'instanceCount', key: 'instanceCount', width: 70 }
+  { title: '类型名称', dataIndex: 'typeName', key: 'typeName', ellipsis: true },
+  { title: '代码', dataIndex: 'typeCode', key: 'typeCode', width: 100, ellipsis: true },
+  { title: '层级', dataIndex: 'level', key: 'level', width: 60, ellipsis: true },
+  { title: '实例数', dataIndex: 'instanceCount', key: 'instanceCount', width: 70, ellipsis: true }
 ]
 
 // 将后端树转为 ant-design-vue tree 格式
@@ -325,7 +326,7 @@ onMounted(() => {
 
   .explorer-body {
     flex: 1;
-    overflow-y: auto;
+    overflow: auto;
     padding: 4px 0;
   }
 
@@ -404,6 +405,18 @@ onMounted(() => {
 
   .ant-tree-iconEle {
     display: none;
+  }
+}
+
+:deep(.ant-table) {
+  .ant-table-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .ant-table-body {
+    overflow-x: auto !important;
   }
 }
 </style>

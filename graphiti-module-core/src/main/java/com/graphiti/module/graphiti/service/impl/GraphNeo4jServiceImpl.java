@@ -274,6 +274,20 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
         }
         return 0L;
     }
+    
+    @Override
+    public long countEpisodesByType(String graphId, String episodeType) {
+        String cypher = "MATCH (e:Episode {graph_id: $graph_id, episode_type: $episode_type}) RETURN count(e) as count";
+
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, 
+                Values.parameters("graph_id", graphId, "episode_type", episodeType));
+            if (result.hasNext()) {
+                return result.next().get("count").asLong();
+            }
+        }
+        return 0L;
+    }
 
     @Override
     public List<Map<String, Object>> getEpisodesByGraphId(String graphId, int limit, int offset) {

@@ -25,8 +25,9 @@ public interface OntEpisodeTypeMapper extends BaseMapper<OntEpisodeTypeDO> {
     @Select("SELECT COUNT(*) FROM ont_episode_type WHERE definition_id = #{definitionId}")
     long countByDefinitionId(@Param("definitionId") Long definitionId);
 
-    @Select("SELECT COUNT(*) FROM episode WHERE graph_id = #{graphId} AND episode_type = #{typeCode}")
-    long countEpisodeInstances(@Param("graphId") String graphId, @Param("typeCode") String typeCode);
+    // 已废弃: Episode 数据存储在 Neo4j 中,不使用 SQL 查询
+    // @Select("SELECT COUNT(*) FROM episode WHERE graph_id = #{graphId} AND episode_type = #{typeCode}")
+    // long countEpisodeInstances(@Param("graphId") String graphId, @Param("typeCode") String typeCode);
 
     int batchUpdateSortOrder(@Param("list") List<OntEpisodeTypeDO> types);
 

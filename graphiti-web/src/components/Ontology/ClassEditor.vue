@@ -133,7 +133,11 @@
             <div v-if="inheritancePath.length === 0" class="empty-tip">无继承关系（顶级类）</div>
             <div v-else class="inheritance-path">
               <span v-for="(cls, idx) in inheritancePath" :key="cls.id" class="path-item">
-                <span class="path-node" :class="{ current: cls.id === classId }">{{ cls.localName }}</span>
+                <span
+                  class="path-node"
+                  :class="{ current: cls.id === classId, clickable: cls.id !== classId }"
+                  @click="cls.id !== classId ? openParentClass(cls) : undefined"
+                >{{ cls.localName }}</span>
                 <span v-if="idx < inheritancePath.length - 1" class="path-arrow">→</span>
               </span>
             </div>
@@ -183,16 +187,27 @@
 
       <a-tab-pane key="instances" tab="实例数据">
         <div class="tab-content">
-          <div class="section-header">
-            <span class="section-title">该类的实例节点</span>
-            <a-button size="small" type="primary" @click="goToInstances">
-              <template #icon><ExportOutlined /></template>
-              在实例表格中查看
-            </a-button>
+          <div class="instance-stats-bar">
+            <div class="stat-item">
+              <span class="stat-label">实例数量</span>
+              <span class="stat-value">{{ instanceCount }}</span>
+            </div>
           </div>
-          <div class="instance-preview">
-            <a-statistic title="实例数量" :value="instanceCount" />
-          </div>
+          <a-table
+            :columns="instanceColumns"
+            :data-source="instanceList"
+            :pagination="instancePagination"
+            :loading="instanceLoading"
+            row-key="uuid"
+            size="small"
+            @change="handleInstanceTableChange"
+          >
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'name'">
+                <a-button type="link" size="small" @click="viewInstance(record)">{{ record.name }}</a-button>
+              </template>
+            </template>
+          </a-table>
         </div>
       </a-tab-pane>
     </a-tabs>
@@ -264,10 +279,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { SaveOutlined, DeleteOutlined, PlusOutlined, ExportOutlined } from '@ant-design/icons-vue'
+import { SaveOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
+import { graphApi } from '@/api/graph'
 import type { OntClassVO, OntPropertyVO, OntConstraintVO } from '@/api/ontology'
+import type { ClassInstance } from '@/api/graph'
 import ConstraintValueEditor from './ConstraintValueEditor.vue'
 
 const props = defineProps<{
@@ -368,6 +385,23 @@ const subclasses = computed(() =>
 )
 
 const instanceCount = ref(0)
+const instanceList = ref<ClassInstance[]>([])
+const instanceLoading = ref(false)
+const instancePagination = reactive({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+  showSizeChanger: true,
+  pageSizeOptions: ['10', '20', '50'],
+  showTotal: (total: number) => `共 ${total} 条`
+})
+
+const instanceColumns = [
+  { title: '名称', dataIndex: 'name', key: 'name' },
+  { title: 'UUID', dataIndex: 'uuid', key: 'uuid', ellipsis: true },
+  { title: '类型', dataIndex: 'type', key: 'type' },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt' }
+]
 
 async function loadData() {
   if (!props.classId) return
@@ -402,6 +436,8 @@ async function loadData() {
     equivalentTo: equivIds,
     disjointWith: disjointIds
   })
+
+  await loadInstances()
 }
 
 async function handleSave() {
@@ -546,9 +582,46 @@ function openSubclass(cls: OntClassVO) {
   store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
 }
 
-function goToInstances() {
-  if (!form.localName) return
-  store.openTab({ id: `instance-${form.localName}`, type: 'instance-table', title: `实例: ${form.localName}`, classType: form.localName })
+function openParentClass(cls: OntClassVO) {
+  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
+}
+
+async function loadInstances() {
+  if (!props.classId || !form.localName) {
+    instanceList.value = []
+    instanceCount.value = 0
+    instancePagination.total = 0
+    return
+  }
+  instanceLoading.value = true
+  try {
+    const res = await graphApi.getClassInstances(props.graphId, form.localName, {
+      page: instancePagination.current,
+      pageSize: instancePagination.pageSize
+    })
+    instanceList.value = res.data || []
+    instanceCount.value = res.total || 0
+    instancePagination.total = res.total || 0
+  } catch (e: any) {
+    message.error(e.message || '加载实例失败')
+  } finally {
+    instanceLoading.value = false
+  }
+}
+
+function handleInstanceTableChange(pagination: any) {
+  instancePagination.current = pagination.current
+  instancePagination.pageSize = pagination.pageSize
+  loadInstances()
+}
+
+function viewInstance(record: ClassInstance) {
+  store.openTab({
+    id: `instance-editor-${record.uuid}`,
+    type: 'instance-editor',
+    title: `实例: ${record.name}`,
+    classType: record.type
+  })
 }
 
 function getPropertyTypeColor(type: string) {
@@ -662,15 +735,25 @@ watch(() => props.classId, () => loadData())
         border-radius: 4px;
         font-size: 13px;
         color: #8b949e;
-        cursor: pointer;
 
         &.current { background: rgba(88, 166, 255, 0.2); color: #58a6ff; border: 1px solid #58a6ff; }
+
+        &.clickable {
+          cursor: pointer;
+          &:hover { background: #30363d; color: #e6edf3; }
+        }
       }
       .path-arrow { color: #6e7681; }
     }
 
     .subclasses-section {
       margin-top: 16px;
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #e6edf3;
+      }
 
       .subclass-list {
         display: flex;
@@ -680,26 +763,46 @@ watch(() => props.classId, () => loadData())
 
         .subclass-tag {
           padding: 4px 12px;
-          background: rgba(163, 113, 247, 0.15);
-          border: 1px solid rgba(163, 113, 247, 0.3);
+          background: rgba(230, 237, 243, 0.1);
+          border: 1px solid rgba(230, 237, 243, 0.3);
           border-radius: 4px;
           font-size: 13px;
-          color: #a371f7;
+          color: #e6edf3;
           cursor: pointer;
           transition: all 0.15s;
 
-          &:hover { background: rgba(163, 113, 247, 0.25); }
+          &:hover { background: rgba(230, 237, 243, 0.2); }
         }
       }
     }
   }
 
-  .instance-preview {
-    padding: 24px;
+  .instance-stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
     background: #161b22;
     border-radius: 8px;
     border: 1px solid #30363d;
-    max-width: 200px;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .stat-label {
+        font-size: 13px;
+        color: #8b949e;
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #e6edf3;
+      }
+    }
   }
 }
 </style>

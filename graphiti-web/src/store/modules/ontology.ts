@@ -20,6 +20,7 @@ export type OntologyTabType =
   | 'property-list'
   | 'property-editor'
   | 'constraint-list'
+  | 'constraint-editor'
   | 'domain-rule-list'  // 域规则列表
   | 'definition-editor'
   | 'instance-table'
@@ -37,6 +38,7 @@ export interface OntologyTab {
   dirty?: boolean           // 未保存标记
   classId?: number           // 用于 class-editor
   propertyId?: number       // 用于 property-editor
+  constraintId?: number     // 用于 constraint-editor
   classType?: string        // 用于 instance-table
 }
 
@@ -50,6 +52,7 @@ export interface OntologyExplorerNode {
         'tool-validation' | 'tool-graph' | 'tool'
   classId?: number
   propertyId?: number
+  constraintId?: number
   classType?: string
   count?: number
   children?: OntologyExplorerNode[]
@@ -270,6 +273,7 @@ export const useOntologyStore = defineStore('ontology', () => {
             title: c.constraintType,
             icon: '◇',
             type: 'constraint' as const,
+            constraintId: c.id,
             children: []
           }))
         },

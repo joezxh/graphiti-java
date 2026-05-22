@@ -9,6 +9,7 @@ import com.graphiti.module.graphiti.dal.mysql.metadata.OntCommunityTypeMapper;
 import com.graphiti.module.graphiti.dal.mysql.metadata.OntEpisodeTypeMapper;
 import com.graphiti.module.graphiti.dal.mysql.metadata.OntEntityCategoryMapper;
 import com.graphiti.module.graphiti.dal.mysql.metadata.OntRelationshipMetaMapper;
+import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.vo.metadata.*;
 import com.graphiti.module.graphiti.vo.ontology.OntClassVO;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OntMetadataServiceImpl implements OntMetadataService {
     private final OntEpisodeTypeMapper episodeTypeMapper;
     private final OntEntityCategoryMapper entityCategoryMapper;
     private final OntRelationshipMetaMapper relationshipMetaMapper;
+    private final GraphNeo4jService graphNeo4jService;
 
     // ==================== Community Type ====================
 
@@ -217,7 +219,7 @@ public class OntMetadataServiceImpl implements OntMetadataService {
                 .childCount((long) children.size())
                 .build();
         }
-        long instanceCount = episodeTypeMapper.countEpisodeInstances(graphId, type.getTypeCode());
+        long instanceCount = graphNeo4jService.countEpisodesByType(graphId, type.getTypeCode());
         if (instanceCount > 0) {
             return EpisodeTypeDeleteCheckVO.builder()
                 .canDelete(false)

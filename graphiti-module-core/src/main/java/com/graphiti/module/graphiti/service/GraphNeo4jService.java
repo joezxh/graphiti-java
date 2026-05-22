@@ -71,6 +71,14 @@ public interface GraphNeo4jService {
      * 按图谱ID统计事件数量
      */
     long countEpisodesByGraphId(String graphId);
+    
+    /**
+     * 统计指定图谱和类型的 Episode 数量
+     * @param graphId 图谱ID
+     * @param episodeType 剧集类型代码
+     * @return Episode 数量
+     */
+    long countEpisodesByType(String graphId, String episodeType);
 
     /**
      * 获取图谱的事件列表

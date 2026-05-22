@@ -3,6 +3,7 @@ package com.graphiti.module.graphiti.controller.admin;
 import com.graphiti.common.response.CommonResult;
 import com.graphiti.module.graphiti.dal.mysql.metadata.OntEpisodeTypeMapper;
 import com.graphiti.module.graphiti.service.EpisodeService;
+import com.graphiti.module.graphiti.service.GraphNeo4jService;
 import com.graphiti.module.graphiti.service.metadata.OntMetadataService;
 import com.graphiti.module.graphiti.vo.episode.EpisodeListRespVO;
 import com.graphiti.module.graphiti.vo.metadata.*;
@@ -29,7 +30,7 @@ public class OntMetadataController {
 
     private final OntMetadataService ontMetadataService;
     private final EpisodeService episodeService;
-    private final OntEpisodeTypeMapper episodeTypeMapper;
+    private final GraphNeo4jService graphNeo4jService;
 
     // ==================== Community Type ====================
 
@@ -117,7 +118,7 @@ public class OntMetadataController {
             @PathVariable @Parameter(description = "类型ID") Long id) {
         OntEpisodeTypeRespVO vo = ontMetadataService.getEpisodeTypeById(id);
         if (vo != null) {
-            vo.setInstanceCount(episodeTypeMapper.countEpisodeInstances(graphId, vo.getTypeCode()));
+            vo.setInstanceCount(graphNeo4jService.countEpisodesByType(graphId, vo.getTypeCode()));
         }
         return CommonResult.success(vo);
     }
