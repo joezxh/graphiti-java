@@ -211,6 +211,24 @@ export const useOntologyStore = defineStore('ontology', () => {
     const propertyCount = properties.value.length
     const constraintCount = constraints.value.length
 
+    // 根据 parentClassId 构建类树
+    function buildClassTreeNodes(parentId: number | null): OntologyExplorerNode[] {
+      return classes.value
+        .filter(cls => (parentId == null ? cls.parentClassId == null : cls.parentClassId === parentId))
+        .map(cls => {
+          const children = buildClassTreeNodes(cls.id)
+          return {
+            key: `class-${cls.id}`,
+            title: cls.localName,
+            icon: '◉',
+            type: 'class' as const,
+            classId: cls.id,
+            classType: cls.localName,
+            children
+          }
+        })
+    }
+
     return {
       key: 'ontology-root',
       title: '本体定义',
@@ -223,15 +241,7 @@ export const useOntologyStore = defineStore('ontology', () => {
           icon: '📂',
           type: 'class-group',
           count: classCount,
-          children: classes.value.map(cls => ({
-            key: `class-${cls.id}`,
-            title: cls.localName,
-            icon: '◉',
-            type: 'class' as const,
-            classId: cls.id,
-            classType: cls.localName,
-            children: []
-          }))
+          children: buildClassTreeNodes(null)
         },
         {
           key: 'properties',
