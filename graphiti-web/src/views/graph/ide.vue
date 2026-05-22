@@ -87,11 +87,13 @@
             @open-episode="handleEpisodeNodeClick"
             @open-community="handleCommunityNodeClick"
           />
-          <!-- Episodes Tab: 剧集树 -->
-          <EpisodeExplorer
+          <!-- Episodes Tab: 剧集类型树 -->
+          <EpisodeTypeExplorer
             v-else-if="sidebarTab === 'episodes'"
             :graph-id="effectiveGraphId"
-            @open-episode="handleEpisodeNodeClick"
+            :definition-id="definitionId"
+            @select-type="handleEpisodeTypeSelect"
+            @create-type="handleEpisodeTypeCreate"
           />
           <!-- Communities Tab: 社区树 -->
           <CommunityExplorer
@@ -235,8 +237,26 @@
 
       <!-- Right Panel -->
       <aside class="ide-panel" :class="{ collapsed: !showPanel }">
+        <!-- V5.0: Episode 类型详情面板 -->
+        <template v-if="sidebarTab === 'episodes' && selectedEpisodeType">
+          <div class="panel-header">
+            <span class="panel-title">{{ selectedEpisodeType.typeName || '类型详情' }}</span>
+            <a-button type="text" size="small" @click="selectedEpisodeType = null">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <EpisodeTypeDetailPanel
+            :graph-id="effectiveGraphId"
+            :type-id="selectedEpisodeType.id"
+            :type-data="selectedEpisodeType"
+            @edit-type="handleEpisodeTypeEdit"
+            @delete-type="handleEpisodeTypeDelete"
+            @navigate-to-instance="handleNavigateToInstance"
+          />
+        </template>
+
         <!-- V3.0.0: Episode 详情面板 -->
-        <template v-if="ontologyMode === 'episodes' && selectedEpisode">
+        <template v-else-if="ontologyMode === 'episodes' && selectedEpisode">
           <div class="panel-header">
             <span class="panel-title">事件详情</span>
             <a-button type="text" size="small" @click="selectedEpisode = null">
@@ -639,6 +659,16 @@
       :nodes="nodes"
       @success="handleAddEdgeSuccess"
     />
+
+    <!-- V5.0: Episode Type Edit Modal -->
+    <EpisodeTypeEditModal
+      v-model:visible="showEpisodeTypeEditModal"
+      :graph-id="effectiveGraphId"
+      :definition-id="definitionId"
+      :type-data="editingEpisodeType"
+      :all-types="allEpisodeTypes"
+      @success="handleEpisodeTypeEditSuccess"
+    />
   </div>
 </template>
 
@@ -679,7 +709,7 @@ import type {
   EditTool
 } from '@/api/graph'
 import type { DetailPanelTab } from '@/types/graph-ide'
-import { communityTypeApi, type OntCommunityTypeVO } from '@/api/metadata'
+import { communityTypeApi, episodeTypeApi, type OntCommunityTypeVO, type OntEpisodeTypeVO } from '@/api/metadata'
 import {
   LEGAL_DOMAIN_COLORS,
   EPISODE_TYPE_COLORS,
@@ -692,7 +722,9 @@ import NodeEditModal from '@/components/Graph/NodeEditModal.vue'
 import AddEdgeModal from '@/components/Graph/AddEdgeModal.vue'
 import OntologyObjectExplorer from '@/components/Ontology/OntologyObjectExplorer.vue'
 import OntologyWorkbench from '@/components/Ontology/OntologyWorkbench.vue'
-import EpisodeExplorer from '@/components/Ontology/EpisodeExplorer.vue'
+import EpisodeTypeExplorer from '@/components/Ontology/EpisodeTypeExplorer.vue'
+import EpisodeTypeDetailPanel from '@/components/Ontology/EpisodeTypeDetailPanel.vue'
+import EpisodeTypeEditModal from '@/components/Ontology/EpisodeTypeEditModal.vue'
 import CommunityExplorer from '@/components/Ontology/CommunityExplorer.vue'
 
 const route = useRoute()
@@ -762,6 +794,13 @@ const dedupeNodes = (list: GraphIDENode[]): GraphIDENode[] => {
 const dedupeEdges = (list: GraphIDEEdge[]): GraphIDEEdge[] => {
   return [...new Map(list.map(e => [e.uuid, e])).values()]
 }
+
+// V5.0: Episode 类型管理
+const selectedEpisodeType = ref<OntEpisodeTypeVO | null>(null)
+const allEpisodeTypes = ref<OntEpisodeTypeVO[]>([])
+const showEpisodeTypeEditModal = ref(false)
+const editingEpisodeType = ref<OntEpisodeTypeVO | undefined>(undefined)
+const definitionId = ref<number>(0)
 
 // V3.0.0: 选中的 Episode 详情（剧集视图时使用）
 const selectedEpisode = ref<EpisodeV3 | null>(null)
@@ -1252,11 +1291,86 @@ const handleOntologyOpenTab = (payload: { type: string; title: string; classId?:
   ontologyMode.value = 'class'
 }
 
+// V5.0: 选择剧集类型 → 加载类型详情 + 可视化数据
+const handleEpisodeTypeSelect = async (payload: { typeId: number; typeCode: string; typeName: string }) => {
+  ontologyMode.value = 'episodes'
+  showPanel.value = true
+  loading.value = true
+  selectedEpisodeType.value = null
+  try {
+    const [detailRes, visRes] = await Promise.all([
+      episodeTypeApi.get(effectiveGraphId.value, payload.typeId),
+      graphApi.getEpisodesVisualizationByType(effectiveGraphId.value, payload.typeCode, true, 100)
+    ])
+    selectedEpisodeType.value = detailRes
+    nodes.value = dedupeNodes(visRes?.nodes || [])
+    edges.value = dedupeEdges(visRes?.edges || [])
+  } catch (e) {
+    console.error('加载类型数据失败:', e)
+    message.error('加载类型数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleEpisodeTypeCreate = () => {
+  editingEpisodeType.value = undefined
+  showEpisodeTypeEditModal.value = true
+}
+
+const handleEpisodeTypeEdit = (typeId: number) => {
+  editingEpisodeType.value = selectedEpisodeType.value || undefined
+  showEpisodeTypeEditModal.value = true
+}
+
+const handleEpisodeTypeDelete = async (typeId: number) => {
+  try {
+    await episodeTypeApi.delete(effectiveGraphId.value, typeId)
+    message.success('类型已删除')
+    selectedEpisodeType.value = null
+    showPanel.value = false
+    nodes.value = []
+    edges.value = []
+  } catch (e: any) {
+    message.error(e.message || '删除失败')
+  }
+}
+
+const handleEpisodeTypeEditSuccess = async () => {
+  if (selectedEpisodeType.value) {
+    try {
+      const detail = await episodeTypeApi.get(effectiveGraphId.value, selectedEpisodeType.value.id)
+      selectedEpisodeType.value = detail
+    } catch (e) { /* ignore */ }
+  }
+}
+
+const handleNavigateToInstance = (uuid: string) => {
+  // 导航到实例节点，可选实现
+  message.info(`导航到实例: ${uuid}`)
+}
+
+async function loadDefinitionId() {
+  if (!effectiveGraphId.value) return
+  try {
+    const ontology = await graphApi.getOntology(effectiveGraphId.value)
+    definitionId.value = ontology?.definition?.id || 0
+    if (definitionId.value) {
+      const types = await episodeTypeApi.getTree(effectiveGraphId.value, definitionId.value)
+      allEpisodeTypes.value = types || []
+    }
+  } catch (e) {
+    console.error('加载本体定义失败:', e)
+    definitionId.value = 0
+  }
+}
+
 // 点击剧集节点 → 切换到图谱视图显示剧集数据
 const handleEpisodeNodeClick = async (payload?: { stageNode?: any; processNode?: any }) => {
   sidebarTab.value = 'episodes'
   ontologyMode.value = 'episodes'
   selectedEpisode.value = null
+  selectedEpisodeType.value = null
   showPanel.value = false
   loading.value = true
 
@@ -1331,7 +1445,8 @@ const loadAllData = async () => {
   await Promise.all([
     loadGraphMetadata(),
     loadGraphData(),
-    loadSchemaClasses()
+    loadSchemaClasses(),
+    loadDefinitionId()
   ])
 }
 

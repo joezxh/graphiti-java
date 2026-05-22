@@ -393,6 +393,19 @@ export const graphApi = {
     })
   },
 
+  // V5.0: 根据剧集类型获取可视化数据（复用现有接口，前端按类型过滤）
+  async getEpisodesVisualizationByType(
+    graphId: string,
+    typeCode: string,
+    includeChildren?: boolean,
+    limit?: number
+  ): Promise<GraphVisualizationData> {
+    // 先获取所有 episode 可视化数据，前端组件按 typeCode 过滤
+    return request.get(`/graph/${graphId}/visualization/episodes`, {
+      params: { limit: limit || 100 }
+    })
+  },
+
   // 获取社区可视化数据
   async getCommunitiesVisualization(
     graphId: string,

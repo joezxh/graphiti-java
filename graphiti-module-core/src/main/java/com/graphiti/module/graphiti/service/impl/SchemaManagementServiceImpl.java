@@ -761,7 +761,8 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
         Long definitionId = resolveDefinitionId(graphId);
 
         // 1. 从元数据表读取所有已定义的 Episode 类型
-        List<OntEpisodeTypeDO> metaTypes = episodeTypeMapper.selectActiveByDefinitionId(definitionId);
+        List<OntEpisodeTypeDO> metaTypes = episodeTypeMapper.selectByDefinitionId(definitionId).stream()
+                .filter(t -> "ACTIVE".equals(t.getStatus())).collect(Collectors.toList());
         Map<String, OntEpisodeTypeDO> metaMap = metaTypes.stream()
                 .collect(Collectors.toMap(OntEpisodeTypeDO::getTypeCode, Function.identity(), (a, b) -> a));
 
@@ -820,7 +821,8 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
         Long definitionId = resolveDefinitionId(graphId);
 
         // 1. 从元数据表加载所有 Episode 类型定义
-        List<OntEpisodeTypeDO> metaTypes = episodeTypeMapper.selectActiveByDefinitionId(definitionId);
+        List<OntEpisodeTypeDO> metaTypes = episodeTypeMapper.selectByDefinitionId(definitionId).stream()
+                .filter(t -> "ACTIVE".equals(t.getStatus())).collect(Collectors.toList());
 
         // 2. 按 process_type 分组，构建元数据层级的树结构
         Map<String, Map<String, Object>> processMap = new LinkedHashMap<>();

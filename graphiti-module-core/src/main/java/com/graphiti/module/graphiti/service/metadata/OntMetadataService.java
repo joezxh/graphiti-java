@@ -22,10 +22,14 @@ public interface OntMetadataService {
     Long createEpisodeType(OntEpisodeTypeReqVO reqVO);
     void updateEpisodeType(Long id, OntEpisodeTypeReqVO reqVO);
     void deleteEpisodeType(Long id);
+    void deleteEpisodeType(String graphId, Long id);
     OntEpisodeTypeRespVO getEpisodeTypeById(Long id);
     List<OntEpisodeTypeRespVO> listEpisodeTypes(Long definitionId);
-    List<OntEpisodeTypeRespVO> listEpisodeTypesByProcess(Long definitionId, String legalProcess);
     List<OntEpisodeTypeRespVO> listEpisodeTypesByProcessType(Long definitionId, String processType);
+    List<OntEpisodeTypeRespVO> getEpisodeTypeTree(Long definitionId);
+    EpisodeTypeDeleteCheckVO checkDeleteEpisodeType(String graphId, Long id);
+    void reorderEpisodeTypes(List<EpisodeTypeReorderItemVO> items);
+    EpisodeTypeImportResultVO importEpisodeTypes(Long definitionId, List<OntEpisodeTypeReqVO> items);
     int batchCreateEpisodeTypes(Long definitionId, List<OntEpisodeTypeReqVO> reqVOs);
 
     // ==================== Entity Category ====================

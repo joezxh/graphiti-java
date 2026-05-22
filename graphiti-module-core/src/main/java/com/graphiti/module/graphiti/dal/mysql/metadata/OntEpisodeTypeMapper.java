@@ -10,35 +10,25 @@ import java.util.List;
 @Mapper
 public interface OntEpisodeTypeMapper extends BaseMapper<OntEpisodeTypeDO> {
 
-    @Select("SELECT id, definition_id, type_code, type_name, type_name_en, " +
-            "process_type, stage_label, stage_level, is_review_stage, " +
-            "legal_process, court_level, is_trial_stage, " +
-            "description, sort_order, metadata, status, created_at, updated_at " +
-            "FROM ont_episode_type WHERE definition_id = #{definitionId} AND status = 'ACTIVE' ORDER BY sort_order")
-    List<OntEpisodeTypeDO> selectActiveByDefinitionId(@Param("definitionId") Long definitionId);
-
-    @Select("SELECT * FROM ont_episode_type WHERE definition_id = #{definitionId} ORDER BY sort_order")
+    @Select("SELECT * FROM ont_episode_type WHERE definition_id = #{definitionId} ORDER BY sort_order, level")
     List<OntEpisodeTypeDO> selectByDefinitionId(@Param("definitionId") Long definitionId);
 
-    @Select("SELECT * FROM ont_episode_type WHERE definition_id = #{definitionId} AND legal_process = #{legalProcess} AND status = 'ACTIVE' ORDER BY sort_order")
-    List<OntEpisodeTypeDO> selectByLegalProcess(@Param("definitionId") Long definitionId, @Param("legalProcess") String legalProcess);
+    @Select("SELECT * FROM ont_episode_type WHERE definition_id = #{definitionId} AND parent_type_code = #{parentTypeCode} AND status = 'ACTIVE' ORDER BY sort_order")
+    List<OntEpisodeTypeDO> selectByParentTypeCode(@Param("definitionId") Long definitionId, @Param("parentTypeCode") String parentTypeCode);
 
-    @Select("SELECT id, definition_id, type_code, type_name, type_name_en, " +
-            "process_type, stage_label, stage_level, is_review_stage, " +
-            "legal_process, court_level, is_trial_stage, " +
-            "description, sort_order, metadata, status, created_at, updated_at " +
-            "FROM ont_episode_type WHERE definition_id = #{definitionId} AND process_type = #{processType} AND status = 'ACTIVE' ORDER BY sort_order")
-    List<OntEpisodeTypeDO> selectByProcessType(@Param("definitionId") Long definitionId, @Param("processType") String processType);
+    @Select("SELECT * FROM ont_episode_type WHERE definition_id = #{definitionId} AND parent_type_code IS NULL AND status = 'ACTIVE' ORDER BY sort_order")
+    List<OntEpisodeTypeDO> selectRootTypes(@Param("definitionId") Long definitionId);
 
-    @Select("SELECT id, definition_id, type_code, type_name, type_name_en, " +
-            "process_type, stage_label, stage_level, is_review_stage, " +
-            "legal_process, court_level, is_trial_stage, " +
-            "description, sort_order, metadata, status, created_at, updated_at " +
-            "FROM ont_episode_type WHERE definition_id = #{definitionId} AND type_code = #{typeCode} LIMIT 1")
+    @Select("SELECT * FROM ont_episode_type WHERE definition_id = #{definitionId} AND type_code = #{typeCode} LIMIT 1")
     OntEpisodeTypeDO selectByTypeCode(@Param("definitionId") Long definitionId, @Param("typeCode") String typeCode);
 
     @Select("SELECT COUNT(*) FROM ont_episode_type WHERE definition_id = #{definitionId}")
     long countByDefinitionId(@Param("definitionId") Long definitionId);
+
+    @Select("SELECT COUNT(*) FROM episode WHERE graph_id = #{graphId} AND episode_type = #{typeCode}")
+    long countEpisodeInstances(@Param("graphId") String graphId, @Param("typeCode") String typeCode);
+
+    int batchUpdateSortOrder(@Param("list") List<OntEpisodeTypeDO> types);
 
     @org.apache.ibatis.annotations.Delete("DELETE FROM ont_episode_type WHERE definition_id = #{definitionId}")
     int deleteByDefinitionId(@Param("definitionId") Long definitionId);

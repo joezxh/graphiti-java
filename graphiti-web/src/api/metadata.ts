@@ -29,21 +29,54 @@ export interface OntEpisodeTypeVO {
   typeCode: string
   typeName: string
   typeNameEn?: string
-  legalProcess?: string
-  stageLabel?: string
-  // 通用化字段
+  // 层级关系（V5 新增）
+  parentTypeCode?: string
+  level?: number
+  // 通用分类字段
   processType?: string
-  stageLevel?: string   // 替换 courtLevel
-  isReviewStage?: boolean  // 替换 isTrialStage
-  // 向后兼容旧字段
-  courtLevel?: string
-  isTrialStage?: boolean
+  stageLabel?: string
+  stageLevel?: string
+  isReviewStage?: boolean
   description?: string
   sortOrder?: number
   metadata?: string
   status?: string
+  // 使用统计（查询时动态计算）
+  instanceCount?: number
+  // 子类型列表（树形结构用）
+  children?: OntEpisodeTypeVO[]
   createdAt?: string
   updatedAt?: string
+  createdBy?: string
+  updatedBy?: string
+}
+
+export interface EpisodeTypeDeleteCheckVO {
+  canDelete: boolean
+  reason?: string
+  childCount?: number
+  instanceCount?: number
+}
+
+export interface EpisodeTypeReorderItem {
+  id: number
+  sortOrder: number
+  parentTypeCode?: string
+}
+
+export interface EpisodeTypeImportResultVO {
+  total: number
+  success: number
+  failed: number
+  errors: string[]
+}
+
+export interface PageResult<T> {
+  list: T[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
 }
 
 export interface OntEntityCategoryVO {
@@ -115,9 +148,14 @@ export const communityTypeApi = {
 // ==================== Episode Type API ====================
 
 export const episodeTypeApi = {
-  list: (graphId: string, definitionId: number, legalProcess?: string) =>
+  list: (graphId: string, definitionId: number, processType?: string) =>
     request.get<OntEpisodeTypeVO[]>(`/ontology/${graphId}/episode-types`, {
-      params: { definitionId, ...(legalProcess ? { legalProcess } : {}) }
+      params: { definitionId, ...(processType ? { processType } : {}) }
+    }),
+
+  getTree: (graphId: string, definitionId: number) =>
+    request.get<OntEpisodeTypeVO[]>(`/ontology/${graphId}/episode-types/tree`, {
+      params: { definitionId }
     }),
 
   get: (graphId: string, id: number) =>
@@ -136,6 +174,22 @@ export const episodeTypeApi = {
 
   delete: (graphId: string, id: number) =>
     request.delete(`/ontology/${graphId}/episode-types/${id}`),
+
+  checkDelete: (graphId: string, id: number) =>
+    request.get<EpisodeTypeDeleteCheckVO>(`/ontology/${graphId}/episode-types/${id}/delete-check`),
+
+  reorder: (graphId: string, items: EpisodeTypeReorderItem[]) =>
+    request.post(`/ontology/${graphId}/episode-types/reorder`, items),
+
+  import: (graphId: string, definitionId: number, items: Partial<OntEpisodeTypeVO>[]) =>
+    request.post<EpisodeTypeImportResultVO>(`/ontology/${graphId}/episode-types/import`, items, {
+      params: { definitionId }
+    }),
+
+  getInstances: (graphId: string, id: number, page: number, pageSize: number, keyword?: string) =>
+    request.get<{ episodes: any[]; totalCount: number; rowCount: number }>(`/ontology/${graphId}/episode-types/${id}/instances`, {
+      params: { page, pageSize, ...(keyword ? { keyword } : {}) }
+    }),
 }
 
 // ==================== Entity Category API ====================
