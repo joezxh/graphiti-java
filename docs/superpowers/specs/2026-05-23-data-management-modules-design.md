@@ -322,15 +322,57 @@ graphiti-web/src/
 | 配置路由 | `router/index.ts` | 覆盖/迁移 2 条路由 |
 | 关联导航 | 多个文件 | 模块间跳转链接、侧滑面板 |
 
+## 原页面文件引用检查与处理策略
+
+### 检查范围
+
+对以下将被覆盖/迁移的原路由对应的页面文件进行全项目引用检查：
+
+| 原路由 | 页面文件路径 | 检查结果 | 处理建议 |
+|--------|-------------|---------|---------|
+| `/data/entities` | `views/data/entities.vue` | **仅被 router/index.ts 引用** | 删除（需确认） |
+| `/data/community-episode` | `views/data/community-episode.vue` | **仅被 router/index.ts 引用** | 删除（需确认） |
+| `/episodes` | `views/episodes/index.vue` | **仅被 router/index.ts 引用** | 删除（需确认） |
+| `/edges` | `views/edges/index.vue` | **仅被 router/index.ts 引用** | 删除（需确认） |
+| `/communities` | `views/communities/index.vue` | **仅被 router/index.ts 引用** | 删除（需确认） |
+
+### 检查方法
+
+```bash
+# 检查页面文件是否被其他组件引用
+grep -r "views/data/entities" src/ --include="*.vue" --include="*.ts"
+grep -r "views/data/community-episode" src/ --include="*.vue" --include="*.ts"
+grep -r "views/episodes/index" src/ --include="*.vue" --include="*.ts"
+grep -r "views/edges/index" src/ --include="*.vue" --include="*.ts"
+grep -r "views/communities/index" src/ --include="*.vue" --include="*.ts"
+```
+
+### 删除原则
+
+1. **删除前必须重新执行上述 grep 检查**，确认无其他引用
+2. **路由迁移后**，原路由对应的 `component: () => import(...)` 代码将被删除或替换
+3. **如果检查发现有新的引用**（如其他组件 import、菜单配置直接引用组件路径等），**暂停删除并报告具体引用位置**，等待确认
+4. **删除操作需用户明确确认后方可执行**
+
+### 路由迁移方案
+
+| 原路由 | 新路由 | 迁移方式 |
+|--------|--------|---------|
+| `/edges` | `/data/edges` | 删除原路由，新增新路由 |
+| `/episodes` | `/data/episodes` | 删除原路由，新增新路由 |
+| `/communities` | 保留（菜单调整） | 路由保留，菜单移至 data-management 下 |
+| `/data/community-episode` | `/data/communities` | 删除原路由，新增新路由 |
+| `/data/entities` | `/data/entities` | 覆盖（组件替换） |
+
 ## 兼容性保证
 
 | 功能 | 处理方式 |
-|------|---------|
+|---------|---------|
 | 现有 ide.vue | 保持不变，独立模块为新增入口 |
 | 现有 OntologyWorkbench | 保持不变，独立模块复用其子组件 |
-| 现有路由 /edges | 重定向到 /data/edges |
-| 现有路由 /episodes | 重定向到 /data/episodes |
-| 现有路由 /data/community-episode | 重定向到 /data/communities |
+| 现有路由 /edges | 删除原路由，新路由 /data/edges |
+| 现有路由 /episodes | 删除原路由，新路由 /data/episodes |
+| 现有路由 /data/community-episode | 删除原路由，新路由 /data/communities |
 | 数据导入导出 | 保持不变，菜单位置不变 |
 
 ## 技术要点
