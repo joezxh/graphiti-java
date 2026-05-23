@@ -57,6 +57,24 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'nav.dataExport', requiresAuth: true }
       },
       {
+        path: 'data/classes',
+        name: 'DataClasses',
+        component: () => import('@/views/data/classes.vue'),
+        meta: { title: 'nav.classManagement', requiresAuth: true }
+      },
+      {
+        path: 'data/properties',
+        name: 'DataProperties',
+        component: () => import('@/views/data/properties.vue'),
+        meta: { title: 'nav.propertyManagement', requiresAuth: true }
+      },
+      {
+        path: 'data/constraints',
+        name: 'DataConstraints',
+        component: () => import('@/views/data/constraints.vue'),
+        meta: { title: 'nav.constraintManagement', requiresAuth: true }
+      },
+      {
         path: 'data/entities',
         name: 'DataEntities',
         component: () => import('@/views/data/entities.vue'),
