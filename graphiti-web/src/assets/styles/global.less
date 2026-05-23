@@ -145,6 +145,67 @@ html, body {
   color: @text-primary !important;
 }
 
+// 分页器样式覆盖（解决 CSS-in-JS 运行时注入覆盖问题）
+.ant-pagination {
+  color: #ffffff !important;
+
+  .ant-pagination-item {
+    a {
+      color: #ffffff !important;
+    }
+
+    &.ant-pagination-item-active {
+      border-color: #58a6ff !important;
+      background: rgba(88, 166, 255, 0.15) !important;
+
+      a {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next,
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next {
+    .ant-pagination-item-link {
+      color: #ffffff !important;
+    }
+
+    &:hover .ant-pagination-item-link {
+      color: #58a6ff !important;
+    }
+  }
+
+  .ant-pagination-total-text {
+    color: #ffffff !important;
+  }
+
+  .ant-pagination-options {
+    .ant-select-selector {
+      color: #ffffff !important;
+      background: #161b22 !important;
+      border-color: #30363d !important;
+    }
+
+    .ant-select-arrow {
+      color: #8b949e !important;
+    }
+  }
+
+  .ant-pagination-options-quick-jumper {
+    input {
+      color: #ffffff !important;
+      background: #161b22 !important;
+      border-color: #30363d !important;
+
+      &::placeholder {
+        color: #6e7681 !important;
+      }
+    }
+  }
+}
+
 // 修复按钮文字颜色
 .ant-btn {
   color: #000000 !important;  // 默认按钮黑色文字

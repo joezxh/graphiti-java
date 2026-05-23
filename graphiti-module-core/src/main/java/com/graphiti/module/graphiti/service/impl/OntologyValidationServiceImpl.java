@@ -301,13 +301,15 @@ public class OntologyValidationServiceImpl implements OntologyValidationService 
                 }
                 case "RANGE" -> {
                     if (propValue instanceof Number num) {
-                        if (valueMap.containsKey("min") && num.doubleValue() < ((Number) valueMap.get("min")).doubleValue()) {
+                        Object minObj = valueMap.get("min");
+                        Object maxObj = valueMap.get("max");
+                        if (minObj instanceof Number minNum && num.doubleValue() < minNum.doubleValue()) {
                             errors.add(ValidationErrorVO.of(4, ERR_CONSTRAINT_VIOLATED,
-                                errorMsg + " (min: " + valueMap.get("min") + ")", prop.getLocalName(), propValue));
+                                errorMsg + " (min: " + minObj + ")", prop.getLocalName(), propValue));
                         }
-                        if (valueMap.containsKey("max") && num.doubleValue() > ((Number) valueMap.get("max")).doubleValue()) {
+                        if (maxObj instanceof Number maxNum && num.doubleValue() > maxNum.doubleValue()) {
                             errors.add(ValidationErrorVO.of(4, ERR_CONSTRAINT_VIOLATED,
-                                errorMsg + " (max: " + valueMap.get("max") + ")", prop.getLocalName(), propValue));
+                                errorMsg + " (max: " + maxObj + ")", prop.getLocalName(), propValue));
                         }
                     }
                 }

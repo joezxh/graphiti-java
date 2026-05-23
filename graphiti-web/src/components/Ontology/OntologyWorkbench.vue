@@ -90,6 +90,7 @@
         :graph-id="graphId"
         :class-id="store.activeTab.classId"
         @saved="handleSaved"
+        @edit-instance="handleEditInstance"
       />
       <PropertyEditor
         v-else-if="store.activeTab.type === 'property-editor'"
@@ -233,6 +234,10 @@ function handleSaved() {
 
 function handleInstanceSaved() {
   editingInstance.value = undefined
+  // 保存成功后关闭当前实例编辑 tab
+  if (store.activeTabId) {
+    store.closeTab(store.activeTabId)
+  }
 }
 
 function handleEditInstance(data: any) {

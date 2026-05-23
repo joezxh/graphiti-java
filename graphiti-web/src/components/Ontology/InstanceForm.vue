@@ -216,6 +216,7 @@ import { SaveOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { graphApi } from '@/api/graph'
 import type { FormInstance } from 'ant-design-vue'
+import dayjs from 'dayjs'
 
 const props = defineProps<{
   graphId: string
@@ -257,7 +258,25 @@ watch(() => props.instanceData, (data) => {
     formData.uuid = data.uuid ?? ''
     formData.name = data.name ?? ''
     formData.type = data.type ?? ''
-    formData.properties = data.properties ? { ...data.properties } : {}
+    
+    // 处理 properties：将日期字符串转换为 dayjs 对象
+    const rawProps = data.properties ? { ...data.properties } : {}
+    formData.properties = {}
+    
+    // 根据 type 查找类定义
+    const targetClass = store.classes.find(c => c.localName === formData.type)
+    const propsDef = targetClass ? store.properties.filter(p => p.domainClassId === targetClass.id) : []
+    
+    for (const [key, value] of Object.entries(rawProps)) {
+      const propDef = propsDef.find(p => p.localName === key)
+      // 如果是日期类型，转换为 dayjs 对象
+      if (propDef && isDateType(propDef.rangeDataType) && typeof value === 'string') {
+        formData.properties[key] = dayjs(value)
+      } else {
+        formData.properties[key] = value
+      }
+    }
+    
     formData.createdAt = data.createdAt ?? ''
     formData.updatedAt = data.updatedAt ?? ''
   } else {
@@ -304,7 +323,8 @@ function getPropertyRules(prop: any) {
   if (prop.pattern) {
     rules.push({ pattern: new RegExp(prop.pattern), message: `格式不符合要求: ${prop.pattern}` })
   }
-  if (prop.minValue !== undefined && prop.maxValue !== undefined) {
+  // 只有当 minValue 和 maxValue 都有实际值时才添加范围校验
+  if (prop.minValue != null && prop.maxValue != null) {
     rules.push({ type: 'number', min: prop.minValue, max: prop.maxValue, message: `值应在 ${prop.minValue} - ${prop.maxValue} 之间` })
   }
   return rules
@@ -396,18 +416,29 @@ async function handleSave() {
 
   saving.value = true
   try {
+    // 处理 properties：将 dayjs 对象转回字符串
+    const cleanProperties: Record<string, any> = {}
+    for (const [key, value] of Object.entries(formData.properties)) {
+      if (value && typeof value === 'object' && 'format' in value && typeof value.format === 'function') {
+        // dayjs 对象，转为 ISO 字符串
+        cleanProperties[key] = (value as any).format('YYYY-MM-DD')
+      } else {
+        cleanProperties[key] = value
+      }
+    }
+
     if (isNew.value) {
       const result = await graphApi.createNode(props.graphId, {
         name: formData.name,
         type: formData.type,
-        properties: formData.properties
+        properties: cleanProperties
       })
       message.success('实例创建成功')
       emit('saved', result)
     } else {
       const result = await graphApi.updateNode(props.graphId, recordUuid.value, {
         name: formData.name,
-        properties: formData.properties
+        properties: cleanProperties
       })
       message.success('实例更新成功')
       emit('saved', result)
@@ -445,6 +476,11 @@ async function handleSaveAs() {
 
   .instance-form-content {
     flex: 1;
+  }
+
+  // 分割线标题颜色
+  :deep(.ant-divider-inner-text) {
+    color: #e6edf3;
   }
 
   .prop-hint {

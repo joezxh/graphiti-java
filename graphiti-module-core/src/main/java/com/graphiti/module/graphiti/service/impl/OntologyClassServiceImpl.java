@@ -24,6 +24,7 @@ import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -57,7 +58,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         entity.setCreatedBy(reqVO.getCreatedBy());
         definitionMapper.insert(entity);
 
-        recordHistory(entity.getId(), "DEFINITION_CREATED", "DEFINITION", entity.getId(),
+        recordHistoryAsync(entity.getId(), "DEFINITION_CREATED", "DEFINITION", entity.getId(),
             null, entity, "创建本体定义: " + reqVO.getName(), reqVO.getCreatedBy());
 
         return toDefinitionVO(entity);
@@ -87,21 +88,21 @@ public class OntologyClassServiceImpl implements OntologyClassService {
                 restoreData.setId(entityId);
                 restoreData.setDefinitionId(defId);
                 classMapper.updateById(restoreData);
-                recordHistory(defId, "CLASS_ROLLBACK", "CLASS", entityId,
+                recordHistoryAsync(defId, "CLASS_ROLLBACK", "CLASS", entityId,
                     null, restoreData, "回滚到历史版本: " + history.getVersion(), null);
             } else if ("PROPERTY".equals(entityType)) {
                 OntPropertyDO restoreData = objectMapper.readValue(history.getBeforeState(), OntPropertyDO.class);
                 restoreData.setId(entityId);
                 restoreData.setDefinitionId(defId);
                 propertyMapper.updateById(restoreData);
-                recordHistory(defId, "PROPERTY_ROLLBACK", "PROPERTY", entityId,
+                recordHistoryAsync(defId, "PROPERTY_ROLLBACK", "PROPERTY", entityId,
                     null, restoreData, "回滚到历史版本: " + history.getVersion(), null);
             } else if ("CONSTRAINT".equals(entityType)) {
                 OntConstraintDO restoreData = objectMapper.readValue(history.getBeforeState(), OntConstraintDO.class);
                 restoreData.setId(entityId);
                 restoreData.setDefinitionId(defId);
                 constraintMapper.updateById(restoreData);
-                recordHistory(defId, "CONSTRAINT_ROLLBACK", "CONSTRAINT", entityId,
+                recordHistoryAsync(defId, "CONSTRAINT_ROLLBACK", "CONSTRAINT", entityId,
                     null, restoreData, "回滚到历史版本: " + history.getVersion(), null);
             } else {
                 throw new BusinessException(1005, "不支持的实体类型回滚: " + entityType);
@@ -180,11 +181,15 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         }
 
         classMapper.insert(entity);
-        recordHistory(defId, "CLASS_ADDED", "CLASS", entity.getId(),
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntClassVO result = toVO(entity);
+        
+        recordHistoryAsync(defId, "CLASS_ADDED", "CLASS", entity.getId(),
             null, entity, "新增类: " + reqVO.getLocalName(), null);
         reasoner.shutdown(graphId); // 缓存失效
 
-        return toVO(entity);
+        return result;
     }
 
     @Override
@@ -216,11 +221,15 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         }
 
         classMapper.updateById(existing);
-        recordHistory(existing.getDefinitionId(), "CLASS_MODIFIED", "CLASS", classId,
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntClassVO result = toVO(existing);
+        
+        recordHistoryAsync(existing.getDefinitionId(), "CLASS_MODIFIED", "CLASS", classId,
             before, existing, "更新类: " + existing.getLocalName(), null);
         reasoner.shutdown(graphId); // 缓存失效
 
-        return toVO(existing);
+        return result;
     }
 
     @Override
@@ -235,10 +244,10 @@ public class OntologyClassServiceImpl implements OntologyClassService {
             throw new BusinessException(2003, "无法删除：该类存在子类型，请先删除子类型");
         }
 
-        recordHistory(existing.getDefinitionId(), "CLASS_DELETED", "CLASS", classId,
-            existing, null, "删除类: " + existing.getLocalName(), null);
-
+        // 先执行删除，再记录历史，避免 recordHistory 失败导致事务 abort 后无法删除
         classMapper.deleteById(classId);
+        recordHistoryAsync(existing.getDefinitionId(), "CLASS_DELETED", "CLASS", classId,
+            existing, null, "删除类: " + existing.getLocalName(), null);
         reasoner.shutdown(graphId); // 缓存失效
     }
 
@@ -417,6 +426,19 @@ public class OntologyClassServiceImpl implements OntologyClassService {
             return objectMapper.readValue(objectMapper.writeValueAsString(src), OntClassDO.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 异步记录版本历史（在独立事务中执行，不影响主事务）
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void recordHistoryAsync(Long defId, String changeType, String entityType,
+            Long entityId, Object before, Object after, String diffSummary, String changedBy) {
+        try {
+            recordHistory(defId, changeType, entityType, entityId, before, after, diffSummary, changedBy);
+        } catch (Exception e) {
+            log.warn("记录版本历史失败: {} - {}", changeType, entityType, e);
         }
     }
 

@@ -175,9 +175,12 @@
                 <a-tag :color="getSeverityColor(record.severity)">{{ record.severity }}</a-tag>
               </template>
               <template v-if="column.key === 'action'">
-                <a-popconfirm title="确定删除？" ok-text="确定" cancel-text="取消" @confirm="deleteConstraint(record)">
-                  <a-button type="link" size="small" danger>删除</a-button>
-                </a-popconfirm>
+                <a-space>
+                  <a-button type="link" size="small" @click="openConstraint(record)">编辑</a-button>
+                  <a-popconfirm title="确定删除？" ok-text="确定" cancel-text="取消" @confirm="deleteConstraint(record)">
+                    <a-button type="link" size="small" danger>删除</a-button>
+                  </a-popconfirm>
+                </a-space>
               </template>
             </template>
           </a-table>
@@ -212,8 +215,8 @@
       </a-tab-pane>
     </a-tabs>
 
-    <!-- 新建属性 Modal -->
-    <a-modal v-model:open="showAddProperty" title="添加属性" @ok="handleAddProperty" :confirm-loading="addingProperty">
+    <!-- 新建/编辑属性 Modal -->
+    <a-modal v-model:open="showAddProperty" :title="editingPropertyId ? '编辑属性' : '添加属性'" @ok="handleAddProperty" :confirm-loading="addingProperty">
       <a-form :model="propertyForm" layout="vertical">
         <a-form-item label="属性名称" required>
           <a-input v-model:value="propertyForm.localName" placeholder="如 name" />
@@ -242,8 +245,8 @@
       </a-form>
     </a-modal>
 
-    <!-- 新建约束 Modal -->
-    <a-modal v-model:open="showAddConstraint" title="添加约束" @ok="handleAddConstraint" :confirm-loading="addingConstraint">
+    <!-- 新建/编辑约束 Modal -->
+    <a-modal v-model:open="showAddConstraint" :title="editingConstraintId ? '编辑约束' : '添加约束'" @ok="handleAddConstraint" :confirm-loading="addingConstraint">
       <a-form :model="constraintForm" layout="vertical">
         <a-form-item label="约束类型" required>
           <a-select v-model:value="constraintForm.constraintType">
@@ -294,6 +297,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'saved'): void
+  (e: 'edit-instance', data: ClassInstance): void
 }>()
 
 const store = useOntologyStore()
@@ -329,6 +333,8 @@ const propertyForm = reactive({
   maxCardinality: undefined as number | undefined
 })
 
+const editingPropertyId = ref<number | null>(null)
+
 const constraintForm = reactive({
   constraintType: 'REQUIRED',
   value: '',
@@ -336,6 +342,8 @@ const constraintForm = reactive({
   errorMessage: '',
   description: ''
 })
+
+const editingConstraintId = ref<number | null>(null)
 
 const propertyColumns = [
   { title: '名称', dataIndex: 'localName', key: 'localName' },
@@ -349,7 +357,7 @@ const constraintColumns = [
   { title: '类型', dataIndex: 'constraintType', key: 'constraintType' },
   { title: '约束值', dataIndex: 'value', key: 'value', ellipsis: true },
   { title: '严重程度', key: 'severity' },
-  { title: '操作', key: 'action', width: 80 }
+  { title: '操作', key: 'action', width: 140 }
 ]
 
 const classOptions = computed(() =>
@@ -514,55 +522,117 @@ async function handleAddProperty() {
   }
   addingProperty.value = true
   try {
-    await ontologyApi.createProperty(props.graphId, {
-      localName: propertyForm.localName,
-      propertyType: propertyForm.propertyType as any,
-      rangeDataType: propertyForm.rangeDataType || undefined,
-      domainClassId: props.classId,
-      isRequired: propertyForm.isRequired,
-      minCardinality: propertyForm.minCardinality,
-      maxCardinality: propertyForm.maxCardinality
-    })
-    message.success('属性已添加')
+    if (editingPropertyId.value) {
+      // 更新属性
+      await ontologyApi.updateProperty(props.graphId, editingPropertyId.value, {
+        localName: propertyForm.localName,
+        propertyType: propertyForm.propertyType as any,
+        rangeDataType: propertyForm.rangeDataType || undefined,
+        domainClassId: props.classId,
+        isRequired: propertyForm.isRequired,
+        minCardinality: propertyForm.minCardinality,
+        maxCardinality: propertyForm.maxCardinality
+      })
+      message.success('属性已更新')
+    } else {
+      // 新建属性
+      await ontologyApi.createProperty(props.graphId, {
+        localName: propertyForm.localName,
+        propertyType: propertyForm.propertyType as any,
+        rangeDataType: propertyForm.rangeDataType || undefined,
+        domainClassId: props.classId,
+        isRequired: propertyForm.isRequired,
+        minCardinality: propertyForm.minCardinality,
+        maxCardinality: propertyForm.maxCardinality
+      })
+      message.success('属性已添加')
+    }
     showAddProperty.value = false
+    editingPropertyId.value = null
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '添加失败')
+    message.error(e.message || '保存失败')
   } finally {
     addingProperty.value = false
   }
 }
 
-function openProperty(_prop: OntPropertyVO) {
-  // Reserved for future: open property in new tab
+function openProperty(prop: OntPropertyVO) {
+  // 填充表单数据
+  editingPropertyId.value = prop.id
+  propertyForm.localName = prop.localName
+  propertyForm.propertyType = prop.propertyType || 'DATATYPE'
+  propertyForm.rangeDataType = prop.rangeDataType || 'string'
+  propertyForm.isRequired = prop.isRequired || false
+  propertyForm.minCardinality = prop.minCardinality || 0
+  propertyForm.maxCardinality = prop.maxCardinality
+  
+  // 打开 Modal
+  showAddProperty.value = true
 }
 
 async function deleteProperty(prop: OntPropertyVO) {
   try {
     await ontologyApi.deleteProperty(props.graphId, prop.id)
     message.success('属性已删除')
+    
+    // 先从本地 store 移除，确保列表立即更新
+    const idx = store.properties.findIndex(x => x.id === prop.id)
+    if (idx !== -1) {
+      store.properties.splice(idx, 1)
+    }
+    
+    // 再刷新完整数据确保一致性
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
     message.error(e.message || '删除失败')
   }
 }
 
+function openConstraint(c: OntConstraintVO) {
+  // 填充表单数据
+  editingConstraintId.value = c.id
+  constraintForm.constraintType = c.constraintType || 'REQUIRED'
+  constraintForm.value = c.value || ''
+  constraintForm.severity = c.severity || 'ERROR'
+  constraintForm.errorMessage = c.errorMessage || ''
+  constraintForm.description = c.description || ''
+  
+  // 打开 Modal
+  showAddConstraint.value = true
+}
+
 async function handleAddConstraint() {
   addingConstraint.value = true
   try {
-    await ontologyApi.createConstraint(props.graphId, {
-      classId: props.classId,
-      constraintType: constraintForm.constraintType,
-      value: constraintForm.value,
-      severity: constraintForm.severity,
-      errorMessage: constraintForm.errorMessage,
-      description: constraintForm.description
-    })
-    message.success('约束已添加')
+    if (editingConstraintId.value) {
+      // 更新约束
+      await ontologyApi.updateConstraint(props.graphId, editingConstraintId.value, {
+        classId: props.classId,
+        constraintType: constraintForm.constraintType,
+        value: constraintForm.value,
+        severity: constraintForm.severity,
+        errorMessage: constraintForm.errorMessage,
+        description: constraintForm.description
+      })
+      message.success('约束已更新')
+    } else {
+      // 新建约束
+      await ontologyApi.createConstraint(props.graphId, {
+        classId: props.classId,
+        constraintType: constraintForm.constraintType,
+        value: constraintForm.value,
+        severity: constraintForm.severity,
+        errorMessage: constraintForm.errorMessage,
+        description: constraintForm.description
+      })
+      message.success('约束已添加')
+    }
     showAddConstraint.value = false
+    editingConstraintId.value = null
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '添加失败')
+    message.error(e.message || '保存失败')
   } finally {
     addingConstraint.value = false
   }
@@ -572,6 +642,14 @@ async function deleteConstraint(c: OntConstraintVO) {
   try {
     await ontologyApi.deleteConstraint(props.graphId, c.id)
     message.success('约束已删除')
+    
+    // 先从本地 store 移除，确保列表立即更新
+    const idx = store.constraints.findIndex(x => x.id === c.id)
+    if (idx !== -1) {
+      store.constraints.splice(idx, 1)
+    }
+    
+    // 再刷新完整数据确保一致性
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
     message.error(e.message || '删除失败')
@@ -615,7 +693,11 @@ function handleInstanceTableChange(pagination: any) {
   loadInstances()
 }
 
-function viewInstance(record: ClassInstance) {
+async function viewInstance(record: ClassInstance) {
+  // 通知父组件设置完整的实例数据
+  emit('edit-instance', record)
+  
+  // 打开实例编辑 tab
   store.openTab({
     id: `instance-editor-${record.uuid}`,
     type: 'instance-editor',

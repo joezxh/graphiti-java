@@ -478,6 +478,16 @@ watch(() => props.propertyId, () => loadData())
 
   .stats-row { margin-bottom: 32px; }
 
+  // 使用统计区域字体颜色覆盖
+  :deep(.ant-statistic) {
+    .ant-statistic-title {
+      color: #8b949e !important;
+    }
+    .ant-statistic-content {
+      color: #e6edf3 !important;
+    }
+  }
+
   .using-classes {
     .section-title { font-size: 14px; font-weight: 600; color: #e6edf3; margin-bottom: 12px; }
     .class-tags { display: flex; flex-wrap: wrap; gap: 8px; }

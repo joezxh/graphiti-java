@@ -2,7 +2,7 @@
   <div class="constraint-list-panel">
     <div class="panel-toolbar">
       <a-space>
-        <a-button type="primary" @click="showModal = true">
+        <a-button type="primary" @click="handleCreate">
           <template #icon><PlusOutlined /></template>
           新建约束
         </a-button>
@@ -31,14 +31,17 @@
           {{ getPropertyName(record.propertyId) }}
         </template>
         <template v-if="column.key === 'action'">
-          <a-popconfirm title="确定删除？" ok-text="确定" @confirm="handleDelete(record)">
-            <a-button type="link" size="small" danger>删除</a-button>
-          </a-popconfirm>
+          <a-space>
+            <a-button type="link" size="small" @click="handleEdit(record)">编辑</a-button>
+            <a-popconfirm title="确定删除？" ok-text="确定" @confirm="handleDelete(record)">
+              <a-button type="link" size="small" danger>删除</a-button>
+            </a-popconfirm>
+          </a-space>
         </template>
       </template>
     </a-table>
 
-    <a-modal v-model:open="showModal" title="新建约束" @ok="handleCreate">
+    <a-modal v-model:open="showModal" :title="editingId ? '编辑约束' : '新建约束'" @ok="handleSave">
       <a-form :model="form" layout="vertical">
         <a-form-item label="约束类型" required>
           <a-select v-model:value="form.constraintType">
@@ -90,6 +93,7 @@ const props = defineProps<{ graphId: string }>()
 const store = useOntologyStore()
 const refreshing = ref(false)
 const showModal = ref(false)
+const editingId = ref<number | null>(null)
 
 const form = reactive({
   constraintType: 'REQUIRED',
@@ -108,7 +112,7 @@ const columns = [
   { title: '约束值', dataIndex: 'value', key: 'value', ellipsis: true },
   { title: '严重程度', key: 'severity', width: 100 },
   { title: '错误消息', dataIndex: 'errorMessage', key: 'errorMessage', ellipsis: true },
-  { title: '操作', key: 'action', width: 80 }
+  { title: '操作', key: 'action', width: 140 }
 ]
 
 const classOptions = computed(() => store.classes.map(c => ({ label: c.localName, value: c.id })))
@@ -118,13 +122,51 @@ function getClassName(id?: number) { return id ? (store.classes.find(c => c.id =
 function getPropertyName(id?: number) { return id ? (store.properties.find(p => p.id === id)?.localName ?? '-') : '-' }
 function severityColor(s?: string) { return { ERROR: 'red', WARNING: 'orange', INFO: 'blue' }[s ?? ''] ?? 'default' }
 
+async function handleEdit(record: any) {
+  // 填充表单数据
+  editingId.value = record.id
+  form.constraintType = record.constraintType || 'REQUIRED'
+  form.classId = record.classId
+  form.propertyId = record.propertyId
+  form.value = record.value || ''
+  form.severity = record.severity || 'ERROR'
+  form.errorMessage = record.errorMessage || ''
+  form.description = record.description || ''
+  
+  // 打开模态框
+  showModal.value = true
+}
+
 async function handleCreate() {
+  // 重置编辑状态
+  editingId.value = null
+  form.constraintType = 'REQUIRED'
+  form.classId = undefined
+  form.propertyId = undefined
+  form.value = ''
+  form.severity = 'ERROR'
+  form.errorMessage = ''
+  form.description = ''
+  showModal.value = true
+}
+
+async function handleSave() {
   try {
-    await ontologyApi.createConstraint(props.graphId, { ...form })
-    message.success('约束已创建')
+    if (editingId.value) {
+      // 更新约束
+      await ontologyApi.updateConstraint(props.graphId, editingId.value, { ...form })
+      message.success('约束已更新')
+    } else {
+      // 新建约束
+      await ontologyApi.createConstraint(props.graphId, { ...form })
+      message.success('约束已创建')
+    }
     showModal.value = false
+    editingId.value = null
     await store.loadFullOntology(props.graphId)
-  } catch (e: any) { message.error(e.message || '创建失败') }
+  } catch (e: any) { 
+    message.error(e.message || '保存失败') 
+  }
 }
 
 async function handleDelete(record: any) {

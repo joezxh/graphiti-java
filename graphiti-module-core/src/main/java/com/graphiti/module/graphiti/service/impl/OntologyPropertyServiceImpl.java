@@ -13,6 +13,7 @@ import com.graphiti.module.graphiti.vo.ontology.OntVersionHistoryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -57,11 +58,14 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         OntPropertyDO entity = toEntity(reqVO, defId, propUri);
         propertyMapper.insert(entity);
 
-        recordHistory(defId, "PROPERTY_ADDED", "PROPERTY", entity.getId(),
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntPropertyVO result = toVO(entity);
+        
+        recordHistoryAsync(defId, "PROPERTY_ADDED", "PROPERTY", entity.getId(),
             null, entity, "新增属性: " + reqVO.getLocalName(), null);
         reasoner.shutdown(graphId); // 缓存失效
 
-        return toVO(entity);
+        return result;
     }
 
     @Override
@@ -105,11 +109,15 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         }
 
         propertyMapper.updateById(existing);
-        recordHistory(existing.getDefinitionId(), "PROPERTY_MODIFIED", "PROPERTY", propertyId,
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntPropertyVO result = toVO(existing);
+        
+        recordHistoryAsync(existing.getDefinitionId(), "PROPERTY_MODIFIED", "PROPERTY", propertyId,
             before, existing, "更新属性: " + existing.getLocalName(), null);
         reasoner.shutdown(graphId); // 缓存失效
 
-        return toVO(existing);
+        return result;
     }
 
     @Override
@@ -124,9 +132,10 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
             throw new BusinessException(2005, "无法删除：存在约束引用此属性");
         }
 
-        recordHistory(existing.getDefinitionId(), "PROPERTY_DELETED", "PROPERTY", propertyId,
-            existing, null, "删除属性: " + existing.getLocalName(), null);
+        // 先执行删除，再记录历史，避免 recordHistory 失败导致事务 abort 后无法删除
         propertyMapper.deleteById(propertyId);
+        recordHistoryAsync(existing.getDefinitionId(), "PROPERTY_DELETED", "PROPERTY", propertyId,
+            existing, null, "删除属性: " + existing.getLocalName(), null);
         reasoner.shutdown(graphId); // 缓存失效
     }
 
@@ -190,11 +199,14 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         entity.setDescription(reqVO.getDescription());
 
         constraintMapper.insert(entity);
-
-        recordHistory(defId, "CONSTRAINT_ADDED", "CONSTRAINT", entity.getId(),
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntConstraintVO result = toConstraintVO(entity);
+                
+        recordHistoryAsync(defId, "CONSTRAINT_ADDED", "CONSTRAINT", entity.getId(),
             null, entity, "新增约束: " + reqVO.getConstraintType(), null);
-
-        return toConstraintVO(entity);
+        
+        return result;
     }
 
     @Override
@@ -214,11 +226,14 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
         if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
 
         constraintMapper.updateById(existing);
-
-        recordHistory(existing.getDefinitionId(), "CONSTRAINT_MODIFIED", "CONSTRAINT", constraintId,
-            before, existing, "更新约束: " + existing.getConstraintType(), null);
-
-        return toConstraintVO(existing);
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntConstraintVO result = toConstraintVO(existing);
+                
+        recordHistoryAsync(existing.getDefinitionId(), "CONSTRAINT_MODIFIED", "CONSTRAINT", constraintId,
+            before, existing, "更新约朿: " + existing.getConstraintType(), null);
+        
+        return result;
     }
 
     @Override
@@ -226,10 +241,22 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
     public void deleteConstraint(String graphId, Long constraintId) {
         OntConstraintDO existing = constraintMapper.selectById(constraintId);
         if (existing == null) return;
-
-        recordHistory(existing.getDefinitionId(), "CONSTRAINT_DELETED", "CONSTRAINT", constraintId,
-            existing, null, "删除约束: " + existing.getConstraintType(), null);
+    
+        // 先执行删除，再记录历史，避免 recordHistory 失败导致事务 abort 后无法删除
         constraintMapper.deleteById(constraintId);
+    }
+
+    /**
+     * 异步记录版本历史（在独立事务中执行，不影响主事务）
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void recordHistoryAsync(Long defId, String changeType, String entityType,
+            Long entityId, Object before, Object after, String diffSummary, String changedBy) {
+        try {
+            recordHistory(defId, changeType, entityType, entityId, before, after, diffSummary, changedBy);
+        } catch (Exception e) {
+            log.warn("记录版本历史失败: {} - {}", changeType, entityType, e);
+        }
     }
 
     // ==================== 版本历史 ====================

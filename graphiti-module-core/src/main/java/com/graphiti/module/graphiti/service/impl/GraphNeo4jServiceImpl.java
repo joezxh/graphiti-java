@@ -318,7 +318,7 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
                 episode.put("source", record.get("source").asString());
                 episode.put("source_description", record.get("source_description").asString());
                 episode.put("content", record.get("content").asString());
-                episode.put("created_at", record.get("created_at").asLong());
+                episode.put("created_at", record.get("created_at").asObject().toString());
                 episode.put("valid_at", record.get("valid_at").asLong());
                 episode.put("graph_id", record.get("graph_id").asString());
                 episode.put("episode_type", record.get("episode_type").asString(null));
@@ -326,8 +326,8 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
                 episode.put("stage_label", record.get("stage_label").asString(null));
                 episode.put("court_level", record.get("court_level").asString(null));
                 episode.put("is_trial_stage", record.get("is_trial_stage").asBoolean(false));
-                episode.put("start_time", record.get("start_time").asString(null));
-                episode.put("end_time", record.get("end_time").asString(null));
+                episode.put("start_time", record.get("start_time").asObject().toString());
+                episode.put("end_time", record.get("end_time").asObject().toString());
                 episode.put("case_id", record.get("case_id").asString(null));
                 episodes.add(episode);
             }
