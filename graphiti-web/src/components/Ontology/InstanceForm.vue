@@ -217,6 +217,15 @@ import { useOntologyStore } from '@/store/modules/ontology'
 import { graphApi } from '@/api/graph'
 import type { FormInstance } from 'ant-design-vue'
 import dayjs from 'dayjs'
+import {
+  isBoolType,
+  isNumericType,
+  isDateType,
+  isLongTextType,
+  parsePropertyValue,
+  serializePropertyValue
+} from '@/composables/usePropertyType'
+import { getPropertyRules } from '@/utils/getPropertyRules'
 
 const props = defineProps<{
   graphId: string
@@ -259,7 +268,7 @@ watch(() => props.instanceData, (data) => {
     formData.name = data.name ?? ''
     formData.type = data.type ?? ''
     
-    // 处理 properties：将日期字符串转换为 dayjs 对象
+    // 处理 properties：根据属性类型解析值
     const rawProps = data.properties ? { ...data.properties } : {}
     formData.properties = {}
     
@@ -269,12 +278,7 @@ watch(() => props.instanceData, (data) => {
     
     for (const [key, value] of Object.entries(rawProps)) {
       const propDef = propsDef.find(p => p.localName === key)
-      // 如果是日期类型，转换为 dayjs 对象
-      if (propDef && isDateType(propDef.rangeDataType) && typeof value === 'string') {
-        formData.properties[key] = dayjs(value)
-      } else {
-        formData.properties[key] = value
-      }
+      formData.properties[key] = parsePropertyValue(value, propDef?.rangeDataType)
     }
     
     formData.createdAt = data.createdAt ?? ''
@@ -301,34 +305,6 @@ const selectedClass = computed(() =>
 const selectedClassProperties = computed(() =>
   store.properties.filter(p => p.domainClassId === selectedClass.value?.id)
 )
-
-function isBoolType(dt?: string) {
-  return dt === 'boolean' || dt === 'Boolean'
-}
-function isNumericType(dt?: string) {
-  return ['integer', 'long', 'float', 'double', 'decimal', 'Int', 'Long', 'Float', 'Double'].includes(dt ?? '')
-}
-function isDateType(dt?: string) {
-  return ['date', 'datetime', 'dateTime', 'Date', 'DateTime'].includes(dt ?? '')
-}
-function isLongTextType(dt?: string) {
-  return ['text', 'string', 'Text', 'String'].includes(dt ?? '') && false // 默认不用textarea
-}
-
-function getPropertyRules(prop: any) {
-  const rules: any[] = []
-  if (prop.isRequired) {
-    rules.push({ required: true, message: `请填写属性 ${prop.localName}`, trigger: 'change' })
-  }
-  if (prop.pattern) {
-    rules.push({ pattern: new RegExp(prop.pattern), message: `格式不符合要求: ${prop.pattern}` })
-  }
-  // 只有当 minValue 和 maxValue 都有实际值时才添加范围校验
-  if (prop.minValue != null && prop.maxValue != null) {
-    rules.push({ type: 'number', min: prop.minValue, max: prop.maxValue, message: `值应在 ${prop.minValue} - ${prop.maxValue} 之间` })
-  }
-  return rules
-}
 
 function filterClassOption(input: string, option: any) {
   return option.children()[0].children.toLowerCase().includes(input.toLowerCase())
@@ -416,15 +392,14 @@ async function handleSave() {
 
   saving.value = true
   try {
-    // 处理 properties：将 dayjs 对象转回字符串
+    // 处理 properties：根据属性类型序列化值
     const cleanProperties: Record<string, any> = {}
+    const targetClass = store.classes.find(c => c.localName === formData.type)
+    const propsDef = targetClass ? store.properties.filter(p => p.domainClassId === targetClass.id) : []
+
     for (const [key, value] of Object.entries(formData.properties)) {
-      if (value && typeof value === 'object' && 'format' in value && typeof value.format === 'function') {
-        // dayjs 对象，转为 ISO 字符串
-        cleanProperties[key] = (value as any).format('YYYY-MM-DD')
-      } else {
-        cleanProperties[key] = value
-      }
+      const propDef = propsDef.find(p => p.localName === key)
+      cleanProperties[key] = serializePropertyValue(value, propDef?.rangeDataType)
     }
 
     if (isNew.value) {

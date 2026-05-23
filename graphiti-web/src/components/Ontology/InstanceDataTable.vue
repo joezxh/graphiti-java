@@ -78,23 +78,6 @@
         @row-click="handleRowClick"
         @row-contextmenu="handleContextMenu"
       >
-        <!-- 可编辑单元格 -->
-        <template
-          #[`bodyCell`]="{ column, record }"
-        >
-          <div v-if="editingKey === (record as any)[rowKey]" class="cell-editor">
-            <a-input
-              v-model:value="editingRecord[column.dataIndex as keyof typeof editingRecord]"
-              size="small"
-              @pressEnter="handleCellSave(record)"
-              @blur="handleCellSave(record)"
-            />
-          </div>
-          <div v-else class="cell-display" @dblclick="startCellEdit(record, column)">
-            {{ getCellText(record, column) }}
-          </div>
-        </template>
-
         <template #bodyCell="{ column, record }">
           <!-- UUID列特殊处理 -->
           <template v-if="column.key === 'uuid'">
@@ -104,8 +87,19 @@
             </a-tooltip>
           </template>
 
+          <!-- 属性列：使用 PropertyValueCell 组件 -->
+          <template v-else-if="column.__propDef">
+            <PropertyValueCell
+              :value="getNestedValue(record, column.dataIndex)"
+              :prop-def="column.__propDef"
+              :editing="editingKey === record.uuid && editingColumn === column.key"
+              @update="handleCellUpdate(record, column, $event)"
+              @start-edit="startCellEdit(record, column)"
+            />
+          </template>
+
           <!-- 操作列 -->
-          <template v-if="column.key === 'action'">
+          <template v-else-if="column.key === 'action'">
             <a-space>
               <a-button type="link" size="small" @click="handleView(record)">查看</a-button>
               <a-popconfirm title="确定删除？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record)">
@@ -139,8 +133,16 @@
       placement="right"
     >
       <a-descriptions v-if="selectedRecord" :column="1" bordered size="small">
-        <a-descriptions-item v-for="col in detailColumns" :key="col.key" :label="String(col.title)">
-          {{ getCellText(selectedRecord, col) }}
+        <a-descriptions-item label="UUID">{{ selectedRecord.uuid }}</a-descriptions-item>
+        <a-descriptions-item label="名称">{{ selectedRecord.name }}</a-descriptions-item>
+        <a-descriptions-item label="类型">{{ selectedRecord.type }}</a-descriptions-item>
+
+        <a-descriptions-item
+          v-for="prop in selectedClassProperties"
+          :key="prop.id"
+          :label="prop.localName"
+        >
+          {{ formatPropertyValue(selectedRecord.properties?.[prop.localName], prop.propertyType, prop.rangeDataType) }}
         </a-descriptions-item>
       </a-descriptions>
     </a-drawer>
@@ -160,6 +162,8 @@ import {
 import { graphApi } from '@/api/graph'
 import { useOntologyStore } from '@/store/modules/ontology'
 import DataImportExportModal from './DataImportExportModal.vue'
+import PropertyValueCell from './PropertyValueCell.vue'
+import { formatPropertyValue } from '@/composables/usePropertyType'
 
 const props = defineProps<{
   graphId: string
@@ -186,6 +190,7 @@ const importExportRef = ref()
 
 // ---- Edit State ----
 const editingKey = ref('')
+const editingColumn = ref('')
 const editingRecord = reactive<Record<string, any>>({})
 
 // ---- Detail Drawer ----
@@ -198,22 +203,28 @@ const contextMenu = reactive({ visible: false, x: 0, y: 0, record: null as any }
 // ---- Dynamic Columns ----
 const dynamicColumns = computed(() => {
   const cols: any[] = [
-    { title: 'UUID', key: 'uuid', dataIndex: 'uuid', width: 220, fixed: 'left', ellipsis: true }
+    { title: 'UUID', key: 'uuid', dataIndex: 'uuid', width: 220, fixed: 'left', ellipsis: true },
+    { title: '名称', key: 'name', dataIndex: 'name', width: 150 }
   ]
-  // 根据类属性动态生成列
-  const classProps = store.properties.filter(p =>
-    !props.classType || store.classes.find(c => c.localName === props.classType && c.id === p.domainClassId)
-  )
-  const propNames = new Set(classProps.map(p => p.localName))
-  propNames.forEach(name => {
-    cols.push({
-      title: name,
-      key: name,
-      dataIndex: name,
-      width: 150,
-      ellipsis: true
-    })
-  })
+
+  // 如果指定了 classType，添加该类定义的属性列
+  if (props.classType) {
+    const targetClass = store.classes.find(c => c.localName === props.classType)
+    if (targetClass) {
+      const classProps = store.properties.filter(p => p.domainClassId === targetClass.id)
+      classProps.forEach(prop => {
+        cols.push({
+          title: prop.localName,
+          key: prop.localName,
+          dataIndex: ['properties', prop.localName],
+          width: 150,
+          ellipsis: true,
+          __propDef: prop
+        })
+      })
+    }
+  }
+
   cols.push({ title: '操作', key: 'action', width: 120, fixed: 'right' })
   return cols
 })
@@ -221,9 +232,12 @@ const dynamicColumns = computed(() => {
 const tableScrollX = computed(() => Math.max(dynamicColumns.value.length * 150, 600))
 const tableScrollY = computed(() => 'calc(100vh - 340px)')
 
-const detailColumns = computed(() => dynamicColumns.value.filter(c => c.key !== 'action'))
-
-// ---- Methods ----
+const selectedClassProperties = computed(() => {
+  if (!selectedRecord.value?.type) return []
+  const cls = store.classes.find(c => c.localName === selectedRecord.value.type)
+  if (!cls) return []
+  return store.properties.filter(p => p.domainClassId === cls.id)
+})
 
 async function loadData() {
   if (!props.graphId) return
@@ -265,15 +279,31 @@ function handleSelectionChange(keys: string[]) {
 function startCellEdit(record: any, column: any) {
   if (column.key === 'uuid' || column.key === 'action') return
   editingKey.value = record[rowKey]
-  Object.assign(editingRecord, record)
+  editingColumn.value = column.key
 }
 
-async function handleCellSave(record: any) {
+function getNestedValue(record: any, dataIndex: string | string[]): any {
+  if (typeof dataIndex === 'string') return record[dataIndex]
+  if (Array.isArray(dataIndex)) {
+    let val = record
+    for (const key of dataIndex) {
+      if (val == null) return undefined
+      val = val[key]
+    }
+    return val
+  }
+  return undefined
+}
+
+async function handleCellUpdate(record: any, column: any, value: any) {
   editingKey.value = ''
+  editingColumn.value = ''
   try {
-    await graphApi.updateNode(props.graphId, record[rowKey], {
+    const propKey = Array.isArray(column.dataIndex) ? column.dataIndex[column.dataIndex.length - 1] : column.dataIndex
+    const updatedProperties = { ...record.properties, [propKey]: value }
+    await graphApi.updateNode(props.graphId, record.uuid, {
       name: record.name,
-      properties: editingRecord
+      properties: updatedProperties
     })
     message.success('已保存')
     loadData()
