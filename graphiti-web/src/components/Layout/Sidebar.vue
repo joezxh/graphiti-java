@@ -56,6 +56,24 @@
         </template>
         <template #title>{{ $t('nav.dataManagement') }}</template>
 
+        <a-menu-item key="/data/classes">
+          <template #icon>
+            <AppstoreOutlined />
+          </template>
+          {{ $t('nav.classManagement') }}
+        </a-menu-item>
+        <a-menu-item key="/data/properties">
+          <template #icon>
+            <TagOutlined />
+          </template>
+          {{ $t('nav.propertyManagement') }}
+        </a-menu-item>
+        <a-menu-item key="/data/constraints">
+          <template #icon>
+            <SafetyCertificateOutlined />
+          </template>
+          {{ $t('nav.constraintManagement') }}
+        </a-menu-item>
         <a-menu-item key="/data/entities">
           <template #icon>
             <NodeIndexOutlined />
@@ -67,6 +85,12 @@
             <LinkOutlined />
           </template>
           {{ $t('nav.edgeManagement') }}
+        </a-menu-item>
+        <a-menu-item key="/data/community-episode">
+          <template #icon>
+            <ClusterOutlined />
+          </template>
+          {{ $t('nav.communityEpisodeManagement') }}
         </a-menu-item>
         <a-menu-item key="/episodes">
           <template #icon>
@@ -86,12 +110,7 @@
           </template>
           {{ $t('nav.dataExport') }}
         </a-menu-item>
-        <a-menu-item key="/data/community-episode">
-          <template #icon>
-            <ClusterOutlined />
-          </template>
-          {{ $t('nav.communityEpisodeManagement') }}
-        </a-menu-item>
+        
         <a-menu-item key="/legal-kg">
           <template #icon>
             <AuditOutlined />
@@ -198,7 +217,9 @@ import {
   // SafetyOutlined, // 未使用
   AuditOutlined,
   MessageOutlined,
-  CodeOutlined
+  CodeOutlined,
+  TagOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons-vue'
 
 const route = useRoute()
