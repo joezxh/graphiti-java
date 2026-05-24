@@ -896,9 +896,13 @@ public class GraphVisualizationServiceImpl implements GraphVisualizationService 
             Integer depth) {
 
         int effectivePage = page != null && page > 0 ? page : 1;
-        int effectivePageSize = pageSize != null && pageSize > 0 ? pageSize : 20;
+        int effectivePageSize = pageSize != null && pageSize > 0 ? Math.min(pageSize, 500) : 20;
         int effectiveDepth = depth != null && depth >= 1 && depth <= 3 ? depth : 2;
         int skip = (effectivePage - 1) * effectivePageSize;
+
+        if (className == null || className.isBlank()) {
+            throw new IllegalArgumentException("className cannot be null or blank");
+        }
 
         try (Session session = neo4jDriver.session()) {
             // 阶段 1: 统计总数
@@ -947,6 +951,7 @@ public class GraphVisualizationServiceImpl implements GraphVisualizationService 
 
             // 阶段 3: 扩展 N 跳邻居（双向）
             if (!centerUuids.isEmpty()) {
+                int maxNeighborNodes = 500;
                 String expandCypher =
                     "MATCH (center:Entity) " +
                     "WHERE center.uuid IN $uuids " +
@@ -954,6 +959,7 @@ public class GraphVisualizationServiceImpl implements GraphVisualizationService 
                     "WHERE n.graph_id = $graphId AND n.invalid_at IS NULL AND n <> center " +
                     "UNWIND nodes(path) as node " +
                     "WITH DISTINCT node " +
+                    "LIMIT " + maxNeighborNodes + " " +
                     "RETURN node";
 
                 Result expandResult = session.run(expandCypher,
