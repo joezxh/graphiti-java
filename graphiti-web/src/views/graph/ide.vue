@@ -145,14 +145,22 @@
       <!-- Canvas Area -->
       <div class="ide-canvas" :class="{ collapsed: canvasCollapsed }">
         <template v-if="!canvasCollapsed">
-          <!-- Ontology Workbench (shown when ontology tab is active and class mode) -->
+          <!-- 本体类视图（点击左侧树中类时显示） -->
+          <OntologyClassView
+            v-if="ontologyClassViewActive && ontologyClassViewClass"
+            :graph-id="effectiveGraphId"
+            :schema-class="ontologyClassViewClass"
+            @instance-click="handleClassViewInstanceClick"
+            @instance-dblclick="handleClassViewInstanceDblClick"
+          />
+          <!-- Ontology Workbench（本体模式+class 且未激活类视图时显示） -->
           <OntologyWorkbench
-            v-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
+            v-else-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
             :graph-id="effectiveGraphId"
             :selected-class-id="selectedOntClassId"
             @class-selected="handleOntClassSelected"
           />
-          <!-- Graph Canvas (shown for episodes/communities sidebar tabs, or episodes/communities ontology mode) -->
+          <!-- Graph Canvas（其余情况） -->
           <template v-else>
           <!-- Toolbar -->
           <div class="canvas-toolbar">
@@ -419,6 +427,25 @@
             <a-popconfirm :title="t('graphIde.confirmDeleteCommunity')" :ok-text="t('graphIde.ok')" :cancel-text="t('graphIde.cancel')" @confirm="deleteSelectedCommunity">
               <a-button danger block>{{ t('graphIde.deleteCommunity') }}</a-button>
             </a-popconfirm>
+          </div>
+        </template>
+
+        <!-- 本体类视图时：显示类编辑器 -->
+        <template v-else-if="ontologyClassViewActive && ontologyClassViewClass">
+          <div class="panel-header">
+            <span class="panel-title">{{ ontologyClassViewClass.localName }}</span>
+            <a-button type="text" size="small" @click="exitOntologyClassView" title="关闭">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <div class="panel-content" style="overflow-y: auto; flex: 1;">
+            <ClassEditor
+              :class-id="ontologyClassViewClass.id"
+              :graph-id="effectiveGraphId"
+              :is-new="false"
+              :read-only="false"
+              @saved="exitOntologyClassView"
+            />
           </div>
         </template>
 
@@ -781,6 +808,8 @@ import NodeEditModal from '@/components/Graph/NodeEditModal.vue'
 import AddEdgeModal from '@/components/Graph/AddEdgeModal.vue'
 import OntologyObjectExplorer from '@/components/Ontology/OntologyObjectExplorer.vue'
 import OntologyWorkbench from '@/components/Ontology/OntologyWorkbench.vue'
+import OntologyClassView from '@/components/Ontology/OntologyClassView.vue'
+import ClassEditor from '@/components/Ontology/ClassEditor.vue'
 import EpisodeTypeExplorer from '@/components/Ontology/EpisodeTypeExplorer.vue'
 import EpisodeTypeDetailPanel from '@/components/Ontology/EpisodeTypeDetailPanel.vue'
 import EpisodeTypeEditModal from '@/components/Ontology/EpisodeTypeEditModal.vue'
@@ -827,6 +856,10 @@ const searchKeyword = ref('')
 const selectedNode = ref<GraphIDENode | null>(null)
 const selectedClass = ref<SchemaClass | null>(null)
 const currentDetailTab = ref<DetailPanelTab>('info')
+
+// 本体类视图状态
+const ontologyClassViewActive = ref(false)
+const ontologyClassViewClass = ref<SchemaClass | null>(null)
 
 // Context Menu
 const contextMenu = reactive({
@@ -1593,22 +1626,32 @@ const handleCommunityNodeClick = async (node?: any) => {
 // 事件流点击（顶级节点）
 // 本体树中选中某个类 → 打开类列表标签页 + 右侧面板显示类统计信息
 const handleOntClassSelected = async (classId: number) => {
-  selectedOntClassId.value = classId
   const schemaClass = schemaClasses.value.find(c => c.id === classId)
   if (!schemaClass) return
 
-  selectedClass.value = schemaClass
+  selectedOntClassId.value = classId
+  ontologyClassViewActive.value = true
+  ontologyClassViewClass.value = schemaClass
   selectedNode.value = null
   panelCollapsed.value = false
-  currentDetailTab.value = 'info'
+}
 
-  // 打开类列表标签页（显示类管理界面）
-  ontologyStore.openTab({
-    id: 'class-list-panel',
-    type: 'class-list',
-    title: '类列表'
-  })
-  ontologyMode.value = 'class'
+// 退出本体类视图
+const exitOntologyClassView = () => {
+  ontologyClassViewActive.value = false
+  ontologyClassViewClass.value = null
+}
+
+// 本体类视图中点击实例
+const handleClassViewInstanceClick = (node: GraphIDENode) => {
+  selectedNode.value = node
+}
+
+// 本体类视图中双击实例（打开节点编辑）
+const handleClassViewInstanceDblClick = (node: GraphIDENode) => {
+  selectedNode.value = node
+  editingNode.value = node
+  showNodeEditModal.value = true
 }
 
 const loadAllData = async () => {
