@@ -76,12 +76,14 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import { SaveOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
 import ConstraintValueEditor from './ConstraintValueEditor.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   graphId: string
@@ -140,7 +142,7 @@ async function handleSave() {
       errorMessage: form.errorMessage,
       description: form.description
     })
-    message.success('约束已更新')
+    message.success(t('TODO_约束已更新'))
     await store.loadFullOntology(props.graphId)
     emit('saved')
   } catch (e: any) {
@@ -161,7 +163,7 @@ async function handleDelete() {
       deleting.value = true
       try {
         await ontologyApi.deleteConstraint(props.graphId, props.constraintId!)
-        message.success('约束已删除')
+        message.success(t('TODO_约束已删除'))
         await store.loadFullOntology(props.graphId)
         emit('saved')
       } catch (e: any) {

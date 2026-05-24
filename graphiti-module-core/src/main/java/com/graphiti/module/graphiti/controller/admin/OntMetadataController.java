@@ -193,8 +193,15 @@ public class OntMetadataController {
             @RequestParam(defaultValue = "1") @Parameter(description = "页码") Integer page,
             @RequestParam(defaultValue = "20") @Parameter(description = "每页数量") Integer pageSize,
             @RequestParam(required = false) @Parameter(description = "搜索关键词") String keyword) {
-        // TODO: 按类型过滤的实例列表查询，暂用全量列表
-        EpisodeListRespVO result = episodeService.listEpisodes(graphId, pageSize, (page - 1) * pageSize);
+        OntEpisodeTypeRespVO type = ontMetadataService.getEpisodeTypeById(id);
+        if (type == null || type.getTypeCode() == null) {
+            EpisodeListRespVO empty = new EpisodeListRespVO();
+            empty.setEpisodes(List.of());
+            empty.setTotalCount(0);
+            empty.setRowCount(0);
+            return CommonResult.success(empty);
+        }
+        EpisodeListRespVO result = episodeService.listEpisodesByType(graphId, type.getTypeCode(), page, pageSize);
         return CommonResult.success(result);
     }
 

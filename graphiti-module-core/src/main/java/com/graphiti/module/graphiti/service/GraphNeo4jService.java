@@ -81,6 +81,16 @@ public interface GraphNeo4jService {
     long countEpisodesByType(String graphId, String episodeType);
 
     /**
+     * 按类型获取图谱的事件列表（分页）
+     * @param graphId 图谱ID
+     * @param episodeType 剧集类型代码
+     * @param limit 限制数量
+     * @param offset 偏移量
+     * @return Episode 列表
+     */
+    List<Map<String, Object>> getEpisodesByType(String graphId, String episodeType, int limit, int offset);
+
+    /**
      * 获取图谱的事件列表
      */
     List<Map<String, Object>> getEpisodesByGraphId(String graphId, int limit, int offset);

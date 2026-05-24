@@ -4,7 +4,7 @@
     
     <!-- Minimap -->
     <div v-if="showMinimap" class="minimap">
-      <div class="minimap-header">小地图</div>
+      <div class="minimap-header">{{ $t('graphIde.tooltipMinimap') }}</div>
       <svg ref="minimapRef" class="minimap-svg" />
     </div>
     
@@ -28,7 +28,8 @@
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import * as echarts from 'echarts'
 import { PlusOutlined, MinusOutlined, AimOutlined } from '@ant-design/icons-vue'
-import type { GraphIDENode, GraphIDEEdge, LayoutType, EditTool } from '@/api/graph'
+import type { GraphIDENode, GraphIDEEdge } from '@/api/graph'
+import type { LayoutType, EditTool } from '@/types/graph-ide'
 
 interface Props {
   graphId: string
@@ -494,6 +495,47 @@ const handleZoomFit = () => {
   zoom.value = 100
 }
 
+// Focus and highlight a specific node by UUID
+const focusNode = (uuid: string): boolean => {
+  if (!chartInstance) return false
+  const nodeIndex = props.nodes.findIndex(n => n.uuid === uuid)
+  if (nodeIndex < 0) return false
+
+  // Clear previous selection
+  if (props.selectedNode) {
+    const oldIndex = props.nodes.findIndex(n => n.uuid === props.selectedNode!.uuid)
+    if (oldIndex >= 0) {
+      chartInstance.dispatchAction({ type: 'downplay', dataIndex: oldIndex })
+    }
+  }
+
+  // Highlight target node
+  chartInstance.dispatchAction({ type: 'highlight', dataIndex: nodeIndex })
+  chartInstance.dispatchAction({
+    type: 'showTip',
+    seriesIndex: 0,
+    dataIndex: nodeIndex
+  })
+
+  // Try to center view on the node
+  const option = chartInstance.getOption() as any
+  if (option?.series?.[0]?.data?.[nodeIndex]) {
+    const nodeData = option.series[0].data[nodeIndex]
+    if (nodeData.x !== undefined && nodeData.y !== undefined) {
+      const width = chartInstance.getWidth()
+      const height = chartInstance.getHeight()
+      chartInstance.setOption({
+        series: [{
+          center: [width / 2 - nodeData.x, height / 2 - nodeData.y],
+          animationDurationUpdate: 300
+        }]
+      }, { notMerge: false, lazyUpdate: false })
+    }
+  }
+
+  return true
+}
+
 // Watch props changes
 watch(
   () => [props.nodes, props.edges, props.layout, props.aggregationMode],
@@ -565,7 +607,8 @@ defineExpose({
   zoomIn: handleZoomIn,
   zoomOut: handleZoomOut,
   zoomFit: handleZoomFit,
-  refresh: updateChart
+  refresh: updateChart,
+  focusNode
 })
 </script>
 

@@ -32,9 +32,9 @@
         </template>
         <template v-if="column.key === 'action'">
           <a-space>
-            <a-button type="link" size="small" @click="handleEdit(record)">编辑</a-button>
-            <a-popconfirm title="确定删除？" ok-text="确定" @confirm="handleDelete(record)">
-              <a-button type="link" size="small" danger>删除</a-button>
+            <a-button type="link" size="small" @click="handleEdit(record)">{{ t('common.edit') }}</a-button>
+            <a-popconfirm title="确定删除？" :ok-text="t('common.confirm')" @confirm="handleDelete(record)">
+              <a-button type="link" size="small" danger>{{ t('common.delete') }}</a-button>
             </a-popconfirm>
           </a-space>
         </template>
@@ -82,12 +82,14 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
 import ConstraintValueEditor from './ConstraintValueEditor.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ graphId: string }>()
 const store = useOntologyStore()
@@ -155,11 +157,11 @@ async function handleSave() {
     if (editingId.value) {
       // 更新约束
       await ontologyApi.updateConstraint(props.graphId, editingId.value, { ...form })
-      message.success('约束已更新')
+      message.success(t('TODO_约束已更新'))
     } else {
       // 新建约束
       await ontologyApi.createConstraint(props.graphId, { ...form })
-      message.success('约束已创建')
+      message.success(t('TODO_约束已创建'))
     }
     showModal.value = false
     editingId.value = null
@@ -172,7 +174,7 @@ async function handleSave() {
 async function handleDelete(record: any) {
   try {
     await ontologyApi.deleteConstraint(props.graphId, record.id)
-    message.success('删除成功')
+    message.success(t('TODO_删除成功'))
     await store.loadFullOntology(props.graphId)
   } catch (e: any) { message.error(e.message || '删除失败') }
 }
@@ -181,7 +183,7 @@ async function handleRefresh() {
   refreshing.value = true
   await store.loadFullOntology(props.graphId)
   refreshing.value = false
-  message.success('已刷新')
+  message.success(t('TODO_已刷新'))
 }
 </script>
 

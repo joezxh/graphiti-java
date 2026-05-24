@@ -9,13 +9,13 @@
       <a-space>
         <a-button type="primary" :loading="saving" @click="handleSave">
           <template #icon><SaveOutlined /></template>
-          保存
+          {{ t('common.save') }}
         </a-button>
-        <a-button v-if="isNew" type="default" @click="handleSave">保存并新建</a-button>
+        <a-button v-if="isNew" type="default" @click="handleSave">{{ t('classEditor.saveAndNew') }}</a-button>
         <a-divider type="vertical" />
         <a-button danger :disabled="!classId" :loading="deleting" @click="handleDelete">
           <template #icon><DeleteOutlined /></template>
-          删除
+          {{ t('common.delete') }}
         </a-button>
       </a-space>
       <div class="toolbar-right">
@@ -26,17 +26,17 @@
 
     <!-- Tab页签 -->
     <a-tabs v-model:activeKey="activeTab" class="class-editor-tabs">
-      <a-tab-pane key="basic" tab="基本信息">
+      <a-tab-pane key="basic" :tab="t('classEditor.tabBasic')">
         <div class="tab-content">
           <a-form :model="form" layout="vertical" class="basic-form">
             <a-row :gutter="16">
               <a-col :span="12">
-                <a-form-item label="类名称（localName）" required>
-                  <a-input v-model:value="form.localName" placeholder="如 Person" />
+                <a-form-item :label="t('classEditor.className')" required>
+                  <a-input v-model:value="form.localName" :placeholder="t('classEditor.classNamePlaceholder')" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="完整URI（classUri）">
+                <a-form-item :label="t('classEditor.classUri')">
                   <a-input v-model:value="form.classUri" placeholder="http://graphiti.io/ontology/Person" />
                 </a-form-item>
               </a-col>
@@ -44,55 +44,55 @@
 
             <a-row :gutter="16">
               <a-col :span="12">
-                <a-form-item label="父类（多继承）">
+                <a-form-item :label="t('classEditor.parentClass')">
                   <a-select
                     v-model:value="form.parentClassIds"
                     mode="multiple"
-                    placeholder="选择父类"
+                    :placeholder="t('classEditor.selectParentClass')"
                     allow-clear
                     :options="classOptions"
                   />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="领域分类">
-                  <a-select v-model:value="form.domainHint" placeholder="选择领域" allow-clear>
-                    <a-select-option value="FINANCIAL">金融</a-select-option>
-                    <a-select-option value="MEDICAL">医疗</a-select-option>
-                    <a-select-option value="ECOMMERCE">电商</a-select-option>
-                    <a-select-option value="LEGAL">法律</a-select-option>
-                    <a-select-option value="KNOWLEDGE">通用知识</a-select-option>
+                <a-form-item :label="t('classEditor.domain')">
+                  <a-select v-model:value="form.domainHint" :placeholder="t('classEditor.selectDomain')" allow-clear>
+                    <a-select-option value="FINANCIAL">{{ t('classEditor.domainFinancial') }}</a-select-option>
+                    <a-select-option value="MEDICAL">{{ t('classEditor.domainMedical') }}</a-select-option>
+                    <a-select-option value="ECOMMERCE">{{ t('classEditor.domainEcommerce') }}</a-select-option>
+                    <a-select-option value="LEGAL">{{ t('classEditor.domainLegal') }}</a-select-option>
+                    <a-select-option value="KNOWLEDGE">{{ t('classEditor.domainKnowledge') }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
 
-            <a-form-item label="等价类（equivalentTo）">
-              <a-select v-model:value="form.equivalentTo" mode="multiple" placeholder="选择等价类" allow-clear :options="classOptions" />
+            <a-form-item :label="t('classEditor.equivalentTo')">
+              <a-select v-model:value="form.equivalentTo" mode="multiple" :placeholder="t('classEditor.selectEquivalent')" allow-clear :options="classOptions" />
             </a-form-item>
 
-            <a-form-item label="不相交类（disjointWith）">
-              <a-select v-model:value="form.disjointWith" mode="multiple" placeholder="选择不相交类" allow-clear :options="classOptions" />
+            <a-form-item :label="t('classEditor.disjointWith')">
+              <a-select v-model:value="form.disjointWith" mode="multiple" :placeholder="t('classEditor.selectDisjoint')" allow-clear :options="classOptions" />
             </a-form-item>
 
-            <a-form-item label="描述">
-              <a-textarea v-model:value="form.description" :rows="3" placeholder="类的功能描述..." />
+            <a-form-item :label="t('classEditor.description')">
+              <a-textarea v-model:value="form.description" :rows="3" :placeholder="t('classEditor.descriptionPlaceholder')" />
             </a-form-item>
 
-            <a-form-item label="示例">
-              <a-textarea v-model:value="form.example" :rows="2" placeholder="类的使用示例..." />
+            <a-form-item :label="t('classEditor.example')">
+              <a-textarea v-model:value="form.example" :rows="2" :placeholder="t('classEditor.examplePlaceholder')" />
             </a-form-item>
           </a-form>
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="properties" tab="属性列表">
+      <a-tab-pane key="properties" :tab="t('classEditor.tabProperties')">
         <div class="tab-content">
           <div class="section-header">
-            <span class="section-title">类属性（直接定义 + 继承）</span>
+            <span class="section-title">{{ t('classEditor.classProperties') }}</span>
             <a-button size="small" type="primary" @click="showAddProperty = true">
               <template #icon><PlusOutlined /></template>
-              添加属性
+              {{ t('classEditor.addProperty') }}
             </a-button>
           </div>
           <a-table
@@ -108,14 +108,14 @@
               </template>
               <template v-if="column.key === 'isRequired'">
                 <a-tag :color="record.isRequired ? 'red' : 'default'">
-                  {{ record.isRequired ? '必填' : '可选' }}
+                  {{ record.isRequired ? t('classEditor.required') : t('classEditor.optional') }}
                 </a-tag>
               </template>
               <template v-if="column.key === 'action'">
                 <a-space>
-                  <a-button type="link" size="small" @click="openProperty(record)">编辑</a-button>
-                  <a-popconfirm title="确定删除此属性？" ok-text="确定" cancel-text="取消" @confirm="deleteProperty(record)">
-                    <a-button type="link" size="small" danger>删除</a-button>
+                  <a-button type="link" size="small" @click="openProperty(record)">{{ t('common.edit') }}</a-button>
+                  <a-popconfirm :title="t('classEditor.confirmDeleteProperty')" :ok-text="t('common.confirm')" :cancel-text="t('common.cancel')" @confirm="deleteProperty(record)">
+                    <a-button type="link" size="small" danger>{{ t('common.delete') }}</a-button>
                   </a-popconfirm>
                 </a-space>
               </template>
@@ -124,13 +124,13 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="inheritance" tab="继承关系">
+      <a-tab-pane key="inheritance" :tab="t('classEditor.tabInheritance')">
         <div class="tab-content">
           <div class="section-header">
-            <span class="section-title">继承树</span>
+            <span class="section-title">{{ t('classEditor.inheritanceTree') }}</span>
           </div>
           <div class="inheritance-tree">
-            <div v-if="inheritancePath.length === 0" class="empty-tip">无继承关系（顶级类）</div>
+            <div v-if="inheritancePath.length === 0" class="empty-tip">{{ t('classEditor.noInheritance') }}</div>
             <div v-else class="inheritance-path">
               <span v-for="(cls, idx) in inheritancePath" :key="cls.id" class="path-item">
                 <span
@@ -142,8 +142,8 @@
               </span>
             </div>
             <div class="subclasses-section">
-              <div class="section-title">子类</div>
-              <div v-if="subclasses.length === 0" class="empty-tip">无子类</div>
+              <div class="section-title">{{ t('classEditor.subclasses') }}</div>
+              <div v-if="subclasses.length === 0" class="empty-tip">{{ t('classEditor.noSubclasses') }}</div>
               <div v-else class="subclass-list">
                 <span v-for="sub in subclasses" :key="sub.id" class="subclass-tag" @click="openSubclass(sub)">
                   {{ sub.localName }}
@@ -154,13 +154,13 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="constraints" tab="约束规则">
+      <a-tab-pane key="constraints" :tab="t('classEditor.tabConstraints')">
         <div class="tab-content">
           <div class="section-header">
-            <span class="section-title">类约束</span>
+            <span class="section-title">{{ t('classEditor.classConstraints') }}</span>
             <a-button size="small" type="primary" @click="showAddConstraint = true">
               <template #icon><PlusOutlined /></template>
-              添加约束
+              {{ t('classEditor.addConstraint') }}
             </a-button>
           </div>
           <a-table
@@ -176,23 +176,23 @@
               </template>
               <template v-if="column.key === 'action'">
                 <a-space>
-                  <a-button type="link" size="small" @click="openConstraint(record)">编辑</a-button>
-                  <a-popconfirm title="确定删除？" ok-text="确定" cancel-text="取消" @confirm="deleteConstraint(record)">
-                    <a-button type="link" size="small" danger>删除</a-button>
+                  <a-button type="link" size="small" @click="openConstraint(record)">{{ t('common.edit') }}</a-button>
+                  <a-popconfirm :title="t('classEditor.confirmDeleteConstraint')" :ok-text="t('common.confirm')" :cancel-text="t('common.cancel')" @confirm="deleteConstraint(record)">
+                    <a-button type="link" size="small" danger>{{ t('common.delete') }}</a-button>
                   </a-popconfirm>
                 </a-space>
               </template>
             </template>
           </a-table>
-          <div v-if="classConstraints.length === 0" class="empty-tip">暂无约束</div>
+          <div v-if="classConstraints.length === 0" class="empty-tip">{{ t('classEditor.noConstraints') }}</div>
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="instances" tab="实例数据">
+      <a-tab-pane key="instances" :tab="t('classEditor.tabInstances')">
         <div class="tab-content">
           <div class="instance-stats-bar">
             <div class="stat-item">
-              <span class="stat-label">实例数量</span>
+              <span class="stat-label">{{ t('classEditor.instanceCount') }}</span>
               <span class="stat-value">{{ instanceCount }}</span>
             </div>
           </div>
@@ -216,62 +216,62 @@
     </a-tabs>
 
     <!-- 新建/编辑属性 Modal -->
-    <a-modal v-model:open="showAddProperty" :title="editingPropertyId ? '编辑属性' : '添加属性'" @ok="handleAddProperty" :confirm-loading="addingProperty">
+    <a-modal v-model:open="showAddProperty" :title="editingPropertyId ? t('classEditor.editProperty') : t('classEditor.addPropertyModal')" @ok="handleAddProperty" :confirm-loading="addingProperty">
       <a-form :model="propertyForm" layout="vertical">
-        <a-form-item label="属性名称" required>
-          <a-input v-model:value="propertyForm.localName" placeholder="如 name" />
+        <a-form-item :label="t('classEditor.propertyName')" required>
+          <a-input v-model:value="propertyForm.localName" :placeholder="t('classEditor.propertyNamePlaceholder')" />
         </a-form-item>
-        <a-form-item label="属性类型" required>
+        <a-form-item :label="t('classEditor.propertyType')" required>
           <a-select v-model:value="propertyForm.propertyType">
-            <a-select-option value="DATATYPE">数据类型属性</a-select-option>
-            <a-select-option value="OBJECT">对象属性</a-select-option>
-            <a-select-option value="ANNOTATION">注解属性</a-select-option>
+            <a-select-option value="DATATYPE">{{ t('classEditor.typeDatatype') }}</a-select-option>
+            <a-select-option value="OBJECT">{{ t('classEditor.typeObject') }}</a-select-option>
+            <a-select-option value="ANNOTATION">{{ t('classEditor.typeAnnotation') }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item v-if="propertyForm.propertyType === 'DATATYPE'" label="数据类型">
+        <a-form-item v-if="propertyForm.propertyType === 'DATATYPE'" :label="t('classEditor.dataType')">
           <a-select v-model:value="propertyForm.rangeDataType">
-            <a-select-option value="string">字符串</a-select-option>
-            <a-select-option value="integer">整数</a-select-option>
-            <a-select-option value="float">浮点数</a-select-option>
-            <a-select-option value="boolean">布尔值</a-select-option>
-            <a-select-option value="date">日期</a-select-option>
-            <a-select-option value="datetime">日期时间</a-select-option>
+            <a-select-option value="string">{{ t('classEditor.dataTypeString') }}</a-select-option>
+            <a-select-option value="integer">{{ t('classEditor.dataTypeInteger') }}</a-select-option>
+            <a-select-option value="float">{{ t('classEditor.dataTypeFloat') }}</a-select-option>
+            <a-select-option value="boolean">{{ t('classEditor.dataTypeBoolean') }}</a-select-option>
+            <a-select-option value="date">{{ t('classEditor.dataTypeDate') }}</a-select-option>
+            <a-select-option value="datetime">{{ t('classEditor.dataTypeDatetime') }}</a-select-option>
             <a-select-option value="json">JSON</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="必填">
+        <a-form-item :label="t('classEditor.required')">
           <a-switch v-model:checked="propertyForm.isRequired" />
         </a-form-item>
       </a-form>
     </a-modal>
 
     <!-- 新建/编辑约束 Modal -->
-    <a-modal v-model:open="showAddConstraint" :title="editingConstraintId ? '编辑约束' : '添加约束'" @ok="handleAddConstraint" :confirm-loading="addingConstraint">
+    <a-modal v-model:open="showAddConstraint" :title="editingConstraintId ? t('classEditor.editConstraint') : t('classEditor.addConstraintModal')" @ok="handleAddConstraint" :confirm-loading="addingConstraint">
       <a-form :model="constraintForm" layout="vertical">
-        <a-form-item label="约束类型" required>
+        <a-form-item :label="t('classEditor.constraintType')" required>
           <a-select v-model:value="constraintForm.constraintType">
-            <a-select-option value="CARDINALITY">基数约束</a-select-option>
-            <a-select-option value="RANGE">值域约束</a-select-option>
-            <a-select-option value="PATTERN">正则约束</a-select-option>
-            <a-select-option value="NOT_NULL">非空约束</a-select-option>
-            <a-select-option value="ENUM">枚举约束</a-select-option>
-            <a-select-option value="CUSTOM">自定义约束</a-select-option>
+            <a-select-option value="CARDINALITY">{{ t('classEditor.constraintCardinality') }}</a-select-option>
+            <a-select-option value="RANGE">{{ t('classEditor.constraintRange') }}</a-select-option>
+            <a-select-option value="PATTERN">{{ t('classEditor.constraintPattern') }}</a-select-option>
+            <a-select-option value="NOT_NULL">{{ t('classEditor.constraintNotNull') }}</a-select-option>
+            <a-select-option value="ENUM">{{ t('classEditor.constraintEnum') }}</a-select-option>
+            <a-select-option value="CUSTOM">{{ t('classEditor.constraintCustom') }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="约束值">
+        <a-form-item :label="t('classEditor.constraintValue')">
           <ConstraintValueEditor v-model:model-value="constraintForm.value" :type="constraintForm.constraintType" />
         </a-form-item>
-        <a-form-item label="严重程度">
+        <a-form-item :label="t('classEditor.severity')">
           <a-select v-model:value="constraintForm.severity">
-            <a-select-option value="ERROR">错误</a-select-option>
-            <a-select-option value="WARNING">警告</a-select-option>
-            <a-select-option value="INFO">信息</a-select-option>
+            <a-select-option value="ERROR">{{ t('classEditor.severityError') }}</a-select-option>
+            <a-select-option value="WARNING">{{ t('classEditor.severityWarning') }}</a-select-option>
+            <a-select-option value="INFO">{{ t('classEditor.severityInfo') }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="错误消息">
-          <a-input v-model:value="constraintForm.errorMessage" placeholder="验证失败时的提示" />
+        <a-form-item :label="t('classEditor.errorMessage')">
+          <a-input v-model:value="constraintForm.errorMessage" :placeholder="t('classEditor.errorMessagePlaceholder')" />
         </a-form-item>
-        <a-form-item label="描述">
+        <a-form-item :label="t('classEditor.description')">
           <a-textarea v-model:value="constraintForm.description" :rows="2" />
         </a-form-item>
       </a-form>
@@ -282,6 +282,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
 import { SaveOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
@@ -289,6 +290,8 @@ import { graphApi } from '@/api/graph'
 import type { OntClassVO, OntPropertyVO, OntConstraintVO } from '@/api/ontology'
 import type { ClassInstance } from '@/api/graph'
 import ConstraintValueEditor from './ConstraintValueEditor.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   graphId: string
@@ -345,20 +348,20 @@ const constraintForm = reactive({
 
 const editingConstraintId = ref<number | null>(null)
 
-const propertyColumns = [
-  { title: '名称', dataIndex: 'localName', key: 'localName' },
-  { title: '类型', key: 'propertyType' },
-  { title: '数据类型', dataIndex: 'rangeDataType', key: 'rangeDataType' },
-  { title: '必填', key: 'isRequired' },
-  { title: '操作', key: 'action', width: 160 }
-]
+const propertyColumns = computed(() => [
+  { title: t('classEditor.colName'), dataIndex: 'localName', key: 'localName' },
+  { title: t('classEditor.colType'), key: 'propertyType' },
+  { title: t('classEditor.colDataType'), dataIndex: 'rangeDataType', key: 'rangeDataType' },
+  { title: t('classEditor.colRequired'), key: 'isRequired' },
+  { title: t('classEditor.colActions'), width: 160 }
+])
 
-const constraintColumns = [
-  { title: '类型', dataIndex: 'constraintType', key: 'constraintType' },
-  { title: '约束值', dataIndex: 'value', key: 'value', ellipsis: true },
-  { title: '严重程度', key: 'severity' },
-  { title: '操作', key: 'action', width: 140 }
-]
+const constraintColumns = computed(() => [
+  { title: t('classEditor.colConstraintType'), dataIndex: 'constraintType', key: 'constraintType' },
+  { title: t('classEditor.colConstraintValue'), dataIndex: 'value', key: 'value', ellipsis: true },
+  { title: t('classEditor.colSeverity'), key: 'severity' },
+  { title: t('classEditor.colActions'), width: 140 }
+])
 
 const classOptions = computed(() =>
   store.classes.map(c => ({ label: c.localName, value: c.id }))
@@ -404,12 +407,12 @@ const instancePagination = reactive({
   showTotal: (total: number) => `共 ${total} 条`
 })
 
-const instanceColumns = [
-  { title: '名称', dataIndex: 'name', key: 'name' },
-  { title: 'UUID', dataIndex: 'uuid', key: 'uuid', ellipsis: true },
-  { title: '类型', dataIndex: 'type', key: 'type' },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt' }
-]
+const instanceColumns = computed(() => [
+  { title: t('classEditor.colInstanceName'), dataIndex: 'name', key: 'name' },
+  { title: t('classEditor.colInstanceUUID'), dataIndex: 'uuid', key: 'uuid', ellipsis: true },
+  { title: t('classEditor.colInstanceType'), dataIndex: 'type', key: 'type' },
+  { title: t('classEditor.colInstanceCreatedAt'), dataIndex: 'createdAt', key: 'createdAt' }
+])
 
 async function loadData() {
   if (!props.classId) return
@@ -450,7 +453,7 @@ async function loadData() {
 
 async function handleSave() {
   if (!form.localName.trim()) {
-    message.error('请填写类名称')
+    message.error(t('classEditor.errorClassName'))
     return
   }
   saving.value = true
@@ -477,15 +480,15 @@ async function handleSave() {
     }
     if (props.classId) {
       await ontologyApi.updateClass(props.graphId, props.classId, data)
-      message.success('类已更新')
+      message.success(t('classEditor.classUpdated'))
     } else {
       await ontologyApi.createClass(props.graphId, data)
-      message.success('类已创建')
+      message.success(t('classEditor.classCreated'))
       emit('saved')
     }
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '保存失败')
+    message.error(e.message || t('common.saveFailed'))
   } finally {
     saving.value = false
   }
@@ -494,20 +497,20 @@ async function handleSave() {
 async function handleDelete() {
   if (!props.classId) return
   Modal.confirm({
-    title: '确定删除此类？',
-    content: '删除类不会自动删除其实例，是否继续？',
-    okText: '确定',
+    title: t('classEditor.confirmDeleteClass'),
+    content: t('classEditor.confirmDeleteClassContent'),
+    okText: t('common.confirm'),
     okType: 'danger',
-    cancelText: '取消',
+    cancelText: t('common.cancel'),
     async onOk() {
       deleting.value = true
       try {
         await ontologyApi.deleteClass(props.graphId, props.classId!)
-        message.success('类已删除')
+        message.success(t('classEditor.classDeleted'))
         store.loadFullOntology(props.graphId)
         emit('saved')
       } catch (e: any) {
-        message.error(e.message || '删除失败')
+        message.error(e.message || t('common.deleteFailed'))
       } finally {
         deleting.value = false
       }
@@ -517,7 +520,7 @@ async function handleDelete() {
 
 async function handleAddProperty() {
   if (!propertyForm.localName.trim()) {
-    message.error('请填写属性名称')
+    message.error(t('classEditor.errorPropertyName'))
     return
   }
   addingProperty.value = true
@@ -533,7 +536,7 @@ async function handleAddProperty() {
         minCardinality: propertyForm.minCardinality,
         maxCardinality: propertyForm.maxCardinality
       })
-      message.success('属性已更新')
+      message.success(t('classEditor.propertyUpdated'))
     } else {
       // 新建属性
       await ontologyApi.createProperty(props.graphId, {
@@ -545,13 +548,13 @@ async function handleAddProperty() {
         minCardinality: propertyForm.minCardinality,
         maxCardinality: propertyForm.maxCardinality
       })
-      message.success('属性已添加')
+      message.success(t('classEditor.propertyAdded'))
     }
     showAddProperty.value = false
     editingPropertyId.value = null
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '保存失败')
+    message.error(e.message || t('common.saveFailed'))
   } finally {
     addingProperty.value = false
   }
@@ -574,7 +577,7 @@ function openProperty(prop: OntPropertyVO) {
 async function deleteProperty(prop: OntPropertyVO) {
   try {
     await ontologyApi.deleteProperty(props.graphId, prop.id)
-    message.success('属性已删除')
+    message.success(t('classEditor.propertyDeleted'))
     
     // 先从本地 store 移除，确保列表立即更新
     const idx = store.properties.findIndex(x => x.id === prop.id)
@@ -585,7 +588,7 @@ async function deleteProperty(prop: OntPropertyVO) {
     // 再刷新完整数据确保一致性
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '删除失败')
+    message.error(e.message || t('common.deleteFailed'))
   }
 }
 
@@ -615,7 +618,7 @@ async function handleAddConstraint() {
         errorMessage: constraintForm.errorMessage,
         description: constraintForm.description
       })
-      message.success('约束已更新')
+      message.success(t('classEditor.constraintUpdated'))
     } else {
       // 新建约束
       await ontologyApi.createConstraint(props.graphId, {
@@ -626,13 +629,13 @@ async function handleAddConstraint() {
         errorMessage: constraintForm.errorMessage,
         description: constraintForm.description
       })
-      message.success('约束已添加')
+      message.success(t('classEditor.constraintAdded'))
     }
     showAddConstraint.value = false
     editingConstraintId.value = null
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '保存失败')
+    message.error(e.message || t('common.saveFailed'))
   } finally {
     addingConstraint.value = false
   }
@@ -641,7 +644,7 @@ async function handleAddConstraint() {
 async function deleteConstraint(c: OntConstraintVO) {
   try {
     await ontologyApi.deleteConstraint(props.graphId, c.id)
-    message.success('约束已删除')
+    message.success(t('classEditor.constraintDeleted'))
     
     // 先从本地 store 移除，确保列表立即更新
     const idx = store.constraints.findIndex(x => x.id === c.id)
@@ -652,16 +655,16 @@ async function deleteConstraint(c: OntConstraintVO) {
     // 再刷新完整数据确保一致性
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '删除失败')
+    message.error(e.message || t('common.deleteFailed'))
   }
 }
 
 function openSubclass(cls: OntClassVO) {
-  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
+  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `${t('classEditor.class')}: ${cls.localName}`, classId: cls.id })
 }
 
 function openParentClass(cls: OntClassVO) {
-  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
+  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `${t('classEditor.class')}: ${cls.localName}`, classId: cls.id })
 }
 
 async function loadInstances() {
@@ -681,7 +684,7 @@ async function loadInstances() {
     instanceCount.value = res.total || 0
     instancePagination.total = res.total || 0
   } catch (e: any) {
-    message.error(e.message || '加载实例失败')
+    message.error(e.message || t('classEditor.errorLoadInstances'))
   } finally {
     instanceLoading.value = false
   }
@@ -701,7 +704,7 @@ async function viewInstance(record: ClassInstance) {
   store.openTab({
     id: `instance-editor-${record.uuid}`,
     type: 'instance-editor',
-    title: `实例: ${record.name}`,
+    title: `${t('classEditor.instance')}: ${record.name}`,
     classType: record.type
   })
 }

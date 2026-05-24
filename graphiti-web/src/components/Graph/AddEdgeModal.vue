@@ -63,10 +63,12 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import { graphApi } from '@/api/graph'
 import type { GraphIDENode, GraphIDEEdge } from '@/api/graph'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   visible: boolean
@@ -113,12 +115,12 @@ const filterNodeOption = (input: string, option: any) => {
 
 const handleOk = async () => {
   if (!formState.edgeType) {
-    message.warning('请选择或输入关系类型')
+    message.warning(t('TODO_请选择或输入关系类型'))
     return
   }
   
   if (!formState.targetUuid) {
-    message.warning('请选择目标节点')
+    message.warning(t('TODO_请选择目标节点'))
     return
   }
   
@@ -131,11 +133,11 @@ const handleOk = async () => {
       fact: formState.fact || undefined
     })
     
-    message.success('创建成功')
+    message.success(t('TODO_创建成功'))
     emit('success', edge)
     handleClose()
   } catch (error) {
-    message.error('创建失败')
+    message.error(t('TODO_创建失败'))
   } finally {
     loading.value = false
   }

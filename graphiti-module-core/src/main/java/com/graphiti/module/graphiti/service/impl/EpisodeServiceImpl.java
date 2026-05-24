@@ -39,6 +39,21 @@ public class EpisodeServiceImpl implements EpisodeService {
         respVO.setRowCount(episodes.size());
         return respVO;
     }
+
+    @Override
+    public EpisodeListRespVO listEpisodesByType(String graphId, String typeCode, int page, int pageSize) {
+        long total = graphNeo4jService.countEpisodesByType(graphId, typeCode);
+        int offset = (page - 1) * pageSize;
+        List<Map<String, Object>> rows = graphNeo4jService.getEpisodesByType(graphId, typeCode, pageSize, offset);
+        List<EpisodeInfoRespVO> episodes = rows.stream()
+                .map(this::convertToEpisodeInfo)
+                .collect(Collectors.toList());
+        EpisodeListRespVO respVO = new EpisodeListRespVO();
+        respVO.setEpisodes(episodes);
+        respVO.setTotalCount(total);
+        respVO.setRowCount(episodes.size());
+        return respVO;
+    }
     
     @Override
     public EpisodeInfoRespVO getEpisodeDetail(String graphId, String episodeUuid) {

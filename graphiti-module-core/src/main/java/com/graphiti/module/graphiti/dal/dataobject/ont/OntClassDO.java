@@ -22,6 +22,9 @@ public class OntClassDO implements Serializable {
     @TableField("local_name")
     private String localName;
 
+    @TableField("name_en")
+    private String nameEn;
+
     @TableField("parent_class_id")
     private Long parentClassId;
 

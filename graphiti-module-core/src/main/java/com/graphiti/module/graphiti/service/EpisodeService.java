@@ -18,6 +18,16 @@ public interface EpisodeService {
      * @return EpisodeListRespVO
      */
     EpisodeListRespVO listEpisodes(String graphId, int limit, int offset);
+
+    /**
+     * 按类型获取事件列表（分页）
+     * @param graphId 图谱ID
+     * @param typeCode 剧集类型代码
+     * @param page 页码（从1开始）
+     * @param pageSize 每页数量
+     * @return EpisodeListRespVO
+     */
+    EpisodeListRespVO listEpisodesByType(String graphId, String typeCode, int page, int pageSize);
     
     /**
      * 获取事件详情

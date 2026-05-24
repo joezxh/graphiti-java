@@ -20,12 +20,12 @@
         </div>
         
         <div class="breadcrumb">
-          <span class="breadcrumb-item" @click="$router.push('/graph/ide')">图谱管理</span>
+          <span class="breadcrumb-item" @click="$router.push('/graph/ide')">{{ t('graphIde.breadcrumb') }}</span>
           <span class="breadcrumb-sep">/</span>
           <a-select
             v-if="!graphId"
             v-model:value="selectedGraphId"
-            placeholder="请选择图谱"
+            :placeholder="t('graphIde.selectGraphPlaceholder')"
             style="width: 160px; margin-left: 8px;"
             :loading="loadingGraphs"
             @change="handleGraphChange"
@@ -34,14 +34,14 @@
               {{ g.name }}
             </a-select-option>
           </a-select>
-          <span v-else class="breadcrumb-current">{{ graphData?.name || '加载中...' }}</span>
+          <span v-else class="breadcrumb-current">{{ graphData?.name || t('graphIde.loading') }}</span>
         </div>
       </div>
 
       <div class="header-actions">
         <a-button class="action-btn" @click="handleSync">
           <template #icon><SyncOutlined :spin="syncing" /></template>
-          同步
+          {{ t('graphIde.sync') }}
         </a-button>
       </div>
     </header>
@@ -57,21 +57,21 @@
               :class="{ active: sidebarTab === 'ontology' }"
               @click="sidebarTab = 'ontology'"
             >
-              本体
+              {{ t('graphIde.sidebarOntology') }}
             </button>
             <button
               class="sidebar-tab"
               :class="{ active: sidebarTab === 'episodes' }"
               @click="sidebarTab = 'episodes'"
             >
-              剧集
+              {{ t('graphIde.sidebarEpisodes') }}
             </button>
             <button
               class="sidebar-tab"
               :class="{ active: sidebarTab === 'communities' }"
               @click="sidebarTab = 'communities'"
             >
-              社区
+              {{ t('graphIde.sidebarCommunities') }}
             </button>
           </div>
         </div>
@@ -118,18 +118,18 @@
         <!-- Toolbar -->
         <div class="canvas-toolbar">
           <div class="toolbar-group">
-            <a-tooltip title="添加节点">
+            <a-tooltip :title="t('graphIde.tooltipAddNode')">
               <a-button type="text" size="small" @click="addNode">
                 <template #icon><PlusOutlined /></template>
               </a-button>
             </a-tooltip>
-            <a-tooltip title="添加边">
+            <a-tooltip :title="t('graphIde.tooltipAddEdge')">
               <a-button type="text" size="small" @click="addEdge">
                 <template #icon><LinkOutlined /></template>
               </a-button>
             </a-tooltip>
             <a-divider type="vertical" />
-            <a-tooltip title="选择">
+            <a-tooltip :title="t('graphIde.tooltipSelect')">
               <a-button
                 type="text"
                 size="small"
@@ -139,7 +139,7 @@
                 <template #icon><AimOutlined /></template>
               </a-button>
             </a-tooltip>
-            <a-tooltip title="平移">
+            <a-tooltip :title="t('graphIde.tooltipPan')">
               <a-button
                 type="text"
                 size="small"
@@ -173,7 +173,7 @@
           <div class="toolbar-separator" />
 
           <div class="toolbar-group">
-            <a-tooltip title="小地图">
+            <a-tooltip :title="t('graphIde.tooltipMinimap')">
               <a-button
                 type="text"
                 size="small"
@@ -183,7 +183,7 @@
                 <template #icon><BorderOutlined style="color: #fff" /></template>
               </a-button>
             </a-tooltip>
-            <a-tooltip title="聚合视图">
+            <a-tooltip :title="t('graphIde.tooltipAggregation')">
               <a-button
                 type="text"
                 size="small"
@@ -200,7 +200,7 @@
           <div class="toolbar-group">
             <a-input-search
               v-model:value="searchKeyword"
-              placeholder="搜索节点..."
+              :placeholder="t('graphIde.searchNodePlaceholder')"
               size="small"
               style="width: 180px"
               @search="handleSearch"
@@ -208,14 +208,14 @@
           </div>
 
           <a-button type="primary" @click="showCascadeModal = true">
-            级联编辑
+            {{ t('graphIde.cascadeEdit') }}
           </a-button>
         </div>
 
         <!-- Canvas -->
         <div class="canvas-wrapper">
           <div v-if="loading" class="canvas-loading">
-            <a-spin size="large" tip="加载中..." />
+            <a-spin size="large" :tip="t('graphIde.canvasLoading')" />
           </div>
           <GraphCanvas
             ref="graphCanvasRef"
@@ -240,7 +240,7 @@
         <!-- V5.0: Episode 类型详情面板 -->
         <template v-if="sidebarTab === 'episodes' && selectedEpisodeType">
           <div class="panel-header">
-            <span class="panel-title">{{ selectedEpisodeType.typeName || '类型详情' }}</span>
+            <span class="panel-title">{{ selectedEpisodeType.typeName || t('graphIde.panelTypeDetail') }}</span>
             <a-button type="text" size="small" @click="selectedEpisodeType = null">
               <template #icon><CloseOutlined /></template>
             </a-button>
@@ -249,52 +249,56 @@
             :graph-id="effectiveGraphId"
             :type-id="selectedEpisodeType.id"
             :type-data="selectedEpisodeType"
+            :pagination="episodePagination"
+            :depth="episodeDepth"
             @edit-type="handleEpisodeTypeEdit"
             @delete-type="handleEpisodeTypeDelete"
             @navigate-to-instance="handleNavigateToInstance"
+            @pagination-change="handleEpisodePaginationChange"
+            @depth-change="handleEpisodeDepthChange"
           />
         </template>
 
         <!-- V3.0.0: Episode 详情面板 -->
         <template v-else-if="ontologyMode === 'episodes' && selectedEpisode">
           <div class="panel-header">
-            <span class="panel-title">事件详情</span>
+            <span class="panel-title">{{ t('graphIde.panelEventDetail') }}</span>
             <a-button type="text" size="small" @click="selectedEpisode = null">
               <template #icon><CloseOutlined /></template>
             </a-button>
           </div>
           <div class="panel-content">
             <a-descriptions :column="2" bordered size="small">
-              <a-descriptions-item label="名称" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelName')" :span="2">
                 {{ selectedEpisode.name }}
               </a-descriptions-item>
-              <a-descriptions-item label="类型">
+              <a-descriptions-item :label="t('graphIde.labelType')">
                 <a-tag :color="getEpisodeColor(selectedEpisode.episodeType)">
                   {{ selectedEpisode.episodeType || '-' }}
                 </a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="流程类型">
+              <a-descriptions-item :label="t('graphIde.labelProcessType')">
                 <a-tag>{{ selectedEpisode.processType || selectedEpisode.legalProcess || '-' }}</a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="阶段">
+              <a-descriptions-item :label="t('graphIde.labelStage')">
                 {{ selectedEpisode.stageLabel || '-' }}
               </a-descriptions-item>
-              <a-descriptions-item label="阶段级别">
+              <a-descriptions-item :label="t('graphIde.labelStageLevel')">
                 <a-tag v-if="selectedEpisode.stageLevel || selectedEpisode.courtLevel" color="purple">{{ selectedEpisode.stageLevel || selectedEpisode.courtLevel }}</a-tag>
                 <span v-else>-</span>
               </a-descriptions-item>
-              <a-descriptions-item label="审查阶段">
+              <a-descriptions-item :label="t('graphIde.labelReviewStage')">
                 <a-tag :color="selectedEpisode.isReviewStage || selectedEpisode.isTrialStage ? 'green' : 'default'">
-                  {{ (selectedEpisode.isReviewStage || selectedEpisode.isTrialStage) ? '是' : '否' }}
+                  {{ (selectedEpisode.isReviewStage || selectedEpisode.isTrialStage) ? t('graphIde.yes') : t('graphIde.no') }}
                 </a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="开始时间" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelStartTime')" :span="2">
                 {{ formatEpisodeTime(selectedEpisode.startTime) }}
               </a-descriptions-item>
-              <a-descriptions-item label="结束时间" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelEndTime')" :span="2">
                 {{ formatEpisodeTime(selectedEpisode.endTime) }}
               </a-descriptions-item>
-              <a-descriptions-item label="内容" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelContent')" :span="2">
                 <div class="episode-content">{{ selectedEpisode.content }}</div>
               </a-descriptions-item>
             </a-descriptions>
@@ -304,44 +308,44 @@
         <!-- V3.0.0: Community 详情面板 -->
         <template v-else-if="ontologyMode === 'communities' && selectedCommunityDetail">
           <div class="panel-header">
-            <span class="panel-title">社区详情</span>
+            <span class="panel-title">{{ t('graphIde.panelCommunityDetail') }}</span>
             <a-button type="text" size="small" @click="selectedCommunityDetail = null">
               <template #icon><CloseOutlined /></template>
             </a-button>
           </div>
           <div class="panel-content">
             <a-descriptions :column="2" bordered size="small">
-              <a-descriptions-item label="名称" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelName')" :span="2">
                 {{ selectedCommunityDetail.name }}
               </a-descriptions-item>
-              <a-descriptions-item label="类型">
+              <a-descriptions-item :label="t('graphIde.labelType')">
                 <a-tag :color="getCommunityColor(selectedCommunityDetail.communityType)">
                   {{ selectedCommunityDetail.communityType || '-' }}
                 </a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="法律领域">
+              <a-descriptions-item :label="t('graphIde.labelLegalDomain')">
                 <a-tag>{{ selectedCommunityDetail.legalDomain || '-' }}</a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="辖区">
+              <a-descriptions-item :label="t('graphIde.labelJurisdiction')">
                 {{ selectedCommunityDetail.jurisdiction || '-' }}
               </a-descriptions-item>
-              <a-descriptions-item label="实践类型">
+              <a-descriptions-item :label="t('graphIde.labelPracticeType')">
                 {{ selectedCommunityDetail.practiceType || '-' }}
               </a-descriptions-item>
-              <a-descriptions-item label="成员数">
+              <a-descriptions-item :label="t('graphIde.labelMemberCount')">
                 <strong>{{ selectedCommunityDetail.memberCount || 0 }}</strong>
               </a-descriptions-item>
-              <a-descriptions-item label="摘要" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelSummary')" :span="2">
                 <div class="community-content">{{ selectedCommunityDetail.summary || '-' }}</div>
               </a-descriptions-item>
-              <a-descriptions-item label="描述" :span="2">
+              <a-descriptions-item :label="t('graphIde.labelDescription')" :span="2">
                 <div class="community-content">{{ selectedCommunityDetail.description || '-' }}</div>
               </a-descriptions-item>
             </a-descriptions>
 
             <!-- 子社区列表 -->
             <div v-if="selectedCommunityDetail.subCommunities && selectedCommunityDetail.subCommunities.length > 0" class="detail-section" style="margin-top: 16px;">
-              <div class="section-title">子社区 ({{ selectedCommunityDetail.subCommunities.length }})</div>
+              <div class="section-title">{{ t('graphIde.subCommunities') }} ({{ selectedCommunityDetail.subCommunities.length }})</div>
               <div class="property-list">
                 <div v-for="sub in selectedCommunityDetail.subCommunities" :key="sub.uuid" class="property-item">
                   <span class="property-value">{{ sub.name || sub.uuid }}</span>
@@ -351,21 +355,21 @@
 
             <!-- 成员节点列表 -->
             <div v-if="selectedCommunityDetail.members && selectedCommunityDetail.members.length > 0" class="detail-section" style="margin-top: 16px;">
-              <div class="section-title">成员节点 ({{ selectedCommunityDetail.members.length }})</div>
+              <div class="section-title">{{ t('graphIde.memberNodes') }} ({{ selectedCommunityDetail.members.length }})</div>
               <div class="property-list">
                 <div v-for="member in selectedCommunityDetail.members.slice(0, 10)" :key="member.uuid" class="property-item" @click="navigateToNode(member.uuid)" style="cursor:pointer">
                   <span class="property-key">{{ member.type || 'Entity' }}</span>
                   <span class="property-value">{{ member.name || member.uuid }}</span>
                 </div>
                 <div v-if="selectedCommunityDetail.members.length > 10" class="property-item">
-                  <span class="property-value" style="color: #8b949e; text-align: center">还有 {{ selectedCommunityDetail.members.length - 10 }} 个成员...</span>
+                  <span class="property-value" style="color: #8b949e; text-align: center">{{ t('graphIde.moreMembers', { count: selectedCommunityDetail.members.length - 10 }) }}</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="panel-footer">
-            <a-popconfirm title="确定要删除此社区吗？" ok-text="确定" cancel-text="取消" @confirm="deleteSelectedCommunity">
-              <a-button danger block>删除社区</a-button>
+            <a-popconfirm :title="t('graphIde.confirmDeleteCommunity')" :ok-text="t('graphIde.ok')" :cancel-text="t('graphIde.cancel')" @confirm="deleteSelectedCommunity">
+              <a-button danger block>{{ t('graphIde.deleteCommunity') }}</a-button>
             </a-popconfirm>
           </div>
         </template>
@@ -373,7 +377,7 @@
         <template v-else-if="selectedNode || selectedClass">
           <div class="panel-header">
             <span class="panel-title">
-              {{ selectedNode ? '节点详情' : '类详情' }}
+              {{ selectedNode ? t('graphIde.panelNodeDetail') : t('graphIde.panelClassDetail') }}
             </span>
             <a-button type="text" size="small" @click="closePanel">
               <template #icon><CloseOutlined /></template>
@@ -395,20 +399,20 @@
           <div class="panel-content">
             <!-- Info Tab -->
             <div v-if="currentDetailTab === 'info'" class="detail-section">
-              <div class="section-title">基本信息</div>
+              <div class="section-title">{{ t('graphIde.tabBasicInfo') }}</div>
               <div class="info-list">
                 <div class="info-row">
-                  <span class="info-label">名称</span>
+                  <span class="info-label">{{ t('graphIde.labelName') }}</span>
                   <span class="info-value">{{ selectedNode?.name || selectedClass?.localName || '-' }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="info-label">类型</span>
+                  <span class="info-label">{{ t('graphIde.labelType') }}</span>
                   <a-tag :color="getNodeColor(selectedNode?.type || selectedClass?.localName || '')">
                     {{ selectedNode?.type || selectedClass?.localName }}
                   </a-tag>
                 </div>
                 <div v-if="selectedNode?.summary" class="info-row">
-                  <span class="info-label">摘要</span>
+                  <span class="info-label">{{ t('graphIde.labelSummary') }}</span>
                   <span class="info-value">{{ selectedNode.summary }}</span>
                 </div>
                 <div v-if="selectedClass?.classUri" class="info-row">
@@ -416,15 +420,15 @@
                   <span class="info-value uri">{{ selectedClass.classUri }}</span>
                 </div>
                 <div v-if="selectedClass?.description" class="info-row">
-                  <span class="info-label">描述</span>
+                  <span class="info-label">{{ t('graphIde.labelDescription') }}</span>
                   <span class="info-value">{{ selectedClass.description }}</span>
                 </div>
                 <div class="info-row">
-                  <span class="info-label">属性数</span>
+                  <span class="info-label">{{ t('graphIde.labelPropertyCount') }}</span>
                   <span class="info-value">{{ selectedClass?.propertyCount || 0 }}</span>
                 </div>
                 <div v-if="selectedNode?.createdAt" class="info-row">
-                  <span class="info-label">创建时间</span>
+                  <span class="info-label">{{ t('graphIde.labelCreatedAt') }}</span>
                   <span class="info-value">{{ selectedNode.createdAt }}</span>
                 </div>
               </div>
@@ -432,7 +436,7 @@
 
             <!-- Properties Tab -->
             <div v-if="currentDetailTab === 'properties'" class="detail-section">
-              <div class="section-title">属性列表</div>
+              <div class="section-title">{{ t('graphIde.sectionProperties') }}</div>
               <div class="property-list">
                 <div
                   v-for="(value, key) in displayProperties"
@@ -443,7 +447,7 @@
                   <span class="property-value">{{ formatValue(value) }}</span>
                 </div>
                 <div v-if="Object.keys(displayProperties).length === 0" class="empty-tip">
-                  暂无属性
+                  {{ t('graphIde.emptyNoProperties') }}
                 </div>
               </div>
               <a-button
@@ -453,13 +457,13 @@
                 @click="showPropertyForm = true"
               >
                 <template #icon><PlusOutlined /></template>
-                添加属性
+                {{ t('graphIde.addProperty') }}
               </a-button>
             </div>
 
             <!-- Relations Tab -->
             <div v-if="currentDetailTab === 'relations' && selectedNode" class="detail-section">
-              <div class="section-title">关联关系</div>
+              <div class="section-title">{{ t('graphIde.sectionRelations') }}</div>
               <div class="relation-list">
                 <div
                   v-for="rel in nodeRelations"
@@ -472,19 +476,19 @@
                   <RightOutlined class="relation-arrow" />
                 </div>
                 <div v-if="nodeRelations.length === 0" class="empty-tip">
-                  暂无关联关系
+                  {{ t('graphIde.emptyNoRelations') }}
                 </div>
               </div>
             </div>
 
             <!-- Instances Tab -->
             <div v-if="currentDetailTab === 'instances' && selectedClass" class="detail-section">
-              <div class="section-title">类实例</div>
+              <div class="section-title">{{ t('graphIde.sectionInstances') }}</div>
               
               <div class="instance-toolbar">
                 <a-input-search
                   v-model:value="instanceSearchKeyword"
-                  placeholder="搜索实例名称"
+                  :placeholder="t('graphIde.searchInstancePlaceholder')"
                   style="width: 100%"
                   @search="handleInstanceSearch"
                   @change="handleInstanceSearchChange"
@@ -512,7 +516,7 @@
                     </div>
                   </div>
                   <div class="instance-actions">
-                    <a-tooltip title="在画布中定位">
+                    <a-tooltip :title="t('graphIde.tooltipLocateInCanvas')">
                       <a-button 
                         type="text" 
                         size="small"
@@ -521,7 +525,7 @@
                         <template #icon><AimOutlined /></template>
                       </a-button>
                     </a-tooltip>
-                    <a-tooltip title="添加到画布">
+                    <a-tooltip :title="t('graphIde.tooltipAddToCanvas')">
                       <a-button 
                         type="text" 
                         size="small"
@@ -535,11 +539,11 @@
                 
                 <div v-if="instanceLoading" class="instance-loading">
                   <a-spin size="small" />
-                  <span>加载中...</span>
+                  <span>{{ t('graphIde.instanceLoading') }}</span>
                 </div>
                 
                 <div v-if="!instanceLoading && classInstances.length === 0" class="empty-tip">
-                  暂无实例数据
+                  {{ t('graphIde.emptyNoInstances') }}
                 </div>
               </div>
 
@@ -562,16 +566,16 @@
               block
               @click="editSelectedNode"
             >
-              编辑
+              {{ t('graphIde.btnEdit') }}
             </a-button>
             <a-popconfirm
-              title="确定要删除吗？"
-              ok-text="确定"
-              cancel-text="取消"
+              :title="t('graphIde.confirmDelete')"
+              :ok-text="t('graphIde.ok')"
+              :cancel-text="t('graphIde.cancel')"
               @confirm="deleteSelected"
             >
               <a-button danger block>
-                删除
+                {{ t('graphIde.btnDelete') }}
               </a-button>
             </a-popconfirm>
           </div>
@@ -579,8 +583,8 @@
 
         <div v-else class="panel-empty">
           <InboxOutlined class="empty-icon" />
-          <div class="empty-title">选择节点或类</div>
-          <div class="empty-desc">点击图谱中的节点或左侧资源管理器中的类查看详情</div>
+          <div class="empty-title">{{ t('graphIde.emptySelectNodeOrClass') }}</div>
+          <div class="empty-desc">{{ t('graphIde.emptyDescClickNode') }}</div>
         </div>
       </aside>
     </div>
@@ -589,23 +593,23 @@
     <footer class="ide-status">
       <div class="status-item">
         <span class="status-dot success" />
-        <span>Neo4j 已连接</span>
+        <span>{{ t('graphIde.statusNeo4jConnected') }}</span>
       </div>
       <div class="status-item">
-        节点: <strong>{{ formatNumber(graphData?.nodeCount || 0) }}</strong>
+        {{ t('graphIde.statusNodes') }}: <strong>{{ formatNumber(graphData?.nodeCount || 0) }}</strong>
       </div>
       <div class="status-item">
-        边: <strong>{{ formatNumber(graphData?.edgeCount || 0) }}</strong>
+        {{ t('graphIde.statusEdges') }}: <strong>{{ formatNumber(graphData?.edgeCount || 0) }}</strong>
       </div>
       <div class="status-item">
-        类: <strong>{{ schemaClasses.length }}</strong>
+        {{ t('graphIde.statusClasses') }}: <strong>{{ schemaClasses.length }}</strong>
       </div>
       <div class="status-item">
-        事件: <strong>{{ graphData?.episodeCount || 0 }}</strong>
+        {{ t('graphIde.statusEvents') }}: <strong>{{ graphData?.episodeCount || 0 }}</strong>
       </div>
       <div class="status-spacer" />
       <div class="status-item">
-        显示: {{ nodes.length }} / {{ formatNumber(graphData?.nodeCount || 0) }}
+        {{ t('graphIde.statusDisplay') }}: {{ nodes.length }} / {{ formatNumber(graphData?.nodeCount || 0) }}
       </div>
     </footer>
 
@@ -617,21 +621,21 @@
       @click.stop
     >
       <div class="context-menu-item" @click="viewNodeDetails">
-        <EyeOutlined /> 查看详情
+        <EyeOutlined /> {{ t('graphIde.contextMenuViewDetail') }}
       </div>
       <div class="context-menu-item" @click="editNodeContext">
-        <EditOutlined /> 编辑属性
+        <EditOutlined /> {{ t('graphIde.contextMenuEditProperties') }}
       </div>
       <div class="context-menu-separator" />
       <div class="context-menu-item" @click="expandNeighbors">
-        <ExpandOutlined /> 展开邻居
+        <ExpandOutlined /> {{ t('graphIde.contextMenuExpandNeighbors') }}
       </div>
       <div class="context-menu-item" @click="addRelationContext">
-        <LinkOutlined /> 添加关联
+        <LinkOutlined /> {{ t('graphIde.contextMenuAddRelation') }}
       </div>
       <div class="context-menu-separator" />
       <div class="context-menu-item danger" @click="deleteNodeContext">
-        <DeleteOutlined /> 删除节点
+        <DeleteOutlined /> {{ t('graphIde.contextMenuDeleteNode') }}
       </div>
     </div>
 
@@ -673,8 +677,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import {
   SyncOutlined,
@@ -704,11 +709,9 @@ import type {
   GraphIDENode,
   GraphIDEEdge,
   SchemaClass,
-  ClassInstance,
-  LayoutType,
-  EditTool
+  ClassInstance
 } from '@/api/graph'
-import type { DetailPanelTab } from '@/types/graph-ide'
+import type { DetailPanelTab, LayoutType, EditTool } from '@/types/graph-ide'
 import { communityTypeApi, episodeTypeApi, type OntCommunityTypeVO, type OntEpisodeTypeVO } from '@/api/metadata'
 import {
   LEGAL_DOMAIN_COLORS,
@@ -727,6 +730,7 @@ import EpisodeTypeDetailPanel from '@/components/Ontology/EpisodeTypeDetailPanel
 import EpisodeTypeEditModal from '@/components/Ontology/EpisodeTypeEditModal.vue'
 import CommunityExplorer from '@/components/Ontology/CommunityExplorer.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -802,6 +806,16 @@ const showEpisodeTypeEditModal = ref(false)
 const editingEpisodeType = ref<OntEpisodeTypeVO | undefined>(undefined)
 const definitionId = ref<number>(0)
 
+// V5.0: Episode 类型分页与深度状态
+const episodePagination = ref({
+  page: 1,
+  pageSize: 20,
+  total: 0,
+  totalPages: 0,
+  hasNextPage: false
+})
+const episodeDepth = ref<number>(2)
+
 // V3.0.0: 选中的 Episode 详情（剧集视图时使用）
 const selectedEpisode = ref<EpisodeV3 | null>(null)
 
@@ -824,17 +838,17 @@ const instanceSearchKeyword = ref('')
 // - dagre (层次): 有向无环图布局，节点按层级从左到右或从上到下排列
 // - concentric (同心): 节点按度数排列在同心圆上，中心节点最重要
 const layouts = [
-  { key: 'force' as LayoutType, label: '力导向', icon: NodeIndexOutlined },
-  { key: 'grid' as LayoutType, label: '网格', icon: AppstoreOutlined },
-  { key: 'dagre' as LayoutType, label: '层次', icon: UnorderedListOutlined },
-  { key: 'concentric' as LayoutType, label: '同心', icon: ClusterOutlined }
+  { key: 'force' as LayoutType, label: t('graphIde.layoutForce'), icon: NodeIndexOutlined },
+  { key: 'grid' as LayoutType, label: t('graphIde.layoutGrid'), icon: AppstoreOutlined },
+  { key: 'dagre' as LayoutType, label: t('graphIde.layoutDagre'), icon: UnorderedListOutlined },
+  { key: 'concentric' as LayoutType, label: t('graphIde.layoutConcentric'), icon: ClusterOutlined }
 ]
 
 const detailTabs = [
-  { key: 'info' as DetailPanelTab, label: '基本信息' },
-  { key: 'properties' as DetailPanelTab, label: '属性' },
-  { key: 'relations' as DetailPanelTab, label: '关系' },
-  { key: 'instances' as DetailPanelTab, label: '实例' }
+  { key: 'info' as DetailPanelTab, label: t('graphIde.tabBasicInfo') },
+  { key: 'properties' as DetailPanelTab, label: t('graphIde.tabProperties') },
+  { key: 'relations' as DetailPanelTab, label: t('graphIde.tabRelations') },
+  { key: 'instances' as DetailPanelTab, label: t('graphIde.tabInstances') }
 ]
 
 const displayProperties = computed(() => {
@@ -974,11 +988,11 @@ const expandNeighbors = async () => {
   if (contextMenu.node) {
     try {
       const result = await graphApi.expandNeighbors(effectiveGraphId.value, contextMenu.node.uuid)
-    nodes.value = dedupeNodes([...(nodes.value || []), ...(data.nodes || [])])
-    edges.value = dedupeEdges([...(edges.value || []), ...(data.edges || [])])
-    message.success(`已展开 ${result.nodes.length} 个邻居节点`)
+      nodes.value = dedupeNodes([...(nodes.value || []), ...(result.nodes || [])])
+      edges.value = dedupeEdges([...(edges.value || []), ...(result.edges || [])])
+      message.success(t('graphIde.messageExpandedNeighbors', { count: result.nodes.length }))
     } catch (error) {
-      message.error('展开邻居失败')
+      message.error(t('graphIde.messageExpandNeighborsFailed'))
     }
   }
   contextMenu.visible = false
@@ -1291,25 +1305,101 @@ const handleOntologyOpenTab = (payload: { type: string; title: string; classId?:
   ontologyMode.value = 'class'
 }
 
+// V5.0: 加载 Episode 类型可视化数据
+const loadEpisodeTypeVisualization = async (typeCode: string) => {
+  const res = await graphApi.getEpisodesVisualizationByType(
+    effectiveGraphId.value,
+    typeCode,
+    episodePagination.value.page,
+    episodePagination.value.pageSize,
+    episodeDepth.value
+  )
+
+  // 追加模式：新数据与现有数据合并（按 uuid 去重）
+  nodes.value = dedupeNodes([...nodes.value, ...(res.nodes || [])])
+  edges.value = dedupeEdges([...edges.value, ...(res.edges || [])])
+
+  // 更新分页状态
+  episodePagination.value = {
+    page: res.pagination?.page || episodePagination.value.page,
+    pageSize: res.pagination?.pageSize || episodePagination.value.pageSize,
+    total: res.pagination?.total || 0,
+    totalPages: res.pagination?.totalPages || 0,
+    hasNextPage: res.pagination?.page !== undefined && res.pagination?.totalPages !== undefined
+      ? res.pagination.page < res.pagination.totalPages
+      : false
+  }
+}
+
 // V5.0: 选择剧集类型 → 加载类型详情 + 可视化数据
 const handleEpisodeTypeSelect = async (payload: { typeId: number; typeCode: string; typeName: string }) => {
+  // 重置分页和深度
+  episodePagination.value = {
+    page: 1,
+    pageSize: 20,
+    total: 0,
+    totalPages: 0,
+    hasNextPage: false
+  }
+  episodeDepth.value = 2
+
+  // 清空画布
+  nodes.value = []
+  edges.value = []
   ontologyMode.value = 'episodes'
   showPanel.value = true
   loading.value = true
-  selectedEpisodeType.value = null
+
   try {
-    const [detailRes, visRes] = await Promise.all([
-      episodeTypeApi.get(effectiveGraphId.value, payload.typeId),
-      graphApi.getEpisodesVisualizationByType(effectiveGraphId.value, payload.typeCode, true, 100)
+    await Promise.all([
+      loadEpisodeTypeVisualization(payload.typeCode),
+      episodeTypeApi.get(effectiveGraphId.value, payload.typeId).then(detail => {
+        selectedEpisodeType.value = detail
+      })
     ])
-    selectedEpisodeType.value = detailRes
-    nodes.value = dedupeNodes(visRes?.nodes || [])
-    edges.value = dedupeEdges(visRes?.edges || [])
   } catch (e) {
     console.error('加载类型数据失败:', e)
     message.error('加载类型数据失败')
   } finally {
     loading.value = false
+  }
+}
+
+// V5.0: 分页变更（同步画布+表格）
+const handleEpisodePaginationChange = async (newPage: number) => {
+  episodePagination.value.page = newPage
+  const typeCode = selectedEpisodeType.value?.typeCode
+  if (!typeCode) return
+
+  loading.value = true
+  try {
+    await loadEpisodeTypeVisualization(typeCode)
+  } catch (e) {
+    console.error('翻页加载失败:', e)
+    message.error('加载失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// V5.0: 跳数变更（清空重载）
+const handleEpisodeDepthChange = async (newDepth: number) => {
+  episodeDepth.value = newDepth
+  episodePagination.value.page = 1
+  nodes.value = []
+  edges.value = []
+
+  const typeCode = selectedEpisodeType.value?.typeCode
+  if (typeCode) {
+    loading.value = true
+    try {
+      await loadEpisodeTypeVisualization(typeCode)
+    } catch (e) {
+      console.error('深度变更加载失败:', e)
+      message.error('加载失败')
+    } finally {
+      loading.value = false
+    }
   }
 }
 
@@ -1345,9 +1435,29 @@ const handleEpisodeTypeEditSuccess = async () => {
   }
 }
 
-const handleNavigateToInstance = (uuid: string) => {
-  // 导航到实例节点，可选实现
-  message.info(`导航到实例: ${uuid}`)
+const handleNavigateToInstance = async (uuid: string) => {
+  // 1. 如果节点不在当前画布中，先从后端加载并添加
+  const existingNode = nodes.value.find(n => n.uuid === uuid)
+  if (!existingNode) {
+    try {
+      const detail = await graphApi.getNodeDetail(effectiveGraphId.value, uuid)
+      nodes.value.push(detail)
+      handleNodeClick(detail)
+    } catch (error) {
+      message.error('加载节点失败')
+      return
+    }
+  } else {
+    handleNodeClick(existingNode)
+  }
+
+  // 2. 等待画布更新后，高亮并居中定位
+  nextTick(() => {
+    const focused = graphCanvasRef.value?.focusNode(uuid)
+    if (!focused) {
+      message.warning('节点定位失败')
+    }
+  })
 }
 
 async function loadDefinitionId() {
@@ -1635,7 +1745,7 @@ watch(currentDetailTab, (newTab) => {
   .sidebar-content {
     flex: 1;
     overflow-y: auto;
-    padding: 12px;
+    padding: 0;
   }
 
   :global(.ide-sidebar .tree-node) {

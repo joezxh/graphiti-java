@@ -1,61 +1,61 @@
 <template>
   <div class="graph-toolbar">
     <div class="toolbar-left">
-      <a-tooltip title="缩放至适配">
+      <a-tooltip :title="t('graph.toolbarZoomFit')">
         <a-button type="text" size="small" @click="handleZoomToFit">
           <template #icon><ExpandOutlined /></template>
         </a-button>
       </a-tooltip>
-      
-      <a-tooltip title="放大">
+
+      <a-tooltip :title="t('graph.toolbarZoomIn')">
         <a-button type="text" size="small" @click="handleZoomIn">
           <template #icon><ZoomInOutlined /></template>
         </a-button>
       </a-tooltip>
-      
-      <a-tooltip title="缩小">
+
+      <a-tooltip :title="t('graph.toolbarZoomOut')">
         <a-button type="text" size="small" @click="handleZoomOut">
           <template #icon><ZoomOutOutlined /></template>
         </a-button>
       </a-tooltip>
-      
+
       <a-divider type="vertical" />
-      
-      <a-tooltip title="显示标签">
-        <a-button 
-          type="text" 
-          size="small" 
+
+      <a-tooltip :title="t('graph.toolbarShowLabels')">
+        <a-button
+          type="text"
+          size="small"
           :class="{ active: showLabels }"
           @click="toggleLabels"
         >
           <template #icon><FontSizeOutlined /></template>
         </a-button>
       </a-tooltip>
-      
-      <a-tooltip title="布局切换">
+
+      <a-tooltip :title="t('graph.toolbarLayoutSwitch')">
         <a-dropdown :trigger="['click']">
           <a-button type="text" size="small">
             <template #icon><AppstoreOutlined /></template>
           </a-button>
           <template #overlay>
             <a-menu @click="handleLayoutChange">
-              <a-menu-item key="force">力导向布局</a-menu-item>
-              <a-menu-item key="circular">环形布局</a-menu-item>
-              <a-menu-item key="tree">树形布局</a-menu-item>
+              <a-menu-item key="force">{{ t('graph.layoutForce') }}</a-menu-item>
+              <a-menu-item key="circular">{{ t('graph.layoutCircular') }}</a-menu-item>
+              <a-menu-item key="tree">{{ t('graph.layoutTree') }}</a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
       </a-tooltip>
     </div>
-    
+
     <div class="toolbar-right">
-      <a-tooltip title="刷新">
+      <a-tooltip :title="t('graph.toolbarRefresh')">
         <a-button type="text" size="small" @click="handleRefresh">
           <template #icon><ReloadOutlined /></template>
         </a-button>
       </a-tooltip>
-      
-      <a-tooltip title="全屏">
+
+      <a-tooltip :title="t('graph.toolbarFullscreen')">
         <a-button type="text" size="small" @click="handleFullscreen">
           <template #icon><FullscreenOutlined /></template>
         </a-button>
@@ -65,6 +65,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import {
   ExpandOutlined,
   ZoomInOutlined,
@@ -74,6 +75,8 @@ import {
   ReloadOutlined,
   FullscreenOutlined
 } from '@ant-design/icons-vue'
+
+const { t } = useI18n()
 
 interface Props {
   showLabels?: boolean

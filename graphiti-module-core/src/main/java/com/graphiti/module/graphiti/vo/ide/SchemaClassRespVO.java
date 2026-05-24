@@ -15,6 +15,7 @@ public class SchemaClassRespVO implements Serializable {
     private Long definitionId;
     private String classUri;
     private String localName;
+    private String nameEn;
     private String description;
     private List<Long> parentClassIds;
     private Integer propertyCount;

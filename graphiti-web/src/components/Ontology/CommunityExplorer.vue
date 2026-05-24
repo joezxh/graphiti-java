@@ -3,25 +3,26 @@
  */
 <template>
   <div class="object-explorer">
-    <div class="explorer-search">
+    <!-- 搜索栏 + 工具栏 -->
+    <div class="explorer-search-toolbar">
       <a-input-search
         v-model:value="searchKeyword"
-        placeholder="搜索社区..."
+        :placeholder="t('communityEpisode.searchCommunity')"
         size="small"
         allow-clear
         @search="handleSearch"
         @change="handleSearch"
+        class="search-input"
       >
         <template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template>
       </a-input-search>
-    </div>
-
-    <div class="explorer-toolbar">
-      <a-tooltip title="刷新">
-        <a-button type="text" size="small" :loading="loading" @click="handleRefresh">
-          <template #icon><ReloadOutlined :spin="loading" /></template>
-        </a-button>
-      </a-tooltip>
+      <div class="toolbar-actions">
+        <a-tooltip :title="$t('common.refresh')">
+          <a-button type="text" size="small" :loading="loading" @click="handleRefresh" class="toolbar-btn">
+            <template #icon><ReloadOutlined :spin="loading" /></template>
+          </a-button>
+        </a-tooltip>
+      </div>
     </div>
 
     <div class="explorer-tree">
@@ -40,7 +41,7 @@
         <template #title="node">
           <div class="tree-node-content" @contextmenu.prevent="handleContextMenu($event, node)">
             <span class="node-icon" :style="{ color: getNodeColor(node.type) }">
-              {{ getNodeIcon(node.type) }}
+              {{ node.children && node.children.length > 0 ? '📁' : getNodeIcon(node.type) }}
             </span>
             <span class="node-label">{{ node.title }}</span>
             <span v-if="node.count !== undefined" class="node-count">{{ node.count }}</span>
@@ -48,10 +49,10 @@
         </template>
       </a-tree>
       <div v-else-if="loading" class="empty-tree-tip">
-        <a-spin size="small" /> 加载中...
+        <a-spin size="small" /> {{ $t('common.loading') }}
       </div>
       <div v-else class="empty-tree-tip">
-        暂有社区数据
+        {{ $t('common.noData') }}
       </div>
     </div>
   </div>
@@ -59,10 +60,13 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ApiOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { graphApi } from '@/api/graph'
 import { LEGAL_DOMAIN_COLORS } from '@/types/legal-graph-v3'
+
+const { t } = useI18n()
 
 interface CommunityNode {
   key: string
@@ -93,7 +97,7 @@ const treeData = computed(() => {
 
   const root: CommunityNode = {
     key: 'communities-root',
-    title: '社区',
+    title: t('communityEpisode.communityTab'),
     icon: '📂',
     type: 'root',
     children: hierarchy.value.map(node => ({
@@ -198,7 +202,7 @@ function expandAllMatching(nodes: CommunityNode[], keyword: string) {
 
 async function handleRefresh() {
   await loadData()
-  message.success('社区已刷新')
+  message.success(t('common.refreshSuccess'))
 }
 
 const ctxMenu = reactive({
@@ -229,7 +233,7 @@ async function loadData() {
     const data = await graphApi.getCommunityHierarchy(props.graphId)
     hierarchy.value = data || []
   } catch (e) {
-    console.error('加载社区数据失败:', e)
+    console.error(t('communityEpisode.loadCommunitiesFailed'), e)
     hierarchy.value = []
   } finally {
     loading.value = false
@@ -249,23 +253,60 @@ function handleClickOutside() {
   overflow: hidden;
 }
 
-.explorer-search {
-  padding: 8px;
-  flex-shrink: 0;
-}
-
-.explorer-toolbar {
+.explorer-search-toolbar {
   display: flex;
   align-items: center;
+  padding: 2px 4px;
   gap: 4px;
-  padding: 0 8px 8px;
+  border-bottom: 1px solid #21262d;
   flex-shrink: 0;
+  white-space: nowrap;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    
+    :deep(.ant-input) {
+      padding: 1px 6px;
+      font-size: 12px;
+      height: 24px;
+    }
+    
+    :deep(.ant-input-search) {
+      padding: 0;
+    }
+  }
+
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+
+    .toolbar-btn {
+      padding: 0;
+      height: 24px;
+      width: 24px;
+      min-width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+
+      :deep(.anticon) {
+        font-size: 12px;
+      }
+    }
+  }
 }
 
 .explorer-tree {
   flex: 1;
   overflow-y: auto;
-  padding: 0 4px;
+  padding: 4px 0;
 }
 
 .tree-node-content {
@@ -273,29 +314,27 @@ function handleClickOutside() {
   align-items: center;
   gap: 6px;
   width: 100%;
-  cursor: pointer;
 
   .node-icon {
-    width: 16px;
     font-size: 12px;
     flex-shrink: 0;
+    width: 14px;
   }
 
   .node-label {
     flex: 1;
+    font-size: 13px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 13px;
-    color: #e6edf3;
   }
 
   .node-count {
     font-size: 11px;
     color: #6e7681;
     background: #21262d;
-    padding: 2px 6px;
-    border-radius: 10px;
+    padding: 1px 5px;
+    border-radius: 8px;
     flex-shrink: 0;
   }
 }
@@ -309,5 +348,41 @@ function handleClickOutside() {
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+:deep(.ant-tree) {
+  background: transparent;
+  color: #e6edf3;
+  font-size: 13px;
+
+  .ant-tree-treenode {
+    padding: 2px 0;
+    width: 100%;
+  }
+
+  .ant-tree-node-content-wrapper {
+    padding: 2px 4px;
+    min-height: 28px;
+    border-radius: 4px;
+    width: 100%;
+    transition: background 0.15s;
+
+    &:hover {
+      background: #21262d;
+    }
+  }
+
+  .ant-tree-node-selected .ant-tree-node-content-wrapper {
+    background: rgba(88, 166, 255, 0.15) !important;
+    color: #58a6ff;
+  }
+
+  .ant-tree-switcher {
+    color: #6e7681;
+  }
+
+  .ant-tree-iconEle {
+    display: none;
+  }
 }
 </style>

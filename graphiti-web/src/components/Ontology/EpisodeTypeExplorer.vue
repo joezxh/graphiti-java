@@ -1,32 +1,38 @@
 <template>
   <div class="episode-type-explorer">
-    <!-- 搜索栏 -->
-    <div class="explorer-search">
+    <!-- 搜索栏 + 工具栏 -->
+    <div class="explorer-search-toolbar">
       <a-input-search
         v-model:value="searchKeyword"
-        placeholder="搜索类型..."
+        :placeholder="t('ontology.searchType')"
         size="small"
         allow-clear
         @search="handleSearch"
         @change="handleSearch"
+        class="search-input"
       >
         <template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template>
       </a-input-search>
-    </div>
-
-    <!-- 工具栏 -->
-    <div class="explorer-toolbar">
-      <a-tooltip title="刷新">
-        <a-button type="text" size="small" :loading="loading" @click="handleRefresh">
-          <template #icon><ReloadOutlined :spin="loading" /></template>
-        </a-button>
-      </a-tooltip>
-      <a-tooltip title="新建类型">
-        <a-button type="text" size="small" @click="handleCreate">
-          <template #icon><PlusOutlined /></template>
-        </a-button>
-      </a-tooltip>
-      <a-segmented v-model:value="viewMode" :options="viewOptions" size="small" />
+      <div class="toolbar-actions">
+        <a-tooltip :title="t('common.refresh')">
+          <a-button type="text" size="small" :loading="loading" @click="handleRefresh" class="toolbar-btn">
+            <template #icon><ReloadOutlined :spin="loading" /></template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip :title="t('common.create')">
+          <a-button type="text" size="small" @click="handleCreate" class="toolbar-btn">
+            <template #icon><PlusOutlined /></template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip :title="viewMode === 'tree' ? t('ontology.switchList') : t('ontology.switchTree')">
+          <a-button type="text" size="small" @click="viewMode = viewMode === 'tree' ? 'list' : 'tree'" class="toolbar-btn">
+            <template #icon>
+              <UnorderedListOutlined v-if="viewMode === 'tree'" />
+              <AppstoreOutlined v-else />
+            </template>
+          </a-button>
+        </a-tooltip>
+      </div>
     </div>
 
     <!-- 树形/列表视图 -->
@@ -68,10 +74,10 @@
       />
 
       <div v-else-if="loading" class="empty-tip">
-        <a-spin size="small" /> 加载中...
+        <a-spin size="small" /> {{ t('common.loading') }}
       </div>
       <div v-else class="empty-tip">
-        暂无剧集类型数据
+        {{ t('common.noData') }}
       </div>
     </div>
   </div>
@@ -79,15 +85,20 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   SearchOutlined,
   ReloadOutlined,
   PlusOutlined,
-  FolderOpenOutlined
+  FolderOpenOutlined,
+  UnorderedListOutlined,
+  AppstoreOutlined
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { episodeTypeApi } from '@/api/metadata'
 import type { OntEpisodeTypeVO } from '@/api/metadata'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   graphId: string
@@ -102,20 +113,20 @@ const emit = defineEmits<{
 const searchKeyword = ref('')
 const viewMode = ref<'tree' | 'list'>('tree')
 const viewOptions = [
-  { label: '树', value: 'tree' },
-  { label: '列表', value: 'list' }
+  { label: t('ontology.treeView'), value: 'tree' },
+  { label: t('ontology.listView'), value: 'list' }
 ]
 const selectedKeys = ref<string[]>([])
 const expandedKeys = ref<string[]>([])
 const typeTree = ref<OntEpisodeTypeVO[]>([])
 const loading = ref(false)
 
-const listColumns = [
-  { title: '类型名称', dataIndex: 'typeName', key: 'typeName', ellipsis: true },
-  { title: '代码', dataIndex: 'typeCode', key: 'typeCode', width: 100, ellipsis: true },
-  { title: '层级', dataIndex: 'level', key: 'level', width: 60, ellipsis: true },
-  { title: '实例数', dataIndex: 'instanceCount', key: 'instanceCount', width: 70, ellipsis: true }
-]
+const listColumns = computed(() => [
+  { title: t('ontology.typeName'), dataIndex: 'typeName', key: 'typeName', ellipsis: true },
+  { title: t('common.code'), dataIndex: 'typeCode', key: 'typeCode', width: 100, ellipsis: true },
+  { title: t('ontology.level'), dataIndex: 'level', key: 'level', width: 60, ellipsis: true },
+  { title: t('ontology.instanceCount'), dataIndex: 'instanceCount', key: 'instanceCount', width: 70, ellipsis: true }
+])
 
 // 将后端树转为 ant-design-vue tree 格式
 function buildTreeData(nodes: OntEpisodeTypeVO[], parentKey = ''): any[] {
@@ -247,12 +258,12 @@ async function handleDrop(info: any) {
 
   // 简单实现：同层级拖拽更新排序
   // 实际项目中应调用 episodeTypeApi.reorder
-  message.info('拖拽排序功能开发中')
+  message.info(t('ontology.dragSortDev'))
 }
 
 async function handleRefresh() {
   await loadData()
-  message.success('类型列表已刷新')
+  message.success(t('common.refreshSuccess'))
 }
 
 function handleCreate() {
@@ -282,7 +293,7 @@ async function loadData() {
     const data = await episodeTypeApi.getTree(props.graphId, defId)
     typeTree.value = data || []
   } catch (e) {
-    console.error('加载剧集类型树失败:', e)
+    console.error(t('ontology.loadEpisodeTypeTreeFailed'), e)
     typeTree.value = []
   } finally {
     loading.value = false
@@ -309,19 +320,41 @@ onMounted(() => {
   height: 100%;
   overflow: hidden;
 
-  .explorer-search {
-    padding: 8px;
-    border-bottom: 1px solid #21262d;
-    flex-shrink: 0;
-  }
-
-  .explorer-toolbar {
+  .explorer-search-toolbar {
     display: flex;
     align-items: center;
-    padding: 4px 8px;
-    gap: 4px;
+    padding: 8px;
+    gap: 8px;
     border-bottom: 1px solid #21262d;
     flex-shrink: 0;
+    white-space: nowrap;
+
+    .search-input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+
+      .toolbar-btn {
+        padding: 0;
+        height: 24px;
+        width: 24px;
+        min-width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+
+        :deep(.anticon) {
+          font-size: 12px;
+        }
+      }
+    }
   }
 
   .explorer-body {

@@ -1,0 +1,326 @@
+[
+  {
+    "file": "src/components/Ontology/PropertyEditor.vue",
+    "lines": 67,
+    "namespace": "ontology.propertyEditor",
+    "sample": [
+      "   Line 11: 保存...",
+      "   Line 16: 删除...",
+      "   Line 26: <a-tab-pane key=\"basic\" tab=\"基本信息\">...",
+      "   Line 31: <a-form-item label=\"属性名称（localName）\" required>...",
+      "   Line 32: <a-input v-model:value=\"form.localName\" placeholder=\"如 name, age\" />..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/ConstraintEditor.vue",
+    "lines": 29,
+    "namespace": "ontology.constraintEditor",
+    "sample": [
+      "   Line 10: 保存...",
+      "   Line 14: 删除...",
+      "   Line 26: <a-form-item label=\"约束类型\" required>...",
+      "   Line 28: <a-select-option value=\"CARDINALITY\">基数约束</a-select-option>...",
+      "   Line 29: <a-select-option value=\"RANGE\">值域约束</a-select-option>..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/PropertyListPanel.vue",
+    "lines": 18,
+    "namespace": "ontology.propertyListPanel",
+    "sample": [
+      "   Line 7: 新建属性...",
+      "   Line 11: 刷新...",
+      "   Line 14: <a-input-search v-model:value=\"keyword\" placeholder=\"搜索属性...\" style=\"width: 200p...",
+      "   Line 30: <a-tag :color=\"record.isRequired ? 'red' : 'default'\">{{ record.isRequired ? '是'...",
+      "   Line 37: <a-button type=\"link\" size=\"small\" @click.stop=\"handleEdit(record)\">编辑</a-button..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/ConstraintListPanel.vue",
+    "lines": 38,
+    "namespace": "ontology.constraintListPanel",
+    "sample": [
+      "   Line 7: 新建约束...",
+      "   Line 11: 刷新...",
+      "   Line 35: <a-button type=\"link\" size=\"small\" @click=\"handleEdit(record)\">编辑</a-button>...",
+      "   Line 36: <a-popconfirm title=\"确定删除？\" ok-text=\"确定\" @confirm=\"handleDelete(record)\">...",
+      "   Line 37: <a-button type=\"link\" size=\"small\" danger>删除</a-button>..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/CommunityExplorer.vue",
+    "lines": 1,
+    "namespace": "ontology.communityExplorer",
+    "sample": [
+      "   Line 6: <!-- 搜索栏 + 工具栏 -->..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/EpisodeTypeExplorer.vue",
+    "lines": 2,
+    "namespace": "ontology.episodeTypeExplorer",
+    "sample": [
+      "   Line 3: <!-- 搜索栏 + 工具栏 -->...",
+      "   Line 38: <!-- 树形/列表视图 -->..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/EpisodeTypeEditModal.vue",
+    "lines": 33,
+    "namespace": "ontology.episodeTypeEditModal",
+    "sample": [
+      "   Line 4: :title=\"isEdit ? '编辑剧集类型' : '新建剧集类型'\"...",
+      "   Line 6: :ok-text=\"isEdit ? '保存' : '创建'\"...",
+      "   Line 19: <a-form-item label=\"类型代码\" name=\"typeCode\">...",
+      "   Line 20: <a-input v-model:value=\"form.typeCode\" placeholder=\"如: trial, appeal\" :disabled=...",
+      "   Line 23: <a-form-item label=\"类型名称\" name=\"typeName\">..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/EpisodeTypeDetailPanel.vue",
+    "lines": 32,
+    "namespace": "ontology.episodeTypeDetailPanel",
+    "sample": [
+      "   Line 3: <!-- Tab 切换 -->...",
+      "   Line 10: 类型详情...",
+      "   Line 17: 实例列表...",
+      "   Line 21: <!-- 类型详情 Tab -->...",
+      "   Line 24: <a-descriptions-item label=\"类型代码\">..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/DomainRuleEditModal.vue",
+    "lines": 51,
+    "namespace": "ontology.domainRuleEditModal",
+    "sample": [
+      "   Line 4: :title=\"isEdit ? '编辑域规则' : '新建域规则'\"...",
+      "   Line 18: <a-form-item label=\"规则名称\" name=\"ruleName\">...",
+      "   Line 19: <a-input v-model:value=\"form.ruleName\" placeholder=\"例: 金额校验规则\" />...",
+      "   Line 23: <a-form-item label=\"规则代码\" name=\"ruleCode\">...",
+      "   Line 26: placeholder=\"例: AMOUNT_CHECK\"..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/DomainRuleListPanel.vue",
+    "lines": 35,
+    "namespace": "ontology.domainRuleListPanel",
+    "sample": [
+      "   Line 7: 新建规则...",
+      "   Line 11: 刷新...",
+      "   Line 18: placeholder=\"搜索规则名称/代码...\"...",
+      "   Line 31: <!-- 适用类列 -->...",
+      "   Line 34: 🌐 全部类..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/DomainRuleTestModal.vue",
+    "lines": 22,
+    "namespace": "ontology.domainRuleTestModal",
+    "sample": [
+      "   Line 4: title=\"🧪 测试 SpEL 表达式\"...",
+      "   Line 9: <a-descriptions title=\"当前规则\" bordered size=\"small\" :column=\"1\">...",
+      "   Line 10: <a-descriptions-item label=\"规则名称\">...",
+      "   Line 13: <a-descriptions-item label=\"SpEL 表达式\">...",
+      "   Line 21: <a-form-item label=\"测试数据 (JSON 格式)\">..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/InstanceForm.vue",
+    "lines": 50,
+    "namespace": "ontology.instanceForm",
+    "sample": [
+      "   Line 11: 保存...",
+      "   Line 13: <a-button :disabled=\"isNew\" @click=\"handleSaveAs\">另存为</a-button>...",
+      "   Line 30: <a-divider orientation=\"left\">基本信息</a-divider>...",
+      "   Line 33: <a-input v-model:value=\"formData.uuid\" disabled placeholder=\"系统自动生成\" />...",
+      "   Line 36: <a-form-item label=\"名称\" name=\"name\" :rules=\"[{ required: true, message: '请输入实例名称..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/InstanceDataTable.vue",
+    "lines": 44,
+    "namespace": "ontology.instanceDataTable",
+    "sample": [
+      "   Line 7: <!-- 工具栏 -->...",
+      "   Line 13: 新增...",
+      "   Line 17: 删除 ({{ selectedRowKeys.length }})...",
+      "   Line 22: 导入...",
+      "   Line 26: 导出..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/OntologyWorkbench.vue",
+    "lines": 38,
+    "namespace": "ontology.ontologyWorkbench",
+    "sample": [
+      "   Line 19: <!-- 新建下拉菜单 -->...",
+      "   Line 26: <PlusOutlined /> 新建...",
+      "   Line 31: <a-menu-item-group title=\"定义管理\">...",
+      "   Line 33: <span>📋</span> 本体定义...",
+      "   Line 36: <span>◉</span> 新建类..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/OntologyTabBar.vue",
+    "lines": 1,
+    "namespace": "ontology.ontologyTabBar",
+    "sample": [
+      "   Line 28: <!-- 右键菜单 -->..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/OntologyObjectExplorer.vue",
+    "lines": 39,
+    "namespace": "ontology.ontologyObjectExplorer",
+    "sample": [
+      "   Line 6: <!-- 全局搜索 + 工具栏 -->...",
+      "   Line 8: <a-input-search v-model:value=\"searchKeyword\" placeholder=\"搜索本体...\" size=\"small\"...",
+      "   Line 10: <a-tooltip title=\"刷新\">...",
+      "   Line 15: <a-tooltip title=\"新建类\">...",
+      "   Line 23: <!-- 树形结构 -->..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/DefinitionEditor.vue",
+    "lines": 22,
+    "namespace": "ontology.definitionEditor",
+    "sample": [
+      "   Line 10: 保存...",
+      "   Line 20: <!-- 统计卡片 -->...",
+      "   Line 25: <div class=\"stat-label\">类定义</div>...",
+      "   Line 31: <div class=\"stat-label\">属性定义</div>...",
+      "   Line 37: <div class=\"stat-label\">约束规则</div>..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/ConsistencyCheckPanel.vue",
+    "lines": 31,
+    "namespace": "ontology.consistencyCheckPanel",
+    "sample": [
+      "   Line 10: 预热推理机...",
+      "   Line 14: 开始检查...",
+      "   Line 18: 导出报告...",
+      "   Line 30: :title=\"checkResult.valid ? '本体一致性检查通过' : '发现不一致问题'\"...",
+      "   Line 31: :sub-title=\"checkResult.valid ? checkResult.summary : `发现 ${checkResult.issues.l..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/BatchValidationPanel.vue",
+    "lines": 37,
+    "namespace": "ontology.batchValidationPanel",
+    "sample": [
+      "   Line 10: 开始验证...",
+      "   Line 14: 刷新...",
+      "   Line 20: <div class=\"section-header\"><span class=\"section-title\">验证配置</span></div>...",
+      "   Line 22: <a-form-item label=\"验证范围\">...",
+      "   Line 24: <a-select-option value=\"all\">全部实例</a-select-option>..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/VersionHistoryPanel.vue",
+    "lines": 33,
+    "namespace": "ontology.versionHistoryPanel",
+    "sample": [
+      "   Line 10: 刷新...",
+      "   Line 14: 对比选中版本...",
+      "   Line 18: 回滚到此版本...",
+      "   Line 23: <a-radio-button value=\"timeline\">时间轴</a-radio-button>...",
+      "   Line 24: <a-radio-button value=\"list\">列表</a-radio-button>..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/VersionDiffViewer.vue",
+    "lines": 25,
+    "namespace": "ontology.versionDiffViewer",
+    "sample": [
+      "   Line 10: 刷新...",
+      "   Line 13: <span style=\"color: #8b949e; font-size: 13px\">选择要对比的版本:</span>...",
+      "   Line 14: <a-select v-model:value=\"leftVersion\" placeholder=\"版本A\" style=\"width: 120px\" :op...",
+      "   Line 16: <a-select v-model:value=\"rightVersion\" placeholder=\"版本B\" style=\"width: 120px\" :o...",
+      "   Line 18: 对比..."
+    ]
+  },
+  {
+    "file": "src/components/Ontology/DataImportExportModal.vue",
+    "lines": 61,
+    "namespace": "ontology.dataImportExportModal",
+    "sample": [
+      "   Line 8: :title=\"mode === 'import' ? '导入实例数据' : '导出实例数据'\"...",
+      "   Line 14: <!-- 模式切换 -->...",
+      "   Line 17: <a-radio-button value=\"import\">导入</a-radio-button>...",
+      "   Line 18: <a-radio-button value=\"export\">导出</a-radio-button>...",
+      "   Line 22: <!-- 导入模式 -->..."
+    ]
+  },
+  {
+    "file": "src/components/Graph/AddEdgeModal.vue",
+    "lines": 20,
+    "namespace": "graphComponent",
+    "sample": [
+      "   Line 4: title=\"添加关联\"...",
+      "   Line 11: <a-form-item label=\"源节点\">...",
+      "   Line 15: <a-form-item label=\"关系类型\" required>...",
+      "   Line 18: placeholder=\"选择关系类型\"...",
+      "   Line 23: <a-select-option value=\"WORKS_FOR\">WORKS_FOR (雇佣关系)</a-select-option>..."
+    ]
+  },
+  {
+    "file": "src/components/Graph/CascadeEditModal.vue",
+    "lines": 37,
+    "namespace": "graphComponent",
+    "sample": [
+      "   Line 4: title=\"属性级联编辑\"...",
+      "   Line 12: <div class=\"section-title\">筛选条件</div>...",
+      "   Line 18: placeholder=\"选择属性\"...",
+      "   Line 33: <a-select-option value=\"eq\">等于</a-select-option>...",
+      "   Line 34: <a-select-option value=\"ne\">不等于</a-select-option>..."
+    ]
+  },
+  {
+    "file": "src/views/legal-kg/index.vue",
+    "lines": 114,
+    "namespace": "legalKg",
+    "sample": [
+      "   Line 8: <!-- 图谱选择 & 操作区 -->...",
+      "   Line 44: <!-- 图谱统计 -->...",
+      "   Line 70: <!-- 标签页 -->...",
+      "   Line 73: <!-- 案件列表 -->...",
+      "   Line 110: <!-- 法律条文 -->..."
+    ]
+  },
+  {
+    "file": "src/views/dashboard/index.vue",
+    "lines": 4,
+    "namespace": "dashboard",
+    "sample": [
+      "   Line 3: <!-- 页面标题区 -->...",
+      "   Line 20: <!-- Stats 卡片区 -->...",
+      "   Line 68: <!-- 快捷操作区 -->...",
+      "   Line 121: <!-- 最近图谱列表 -->..."
+    ]
+  },
+  {
+    "file": "src/views/notification/index.vue",
+    "lines": 6,
+    "namespace": "common",
+    "sample": [
+      "   Line 25: <!-- 通知类型筛选 -->...",
+      "   Line 41: <!-- 通知列表 -->...",
+      "   Line 102: <!-- 空状态 -->...",
+      "   Line 125: const filterType = ref<number>(0) // 0-全部 1-系统通知 2-图谱通知 3-检索通知...",
+      "   Line 126: const filterRead = ref<number>(-1) // -1-全部 0-未读 1-已读..."
+    ]
+  },
+  {
+    "file": "src/views/login/index.vue",
+    "lines": 5,
+    "namespace": "common",
+    "sample": [
+      "   Line 3: <!-- 背景动画 -->...",
+      "   Line 7: <!-- 登录卡片 -->...",
+      "   Line 9: <!-- Logo 和标题 -->...",
+      "   Line 27: <!-- 登录表单 -->...",
+      "   Line 78: <!-- 页脚 -->..."
+    ]
+  }
+]

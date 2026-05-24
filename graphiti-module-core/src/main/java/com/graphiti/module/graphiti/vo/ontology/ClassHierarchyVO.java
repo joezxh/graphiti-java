@@ -14,6 +14,7 @@ import java.util.List;
 public class ClassHierarchyVO {
     private String classUri;
     private String localName;
+    private String nameEn;
     private String description;
     private String domainHint;
     @Builder.Default

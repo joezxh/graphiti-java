@@ -4,16 +4,16 @@
       <a-space>
         <a-button type="primary" @click="handleNew">
           <template #icon><PlusOutlined /></template>
-          新建类
+          {{ t('ontology.addClass') }}
         </a-button>
         <a-button :loading="refreshing" @click="handleRefresh">
           <template #icon><ReloadOutlined /></template>
-          刷新
+          {{ t('common.refresh') }}
         </a-button>
       </a-space>
       <a-input-search
         v-model:value="keyword"
-        placeholder="搜索类..."
+        :placeholder="t('ontology.searchClass')"
         style="width: 200px"
         @search="handleSearch"
       />
@@ -36,9 +36,9 @@
         </template>
         <template v-if="column.key === 'action'">
           <a-space>
-            <a-button type="link" size="small" @click.stop="handleEdit(record)">编辑</a-button>
-            <a-popconfirm title="确定删除？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record)">
-              <a-button type="link" size="small" danger>删除</a-button>
+            <a-button type="link" size="small" @click.stop="handleEdit(record)">{{ t('common.edit') }}</a-button>
+            <a-popconfirm :title="t('common.confirmDelete')" :ok-text="t('common.confirm')" :cancel-text="t('common.cancel')" @confirm="handleDelete(record)">
+              <a-button type="link" size="small" danger>{{ t('common.delete') }}</a-button>
             </a-popconfirm>
           </a-space>
         </template>
@@ -49,11 +49,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
 import type { OntClassVO } from '@/api/ontology'
+
+const { t } = useI18n()
 
 const props = defineProps<{ graphId: string }>()
 const emit = defineEmits<{ (e: 'open-class', classId: number, className: string): void }>()
@@ -61,14 +64,14 @@ const store = useOntologyStore()
 const keyword = ref('')
 const refreshing = ref(false)
 
-const columns = [
-  { title: '名称', dataIndex: 'localName', key: 'localName' },
+const columns = computed(() => [
+  { title: t('common.name'), dataIndex: 'localName', key: 'localName' },
   { title: 'URI', dataIndex: 'classUri', key: 'classUri', ellipsis: true },
-  { title: '领域', key: 'domainHint' },
-  { title: '属性数', key: 'propertyCount', width: 80 },
-  { title: '描述', dataIndex: 'description', key: 'description', ellipsis: true },
-  { title: '操作', key: 'action', width: 140 }
-]
+  { title: t('ontology.domainClassification'), key: 'domainHint' },
+  { title: t('graphIde.labelPropertyCount'), key: 'propertyCount', width: 80 },
+  { title: t('common.description'), dataIndex: 'description', key: 'description', ellipsis: true },
+  { title: t('common.action'), key: 'action', width: 140 }
+])
 
 const filteredClasses = computed(() => {
   if (!keyword.value) return store.classes
@@ -93,16 +96,16 @@ function handleEdit(cls: OntClassVO) {
 }
 
 function handleNew() {
-  emit('open-class', 0 as any, '新建类')
+  emit('open-class', 0 as any, t('ontology.newClass'))
 }
 
 async function handleDelete(cls: OntClassVO) {
   try {
     await ontologyApi.deleteClass(props.graphId, cls.id)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
-    message.error(e.message || '删除失败')
+    message.error(e.message || t('common.deleteFailed'))
   }
 }
 
@@ -110,7 +113,7 @@ async function handleRefresh() {
   refreshing.value = true
   await store.loadFullOntology(props.graphId)
   refreshing.value = false
-  message.success('已刷新')
+  message.success(t('common.refreshSuccess'))
 }
 
 function handleSearch() { /* filtered by computed */ }

@@ -161,7 +161,7 @@
       
       <!-- Actions -->
       <div class="modal-actions">
-        <a-button @click="handleClose">取消</a-button>
+        <a-button @click="handleClose">{{ t('common.cancel') }}</a-button>
         <a-button
           type="primary"
           :disabled="!canExecute"
@@ -176,11 +176,13 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, MinusOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { graphApi } from '@/api/graph'
 import type { SchemaClass, CascadePreviewResponse } from '@/api/graph'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   visible: boolean
@@ -247,13 +249,13 @@ const removeCondition = (index: number) => {
 
 const handlePreview = async () => {
   if (!classType.value) {
-    message.warning('请选择节点类型')
+    message.warning(t('TODO_请选择节点类型'))
     return
   }
   
   const validConditions = conditions.filter(c => c.propertyName)
   if (validConditions.length === 0) {
-    message.warning('请至少添加一个筛选条件')
+    message.warning(t('TODO_请至少添加一个筛选条件'))
     return
   }
   
@@ -270,7 +272,7 @@ const handlePreview = async () => {
     })
     previewResult.value = result
   } catch (error) {
-    message.error('预览失败')
+    message.error(t('TODO_预览失败'))
     console.error(error)
   } finally {
     previewLoading.value = false
@@ -291,7 +293,7 @@ const removeUpdateProperty = (index: number) => {
 
 const handleExecute = async () => {
   if (!previewResult.value || previewResult.value.totalMatch === 0) {
-    message.warning('没有匹配的节点')
+    message.warning(t('TODO_没有匹配的节点'))
     return
   }
   
@@ -306,7 +308,7 @@ const handleExecute = async () => {
   })
   
   if (Object.keys(updates).length === 0) {
-    message.warning('请设置要修改的属性')
+    message.warning(t('TODO_请设置要修改的属性'))
     return
   }
   
@@ -331,7 +333,7 @@ const handleExecute = async () => {
       message.warning(`部分失败: ${result.failedCount} 个`)
     }
   } catch (error) {
-    message.error('执行失败')
+    message.error(t('TODO_执行失败'))
     console.error(error)
   } finally {
     executeLoading.value = false

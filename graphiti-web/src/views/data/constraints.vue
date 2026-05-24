@@ -1,13 +1,13 @@
 <template>
-  <DataManagerLayout title="约束管理">
+  <DataManagerLayout :title="$t('nav.constraintManagement')">
     <template #main-table>
       <ConstraintListPanel :graph-id="graphId" />
     </template>
     <template #right-panel>
       <div class="empty-state">
         <InboxOutlined class="empty-icon" />
-        <div class="empty-title">约束管理</div>
-        <div class="empty-desc">在中间表格中操作约束的增删改查</div>
+        <div class="empty-title">{{ $t('nav.constraintManagement') }}</div>
+        <div class="empty-desc">{{ $t('data.constraintDesc') }}</div>
       </div>
     </template>
   </DataManagerLayout>

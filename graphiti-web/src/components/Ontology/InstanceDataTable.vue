@@ -102,8 +102,8 @@
           <template v-else-if="column.key === 'action'">
             <a-space>
               <a-button type="link" size="small" @click="handleView(record)">查看</a-button>
-              <a-popconfirm title="确定删除？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record)">
-                <a-button type="link" size="small" danger>删除</a-button>
+              <a-popconfirm title="确定删除？" :ok-text="t('common.confirm')" :cancel-text="t('common.cancel')" @confirm="handleDelete(record)">
+                <a-button type="link" size="small" danger>{{ t('common.delete') }}</a-button>
               </a-popconfirm>
             </a-space>
           </template>
@@ -122,7 +122,7 @@
       <a-menu-divider />
       <a-menu-item key="copy-uuid" @click="copyUuid(contextMenu.record?.uuid)">复制UUID</a-menu-item>
       <a-menu-divider />
-      <a-menu-item key="delete" style="color: #f85149" @click="handleDelete(contextMenu.record)">删除</a-menu-item>
+      <a-menu-item key="delete" style="color: #f85149" @click="handleDelete(contextMenu.record)">{{ t('common.delete') }}</a-menu-item>
     </a-menu>
 
     <!-- 查看详情抽屉 -->
@@ -153,6 +153,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import {
@@ -164,6 +165,7 @@ import { useOntologyStore } from '@/store/modules/ontology'
 import DataImportExportModal from './DataImportExportModal.vue'
 import PropertyValueCell from './PropertyValueCell.vue'
 import { formatPropertyValue } from '@/composables/usePropertyType'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   graphId: string
@@ -263,7 +265,7 @@ async function handleRefresh() {
   refreshing.value = true
   await loadData()
   refreshing.value = false
-  message.success('已刷新')
+  message.success(t('TODO_已刷新'))
 }
 
 function handleTableChange(pagination: any) {
@@ -305,7 +307,7 @@ async function handleCellUpdate(record: any, column: any, value: any) {
       name: record.name,
       properties: updatedProperties
     })
-    message.success('已保存')
+    message.success(t('TODO_已保存'))
     loadData()
   } catch (e: any) {
     message.error(e.message || '保存失败')
@@ -319,7 +321,7 @@ function handleAdd() {
 async function handleQuickExport() {
   const data = dataSource.value
   if (data.length === 0) {
-    message.warning('无数据可导出')
+    message.warning(t('TODO_无数据可导出'))
     return
   }
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -350,7 +352,7 @@ async function handleBatchDelete() {
 async function handleDelete(record: any) {
   try {
     await graphApi.deleteNode(props.graphId, record[rowKey])
-    message.success('已删除')
+    message.success(t('TODO_已删除'))
     loadData()
   } catch (e: any) {
     message.error(e.message || '删除失败')
@@ -378,9 +380,9 @@ async function copyUuid(uuid: string) {
   if (!uuid) return
   try {
     await navigator.clipboard.writeText(uuid)
-    message.success('UUID已复制')
+    message.success(t('TODO_UUID已复制'))
   } catch {
-    message.warning('复制失败')
+    message.warning(t('TODO_复制失败'))
   }
 }
 

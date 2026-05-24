@@ -101,6 +101,22 @@ public class GraphIDEController {
         );
     }
 
+    /**
+     * V5.0: 根据剧集类型获取分页可视化数据（含N跳邻居）
+     */
+    @Operation(summary = "根据剧集类型获取分页可视化数据", description = "获取指定 episode_type 的分页节点数据，以及这些节点的N跳双向关系子图")
+    @GetMapping("/{graphId}/visualization/episodes/by-type")
+    public CommonResult<GraphVisualizationRespVO> getEpisodesVisualizationByType(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "类型编码", required = true) String typeCode,
+            @RequestParam(required = false, defaultValue = "1") @Parameter(description = "页码") Integer page,
+            @RequestParam(required = false, defaultValue = "20") @Parameter(description = "每页数量") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "2") @Parameter(description = "扩展跳数") Integer depth) {
+        return CommonResult.success(
+                graphVisualizationService.getEpisodesVisualizationByType(graphId, typeCode, page, pageSize, depth)
+        );
+    }
+
     @Operation(summary = "获取社区可视化数据", description = "获取社区中的所有实体与边数据")
     @GetMapping("/{graphId}/visualization/communities")
     public CommonResult<GraphVisualizationRespVO> getCommunityVisualization(

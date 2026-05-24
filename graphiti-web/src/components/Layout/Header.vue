@@ -71,7 +71,7 @@ const fetchUnreadCount = async () => {
     const res = await notificationApi.getUnreadCount()
     unreadCount.value = res.count
   } catch (error) {
-    console.error('获取未读通知数量失败', error)
+    console.error(t('notification.fetchCountFailed'), error)
   }
 }
 

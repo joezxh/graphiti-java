@@ -1,12 +1,12 @@
 <template>
   <div class="node-detail-panel" v-if="visible">
     <div class="panel-header">
-      <span class="panel-title">节点详情</span>
+      <span class="panel-title">{{ t('graphIde.panelNodeDetail') }}</span>
       <a-button type="text" size="small" @click="handleClose">
         <template #icon><CloseOutlined /></template>
       </a-button>
     </div>
-    
+
     <div class="panel-content" v-if="nodeData">
       <!-- 节点基本信息 -->
       <div class="info-section">
@@ -15,24 +15,24 @@
           <span class="info-value uuid">{{ nodeData.uuid }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">名称</span>
-          <span class="info-value">{{ nodeData.name || '未命名' }}</span>
+          <span class="info-label">{{ t('graphIde.labelName') }}</span>
+          <span class="info-value">{{ nodeData.name || t('common.unknown') }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">类型</span>
+          <span class="info-label">{{ t('graphIde.labelType') }}</span>
           <a-tag :color="getNodeTypeColor(nodeData.type)">
             {{ nodeData.type }}
           </a-tag>
         </div>
       </div>
-      
+
       <!-- 属性列表 -->
       <div class="info-section" v-if="nodeData.properties && Object.keys(nodeData.properties).length > 0">
-        <div class="section-title">属性</div>
+        <div class="section-title">{{ t('graphIde.sectionProperties') }}</div>
         <div class="properties-list">
-          <div 
-            class="property-item" 
-            v-for="(value, key) in nodeData.properties" 
+          <div
+            class="property-item"
+            v-for="(value, key) in nodeData.properties"
             :key="key"
           >
             <span class="property-key">{{ key }}</span>
@@ -40,18 +40,18 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 操作按钮 -->
       <div class="info-section">
-        <div class="section-title">操作</div>
+        <div class="section-title">{{ t('common.actions') }}</div>
         <div class="action-buttons">
           <a-button size="small" @click="handleViewEdges">
             <template #icon><ApiOutlined /></template>
-            查看关联边
+            {{ t('graphIde.viewEdges') }}
           </a-button>
           <a-button size="small" @click="handleViewEpisodes">
             <template #icon><HistoryOutlined /></template>
-            查看事件
+            {{ t('graphIde.viewEvents') }}
           </a-button>
         </div>
       </div>
@@ -60,8 +60,11 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { CloseOutlined, ApiOutlined, HistoryOutlined } from '@ant-design/icons-vue'
 import type { BackendNode } from '@/utils/graph'
+
+const { t } = useI18n()
 
 interface Props {
   visible: boolean

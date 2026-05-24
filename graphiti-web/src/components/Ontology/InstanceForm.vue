@@ -210,6 +210,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, computed, watch, reactive } from 'vue'
 import { message } from 'ant-design-vue'
 import { SaveOutlined, PlusOutlined } from '@ant-design/icons-vue'
@@ -226,6 +227,7 @@ import {
   serializePropertyValue
 } from '@/composables/usePropertyType'
 import { getPropertyRules } from '@/utils/getPropertyRules'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   graphId: string
@@ -318,11 +320,11 @@ const newPropValue = ref('')
 
 function addExtraProp() {
   if (!newPropKey.value.trim()) {
-    message.warning('请输入属性名')
+    message.warning(t('TODO_请输入属性名'))
     return
   }
   if (formData.properties[newPropKey.value] !== undefined) {
-    message.warning('属性已存在')
+    message.warning(t('TODO_属性已存在'))
     return
   }
   extraProps.value.push({ key: newPropKey.value.trim(), label: newPropKey.value.trim() })
@@ -408,14 +410,14 @@ async function handleSave() {
         type: formData.type,
         properties: cleanProperties
       })
-      message.success('实例创建成功')
+      message.success(t('TODO_实例创建成功'))
       emit('saved', result)
     } else {
       const result = await graphApi.updateNode(props.graphId, recordUuid.value, {
         name: formData.name,
         properties: cleanProperties
       })
-      message.success('实例更新成功')
+      message.success(t('TODO_实例更新成功'))
       emit('saved', result)
     }
   } catch (e: any) {

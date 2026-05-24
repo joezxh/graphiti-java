@@ -1,5 +1,5 @@
 <template>
-  <DataManagerLayout title="实体管理">
+  <DataManagerLayout :title="$t('nav.entityManagement')">
     <template #main-table>
       <InstanceDataTable
         :graph-id="graphId"
@@ -16,8 +16,8 @@
       />
       <div v-else class="empty-state">
         <InboxOutlined class="empty-icon" />
-        <div class="empty-title">选择一个实体</div>
-        <div class="empty-desc">点击表格中的实体进行编辑</div>
+        <div class="empty-title">{{ $t('data.selectEntity') }}</div>
+        <div class="empty-desc">{{ $t('data.selectEntityDesc') }}</div>
       </div>
     </template>
   </DataManagerLayout>

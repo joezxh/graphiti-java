@@ -136,10 +136,12 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed, watch, nextTick } from 'vue'
 import { message } from 'ant-design-vue'
 import { ontologyApi } from '@/api/ontology'
 import type { DomainRuleVO, OntClassVO } from '@/api/ontology'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   open: boolean
@@ -236,7 +238,7 @@ function resetForm() {
 function useTemplate(template: { expression: string }) {
   form.spelExpression = template.expression
   showTemplatePicker.value = false
-  message.success('已应用模板')
+  message.success(t('TODO_已应用模板'))
 }
 
 async function handleSave() {
@@ -250,16 +252,16 @@ async function handleSave() {
 
     if (isEdit.value) {
       await ontologyApi.updateDomainRule(props.graphId, props.ruleData!.id!, data)
-      message.success('规则已更新')
+      message.success(t('TODO_规则已更新'))
     } else {
       await ontologyApi.createDomainRule(props.graphId, data)
-      message.success('规则已创建')
+      message.success(t('TODO_规则已创建'))
     }
 
     emit('saved')
   } catch (e: any) {
     if (e.errorFields) {
-      message.error('请检查表单填写')
+      message.error(t('TODO_请检查表单填写'))
     } else {
       message.error(e.message || '保存失败')
     }

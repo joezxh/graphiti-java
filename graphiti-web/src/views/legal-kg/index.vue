@@ -654,28 +654,28 @@ const extractedFile = ref<File | null>(null)
 
 // 表格列定义
 const caseColumns: TableColumnsType = [
-  { title: t('legalKg.caseNumber') || '案件编号', dataIndex: ['properties', 'caseNumber'], key: 'caseNumber', width: 200 },
-  { title: t('legalKg.caseName') || '案件名称', dataIndex: 'name', key: 'name' },
-  { title: t('legalKg.caseType') || '案件类型', key: 'caseType', width: 100 },
-  { title: t('legalKg.caseStatus') || '案件状态', key: 'caseStatus', width: 100 },
-  { title: t('legalKg.amount') || '争议金额', key: 'amount', width: 120 },
-  { title: t('legalKg.action') || '操作', key: 'action', width: 150 }
+  { title: t('legalKg.caseNumber'), dataIndex: ['properties', 'caseNumber'], key: 'caseNumber', width: 200 },
+  { title: t('legalKg.caseName'), dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.caseType'), key: 'caseType', width: 100 },
+  { title: t('legalKg.caseStatus'), key: 'caseStatus', width: 100 },
+  { title: t('legalKg.amount'), key: 'amount', width: 120 },
+  { title: t('legalKg.action'), key: 'action', width: 150 }
 ]
 
 const provisionColumns: TableColumnsType = [
-  { title: t('legalKg.article') || '条款', dataIndex: ['properties', 'articleNumber'], key: 'articleNumber', width: 120 },
-  { title: t('legalKg.provisionName') || '条文名称', dataIndex: 'name', key: 'name' },
-  { title: t('legalKg.content') || '内容摘要', key: 'content', ellipsis: true },
-  { title: t('legalKg.keywords') || '关键词', key: 'keywords', width: 200 },
-  { title: t('legalKg.action') || '操作', key: 'action', width: 100 }
+  { title: t('legalKg.article'), dataIndex: ['properties', 'articleNumber'], key: 'articleNumber', width: 120 },
+  { title: t('legalKg.provisionName'), dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.content'), key: 'content', ellipsis: true },
+  { title: t('legalKg.keywords'), key: 'keywords', width: 200 },
+  { title: t('legalKg.action'), key: 'action', width: 100 }
 ]
 
 const partyColumns: TableColumnsType = [
-  { title: t('legalKg.name') || '名称', dataIndex: 'name', key: 'name' },
-  { title: t('legalKg.type') || '类型', key: 'partyType', width: 100 },
-  { title: t('legalKg.role') || '角色', key: 'role', width: 100 },
-  { title: t('legalKg.address') || '住所地', dataIndex: ['properties', 'address'], key: 'address' },
-  { title: t('legalKg.action') || '操作', key: 'action', width: 150 }
+  { title: t('legalKg.name'), dataIndex: 'name', key: 'name' },
+  { title: t('legalKg.type'), key: 'partyType', width: 100 },
+  { title: t('legalKg.role'), key: 'role', width: 100 },
+  { title: t('legalKg.address'), dataIndex: ['properties', 'address'], key: 'address' },
+  { title: t('legalKg.action'), key: 'action', width: 150 }
 ]
 
 const courtColumns: TableColumnsType = [

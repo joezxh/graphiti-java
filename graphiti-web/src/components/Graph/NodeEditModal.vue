@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :open="visible"
-    :title="isEdit ? '编辑节点' : '创建节点'"
+    :title="isEdit ? t('graphIde.nodeEditTitleEdit') : t('graphIde.nodeEditTitleNew')"
     width="500px"
     @ok="handleOk"
     @cancel="handleClose"
@@ -13,25 +13,25 @@
       :rules="rules"
       layout="vertical"
     >
-      <a-form-item label="节点名称" name="name">
+      <a-form-item :label="t('graphIde.labelNodeName')" name="name">
         <a-input
           v-model:value="formState.name"
-          placeholder="请输入节点名称"
+          :placeholder="t('graphIde.placeholderEnterNodeName')"
         />
       </a-form-item>
-      
-      <a-form-item label="节点类型" name="type">
+
+      <a-form-item :label="t('graphIde.labelNodeType')" name="type">
         <a-select
           v-model:value="formState.type"
-          placeholder="请选择节点类型"
+          :placeholder="t('graphIde.placeholderSelectNodeType')"
         >
           <a-select-option v-for="cls in classes" :key="cls.id" :value="cls.localName">
             {{ cls.localName }}
           </a-select-option>
         </a-select>
       </a-form-item>
-      
-      <a-form-item label="属性">
+
+      <a-form-item :label="t('graphIde.sectionProperties')">
         <div class="properties-list">
           <div
             v-for="(value, key) in formState.properties"
@@ -60,18 +60,18 @@
               <template #icon><MinusOutlined /></template>
             </a-button>
           </div>
-          
+
           <div class="add-property-row">
             <a-input
               v-model:value="newPropertyKey"
-              placeholder="属性名"
+              :placeholder="t('graphIde.placeholderPropertyName')"
               style="width: 120px"
               size="small"
             />
             <span class="property-equal">=</span>
             <a-input
               v-model:value="newPropertyValue"
-              placeholder="属性值"
+              :placeholder="t('graphIde.placeholderPropertyValue')"
               style="flex: 1"
               size="small"
             />
@@ -92,10 +92,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons-vue'
 import { graphApi } from '@/api/graph'
 import type { SchemaClass, GraphIDENode } from '@/api/graph'
+
+const { t } = useI18n()
 
 interface Props {
   visible: boolean
@@ -129,15 +132,15 @@ const newPropertyValue = ref('')
 const isEdit = computed(() => !!props.node)
 
 // Rules
-const rules = {
+const rules = computed(() => ({
   name: [
-    { required: true, message: '请输入节点名称', trigger: 'blur' },
-    { min: 1, max: 100, message: '名称长度在 1-100 个字符', trigger: 'blur' }
+    { required: true, message: t('graphIde.requiredNodeName'), trigger: 'blur' },
+    { min: 1, max: 100, message: t('graphIde.nodeNameLength'), trigger: 'blur' }
   ],
   type: [
-    { required: true, message: '请选择节点类型', trigger: 'change' }
+    { required: true, message: t('graphIde.requiredNodeType'), trigger: 'change' }
   ]
-}
+}))
 
 // Watch visible change
 watch(() => props.visible, (val) => {
@@ -187,7 +190,7 @@ const handleOk = async () => {
         name: formState.name,
         properties: formState.properties
       })
-      message.success('更新成功')
+      message.success(t('common.updateSuccess'))
       emit('success', updated)
     } else {
       // Create new node
@@ -196,7 +199,7 @@ const handleOk = async () => {
         type: formState.type,
         properties: formState.properties
       })
-      message.success('创建成功')
+      message.success(t('common.createSuccess'))
       emit('success', created)
     }
     

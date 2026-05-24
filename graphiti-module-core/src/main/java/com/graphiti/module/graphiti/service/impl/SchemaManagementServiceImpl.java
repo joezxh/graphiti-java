@@ -80,6 +80,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
             vo.setDefinitionId(cls.getDefinitionId());
             vo.setClassUri(cls.getClassUri());
             vo.setLocalName(cls.getLocalName());
+            vo.setNameEn(cls.getNameEn());
             vo.setDescription(cls.getDescription());
             vo.setPropertyCount(propertyCountMap.getOrDefault(cls.getId(), 0L).intValue());
 
@@ -105,6 +106,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
         vo.setDefinitionId(cls.getDefinitionId());
         vo.setClassUri(cls.getClassUri());
         vo.setLocalName(cls.getLocalName());
+        vo.setNameEn(cls.getNameEn());
         vo.setDescription(cls.getDescription());
 
         List<OntClassInheritanceDO> inheritances = inheritanceMapper.selectList(
@@ -130,6 +132,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
         OntDefinitionDO definition = getOrCreateDefinition(graphId);
 
         String localName = (String) classData.get("localName");
+        String nameEn = (String) classData.get("nameEn");
         String description = (String) classData.get("description");
         @SuppressWarnings("unchecked")
         List<Integer> parentClassIds = (List<Integer>) classData.getOrDefault("parentClassIds", new ArrayList<>());
@@ -147,6 +150,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
         cls.setDefinitionId(definition.getId());
         cls.setClassUri(definition.getNamespace() + "/" + localName);
         cls.setLocalName(localName);
+        cls.setNameEn(nameEn);
         cls.setDescription(description);
         classMapper.insert(cls);
 
@@ -164,6 +168,7 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
         vo.setDefinitionId(cls.getDefinitionId());
         vo.setClassUri(cls.getClassUri());
         vo.setLocalName(cls.getLocalName());
+        vo.setNameEn(cls.getNameEn());
         vo.setDescription(cls.getDescription());
         vo.setParentClassIds(parentClassIds.stream().map(Integer::longValue).collect(Collectors.toList()));
         vo.setPropertyCount(0);
@@ -181,6 +186,9 @@ public class SchemaManagementServiceImpl implements SchemaManagementService {
 
         if (classData.containsKey("localName")) {
             cls.setLocalName((String) classData.get("localName"));
+        }
+        if (classData.containsKey("nameEn")) {
+            cls.setNameEn((String) classData.get("nameEn"));
         }
         if (classData.containsKey("description")) {
             cls.setDescription((String) classData.get("description"));

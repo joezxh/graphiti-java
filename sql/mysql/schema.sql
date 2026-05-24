@@ -239,6 +239,7 @@ CREATE TABLE ont_class (
     definition_id BIGINT NOT NULL COMMENT '所属本体定义的ID',
     class_uri VARCHAR(512) NOT NULL COMMENT '类的完整URI',
     local_name VARCHAR(128) NOT NULL COMMENT '类的本地名称',
+    name_en VARCHAR(128) COMMENT '类的英文名称',
     parent_class_id BIGINT COMMENT '父类ID',
     equivalent_to TEXT COMMENT '等价类列表(JSON数组)',
     disjoint_with TEXT COMMENT '互斥类列表(JSON数组)',

@@ -8,13 +8,13 @@
     <template v-if="type === 'CARDINALITY' || type === 'RANGE'">
       <a-row :gutter="16">
         <a-col :span="12">
-          <a-form-item :label="type === 'CARDINALITY' ? '最小基数' : '最小值'">
+          <a-form-item :label="type === 'CARDINALITY' ? t('ontology.minCardinality') : t('ontology.minValue')">
             <a-input-number v-model:value="numValue.min" :min="0" style="width: 100%" />
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item :label="type === 'CARDINALITY' ? '最大基数' : '最大值'">
-            <a-input-number v-model:value="numValue.max" :min="0" style="width: 100%" placeholder="无限制留空" />
+          <a-form-item :label="type === 'CARDINALITY' ? t('ontology.maxCardinality') : t('ontology.maxValue')">
+            <a-input-number v-model:value="numValue.max" :min="0" style="width: 100%" :placeholder="t('ontology.noLimitEmpty')" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -22,17 +22,17 @@
 
     <!-- PATTERN: 正则输入 + 预设 -->
     <template v-else-if="type === 'PATTERN'">
-      <a-form-item label="正则表达式">
+      <a-form-item :label="t('ontology.regexPattern')">
         <a-input v-model:value="patternValue.pattern" placeholder="^[A-Za-z]+$">
           <template #addonAfter>
             <a-select v-model:value="patternPreset" style="width: 140px" @change="applyPatternPreset">
-              <a-select-option value="">自定义</a-select-option>
-              <a-select-option value="phone">手机号</a-select-option>
-              <a-select-option value="email">邮箱</a-select-option>
+              <a-select-option value="">{{ t('ontology.custom') }}</a-select-option>
+              <a-select-option value="phone">{{ t('ontology.phone') }}</a-select-option>
+              <a-select-option value="email">{{ t('ontology.email') }}</a-select-option>
               <a-select-option value="url">URL</a-select-option>
-              <a-select-option value="idCard">身份证号</a-select-option>
-              <a-select-option value="chinese">纯中文</a-select-option>
-              <a-select-option value="number">纯数字</a-select-option>
+              <a-select-option value="idCard">{{ t('ontology.idCard') }}</a-select-option>
+              <a-select-option value="chinese">{{ t('ontology.chineseOnly') }}</a-select-option>
+              <a-select-option value="number">{{ t('ontology.numberOnly') }}</a-select-option>
             </a-select>
           </template>
         </a-input>
@@ -41,11 +41,11 @@
 
     <!-- ENUM: 枚举值列表 -->
     <template v-else-if="type === 'ENUM'">
-      <a-form-item label="枚举值（回车确认）">
+      <a-form-item :label="t('ontology.enumValues')">
         <a-select
           v-model:value="enumValue.values"
           mode="tags"
-          placeholder="输入枚举值后按回车"
+          :placeholder="t('ontology.enumPlaceholder')"
           style="width: 100%"
         />
       </a-form-item>
@@ -53,13 +53,13 @@
 
     <!-- NOT_NULL: 无额外配置 -->
     <template v-else-if="type === 'NOT_NULL'">
-      <a-alert type="info" message="此约束无需额外配置，仅要求值不能为空" />
+      <a-alert type="info" :message="t('ontology.notNullMessage')" />
     </template>
 
     <!-- CUSTOM / 默认: 原始文本输入 -->
     <template v-else>
-      <a-form-item label="约束值（JSON 或自定义文本）">
-        <a-textarea v-model:value="rawValue" :rows="3" placeholder='{ "key": "value" }' />
+      <a-form-item :label="t('ontology.constraintValue')">
+        <a-textarea v-model:value="rawValue" :rows="3" :placeholder='t("ontology.constraintPlaceholder")' />
       </a-form-item>
     </template>
   </div>
@@ -67,6 +67,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   type: string

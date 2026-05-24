@@ -3,7 +3,22 @@
  */
 <template>
   <div class="object-explorer">
-    <!-- 全局搜索 --><div class="explorer-search"><a-input-search v-model:value="searchKeyword" placeholder="搜索本体..." size="small" allow-clear @search="handleSearch" @change="handleSearch"><template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template></a-input-search></div><!-- 工具栏 --><div class="explorer-toolbar"><a-tooltip title="刷新"><a-button type="text" size="small" :loading="store.loading" @click="handleRefresh"><template #icon><ReloadOutlined :spin="store.loading" /></template></a-button></a-tooltip><a-tooltip title="新建类"><a-button type="text" size="small" @click="handleNewClass"><template #icon><PlusOutlined /></template></a-button></a-tooltip></div>
+    <!-- 全局搜索 + 工具栏 -->
+    <div class="explorer-search-toolbar">
+      <a-input-search v-model:value="searchKeyword" placeholder="搜索本体..." size="small" allow-clear @search="handleSearch" @change="handleSearch" class="search-input"><template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template></a-input-search>
+      <div class="toolbar-actions">
+        <a-tooltip title="刷新">
+          <a-button type="text" size="small" :loading="store.loading" @click="handleRefresh" class="toolbar-btn">
+            <template #icon><ReloadOutlined :spin="store.loading" /></template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip title="新建类">
+          <a-button type="text" size="small" @click="handleNewClass" class="toolbar-btn">
+            <template #icon><PlusOutlined /></template>
+          </a-button>
+        </a-tooltip>
+      </div>
+    </div>
 
     <!-- 树形结构 -->
     <div class="explorer-tree">
@@ -317,19 +332,54 @@ onBeforeUnmount(() => {
   height: 100%;
   overflow: hidden;
 
-  .explorer-search {
-    padding: 8px;
-    border-bottom: 1px solid #21262d;
-    flex-shrink: 0;
-  }
-
-  .explorer-toolbar {
+  .explorer-search-toolbar {
     display: flex;
     align-items: center;
-    padding: 4px 8px;
+    padding: 2px 4px;
     gap: 4px;
     border-bottom: 1px solid #21262d;
     flex-shrink: 0;
+    white-space: nowrap;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    .search-input {
+      flex: 1;
+      min-width: 0;
+      
+      :deep(.ant-input) {
+        padding: 1px 6px;
+        font-size: 12px;
+        height: 24px;
+      }
+      
+      :deep(.ant-input-search) {
+        padding: 0;
+      }
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+
+      .toolbar-btn {
+        padding: 0;
+        height: 24px;
+        width: 24px;
+        min-width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+
+        :deep(.anticon) {
+          font-size: 13px;
+        }
+      }
+    }
   }
 
   .explorer-tree {

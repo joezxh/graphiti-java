@@ -31,10 +31,10 @@
       :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px', position: 'fixed', zIndex: 9999 }"
       @click="handleContextMenuAction"
     >
-      <a-menu-item key="close">关闭当前</a-menu-item>
-      <a-menu-item key="close-others">关闭其他</a-menu-item>
-      <a-menu-item key="close-right">关闭右侧</a-menu-item>
-      <a-menu-item key="close-all">全部关闭</a-menu-item>
+      <a-menu-item key="close">{{ $t('ontology.closeCurrent') }}</a-menu-item>
+      <a-menu-item key="close-others">{{ $t('ontology.closeOthers') }}</a-menu-item>
+      <a-menu-item key="close-right">{{ $t('ontology.closeRight') }}</a-menu-item>
+      <a-menu-item key="close-all">{{ $t('ontology.closeAll') }}</a-menu-item>
     </a-menu>
   </div>
 </template>

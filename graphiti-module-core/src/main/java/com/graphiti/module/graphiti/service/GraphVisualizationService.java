@@ -84,6 +84,16 @@ public interface GraphVisualizationService {
     GraphVisualizationRespVO getEpisodesVisualization(String graphId, int limit);
 
     /**
+     * V5.0: 根据剧集类型获取分页可视化数据（含N跳邻居）
+     */
+    GraphVisualizationRespVO getEpisodesVisualizationByType(
+            String graphId,
+            String typeCode,
+            Integer page,
+            Integer pageSize,
+            Integer depth);
+
+    /**
      * 获取社区可视化数据
      */
     GraphVisualizationRespVO getCommunityVisualization(String graphId, int limit);

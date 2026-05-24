@@ -8,9 +8,9 @@
       <div class="toolbar-left">
         <a-space>
           <a-radio-group v-model:value="vizMode" button-style="solid" size="small">
-            <a-radio-button value="inheritance">继承树</a-radio-button>
-            <a-radio-button value="relation">关系图</a-radio-button>
-            <a-radio-button value="full">完整模式</a-radio-button>
+            <a-radio-button value="inheritance">{{ t('ontology.inheritanceTree') }}</a-radio-button>
+            <a-radio-button value="relation">{{ t('ontology.relationGraph') }}</a-radio-button>
+            <a-radio-button value="full">{{ t('ontology.fullMode') }}</a-radio-button>
           </a-radio-group>
           <a-divider type="vertical" />
           <a-button size="small" @click="handleZoomIn"><template #icon><ZoomInOutlined /></template></a-button>
@@ -19,26 +19,29 @@
         </a-space>
       </div>
       <div class="toolbar-right">
-        <a-input-search v-model:value="searchText" placeholder="搜索节点..." style="width: 180px" size="small" @search="handleSearch" />
-        <a-button size="small" @click="handleExportImage"><template #icon><DownloadOutlined /></template>导出</a-button>
+        <a-input-search v-model:value="searchText" :placeholder="t('graphIde.searchNodePlaceholder')" style="width: 180px" size="small" @search="handleSearch" />
+        <a-button size="small" @click="handleExportImage"><template #icon><DownloadOutlined /></template>{{ t('common.export') }}</a-button>
       </div>
     </div>
     <div ref="chartRef" class="chart-container" />
     <div class="chart-legend">
-      <span class="legend-item"><span class="legend-dot" style="background: #58a6ff"></span>类</span>
-      <span class="legend-item"><span class="legend-dot" style="background: #a371f7"></span>属性</span>
-      <span class="legend-item"><span class="legend-dot" style="background: #3fb950"></span>继承关系</span>
-      <span class="legend-item"><span class="legend-dot" style="background: #d29922"></span>属性关系</span>
+      <span class="legend-item"><span class="legend-dot" style="background: #58a6ff"></span>{{ t('ontology.classLabel') }}</span>
+      <span class="legend-item"><span class="legend-dot" style="background: #a371f7"></span>{{ t('ontology.propertyLabel') }}</span>
+      <span class="legend-item"><span class="legend-dot" style="background: #3fb950"></span>{{ t('ontology.inheritanceRelation') }}</span>
+      <span class="legend-item"><span class="legend-dot" style="background: #d29922"></span>{{ t('ontology.propertyRelation') }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { ZoomInOutlined, ZoomOutOutlined, AimOutlined, DownloadOutlined } from '@ant-design/icons-vue'
 import * as echarts from 'echarts'
 import { useOntologyStore } from '@/store/modules/ontology'
+
+const { t } = useI18n()
 
 defineProps<{ graphId: string; classId?: number }>()
 const emit = defineEmits<{ (e: 'open-class', classId: number): void }>()
@@ -51,9 +54,9 @@ let chart: echarts.ECharts | null = null
 
 function buildSeries(): any {
   const categories = [
-    { name: '类', itemStyle: { color: '#58a6ff' } },
-    { name: '属性', itemStyle: { color: '#a371f7' } },
-    { name: '约束', itemStyle: { color: '#d29922' } }
+    { name: t('ontology.classLabel'), itemStyle: { color: '#58a6ff' } },
+    { name: t('ontology.propertyLabel'), itemStyle: { color: '#a371f7' } },
+    { name: t('ontology.constraintLabel'), itemStyle: { color: '#d29922' } }
   ]
 
   if (vizMode.value === 'inheritance') {
@@ -66,7 +69,7 @@ function buildSeries(): any {
     const edges = store.classes.filter(cls => cls.parentClassId).map(cls => ({
       source: `class-${cls.parentClassId}`, target: `class-${cls.id}`,
       lineStyle: { color: '#3fb950', width: 2 },
-      label: { show: true, formatter: '继承', fontSize: 10, color: '#3fb950' }
+      label: { show: true, formatter: t('ontology.inheritLabel'), fontSize: 10, color: '#3fb950' }
     }))
     return {
       type: 'graph', layout: 'force', roam: true,
@@ -90,7 +93,7 @@ function buildSeries(): any {
       allLinks.push({
         source: `class-${cls.parentClassId}`, target: `class-${cls.id}`,
         lineStyle: { color: '#3fb950', width: 2 },
-        label: { show: vizMode.value === 'full', formatter: '继承', fontSize: 9, color: '#3fb950' }
+        label: { show: vizMode.value === 'full', formatter: t('ontology.inheritLabel'), fontSize: 9, color: '#3fb950' }
       })
     }
   })
@@ -174,7 +177,7 @@ function handleExportImage() {
   const url = chart.getDataURL({ type: 'png', pixelRatio: 2 })
   const a = document.createElement('a'); a.href = url
   a.download = `ontology-graph-${Date.now()}.png`; a.click()
-  message.success('图片已导出')
+  message.success(t('ontology.imageExported'))
 }
 function handleResize() { chart?.resize() }
 

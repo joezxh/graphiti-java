@@ -280,13 +280,61 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
         String cypher = "MATCH (e:Episode {graph_id: $graph_id, episode_type: $episode_type}) RETURN count(e) as count";
 
         try (Session session = neo4jDriver.session()) {
-            Result result = session.run(cypher, 
+            Result result = session.run(cypher,
                 Values.parameters("graph_id", graphId, "episode_type", episodeType));
             if (result.hasNext()) {
                 return result.next().get("count").asLong();
             }
         }
         return 0L;
+    }
+
+    @Override
+    public List<Map<String, Object>> getEpisodesByType(String graphId, String episodeType, int limit, int offset) {
+        String cypher =
+            "MATCH (e:Episode {graph_id: $graph_id, episode_type: $episode_type}) " +
+            "WHERE e.invalid_at IS NULL " +
+            "RETURN e.uuid as uuid, e.name as name, e.source as source, " +
+            "e.source_description as source_description, e.content as content, " +
+            "e.created_at as created_at, e.valid_at as valid_at, e.graph_id as graph_id, " +
+            "e.episode_type as episode_type, " +
+            "e.legal_process as legal_process, " +
+            "e.stage_label as stage_label, " +
+            "e.court_level as court_level, " +
+            "e.is_trial_stage as is_trial_stage, " +
+            "e.start_time as start_time, " +
+            "e.end_time as end_time, " +
+            "e.case_id as case_id " +
+            "ORDER BY e.valid_at DESC " +
+            "SKIP $offset LIMIT $limit";
+
+        List<Map<String, Object>> episodes = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("graph_id", graphId, "episode_type", episodeType, "offset", offset, "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> episode = new HashMap<>();
+                episode.put("uuid", record.get("uuid").asString());
+                episode.put("name", record.get("name").asString());
+                episode.put("source", record.get("source").asString());
+                episode.put("source_description", record.get("source_description").asString());
+                episode.put("content", record.get("content").asString());
+                episode.put("created_at", record.get("created_at").asObject().toString());
+                episode.put("valid_at", record.get("valid_at").asLong());
+                episode.put("graph_id", record.get("graph_id").asString());
+                episode.put("episode_type", record.get("episode_type").asString(null));
+                episode.put("legal_process", record.get("legal_process").asString(null));
+                episode.put("stage_label", record.get("stage_label").asString(null));
+                episode.put("court_level", record.get("court_level").asString(null));
+                episode.put("is_trial_stage", record.get("is_trial_stage").asBoolean(false));
+                episode.put("start_time", record.get("start_time").asObject().toString());
+                episode.put("end_time", record.get("end_time").asObject().toString());
+                episode.put("case_id", record.get("case_id").asString(null));
+                episodes.add(episode);
+            }
+        }
+        return episodes;
     }
 
     @Override

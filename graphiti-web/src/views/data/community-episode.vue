@@ -3,13 +3,13 @@
     <!-- Page Header -->
     <div class="page-header">
       <div class="header-left">
-        <h1 class="page-title">社区/剧集管理</h1>
-        <p class="page-desc">管理 Neo4j 中的社区节点和剧集节点数据</p>
+        <h1 class="page-title">{{ t('communityEpisode.title') }}</h1>
+        <p class="page-desc">{{ t('communityEpisode.desc') }}</p>
       </div>
       <div class="header-right">
         <a-select
           v-model:value="selectedGraphId"
-          placeholder="请选择图谱"
+          :placeholder="t('common.pleaseSelect') + t('graph.graphName')"
           style="width: 220px"
           @change="onGraphChange"
         >
@@ -23,19 +23,19 @@
     <!-- Main Tabs -->
     <a-tabs v-if="selectedGraphId" v-model:activeKey="activeTab" class="management-tabs">
       <!-- 社区管理 -->
-      <a-tab-pane key="communities" tab="社区">
+      <a-tab-pane key="communities" :tab="t('communityEpisode.communityTab')">
         <!-- 工具栏 -->
         <div class="tab-toolbar">
           <a-input-search
             v-model:value="communitySearch"
-            placeholder="搜索名称/摘要"
+            :placeholder="t('communityEpisode.searchCommunity')"
             style="width: 240px"
             @search="loadCommunities"
             allow-clear
           />
           <a-select
             v-model:value="communityDomainFilter"
-            placeholder="领域类型"
+            :placeholder="t('communityEpisode.domainType')"
             style="width: 160px"
             allow-clear
             @change="loadCommunities"
@@ -44,18 +44,18 @@
           </a-select>
           <a-select
             v-model:value="communityTypeFilter"
-            placeholder="社区类型"
+            :placeholder="t('communityEpisode.communityType')"
             style="width: 140px"
             allow-clear
             @change="loadCommunities"
           >
-            <a-select-option v-for="t in communityTypeOptions" :key="t" :value="t">{{ t }}</a-select-option>
+            <a-select-option v-for="type in communityTypeOptions" :key="type" :value="type">{{ type }}</a-select-option>
           </a-select>
           <a-button type="primary" @click="openCommunityModal()">
-            <PlusOutlined /> 新建社区
+            <PlusOutlined /> {{ t('communityEpisode.newCommunity') }}
           </a-button>
           <a-button @click="exportCommunities">
-            <DownloadOutlined /> 导出
+            <DownloadOutlined /> {{ t('common.export') }}
           </a-button>
         </div>
 
@@ -84,11 +84,11 @@
             <template v-else-if="column.key === 'action'">
               <a-space size="small">
                 <a-button type="link" size="small" @click="openCommunityModal(record)">
-                  <EditOutlined /> 编辑
+                  <EditOutlined /> {{ t('common.edit') }}
                 </a-button>
-                <a-popconfirm title="确定要删除此社区吗？" ok-text="确定" cancel-text="取消" @confirm="deleteCommunity(record.uuid)">
+                <a-popconfirm :title="t('communityEpisode.confirmDeleteCommunity')" :ok-text="t('common.confirm')" :cancel-text="t('common.cancel')" @confirm="deleteCommunity(record.uuid)">
                   <a-button type="link" danger size="small">
-                    <DeleteOutlined /> 删除
+                    <DeleteOutlined /> {{ t('common.delete') }}
                   </a-button>
                 </a-popconfirm>
               </a-space>
@@ -98,30 +98,30 @@
       </a-tab-pane>
 
       <!-- 剧集管理 -->
-      <a-tab-pane key="episodes" tab="剧集">
+      <a-tab-pane key="episodes" :tab="t('communityEpisode.episodeTab')">
         <!-- 工具栏 -->
         <div class="tab-toolbar">
           <a-input-search
             v-model:value="episodeSearch"
-            placeholder="搜索名称/来源"
+            :placeholder="t('communityEpisode.searchEpisode')"
             style="width: 240px"
             @search="loadEpisodes"
             allow-clear
           />
           <a-select
             v-model:value="episodeTypeFilter"
-            placeholder="剧集类型"
+            :placeholder="t('communityEpisode.episodeType')"
             style="width: 140px"
             allow-clear
             @change="loadEpisodes"
           >
-            <a-select-option v-for="t in episodeTypeOptions" :key="t" :value="t">{{ t }}</a-select-option>
+            <a-select-option v-for="type in episodeTypeOptions" :key="type" :value="type">{{ type }}</a-select-option>
           </a-select>
           <a-button type="primary" @click="openEpisodeModal()">
-            <PlusOutlined /> 新建剧集
+            <PlusOutlined /> {{ t('communityEpisode.newEpisode') }}
           </a-button>
           <a-button @click="exportEpisodes">
-            <DownloadOutlined /> 导出
+            <DownloadOutlined /> {{ t('common.export') }}
           </a-button>
         </div>
 
@@ -148,11 +148,11 @@
             <template v-else-if="column.key === 'action'">
               <a-space size="small">
                 <a-button type="link" size="small" @click="openEpisodeModal(record)">
-                  <EditOutlined /> 编辑
+                  <EditOutlined /> {{ t('common.edit') }}
                 </a-button>
-                <a-popconfirm title="确定要删除此剧集吗？" ok-text="确定" cancel-text="取消" @confirm="deleteEpisode(record.uuid)">
+                <a-popconfirm :title="t('communityEpisode.confirmDeleteEpisode')" :ok-text="t('common.confirm')" :cancel-text="t('common.cancel')" @confirm="deleteEpisode(record.uuid)">
                   <a-button type="link" danger size="small">
-                    <DeleteOutlined /> 删除
+                    <DeleteOutlined /> {{ t('common.delete') }}
                   </a-button>
                 </a-popconfirm>
               </a-space>
@@ -163,53 +163,53 @@
     </a-tabs>
 
     <!-- 无图谱时的提示 -->
-    <a-empty v-else description="请先选择图谱" style="margin-top: 80px" />
+    <a-empty v-else :description="t('communityEpisode.selectGraphFirst')" style="margin-top: 80px" />
 
     <!-- 社区编辑 Modal -->
     <a-modal
       v-model:open="communityModalVisible"
-      :title="editingCommunity ? '编辑社区' : '新建社区'"
+      :title="editingCommunity ? t('communityEpisode.editCommunity') : t('communityEpisode.newCommunity')"
       :confirm-loading="communityModalLoading"
       width="600px"
       @ok="saveCommunity"
       @cancel="communityModalVisible = false"
     >
       <a-form :model="communityForm" layout="vertical" :label-col="{ span: 6 }">
-        <a-form-item label="名称" required>
-          <a-input v-model:value="communityForm.name" placeholder="社区名称" />
+        <a-form-item :label="t('graphIde.labelName')" required>
+          <a-input v-model:value="communityForm.name" :placeholder="t('communityEpisode.communityNamePlaceholder')" />
         </a-form-item>
-        <a-form-item label="类型">
-          <a-select v-model:value="communityForm.communityType" placeholder="选择社区类型" allow-clear>
-            <a-select-option v-for="t in communityTypeOptions" :key="t" :value="t">{{ t }}</a-select-option>
+        <a-form-item :label="t('graphIde.labelType')">
+          <a-select v-model:value="communityForm.communityType" :placeholder="t('communityEpisode.selectCommunityType')" allow-clear>
+            <a-select-option v-for="type in communityTypeOptions" :key="type" :value="type">{{ type }}</a-select-option>
           </a-select>
         </a-form-item>
         <!-- V3.1.0 通用化字段 -->
-        <a-form-item label="领域类型">
-          <a-select v-model:value="communityForm.domainType" placeholder="选择领域类型（通用化）" allow-clear @change="onDomainTypeChange">
+        <a-form-item :label="t('graphIde.labelLegalDomain')">
+          <a-select v-model:value="communityForm.domainType" :placeholder="t('communityEpisode.selectDomainType')" allow-clear @change="onDomainTypeChange">
             <a-select-option v-for="d in domainOptions" :key="d.typeCode" :value="d.typeCode">{{ d.typeName }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="子领域">
-          <a-select v-model:value="communityForm.subDomainType" placeholder="选择子领域" allow-clear :disabled="!communityForm.domainType">
+        <a-form-item :label="t('communityEpisode.subDomain')">
+          <a-select v-model:value="communityForm.subDomainType" :placeholder="t('communityEpisode.selectSubDomain')" allow-clear :disabled="!communityForm.domainType">
             <a-select-option v-for="d in subDomainOptions" :key="d.typeCode" :value="d.typeCode">{{ d.typeName }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="区域">
-          <a-select v-model:value="communityForm.region" placeholder="选择区域（通用化）" allow-clear>
+        <a-form-item :label="t('communityEpisode.region')">
+          <a-select v-model:value="communityForm.region" :placeholder="t('communityEpisode.selectRegion')" allow-clear>
             <a-select-option v-for="r in regionOptions" :key="r.typeCode" :value="r.typeCode">{{ r.typeName }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="场景类型">
-          <a-select v-model:value="communityForm.scenarioType" placeholder="选择场景类型（通用化）" allow-clear>
+        <a-form-item :label="t('communityEpisode.scenarioType')">
+          <a-select v-model:value="communityForm.scenarioType" :placeholder="t('communityEpisode.selectScenario')" allow-clear>
             <a-select-option v-for="s in scenarioOptions" :key="s.typeCode" :value="s.typeCode">{{ s.typeName }}</a-select-option>
           </a-select>
         </a-form-item>
         <!-- 向后兼容旧字段（隐藏，用户如传旧字段自动映射） -->
-        <a-form-item label="摘要">
-          <a-textarea v-model:value="communityForm.summary" placeholder="社区摘要说明" :rows="2" />
+        <a-form-item :label="t('graphIde.labelSummary')">
+          <a-textarea v-model:value="communityForm.summary" :placeholder="t('communityEpisode.summaryPlaceholder')" :rows="2" />
         </a-form-item>
-        <a-form-item label="描述">
-          <a-textarea v-model:value="communityForm.description" placeholder="详细描述" :rows="3" />
+        <a-form-item :label="t('graphIde.labelDescription')">
+          <a-textarea v-model:value="communityForm.description" :placeholder="t('communityEpisode.descPlaceholder')" :rows="3" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -217,24 +217,24 @@
     <!-- 剧集编辑 Modal -->
     <a-modal
       v-model:open="episodeModalVisible"
-      :title="editingEpisode ? '编辑剧集' : '新建剧集'"
+      :title="editingEpisode ? t('episodeEdit.titleEdit') : t('episodeEdit.titleNew')"
       :confirm-loading="episodeModalLoading"
       width="600px"
       @ok="saveEpisode"
       @cancel="episodeModalVisible = false"
     >
       <a-form :model="episodeForm" layout="vertical" :label-col="{ span: 6 }">
-        <a-form-item label="来源" required>
-          <a-input v-model:value="episodeForm.source" placeholder="来源标识（如案例编号）" />
+        <a-form-item :label="t('episodeEdit.labelSource')" required>
+          <a-input v-model:value="episodeForm.source" :placeholder="t('communityEpisode.sourcePlaceholder')" />
         </a-form-item>
-        <a-form-item label="名称">
-          <a-input v-model:value="episodeForm.name" placeholder="剧集名称（可选）" />
+        <a-form-item :label="t('episodeEdit.labelName')">
+          <a-input v-model:value="episodeForm.name" :placeholder="t('episodeEdit.placeholderName')" />
         </a-form-item>
-        <a-form-item label="来源描述">
-          <a-input v-model:value="episodeForm.sourceDescription" placeholder="来源说明" />
+        <a-form-item :label="t('communityEpisode.sourceDesc')">
+          <a-input v-model:value="episodeForm.sourceDescription" :placeholder="t('communityEpisode.sourceDescPlaceholder')" />
         </a-form-item>
-        <a-form-item label="内容">
-          <a-textarea v-model:value="episodeForm.content" placeholder="剧集内容" :rows="3" />
+        <a-form-item :label="t('episodeEdit.labelContent')">
+          <a-textarea v-model:value="episodeForm.content" :placeholder="t('episodeEdit.placeholderContent')" :rows="3" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -243,6 +243,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, DownloadOutlined
@@ -250,6 +251,8 @@ import {
 import { graphApi } from '@/api/graph'
 import { episodeApi } from '@/api/episode'
 import { communityTypeApi, type OntCommunityTypeVO } from '@/api/metadata'
+
+const { t } = useI18n()
 
 // ==================== State ====================
 
@@ -306,9 +309,9 @@ const loadCommunityTypes = async () => {
   if (!selectedGraphId.value) return
   try {
     const res = await communityTypeApi.list(selectedGraphId.value, 0)
-    communityTypes.value = res.data || []
+    communityTypes.value = (res as any).data || []
   } catch (error) {
-    console.error('加载社区类型失败:', error)
+    console.error(t('communityEpisode.loadTypesFailed'), error)
   }
 }
 
@@ -364,28 +367,28 @@ const domainDepth = computed(() => {
 
 // ==================== Columns ====================
 
-const communityColumns = [
-  { title: '名称', dataIndex: 'name', key: 'name', width: 180, ellipsis: true },
-  { title: '类型', key: 'communityType', width: 100 },
-  { title: '领域', key: 'domainType', width: 120, customRender: ({ text }) => text || '-' },
-  { title: '子领域', key: 'subDomainType', width: 140, customRender: ({ text }) => text || '-' },
-  { title: '区域', key: 'region', width: 90, customRender: ({ text }) => text || '-' },
-  { title: '场景', key: 'scenarioType', width: 90, customRender: ({ text }) => text || '-' },
-  { title: '成员数', key: 'memberCount', width: 90, align: 'center' as const },
-  { title: '创建时间', key: 'createdAt', width: 140 },
-  { title: '操作', key: 'action', width: 160, fixed: 'right' as const },
-]
+const communityColumns = computed(() => [
+  { title: t('graphIde.labelName'), dataIndex: 'name', key: 'name', width: 180, ellipsis: true },
+  { title: t('graphIde.labelType'), key: 'communityType', width: 100 },
+  { title: t('graphIde.labelLegalDomain'), key: 'domainType', width: 120, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('communityEpisode.subDomain'), key: 'subDomainType', width: 140, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('communityEpisode.region'), key: 'region', width: 90, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('communityEpisode.scenarioType'), key: 'scenarioType', width: 90, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('graphIde.labelMemberCount'), key: 'memberCount', width: 90, align: 'center' as const },
+  { title: t('common.createdAt'), key: 'createdAt', width: 140 },
+  { title: t('common.action'), key: 'action', width: 160, fixed: 'right' as const },
+])
 
-const episodeColumns = [
-  { title: '来源', dataIndex: 'source', key: 'source', width: 160, ellipsis: true },
-  { title: '名称', dataIndex: 'name', key: 'name', width: 180, ellipsis: true },
-  { title: '类型', key: 'episodeType', width: 120 },
-  { title: '流程类型', key: 'processType', width: 110, customRender: ({ text }) => text || '-' },
-  { title: '阶段级别', key: 'stageLevel', width: 90, customRender: ({ text }) => text || '-' },
-  { title: '阶段', key: 'stageLabel', width: 90, customRender: ({ text }) => text || '-' },
-  { title: '创建时间', key: 'createdAt', width: 140 },
-  { title: '操作', key: 'action', width: 160, fixed: 'right' as const },
-]
+const episodeColumns = computed(() => [
+  { title: t('episodeEdit.labelSource'), dataIndex: 'source', key: 'source', width: 160, ellipsis: true },
+  { title: t('episodeEdit.labelName'), dataIndex: 'name', key: 'name', width: 180, ellipsis: true },
+  { title: t('graphIde.labelType'), key: 'episodeType', width: 120 },
+  { title: t('graphIde.labelProcessType'), key: 'processType', width: 110, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('graphIde.labelStageLevel'), key: 'stageLevel', width: 90, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('graphIde.labelStage'), key: 'stageLabel', width: 90, customRender: ({ text }: { text: string }) => text || '-' },
+  { title: t('common.createdAt'), key: 'createdAt', width: 140 },
+  { title: t('common.action'), key: 'action', width: 160, fixed: 'right' as const },
+])
 
 // ==================== Graph Selection ====================
 
@@ -396,7 +399,7 @@ onMounted(async () => {
 
 const loadGraphOptions = async () => {
   try {
-    const graphs = await graphApi.listGraphs()
+    const graphs = await graphApi.getList()
     graphOptions.value = graphs.map((g: any) => ({ graphId: g.graphId || g.id, name: g.name }))
     if (graphOptions.value.length > 0) {
       selectedGraphId.value = graphOptions.value[0].graphId
@@ -404,7 +407,7 @@ const loadGraphOptions = async () => {
       await loadEpisodes()
     }
   } catch (e) {
-    console.error('加载图谱列表失败', e)
+    console.error(t('graph.loadFailed'), e)
   }
 }
 
@@ -431,8 +434,8 @@ const loadCommunities = async () => {
     communityList.value = result.communities || []
     communityPagination.total = result.totalCount || 0
   } catch (e) {
-    console.error('加载社区列表失败', e)
-    message.error('加载社区列表失败')
+    console.error(t('communityEpisode.loadCommunitiesFailed'), e)
+    message.error(t('communityEpisode.loadCommunitiesFailed'))
   } finally {
     communityLoading.value = false
   }
@@ -474,17 +477,17 @@ const openCommunityModal = (record?: any) => {
 const saveCommunity = async () => {
   if (!selectedGraphId.value) return
   if (!communityForm.name?.trim()) {
-    message.warning('请填写社区名称')
+    message.warning(t('communityEpisode.pleaseEnterName'))
     return
   }
   // 层级校验：subDomainType 已选时，不能再填 communityType（会创建第 4 层，不允许）
   if (domainDepth.value >= 2 && communityForm.communityType) {
-    message.warning('社区类型层级不能超过 3 层。当前已选择子领域，再填写类型将超出最大深度限制。')
+    message.warning(t('communityEpisode.maxDepthWarning'))
     return
   }
   communityModalLoading.value = true
   try {
-    const payload: Record<string, any> = {
+    const payload = {
       name: communityForm.name,
       communityType: communityForm.communityType,
       // V3.1.0 通用化新字段
@@ -501,16 +504,16 @@ const saveCommunity = async () => {
     }
     if (editingCommunity.value) {
       await graphApi.updateCommunity(selectedGraphId.value, editingCommunity.value.uuid, payload)
-      message.success('更新成功')
+      message.success(t('common.updateSuccess'))
     } else {
       await graphApi.createCommunity(selectedGraphId.value, payload)
-      message.success('创建成功')
+      message.success(t('common.createSuccess'))
     }
     communityModalVisible.value = false
     await loadCommunities()
   } catch (e) {
-    console.error('保存社区失败', e)
-    message.error('保存失败')
+    console.error(t('communityEpisode.saveCommunityFailed'), e)
+    message.error(t('common.saveFailed'))
   } finally {
     communityModalLoading.value = false
   }
@@ -525,11 +528,11 @@ const deleteCommunity = async (uuid: string) => {
   if (!selectedGraphId.value) return
   try {
     await graphApi.deleteCommunity(selectedGraphId.value, uuid)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     await loadCommunities()
   } catch (e) {
-    console.error('删除社区失败', e)
-    message.error('删除失败')
+    console.error(t('communityEpisode.deleteCommunityFailed'), e)
+    message.error(t('common.deleteFailed'))
   }
 }
 
@@ -541,16 +544,16 @@ const handleCommunityTableChange = (pag: any) => {
 
 const exportCommunities = () => {
   const data = communityList.value.map(c => ({
-    名称: c.name,
-    类型: c.communityType || '',
-    领域类型: c.domainType || c.legalDomain || '',
-    子领域: c.subDomainType || '',
-    区域: c.region || c.jurisdiction || '',
-    场景类型: c.scenarioType || c.practiceType || '',
-    成员数: c.memberCount || 0,
-    摘要: c.summary || '',
-    描述: c.description || '',
-    创建时间: c.createdAt || '',
+    [t('graphIde.labelName')]: c.name,
+    [t('graphIde.labelType')]: c.communityType || '',
+    [t('graphIde.labelLegalDomain')]: c.domainType || c.legalDomain || '',
+    [t('communityEpisode.subDomain')]: c.subDomainType || '',
+    [t('communityEpisode.region')]: c.region || c.jurisdiction || '',
+    [t('communityEpisode.scenarioType')]: c.scenarioType || c.practiceType || '',
+    [t('graphIde.labelMemberCount')]: c.memberCount || 0,
+    [t('graphIde.labelSummary')]: c.summary || '',
+    [t('graphIde.labelDescription')]: c.description || '',
+    [t('common.createdAt')]: c.createdAt || '',
   }))
   downloadCSV(data, `communities-${selectedGraphId.value}.csv`)
 }
@@ -581,8 +584,8 @@ const loadEpisodes = async () => {
     episodeList.value = page
     episodePagination.total = total
   } catch (e) {
-    console.error('加载剧集列表失败', e)
-    message.error('加载剧集列表失败')
+    console.error(t('communityEpisode.loadEpisodesFailed'), e)
+    message.error(t('communityEpisode.loadEpisodesFailed'))
   } finally {
     episodeLoading.value = false
   }
@@ -604,13 +607,13 @@ const openEpisodeModal = (record?: any) => {
 const saveEpisode = async () => {
   if (!selectedGraphId.value) return
   if (!episodeForm.source?.trim()) {
-    message.warning('请填写来源')
+    message.warning(t('communityEpisode.pleaseEnterSource'))
     return
   }
   episodeModalLoading.value = true
   try {
     if (editingEpisode.value) {
-      message.warning('剧集更新接口暂未实现，请使用新建方式')
+      message.warning(t('communityEpisode.updateNotImplemented'))
     } else {
       await episodeApi.create(selectedGraphId.value, {
         name: episodeForm.name || undefined,
@@ -618,13 +621,13 @@ const saveEpisode = async () => {
         sourceDescription: episodeForm.sourceDescription || undefined,
         content: episodeForm.content || undefined,
       })
-      message.success('创建成功')
+      message.success(t('common.createSuccess'))
     }
     episodeModalVisible.value = false
     await loadEpisodes()
   } catch (e) {
-    console.error('保存剧集失败', e)
-    message.error('保存失败')
+    console.error(t('communityEpisode.saveEpisodeFailed'), e)
+    message.error(t('common.saveFailed'))
   } finally {
     episodeModalLoading.value = false
   }
@@ -634,11 +637,11 @@ const deleteEpisode = async (uuid: string) => {
   if (!selectedGraphId.value) return
   try {
     await episodeApi.delete(selectedGraphId.value, uuid)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     await loadEpisodes()
   } catch (e) {
-    console.error('删除剧集失败', e)
-    message.error('删除失败')
+    console.error(t('communityEpisode.deleteEpisodeFailed'), e)
+    message.error(t('common.deleteFailed'))
   }
 }
 
@@ -650,14 +653,14 @@ const handleEpisodeTableChange = (pag: any) => {
 
 const exportEpisodes = () => {
   const data = episodeList.value.map(e => ({
-    来源: e.source || '',
-    名称: e.name || '',
-    类型: e.episodeType || '',
-    法律程序: e.legalProcess || '',
-    阶段: e.stageLabel || '',
-    审级: e.courtLevel || '',
-    内容: e.content || '',
-    创建时间: e.createdAt || '',
+    [t('episodeEdit.labelSource')]: e.source || '',
+    [t('episodeEdit.labelName')]: e.name || '',
+    [t('graphIde.labelType')]: e.episodeType || '',
+    [t('graphIde.labelProcessType')]: e.legalProcess || '',
+    [t('graphIde.labelStage')]: e.stageLabel || '',
+    [t('graphIde.labelStageLevel')]: e.courtLevel || '',
+    [t('episodeEdit.labelContent')]: e.content || '',
+    [t('common.createdAt')]: e.createdAt || '',
   }))
   downloadCSV(data, `episodes-${selectedGraphId.value}.csv`)
 }
@@ -691,7 +694,7 @@ const getCommunityColor = (type?: string) => {
 
 const downloadCSV = (data: Record<string, any>[], filename: string) => {
   if (data.length === 0) {
-    message.warning('没有数据可导出')
+    message.warning(t('communityEpisode.noDataToExport'))
     return
   }
   const headers = Object.keys(data[0])

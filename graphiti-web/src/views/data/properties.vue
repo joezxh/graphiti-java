@@ -1,5 +1,5 @@
 <template>
-  <DataManagerLayout title="属性管理">
+  <DataManagerLayout :title="$t('nav.propertyManagement')">
     <template #main-table>
       <PropertyListPanel :graph-id="graphId" @open-property="handleOpenProperty" />
     </template>
@@ -14,8 +14,8 @@
       />
       <div v-else class="empty-state">
         <InboxOutlined class="empty-icon" />
-        <div class="empty-title">选择一个属性</div>
-        <div class="empty-desc">点击左侧列表中的属性查看详情和编辑</div>
+        <div class="empty-title">{{ $t('data.selectProperty') }}</div>
+        <div class="empty-desc">{{ $t('data.selectPropertyDesc') }}</div>
       </div>
     </template>
   </DataManagerLayout>

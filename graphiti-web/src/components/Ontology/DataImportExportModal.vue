@@ -145,7 +145,7 @@
 
         <div class="modal-footer">
           <a-space>
-            <a-button @click="handleClose">取消</a-button>
+            <a-button @click="handleClose">{{ t('common.cancel') }}</a-button>
             <a-button
               v-if="!importing && !importDone"
               type="primary"
@@ -208,7 +208,7 @@
 
         <div class="modal-footer">
           <a-space>
-            <a-button @click="handleClose">取消</a-button>
+            <a-button @click="handleClose">{{ t('common.cancel') }}</a-button>
             <a-button type="primary" :loading="exporting" @click="handleExport">
               导出文件
             </a-button>
@@ -220,11 +220,13 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 import { ref, reactive, computed, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import { InboxOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { graphApi } from '@/api/graph'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   graphId: string
@@ -340,7 +342,7 @@ async function handleBeforeUpload(file: any) {
     handleAutoMap()
     message.success(`已解析 ${parsedData.value.length} 条数据`)
   } else {
-    message.error('文件格式错误或为空')
+    message.error(t('TODO_文件格式错误或为空'))
   }
   return false // 阻止默认上传
 }
@@ -366,7 +368,7 @@ function handleAutoMap() {
 
 async function handleImport() {
   if (!importConfig.classType) {
-    message.warning('请先选择目标类')
+    message.warning(t('TODO_请先选择目标类'))
     return
   }
 

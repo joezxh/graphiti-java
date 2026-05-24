@@ -427,6 +427,7 @@ CREATE TABLE ont_class (
     definition_id BIGINT NOT NULL,
     class_uri VARCHAR(512) NOT NULL,
     local_name VARCHAR(128) NOT NULL,
+    name_en VARCHAR(128),
     parent_class_id BIGINT,
     equivalent_to TEXT,
     disjoint_with TEXT,
@@ -451,6 +452,7 @@ COMMENT ON COLUMN ont_class.id IS '主键ID';
 COMMENT ON COLUMN ont_class.definition_id IS '所属本体定义的ID';
 COMMENT ON COLUMN ont_class.class_uri IS '类的完整URI';
 COMMENT ON COLUMN ont_class.local_name IS '类的本地名称';
+COMMENT ON COLUMN ont_class.name_en IS '类的英文名称';
 COMMENT ON COLUMN ont_class.parent_class_id IS '父类ID';
 COMMENT ON COLUMN ont_class.equivalent_to IS '等价类列表(JSON数组)';
 COMMENT ON COLUMN ont_class.disjoint_with IS '互斥类列表(JSON数组)';

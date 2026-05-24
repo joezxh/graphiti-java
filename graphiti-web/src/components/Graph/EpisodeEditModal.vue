@@ -1,7 +1,7 @@
 <template>
   <a-modal
     v-model:open="visible"
-    :title="episode ? '编辑剧集' : '新建剧集'"
+    :title="episode ? t('episodeEdit.titleEdit') : t('episodeEdit.titleNew')"
     :confirm-loading="loading"
     width="560px"
     :destroy-on-close="true"
@@ -15,66 +15,66 @@
       :wrapper-col="{ span: 18 }"
       layout="horizontal"
     >
-      <a-form-item label="名称" name="name">
-        <a-input v-model:value="formData.name" placeholder="输入剧集名称（可选）" />
+      <a-form-item :label="t('episodeEdit.labelName')" name="name">
+        <a-input v-model:value="formData.name" :placeholder="t('episodeEdit.placeholderName')" />
       </a-form-item>
-      <a-form-item label="内容" name="content" :rules="[{ required: true, message: '请输入剧集内容' }]">
-        <a-textarea v-model:value="formData.content" :rows="3" placeholder="输入剧集内容" />
+      <a-form-item :label="t('episodeEdit.labelContent')" name="content" :rules="[{ required: true, message: t('episodeEdit.requiredContent') }]">
+        <a-textarea v-model:value="formData.content" :rows="3" :placeholder="t('episodeEdit.placeholderContent')" />
       </a-form-item>
-      <a-form-item label="来源" name="source">
-        <a-input v-model:value="formData.source" placeholder="如: text, document" />
+      <a-form-item :label="t('episodeEdit.labelSource')" name="source">
+        <a-input v-model:value="formData.source" placeholder="text, document" />
       </a-form-item>
       <a-divider />
-      <a-form-item label="Episode类型" name="episode_type">
-        <a-select v-model:value="formData.episode_type" placeholder="选择类型" allow-clear>
-          <a-select-option value="EP_TRIAL_1ST">一审</a-select-option>
-          <a-select-option value="EP_TRIAL_2ND">二审</a-select-option>
-          <a-select-option value="EP_MEDIATION">调解</a-select-option>
-          <a-select-option value="EP_NEGOTIATION">协商</a-select-option>
-          <a-select-option value="EP_EXECUTION">执行</a-select-option>
-          <a-select-option value="EP_FILING">立案</a-select-option>
-          <a-select-option value="EP_ARBITRATION">仲裁</a-select-option>
+      <a-form-item :label="t('episodeEdit.labelEpisodeType')" name="episode_type">
+        <a-select v-model:value="formData.episode_type" :placeholder="t('episodeEdit.placeholderSelectType')" allow-clear>
+          <a-select-option value="EP_TRIAL_1ST">{{ t('episodeEdit.typeTrial1st') }}</a-select-option>
+          <a-select-option value="EP_TRIAL_2ND">{{ t('episodeEdit.typeTrial2nd') }}</a-select-option>
+          <a-select-option value="EP_MEDIATION">{{ t('episodeEdit.typeMediation') }}</a-select-option>
+          <a-select-option value="EP_NEGOTIATION">{{ t('episodeEdit.typeNegotiation') }}</a-select-option>
+          <a-select-option value="EP_EXECUTION">{{ t('episodeEdit.typeExecution') }}</a-select-option>
+          <a-select-option value="EP_FILING">{{ t('episodeEdit.typeFiling') }}</a-select-option>
+          <a-select-option value="EP_ARBITRATION">{{ t('episodeEdit.typeArbitration') }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="流程类型" name="process_type">
-        <a-select v-model:value="formData.process_type" placeholder="选择流程类型" allow-clear>
-          <a-select-option value="litigation">诉讼</a-select-option>
-          <a-select-option value="mediation">调解</a-select-option>
-          <a-select-option value="arbitration">仲裁</a-select-option>
-          <a-select-option value="execution">执行</a-select-option>
-          <a-select-option value="business_process">业务流程</a-select-option>
+      <a-form-item :label="t('episodeEdit.labelProcessType')" name="process_type">
+        <a-select v-model:value="formData.process_type" :placeholder="t('episodeEdit.placeholderSelectProcess')" allow-clear>
+          <a-select-option value="litigation">{{ t('episodeEdit.processLitigation') }}</a-select-option>
+          <a-select-option value="mediation">{{ t('episodeEdit.processMediation') }}</a-select-option>
+          <a-select-option value="arbitration">{{ t('episodeEdit.processArbitration') }}</a-select-option>
+          <a-select-option value="execution">{{ t('episodeEdit.processExecution') }}</a-select-option>
+          <a-select-option value="business_process">{{ t('episodeEdit.processBusiness') }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="阶段标签" name="stage_label">
-        <a-select v-model:value="formData.stage_label" placeholder="选择阶段标签" allow-clear>
-          <a-select-option value="立案">立案</a-select-option>
-          <a-select-option value="调解">调解</a-select-option>
-          <a-select-option value="庭审">庭审</a-select-option>
-          <a-select-option value="判决">判决</a-select-option>
-          <a-select-option value="执行">执行</a-select-option>
-          <a-select-option value="归档">归档</a-select-option>
+      <a-form-item :label="t('episodeEdit.labelStageLabel')" name="stage_label">
+        <a-select v-model:value="formData.stage_label" :placeholder="t('episodeEdit.placeholderSelectStage')" allow-clear>
+          <a-select-option value="立案">{{ t('episodeEdit.stageFiling') }}</a-select-option>
+          <a-select-option value="调解">{{ t('episodeEdit.stageMediation') }}</a-select-option>
+          <a-select-option value="庭审">{{ t('episodeEdit.stageTrial') }}</a-select-option>
+          <a-select-option value="判决">{{ t('episodeEdit.stageJudgment') }}</a-select-option>
+          <a-select-option value="执行">{{ t('episodeEdit.stageExecution') }}</a-select-option>
+          <a-select-option value="归档">{{ t('episodeEdit.stageArchive') }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="阶段级别" name="stage_level">
-        <a-select v-model:value="formData.stage_level" placeholder="选择阶段级别" allow-clear>
-          <a-select-option value="一审">一审</a-select-option>
-          <a-select-option value="二审">二审</a-select-option>
-          <a-select-option value="再审">再审</a-select-option>
-          <a-select-option value="终审">终审</a-select-option>
+      <a-form-item :label="t('episodeEdit.labelStageLevel')" name="stage_level">
+        <a-select v-model:value="formData.stage_level" :placeholder="t('episodeEdit.placeholderSelectLevel')" allow-clear>
+          <a-select-option value="一审">{{ t('episodeEdit.level1st') }}</a-select-option>
+          <a-select-option value="二审">{{ t('episodeEdit.level2nd') }}</a-select-option>
+          <a-select-option value="再审">{{ t('episodeEdit.levelRetrial') }}</a-select-option>
+          <a-select-option value="终审">{{ t('episodeEdit.levelFinal') }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="审查阶段" name="is_review_stage">
+      <a-form-item :label="t('episodeEdit.labelReviewStage')" name="is_review_stage">
         <a-switch v-model:checked="formData.is_review_stage" />
       </a-form-item>
       <a-divider />
-      <a-form-item label="开始时间" name="start_time">
+      <a-form-item :label="t('episodeEdit.labelStartTime')" name="start_time">
         <a-date-picker v-model:value="formData.start_time" show-time format="YYYY-MM-DD HH:mm" style="width: 100%" />
       </a-form-item>
-      <a-form-item label="结束时间" name="end_time">
+      <a-form-item :label="t('episodeEdit.labelEndTime')" name="end_time">
         <a-date-picker v-model:value="formData.end_time" show-time format="YYYY-MM-DD HH:mm" style="width: 100%" />
       </a-form-item>
-      <a-form-item label="关联案件" name="case_id">
-        <a-input v-model:value="formData.case_id" placeholder="输入关联案件ID（可选）" />
+      <a-form-item :label="t('episodeEdit.labelCaseId')" name="case_id">
+        <a-input v-model:value="formData.case_id" :placeholder="t('episodeEdit.placeholderCaseId')" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -82,7 +82,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { graphApi } from '@/api/graph'
+
+const { t } = useI18n()
 
 function formatDateForSubmit(value: any): string | undefined {
   if (!value) return undefined

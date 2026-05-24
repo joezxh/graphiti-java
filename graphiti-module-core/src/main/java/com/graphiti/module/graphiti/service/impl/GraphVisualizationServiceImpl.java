@@ -194,7 +194,8 @@ public class GraphVisualizationServiceImpl implements GraphVisualizationService 
         }
         try (Session session = neo4jDriver.session()) {
             String cypher =
-                "MATCH (n:Entity {graph_id: $graphId, uuid: $uuid}) " +
+                "MATCH (n {graph_id: $graphId, uuid: $uuid}) " +
+                "WHERE n:Entity OR n:Episode " +
                 "RETURN n";
 
             Result result = session.run(cypher, Map.of("graphId", graphId, "uuid", nodeUuid));
@@ -754,6 +755,148 @@ public class GraphVisualizationServiceImpl implements GraphVisualizationService 
                     .edges(edges)
                     .build();
         }
+    }
+
+    @Override
+    public GraphVisualizationRespVO getEpisodesVisualizationByType(
+            String graphId,
+            String typeCode,
+            Integer page,
+            Integer pageSize,
+            Integer depth) {
+
+        int effectivePage = page != null && page > 0 ? page : 1;
+        int effectivePageSize = pageSize != null && pageSize > 0 ? pageSize : 20;
+        int effectiveDepth = depth != null && depth >= 1 && depth <= 3 ? depth : 2;
+        int skip = (effectivePage - 1) * effectivePageSize;
+
+        try (Session session = neo4jDriver.session()) {
+            // 阶段 1: 统计总数
+            String countCypher =
+                "MATCH (n:Episode {graph_id: $graphId, episode_type: $typeCode}) " +
+                "WHERE n.invalid_at IS NULL " +
+                "RETURN count(n) as total";
+            Result countResult = session.run(countCypher,
+                Map.of("graphId", graphId, "typeCode", typeCode));
+            long total = countResult.hasNext() ? countResult.next().get("total").asLong() : 0;
+
+            // 阶段 2: 分页查询中心节点
+            String centerCypher =
+                "MATCH (center:Episode {graph_id: $graphId, episode_type: $typeCode}) " +
+                "WHERE center.invalid_at IS NULL " +
+                "WITH center ORDER BY center.valid_at DESC SKIP $skip LIMIT $limit " +
+                "RETURN collect(center) as centers";
+
+            Map<String, Object> centerParams = new HashMap<>();
+            centerParams.put("graphId", graphId);
+            centerParams.put("typeCode", typeCode);
+            centerParams.put("skip", skip);
+            centerParams.put("limit", effectivePageSize);
+
+            Result centerResult = session.run(centerCypher, centerParams);
+            List<GraphVisualizationRespVO.NodeVO> nodes = new ArrayList<>();
+            List<GraphVisualizationRespVO.EdgeVO> edges = new ArrayList<>();
+            Set<String> nodeUuids = new LinkedHashSet<>();
+            Set<String> edgeUuidSet = new HashSet<>();
+
+            List<String> centerUuids = new ArrayList<>();
+            if (centerResult.hasNext()) {
+                Record record = centerResult.next();
+                List<Object> centers = record.get("centers").asList();
+                for (Object obj : centers) {
+                    var neo4jNode = ((org.neo4j.driver.types.Node) obj);
+                    Map<String, Object> nodeMap = neo4jNode.asMap();
+                    String uuid = (String) nodeMap.get("uuid");
+                    if (uuid != null && !nodeUuids.contains(uuid)) {
+                        nodeUuids.add(uuid);
+                        centerUuids.add(uuid);
+                        nodes.add(buildNodeVO(nodeMap));
+                    }
+                }
+            }
+
+            // 阶段 3: 扩展 N 跳邻居（双向）
+            if (!centerUuids.isEmpty()) {
+                String expandCypher =
+                    "MATCH (center:Episode) " +
+                    "WHERE center.uuid IN $uuids " +
+                    "MATCH path = (center)-[*1.." + effectiveDepth + "]-(n) " +
+                    "WHERE n.graph_id = $graphId AND n.invalid_at IS NULL AND n <> center " +
+                    "UNWIND nodes(path) as node " +
+                    "WITH DISTINCT node " +
+                    "RETURN node";
+
+                Result expandResult = session.run(expandCypher,
+                    Map.of("graphId", graphId, "uuids", centerUuids));
+                while (expandResult.hasNext()) {
+                    Record record = expandResult.next();
+                    var neo4jNode = record.get("node").asNode();
+                    Map<String, Object> nodeMap = neo4jNode.asMap();
+                    String uuid = (String) nodeMap.get("uuid");
+                    if (uuid != null && !nodeUuids.contains(uuid)) {
+                        nodeUuids.add(uuid);
+                        nodes.add(buildNodeVO(nodeMap));
+                    }
+                }
+
+                // 阶段 4: 查询所有节点间的关系
+                if (nodeUuids.size() > 1) {
+                    String edgeCypher =
+                        "MATCH (a)-[r]-(b) " +
+                        "WHERE a.uuid IN $uuids AND b.uuid IN $uuids " +
+                        "AND a.graph_id = $graphId AND b.graph_id = $graphId " +
+                        "AND a.invalid_at IS NULL AND b.invalid_at IS NULL " +
+                        "RETURN DISTINCT r, startNode(r).uuid as source, endNode(r).uuid as target " +
+                        "LIMIT 1000";
+
+                    Result edgeResult = session.run(edgeCypher,
+                        Map.of("graphId", graphId, "uuids", new ArrayList<>(nodeUuids)));
+                    while (edgeResult.hasNext()) {
+                        Record record = edgeResult.next();
+                        var rel = record.get("r").asRelationship();
+                        String uuid = rel.get("uuid").asString();
+                        if (uuid == null) {
+                            uuid = java.util.UUID.randomUUID().toString();
+                        }
+                        if (!edgeUuidSet.contains(uuid)) {
+                            edgeUuidSet.add(uuid);
+                            edges.add(GraphVisualizationRespVO.EdgeVO.builder()
+                                    .uuid(uuid)
+                                    .source(record.get("source").asString())
+                                    .target(record.get("target").asString())
+                                    .type(rel.type())
+                                    .fact(rel.containsKey("fact") ? rel.get("fact").asString() : null)
+                                    .build());
+                        }
+                    }
+                }
+            }
+
+            int totalPages = (int) Math.ceil((double) total / effectivePageSize);
+
+            return GraphVisualizationRespVO.builder()
+                    .nodes(nodes)
+                    .edges(edges)
+                    .pagination(GraphVisualizationRespVO.PaginationVO.builder()
+                            .page(effectivePage)
+                            .pageSize(effectivePageSize)
+                            .total(total)
+                            .totalPages(totalPages)
+                            .build())
+                    .build();
+        }
+    }
+
+    private GraphVisualizationRespVO.NodeVO buildNodeVO(Map<String, Object> nodeMap) {
+        String nodeType = (String) nodeMap.get("type");
+        String nodeName = extractNodeName(nodeType, nodeMap);
+        return GraphVisualizationRespVO.NodeVO.builder()
+                .uuid((String) nodeMap.get("uuid"))
+                .name(nodeName)
+                .type(nodeType)
+                .summary((String) nodeMap.get("summary"))
+                .properties(extractProperties(nodeMap))
+                .build();
     }
 
     @Override

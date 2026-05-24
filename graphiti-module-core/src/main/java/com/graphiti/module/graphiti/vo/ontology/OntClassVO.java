@@ -16,6 +16,7 @@ public class OntClassVO {
     private Long definitionId;
     private String classUri;
     private String localName;
+    private String nameEn;
     private Long parentClassId;
     private String parentClassUri;
     private List<String> equivalentTo;

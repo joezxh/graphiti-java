@@ -393,16 +393,21 @@ export const graphApi = {
     })
   },
 
-  // V5.0: 根据剧集类型获取可视化数据（复用现有接口，前端按类型过滤）
+  // V5.0: 根据剧集类型获取分页可视化数据（含N跳邻居）
   async getEpisodesVisualizationByType(
     graphId: string,
     typeCode: string,
-    includeChildren?: boolean,
-    limit?: number
+    page?: number,
+    pageSize?: number,
+    depth?: number
   ): Promise<GraphVisualizationData> {
-    // 先获取所有 episode 可视化数据，前端组件按 typeCode 过滤
-    return request.get(`/graph/${graphId}/visualization/episodes`, {
-      params: { limit: limit || 100 }
+    return request.get(`/graph/${graphId}/visualization/episodes/by-type`, {
+      params: {
+        typeCode,
+        page: page || 1,
+        pageSize: pageSize || 20,
+        depth: depth || 2
+      }
     })
   },
 
@@ -659,11 +664,6 @@ export const graphApi = {
   // V3: 获取单个社区详情
   async getCommunityDetail(graphId: string, communityUuid: string): Promise<any> {
     return request.get(`/graph/${graphId}/communities/${communityUuid}`)
-  },
-
-  // V3: 获取单个 Episode 详情
-  async getEpisodeDetail(graphId: string, episodeUuid: string): Promise<any> {
-    return request.get(`/graph/episode/${graphId}/${episodeUuid}`)
   },
 
   // V3: 删除社区

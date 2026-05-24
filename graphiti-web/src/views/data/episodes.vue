@@ -78,7 +78,7 @@
           </template>
           <template v-if="column.key === 'isTrialStage'">
             <a-tag :color="record.isTrialStage ? 'green' : 'default'" size="small">
-              {{ record.isTrialStage ? '是' : '否' }}
+              {{ record.isTrialStage ? t('common.yes') : t('common.no') }}
             </a-tag>
           </template>
           <template v-if="column.key === 'timeRange'">
@@ -148,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
@@ -200,19 +200,19 @@ const pagination = reactive({
   showTotal: (total: number) => t('common.total', { count: total })
 })
 
-const columns = [
+const columns = computed(() => [
   { title: 'UUID', dataIndex: 'uuid', key: 'uuid', width: 200, ellipsis: true },
   { title: t('common.name'), dataIndex: 'name', key: 'name', width: 150 },
   { title: t('common.source'), key: 'source' },
   { title: t('episodes.contentPreview'), key: 'content' },
-  { title: '类型', dataIndex: 'episodeType', key: 'episodeType', width: 140 },
-  { title: '法律程序', dataIndex: 'legalProcess', key: 'legalProcess', width: 100 },
-  { title: '审级', dataIndex: 'courtLevel', key: 'courtLevel', width: 80 },
-  { title: '审判阶段', dataIndex: 'isTrialStage', key: 'isTrialStage', width: 90 },
-  { title: '时间', key: 'timeRange', width: 180 },
+  { title: t('common.type'), dataIndex: 'episodeType', key: 'episodeType', width: 140 },
+  { title: t('graphIde.labelProcessType'), dataIndex: 'legalProcess', key: 'legalProcess', width: 100 },
+  { title: t('graphIde.labelStageLevel'), dataIndex: 'courtLevel', key: 'courtLevel', width: 80 },
+  { title: t('graphIde.labelReviewStage'), dataIndex: 'isTrialStage', key: 'isTrialStage', width: 90 },
+  { title: t('common.time'), key: 'timeRange', width: 180 },
   { title: t('common.createdAt'), key: 'createdAt', width: 160 },
   { title: t('common.actions'), key: 'action', width: 150 }
-]
+])
 
 const mentionsVisible = ref(false)
 const mentionsData = ref<EpisodeMentions | null>(null)

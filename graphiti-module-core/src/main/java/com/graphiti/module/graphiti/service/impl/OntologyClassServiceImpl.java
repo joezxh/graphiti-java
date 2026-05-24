@@ -160,6 +160,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         entity.setDefinitionId(defId);
         entity.setClassUri(classUri);
         entity.setLocalName(reqVO.getLocalName());
+        entity.setNameEn(reqVO.getNameEn());
         entity.setParentClassId(reqVO.getParentClassId());
         entity.setDescription(reqVO.getDescription());
         entity.setExample(reqVO.getExample());
@@ -201,6 +202,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         OntClassDO before = cloneDO(existing);
 
         if (reqVO.getLocalName() != null) existing.setLocalName(reqVO.getLocalName());
+        if (reqVO.getNameEn() != null) existing.setNameEn(reqVO.getNameEn());
         if (reqVO.getClassUri() != null) existing.setClassUri(reqVO.getClassUri());
         if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
         if (reqVO.getParentClassId() != null) existing.setParentClassId(reqVO.getParentClassId());
@@ -316,6 +318,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         return ClassHierarchyVO.builder()
             .classUri(cls.getClassUri())
             .localName(cls.getLocalName())
+            .nameEn(cls.getNameEn())
             .description(cls.getDescription())
             .domainHint(cls.getDomainHint())
             .children(childVOs)
@@ -361,6 +364,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
         vo.setDefinitionId(entity.getDefinitionId());
         vo.setClassUri(entity.getClassUri());
         vo.setLocalName(entity.getLocalName());
+        vo.setNameEn(entity.getNameEn());
         vo.setParentClassId(entity.getParentClassId());
         vo.setDescription(entity.getDescription());
         vo.setExample(entity.getExample());

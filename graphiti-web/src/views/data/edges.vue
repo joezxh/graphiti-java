@@ -1,5 +1,5 @@
 <template>
-  <DataManagerLayout title="关系边管理">
+  <DataManagerLayout :title="$t('nav.edgeManagement')">
     <template #main-table>
       <EdgeListPanel :graph-id="graphId" />
     </template>

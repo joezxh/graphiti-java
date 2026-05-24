@@ -94,10 +94,10 @@
       <a-table
         :data-source="instanceList"
         :columns="instanceColumns"
-        :pagination="instancePagination"
+        :pagination="false"
         size="small"
         :loading="instancesLoading"
-        @change="handleInstanceTableChange"
+        :scroll="{ x: 'max-content' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'name'">
@@ -108,6 +108,28 @@
           </template>
         </template>
       </a-table>
+
+      <!-- 同步分页控件 -->
+      <div class="instance-pagination-bar">
+        <a-pagination
+          v-model:current="currentPage"
+          :total="props.pagination.total"
+          :pageSize="props.pagination.pageSize"
+          size="small"
+          show-less-items
+          @change="handlePageChange"
+        />
+        <a-select
+          v-model:value="currentDepth"
+          size="small"
+          style="width: 70px; margin-left: 8px"
+          @change="handleDepthChange"
+        >
+          <a-select-option :value="1">1跳</a-select-option>
+          <a-select-option :value="2">2跳</a-select-option>
+          <a-select-option :value="3">3跳</a-select-option>
+        </a-select>
+      </div>
     </div>
   </div>
 </template>
@@ -119,7 +141,6 @@ import {
   DeleteOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons-vue'
-import { message } from 'ant-design-vue'
 import { episodeTypeApi } from '@/api/metadata'
 import type { OntEpisodeTypeVO, EpisodeTypeDeleteCheckVO } from '@/api/metadata'
 
@@ -127,30 +148,54 @@ const props = defineProps<{
   graphId: string
   typeId: number
   typeData?: OntEpisodeTypeVO
+  pagination: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+    hasNextPage: boolean
+  }
+  depth: number
 }>()
 
 const emit = defineEmits<{
   (e: 'edit-type', typeId: number): void
   (e: 'delete-type', typeId: number): void
   (e: 'navigate-to-instance', uuid: string): void
+  (e: 'pagination-change', page: number): void
+  (e: 'depth-change', depth: number): void
 }>()
 
 const activeTab = ref<'info' | 'instances'>('info')
 const deleteCheck = ref<EpisodeTypeDeleteCheckVO | null>(null)
 const instanceList = ref<any[]>([])
 const instancesLoading = ref(false)
-const instancePagination = ref({
-  current: 1,
-  pageSize: 10,
-  total: 0
-})
 
 const canDelete = computed(() => deleteCheck.value?.canDelete ?? false)
 
+// 分页和深度计算属性（双向绑定风格）
+const currentPage = computed({
+  get: () => props.pagination.page,
+  set: (val) => emit('pagination-change', val)
+})
+
+const currentDepth = computed({
+  get: () => props.depth,
+  set: (val) => emit('depth-change', val)
+})
+
+function handlePageChange(page: number) {
+  emit('pagination-change', page)
+}
+
+function handleDepthChange(depth: number) {
+  emit('depth-change', depth)
+}
+
 const instanceColumns = [
-  { title: '名称', dataIndex: 'name', key: 'name', ellipsis: true },
-  { title: '来源', dataIndex: 'source', key: 'source', width: 100 },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 140 }
+  { title: '名称', dataIndex: 'name', key: 'name', width: 'auto', minWidth: 200 },
+  { title: '来源', dataIndex: 'source', key: 'source', width: 100, ellipsis: false },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160, ellipsis: false }
 ]
 
 function getStatusColor(status?: string): string {
@@ -183,27 +228,30 @@ async function loadDeleteCheck() {
   }
 }
 
-async function loadInstances(page = 1, pageSize = 10) {
+async function loadInstances() {
   instancesLoading.value = true
   try {
-    const res = await episodeTypeApi.getInstances(props.graphId, props.typeId, page, pageSize)
+    const res = await episodeTypeApi.getInstances(
+      props.graphId,
+      props.typeId,
+      props.pagination.page,
+      props.pagination.pageSize
+    )
     instanceList.value = res.episodes || []
-    instancePagination.value = {
-      current: page,
-      pageSize,
-      total: res.totalCount || 0
-    }
   } catch (e) {
     console.error('加载实例列表失败:', e)
-    message.error('加载实例列表失败')
+    instanceList.value = []
   } finally {
     instancesLoading.value = false
   }
 }
 
-function handleInstanceTableChange(pagination: any) {
-  loadInstances(pagination.current, pagination.pageSize)
-}
+// 监听分页变化自动刷新
+watch(() => props.pagination.page, () => {
+  if (activeTab.value === 'instances') {
+    loadInstances()
+  }
+}, { immediate: false })
 
 watch(() => props.typeId, () => {
   if (props.typeId) {
@@ -215,8 +263,8 @@ watch(() => props.typeId, () => {
 }, { immediate: true })
 
 watch(activeTab, (tab: 'info' | 'instances') => {
-  if (tab === 'instances' && instanceList.value.length === 0) {
-    loadInstances(1, 10)
+  if (tab === 'instances') {
+    loadInstances()
   }
 })
 </script>
@@ -258,6 +306,19 @@ watch(activeTab, (tab: 'info' | 'instances') => {
     padding: 12px;
   }
 
+  // 实例表格不换行样式
+  :deep(.ant-table) {
+    .ant-table-cell {
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+    }
+
+    .ant-table-tbody > tr > td {
+      white-space: nowrap;
+    }
+  }
+
   .description-text {
     white-space: pre-wrap;
     word-break: break-word;
@@ -272,6 +333,15 @@ watch(activeTab, (tab: 'info' | 'instances') => {
     gap: 8px;
     margin-top: 12px;
     padding-top: 12px;
+    border-top: 1px solid #21262d;
+  }
+
+  .instance-pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    margin-top: 8px;
     border-top: 1px solid #21262d;
   }
 }

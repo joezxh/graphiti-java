@@ -1,5 +1,5 @@
 <template>
-  <DataManagerLayout title="类定义管理">
+  <DataManagerLayout :title="$t('nav.classManagement')">
     <template #main-table>
       <ClassListPanel :graph-id="graphId" @open-class="handleOpenClass" />
     </template>
@@ -14,8 +14,8 @@
       />
       <div v-else class="empty-state">
         <InboxOutlined class="empty-icon" />
-        <div class="empty-title">选择一个类</div>
-        <div class="empty-desc">点击左侧列表中的类查看详情和编辑</div>
+        <div class="empty-title">{{ $t('data.selectClass') }}</div>
+        <div class="empty-desc">{{ $t('data.selectClassDesc') }}</div>
       </div>
     </template>
   </DataManagerLayout>

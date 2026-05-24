@@ -8,12 +8,12 @@
       <a-space>
         <a-button type="primary" :loading="saving" @click="handleSave">
           <template #icon><SaveOutlined /></template>
-          保存
+          {{ t('common.save') }}
         </a-button>
         <a-divider type="vertical" />
         <a-button danger :disabled="!propertyId" :loading="deleting" @click="handleDelete">
           <template #icon><DeleteOutlined /></template>
-          删除
+          {{ t('common.delete') }}
         </a-button>
       </a-space>
       <div class="toolbar-right">
@@ -23,17 +23,17 @@
     </div>
 
     <a-tabs v-model:activeKey="activeTab" class="property-editor-tabs">
-      <a-tab-pane key="basic" tab="基本信息">
+      <a-tab-pane key="basic" :tab="t('propertyEditor.tabBasic')">
         <div class="tab-content">
           <a-form :model="form" layout="vertical" class="basic-form">
             <a-row :gutter="16">
               <a-col :span="12">
-                <a-form-item label="属性名称（localName）" required>
-                  <a-input v-model:value="form.localName" placeholder="如 name, age" />
+                <a-form-item :label="t('propertyEditor.propertyName')" required>
+                  <a-input v-model:value="form.localName" :placeholder="t('propertyEditor.propertyNamePlaceholder')" />
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="完整URI（propertyUri）">
+                <a-form-item :label="t('propertyEditor.propertyUri')">
                   <a-input v-model:value="form.propertyUri" placeholder="http://graphiti.io/ontology/name" />
                 </a-form-item>
               </a-col>
@@ -41,95 +41,95 @@
 
             <a-row :gutter="16">
               <a-col :span="12">
-                <a-form-item label="属性类型" required>
+                <a-form-item :label="t('propertyEditor.propertyType')" required>
                   <a-select v-model:value="form.propertyType">
-                    <a-select-option value="DATATYPE">数据类型属性（DatatypeProperty）</a-select-option>
-                    <a-select-option value="OBJECT">对象属性（ObjectProperty）</a-select-option>
-                    <a-select-option value="ANNOTATION">注解属性（AnnotationProperty）</a-select-option>
-                    <a-select-option value="TRANSITIVE">可传递属性（TransitiveProperty）</a-select-option>
-                    <a-select-option value="SYMMETRIC">对称属性（SymmetricProperty）</a-select-option>
-                    <a-select-option value="FUNCTIONAL">函数属性（FunctionalProperty）</a-select-option>
+                    <a-select-option value="DATATYPE">{{ t('propertyEditor.typeDatatype') }}</a-select-option>
+                    <a-select-option value="OBJECT">{{ t('propertyEditor.typeObject') }}</a-select-option>
+                    <a-select-option value="ANNOTATION">{{ t('propertyEditor.typeAnnotation') }}</a-select-option>
+                    <a-select-option value="TRANSITIVE">{{ t('propertyEditor.typeTransitive') }}</a-select-option>
+                    <a-select-option value="SYMMETRIC">{{ t('propertyEditor.typeSymmetric') }}</a-select-option>
+                    <a-select-option value="FUNCTIONAL">{{ t('propertyEditor.typeFunctional') }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :span="12">
-                <a-form-item label="父属性">
-                  <a-select v-model:value="form.parentPropertyId" placeholder="选择父属性" allow-clear :options="propertyOptions" />
+                <a-form-item :label="t('propertyEditor.parentProperty')">
+                  <a-select v-model:value="form.parentPropertyId" :placeholder="t('propertyEditor.selectParentProperty')" allow-clear :options="propertyOptions" />
                 </a-form-item>
               </a-col>
             </a-row>
 
-            <a-form-item label="逆属性（inverseOf）">
-              <a-select v-model:value="form.inverseOfId" placeholder="选择逆属性" allow-clear :options="propertyOptions" />
+            <a-form-item :label="t('propertyEditor.inverseOf')">
+              <a-select v-model:value="form.inverseOfId" :placeholder="t('propertyEditor.selectInverse')" allow-clear :options="propertyOptions" />
             </a-form-item>
 
-            <a-form-item label="等价属性（equivalentTo）">
-              <a-select v-model:value="form.equivalentTo" mode="multiple" placeholder="选择等价属性" allow-clear :options="propertyOptions" />
+            <a-form-item :label="t('propertyEditor.equivalentTo')">
+              <a-select v-model:value="form.equivalentTo" mode="multiple" :placeholder="t('propertyEditor.selectEquivalent')" allow-clear :options="propertyOptions" />
             </a-form-item>
 
-            <a-form-item label="描述">
+            <a-form-item :label="t('propertyEditor.description')">
               <a-textarea v-model:value="form.description" :rows="3" />
             </a-form-item>
 
-            <a-form-item label="示例">
+            <a-form-item :label="t('propertyEditor.example')">
               <a-textarea v-model:value="form.example" :rows="2" />
             </a-form-item>
           </a-form>
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="domain-range" tab="定义域/值域">
+      <a-tab-pane key="domain-range" :tab="t('propertyEditor.tabDomainRange')">
         <div class="tab-content">
           <a-form :model="form" layout="vertical" class="basic-form">
-            <a-form-item label="定义域（domain）— 哪些类可以使用此属性">
-              <a-select v-model:value="form.domainClassId" placeholder="选择类" allow-clear :options="classOptions">
+            <a-form-item :label="t('propertyEditor.domain')">
+              <a-select v-model:value="form.domainClassId" :placeholder="t('propertyEditor.selectClass')" allow-clear :options="classOptions">
                 <template #suffixIcon><ApiOutlined /></template>
               </a-select>
             </a-form-item>
 
             <a-divider />
 
-            <a-form-item v-if="form.propertyType === 'DATATYPE'" label="值域数据类型（range — DataType）">
-              <a-select v-model:value="form.rangeDataType" placeholder="选择数据类型">
-                <a-select-option value="string">字符串（string）</a-select-option>
-                <a-select-option value="integer">整数（integer）</a-select-option>
-                <a-select-option value="float">浮点数（float）</a-select-option>
-                <a-select-option value="boolean">布尔值（boolean）</a-select-option>
-                <a-select-option value="date">日期（date）</a-select-option>
-                <a-select-option value="datetime">日期时间（datetime）</a-select-option>
+            <a-form-item v-if="form.propertyType === 'DATATYPE'" :label="t('propertyEditor.rangeDataType')">
+              <a-select v-model:value="form.rangeDataType" :placeholder="t('propertyEditor.selectDataType')">
+                <a-select-option value="string">{{ t('propertyEditor.dataTypeString') }}</a-select-option>
+                <a-select-option value="integer">{{ t('propertyEditor.dataTypeInteger') }}</a-select-option>
+                <a-select-option value="float">{{ t('propertyEditor.dataTypeFloat') }}</a-select-option>
+                <a-select-option value="boolean">{{ t('propertyEditor.dataTypeBoolean') }}</a-select-option>
+                <a-select-option value="date">{{ t('propertyEditor.dataTypeDate') }}</a-select-option>
+                <a-select-option value="datetime">{{ t('propertyEditor.dataTypeDatetime') }}</a-select-option>
                 <a-select-option value="json">JSON</a-select-option>
               </a-select>
             </a-form-item>
 
-            <a-form-item v-else-if="form.propertyType === 'OBJECT'" label="值域类（range — Object）">
-              <a-select v-model:value="form.rangeClassId" placeholder="选择目标类" allow-clear :options="classOptions">
+            <a-form-item v-else-if="form.propertyType === 'OBJECT'" :label="t('propertyEditor.rangeClass')">
+              <a-select v-model:value="form.rangeClassId" :placeholder="t('propertyEditor.selectTargetClass')" allow-clear :options="classOptions">
                 <template #suffixIcon><ApiOutlined /></template>
               </a-select>
             </a-form-item>
 
-            <a-form-item label="默认值">
-              <a-input v-model:value="form.defaultValue" placeholder="默认属性值" />
+            <a-form-item :label="t('propertyEditor.defaultValue')">
+              <a-input v-model:value="form.defaultValue" :placeholder="t('propertyEditor.defaultValuePlaceholder')" />
             </a-form-item>
           </a-form>
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="constraints" tab="约束条件">
+      <a-tab-pane key="constraints" :tab="t('propertyEditor.tabConstraints')">
         <div class="tab-content">
           <a-form :model="form" layout="vertical" class="basic-form">
             <a-row :gutter="16">
               <a-col :span="8">
-                <a-form-item label="最小基数（minCardinality）">
+                <a-form-item :label="t('propertyEditor.minCardinality')">
                   <a-input-number v-model:value="form.minCardinality" :min="0" style="width: 100%" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="最大基数（maxCardinality）">
-                  <a-input-number v-model:value="form.maxCardinality" :min="0" style="width: 100%" placeholder="无限制填0" />
+                <a-form-item :label="t('propertyEditor.maxCardinality')">
+                  <a-input-number v-model:value="form.maxCardinality" :min="0" style="width: 100%" :placeholder="t('propertyEditor.maxCardinalityPlaceholder')" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="必填">
+                <a-form-item :label="t('propertyEditor.required')">
                   <a-switch v-model:checked="form.isRequired" />
                 </a-form-item>
               </a-col>
@@ -137,12 +137,12 @@
 
             <a-row :gutter="16">
               <a-col :span="8">
-                <a-form-item label="允许多值（isMultiple）">
+                <a-form-item :label="t('propertyEditor.isMultiple')">
                   <a-switch v-model:checked="form.isMultiple" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="正则约束（pattern）">
+                <a-form-item :label="t('propertyEditor.pattern')">
                   <a-input v-model:value="form.pattern" placeholder="^[A-Za-z]+$" />
                 </a-form-item>
               </a-col>
@@ -150,22 +150,22 @@
 
             <a-row :gutter="16">
               <a-col :span="8">
-                <a-form-item label="最小值">
+                <a-form-item :label="t('propertyEditor.minValue')">
                   <a-input-number v-model:value="form.minValue" style="width: 100%" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="最大值">
+                <a-form-item :label="t('propertyEditor.maxValue')">
                   <a-input-number v-model:value="form.maxValue" style="width: 100%" />
                 </a-form-item>
               </a-col>
             </a-row>
 
-            <a-form-item label="枚举值（allowedValues）">
+            <a-form-item :label="t('propertyEditor.allowedValues')">
               <a-select
                 v-model:value="form.allowedValues"
                 mode="tags"
-                placeholder="输入枚举值后回车确认"
+                :placeholder="t('propertyEditor.allowedValuesPlaceholder')"
                 style="width: 100%"
               />
             </a-form-item>
@@ -173,11 +173,11 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="inheritance" tab="继承关系">
+      <a-tab-pane key="inheritance" :tab="t('propertyEditor.tabInheritance')">
         <div class="tab-content">
           <div class="inheritance-section">
-            <div class="section-title">父属性链</div>
-            <div v-if="propertyAncestors.length === 0" class="empty-tip">无父属性（顶级属性）</div>
+            <div class="section-title">{{ t('propertyEditor.parentPropertyChain') }}</div>
+            <div v-if="propertyAncestors.length === 0" class="empty-tip">{{ t('propertyEditor.noParentProperty') }}</div>
             <div v-else class="inheritance-path">
               <span v-for="(p, idx) in propertyAncestors" :key="p.id" class="path-item">
                 <span class="path-node" :class="{ current: p.id === propertyId }" @click="openProperty(p.id, p.localName)">
@@ -189,8 +189,8 @@
           </div>
 
           <div class="inheritance-section" style="margin-top: 24px;">
-            <div class="section-title">子属性</div>
-            <div v-if="childProperties.length === 0" class="empty-tip">无子属性</div>
+            <div class="section-title">{{ t('propertyEditor.childProperties') }}</div>
+            <div v-if="childProperties.length === 0" class="empty-tip">{{ t('propertyEditor.noChildProperties') }}</div>
             <div v-else class="property-tags">
               <span v-for="p in childProperties" :key="p.id" class="property-tag" @click="openProperty(p.id, p.localName)">
                 {{ p.localName }}
@@ -199,8 +199,8 @@
           </div>
 
           <div class="inheritance-section" style="margin-top: 24px;">
-            <div class="section-title">等价属性</div>
-            <div v-if="equivalentProperties.length === 0" class="empty-tip">无等价属性</div>
+            <div class="section-title">{{ t('propertyEditor.equivalentProperties') }}</div>
+            <div v-if="equivalentProperties.length === 0" class="empty-tip">{{ t('propertyEditor.noEquivalentProperties') }}</div>
             <div v-else class="property-tags">
               <span v-for="p in equivalentProperties" :key="p.id" class="property-tag equivalent" @click="openProperty(p.id, p.localName)">
                 {{ p.localName }}
@@ -210,20 +210,20 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="stats" tab="使用统计">
+      <a-tab-pane key="stats" :tab="t('propertyEditor.tabStats')">
         <div class="tab-content">
           <a-row :gutter="16" class="stats-row">
             <a-col :span="8">
-              <a-statistic title="使用此属性的类数量" :value="usingClassCount" />
+              <a-statistic :title="t('propertyEditor.usingClassCount')" :value="usingClassCount" />
             </a-col>
             <a-col :span="8">
-              <a-statistic title="关联约束数量" :value="constraintCount" />
+              <a-statistic :title="t('propertyEditor.constraintCount')" :value="constraintCount" />
             </a-col>
           </a-row>
 
           <div class="using-classes">
-            <div class="section-title">使用此属性的类</div>
-            <div v-if="usingClasses.length === 0" class="empty-tip">暂无使用记录</div>
+            <div class="section-title">{{ t('propertyEditor.usingClasses') }}</div>
+            <div v-if="usingClasses.length === 0" class="empty-tip">{{ t('propertyEditor.noUsageRecord') }}</div>
             <div v-else class="class-tags">
               <span v-for="cls in usingClasses" :key="cls.id" class="class-tag" @click="openClass(cls)">
                 {{ cls.localName }}
@@ -239,9 +239,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
 import { SaveOutlined, DeleteOutlined, ApiOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   graphId: string
@@ -335,7 +338,7 @@ async function loadData() {
 }
 
 async function handleSave() {
-  if (!form.localName.trim()) { message.error('请填写属性名称'); return }
+  if (!form.localName.trim()) { message.error(t('propertyEditor.errorPropertyName')); return }
   saving.value = true
   try {
     const data = {
@@ -370,11 +373,11 @@ async function handleSave() {
     } else {
       await ontologyApi.createProperty(props.graphId, data)
     }
-    message.success('属性已保存')
+    message.success(t('propertyEditor.propertySaved'))
     await store.loadFullOntology(props.graphId)
     emit('saved')
   } catch (e: any) {
-    message.error(e.message || '保存失败')
+    message.error(e.message || t('common.saveFailed'))
   } finally {
     saving.value = false
   }
@@ -382,15 +385,15 @@ async function handleSave() {
 
 async function handleDelete() {
   if (!props.propertyId) return
-  if (!confirm('确定删除此属性？')) return
+  if (!confirm(t('propertyEditor.confirmDelete'))) return
   deleting.value = true
   try {
     await ontologyApi.deleteProperty(props.graphId, props.propertyId)
-    message.success('属性已删除')
+    message.success(t('propertyEditor.propertyDeleted'))
     await store.loadFullOntology(props.graphId)
     emit('saved')
   } catch (e: any) {
-    message.error(e.message || '删除失败')
+    message.error(e.message || t('common.deleteFailed'))
   } finally {
     deleting.value = false
   }
@@ -427,11 +430,11 @@ const equivalentProperties = computed(() => {
 })
 
 function openClass(cls: any) {
-  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `类: ${cls.localName}`, classId: cls.id })
+  store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `${t('propertyEditor.class')}: ${cls.localName}`, classId: cls.id })
 }
 
 function openProperty(propertyId: number, propertyName: string) {
-  store.openTab({ id: `property-editor-${propertyId}`, type: 'property-editor', title: `属性: ${propertyName}`, propertyId })
+  store.openTab({ id: `property-editor-${propertyId}`, type: 'property-editor', title: `${t('propertyEditor.property')}: ${propertyName}`, propertyId })
 }
 
 onMounted(() => loadData())
