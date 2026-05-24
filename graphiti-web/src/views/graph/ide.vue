@@ -49,196 +49,244 @@
     <!-- Main Content -->
     <div class="ide-main">
       <!-- Sidebar -->
-      <aside class="ide-sidebar">
+      <aside class="ide-sidebar" :class="{ collapsed: sidebarCollapsed }">
         <div class="sidebar-header">
-          <div class="sidebar-tabs">
-            <button
-              class="sidebar-tab"
-              :class="{ active: sidebarTab === 'ontology' }"
-              @click="sidebarTab = 'ontology'"
-            >
-              {{ t('graphIde.sidebarOntology') }}
-            </button>
-            <button
-              class="sidebar-tab"
-              :class="{ active: sidebarTab === 'episodes' }"
-              @click="sidebarTab = 'episodes'"
-            >
-              {{ t('graphIde.sidebarEpisodes') }}
-            </button>
-            <button
-              class="sidebar-tab"
-              :class="{ active: sidebarTab === 'communities' }"
-              @click="sidebarTab = 'communities'"
-            >
-              {{ t('graphIde.sidebarCommunities') }}
-            </button>
+          <template v-if="!sidebarCollapsed">
+            <div class="sidebar-tabs">
+              <button
+                class="sidebar-tab"
+                :class="{ active: sidebarTab === 'ontology' }"
+                @click="sidebarTab = 'ontology'"
+              >
+                {{ t('graphIde.sidebarOntology') }}
+              </button>
+              <button
+                class="sidebar-tab"
+                :class="{ active: sidebarTab === 'episodes' }"
+                @click="sidebarTab = 'episodes'"
+              >
+                {{ t('graphIde.sidebarEpisodes') }}
+              </button>
+              <button
+                class="sidebar-tab"
+                :class="{ active: sidebarTab === 'communities' }"
+                @click="sidebarTab = 'communities'"
+              >
+                {{ t('graphIde.sidebarCommunities') }}
+              </button>
+            </div>
+          </template>
+          <div class="sidebar-collapse-btns">
+            <a-tooltip :title="sidebarCollapsed ? t('graphIde.expandSidebar') : t('graphIde.collapseSidebar')">
+              <a-button type="text" size="small" class="collapse-btn" @click="sidebarCollapsed = !sidebarCollapsed">
+                {{ sidebarCollapsed ? '⯈' : '⯆' }}
+              </a-button>
+            </a-tooltip>
           </div>
         </div>
-
         <div class="sidebar-content">
-          <!-- Ontology Tab: 本体树 -->
-          <OntologyObjectExplorer
-            v-if="sidebarTab === 'ontology'"
-            :graph-id="effectiveGraphId"
-            :ontology-mode="ontologyMode"
-            @open-tab="handleOntologyOpenTab"
-            @class-selected="handleOntClassSelected"
-            @open-episode="handleEpisodeNodeClick"
-            @open-community="handleCommunityNodeClick"
-          />
-          <!-- Episodes Tab: 剧集类型树 -->
-          <EpisodeTypeExplorer
-            v-else-if="sidebarTab === 'episodes'"
-            :graph-id="effectiveGraphId"
-            :definition-id="definitionId"
-            @select-type="handleEpisodeTypeSelect"
-            @create-type="handleEpisodeTypeCreate"
-          />
-          <!-- Communities Tab: 社区树 -->
-          <CommunityExplorer
-            v-else-if="sidebarTab === 'communities'"
-            :graph-id="effectiveGraphId"
-            @open-community="handleCommunityNodeClick"
-          />
+          <template v-if="!sidebarCollapsed">
+            <!-- Ontology Tab: 本体树 -->
+            <OntologyObjectExplorer
+              v-if="sidebarTab === 'ontology'"
+              :graph-id="effectiveGraphId"
+              :ontology-mode="ontologyMode"
+              @open-tab="handleOntologyOpenTab"
+              @class-selected="handleOntClassSelected"
+              @open-episode="handleEpisodeNodeClick"
+              @open-community="handleCommunityNodeClick"
+            />
+            <!-- Episodes Tab: 剧集类型树 -->
+            <EpisodeTypeExplorer
+              v-else-if="sidebarTab === 'episodes'"
+              :graph-id="effectiveGraphId"
+              :definition-id="definitionId"
+              @select-type="handleEpisodeTypeSelect"
+              @create-type="handleEpisodeTypeCreate"
+            />
+            <!-- Communities Tab: 社区树 -->
+            <CommunityExplorer
+              v-else-if="sidebarTab === 'communities'"
+              :graph-id="effectiveGraphId"
+              @open-community="handleCommunityNodeClick"
+            />
+          </template>
+          <template v-else>
+            <div class="sidebar-collapsed-tabs">
+              <button
+                class="sidebar-collapsed-tab"
+                :class="{ active: sidebarTab === 'ontology' }"
+                @click="sidebarCollapsed = false; sidebarTab = 'ontology'"
+                :title="t('graphIde.sidebarOntology')"
+              >
+                O
+              </button>
+              <button
+                class="sidebar-collapsed-tab"
+                :class="{ active: sidebarTab === 'episodes' }"
+                @click="sidebarCollapsed = false; sidebarTab = 'episodes'"
+                :title="t('graphIde.sidebarEpisodes')"
+              >
+                E
+              </button>
+              <button
+                class="sidebar-collapsed-tab"
+                :class="{ active: sidebarTab === 'communities' }"
+                @click="sidebarCollapsed = false; sidebarTab = 'communities'"
+                :title="t('graphIde.sidebarCommunities')"
+              >
+                C
+              </button>
+            </div>
+          </template>
         </div>
       </aside>
 
       <!-- Canvas Area -->
-      <div class="ide-canvas">
-        <!-- Ontology Workbench (shown when ontology tab is active and class mode) -->
-        <OntologyWorkbench
-          v-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
-          :graph-id="effectiveGraphId"
-          :selected-class-id="selectedOntClassId"
-          @class-selected="handleOntClassSelected"
-        />
-        <!-- Graph Canvas (shown for episodes/communities sidebar tabs, or episodes/communities ontology mode) -->
-        <template v-else>
-        <!-- Toolbar -->
-        <div class="canvas-toolbar">
-          <div class="toolbar-group">
-            <a-tooltip :title="t('graphIde.tooltipAddNode')">
-              <a-button type="text" size="small" @click="addNode">
-                <template #icon><PlusOutlined /></template>
-              </a-button>
-            </a-tooltip>
-            <a-tooltip :title="t('graphIde.tooltipAddEdge')">
-              <a-button type="text" size="small" @click="addEdge">
-                <template #icon><LinkOutlined /></template>
-              </a-button>
-            </a-tooltip>
-            <a-divider type="vertical" />
-            <a-tooltip :title="t('graphIde.tooltipSelect')">
-              <a-button
-                type="text"
-                size="small"
-                :class="{ active: currentTool === 'select' }"
-                @click="currentTool = 'select'"
+      <div class="ide-canvas" :class="{ collapsed: canvasCollapsed }">
+        <template v-if="!canvasCollapsed">
+          <!-- Ontology Workbench (shown when ontology tab is active and class mode) -->
+          <OntologyWorkbench
+            v-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
+            :graph-id="effectiveGraphId"
+            :selected-class-id="selectedOntClassId"
+            @class-selected="handleOntClassSelected"
+          />
+          <!-- Graph Canvas (shown for episodes/communities sidebar tabs, or episodes/communities ontology mode) -->
+          <template v-else>
+          <!-- Toolbar -->
+          <div class="canvas-toolbar">
+            <div class="toolbar-group">
+              <a-tooltip :title="t('graphIde.tooltipAddNode')">
+                <a-button type="text" size="small" @click="addNode">
+                  <template #icon><PlusOutlined /></template>
+                </a-button>
+              </a-tooltip>
+              <a-tooltip :title="t('graphIde.tooltipAddEdge')">
+                <a-button type="text" size="small" @click="addEdge">
+                  <template #icon><LinkOutlined /></template>
+                </a-button>
+              </a-tooltip>
+              <a-divider type="vertical" />
+              <a-tooltip :title="t('graphIde.tooltipSelect')">
+                <a-button
+                  type="text"
+                  size="small"
+                  :class="{ active: currentTool === 'select' }"
+                  @click="currentTool = 'select'"
+                >
+                  <template #icon><AimOutlined /></template>
+                </a-button>
+              </a-tooltip>
+              <a-tooltip :title="t('graphIde.tooltipPan')">
+                <a-button
+                  type="text"
+                  size="small"
+                  :class="{ active: currentTool === 'pan' }"
+                  @click="currentTool = 'pan'"
+                >
+                  <template #icon><DragOutlined /></template>
+                </a-button>
+              </a-tooltip>
+            </div>
+
+            <div class="toolbar-separator" />
+
+            <div class="layout-selector">
+              <a-tooltip
+                v-for="layout in layouts"
+                :key="layout.key"
+                :title="layout.label"
               >
-                <template #icon><AimOutlined /></template>
-              </a-button>
-            </a-tooltip>
-            <a-tooltip :title="t('graphIde.tooltipPan')">
-              <a-button
-                type="text"
+                <a-button
+                  size="small"
+                  :class="{ active: currentLayout === layout.key }"
+                  @click="currentLayout = layout.key"
+                >
+                  <template #icon><component :is="layout.icon" style="color: #fff" /></template>
+                  <span style="color: #fff">{{ layout.label }}</span>
+                </a-button>
+              </a-tooltip>
+            </div>
+
+            <div class="toolbar-separator" />
+
+            <div class="toolbar-group">
+              <a-tooltip :title="t('graphIde.tooltipMinimap')">
+                <a-button
+                  type="text"
+                  size="small"
+                  :class="{ active: showMinimap }"
+                  @click="showMinimap = !showMinimap"
+                >
+                  <template #icon><BorderOutlined style="color: #fff" /></template>
+                </a-button>
+              </a-tooltip>
+              <a-tooltip :title="t('graphIde.tooltipAggregation')">
+                <a-button
+                  type="text"
+                  size="small"
+                  :class="{ active: aggregationMode }"
+                  @click="aggregationMode = !aggregationMode"
+                >
+                  <template #icon><ApartmentOutlined style="color: #fff" /></template>
+                </a-button>
+              </a-tooltip>
+            </div>
+
+            <div class="toolbar-spacer" />
+
+            <div class="toolbar-group">
+              <a-input-search
+                v-model:value="searchKeyword"
+                :placeholder="t('graphIde.searchNodePlaceholder')"
                 size="small"
-                :class="{ active: currentTool === 'pan' }"
-                @click="currentTool = 'pan'"
-              >
-                <template #icon><DragOutlined /></template>
-              </a-button>
-            </a-tooltip>
+                style="width: 180px"
+                @search="handleSearch"
+              />
+            </div>
+
+            <a-button type="primary" @click="showCascadeModal = true">
+              {{ t('graphIde.cascadeEdit') }}
+            </a-button>
           </div>
 
-          <div class="toolbar-separator" />
-
-          <div class="layout-selector">
-            <a-tooltip
-              v-for="layout in layouts"
-              :key="layout.key"
-              :title="layout.label"
-            >
-              <a-button
-                size="small"
-                :class="{ active: currentLayout === layout.key }"
-                @click="currentLayout = layout.key"
-              >
-                <template #icon><component :is="layout.icon" style="color: #fff" /></template>
-                <span style="color: #fff">{{ layout.label }}</span>
-              </a-button>
-            </a-tooltip>
-          </div>
-
-          <div class="toolbar-separator" />
-
-          <div class="toolbar-group">
-            <a-tooltip :title="t('graphIde.tooltipMinimap')">
-              <a-button
-                type="text"
-                size="small"
-                :class="{ active: showMinimap }"
-                @click="showMinimap = !showMinimap"
-              >
-                <template #icon><BorderOutlined style="color: #fff" /></template>
-              </a-button>
-            </a-tooltip>
-            <a-tooltip :title="t('graphIde.tooltipAggregation')">
-              <a-button
-                type="text"
-                size="small"
-                :class="{ active: aggregationMode }"
-                @click="aggregationMode = !aggregationMode"
-              >
-                <template #icon><ApartmentOutlined style="color: #fff" /></template>
-              </a-button>
-            </a-tooltip>
-          </div>
-
-          <div class="toolbar-spacer" />
-
-          <div class="toolbar-group">
-            <a-input-search
-              v-model:value="searchKeyword"
-              :placeholder="t('graphIde.searchNodePlaceholder')"
-              size="small"
-              style="width: 180px"
-              @search="handleSearch"
+          <!-- Canvas -->
+          <div class="canvas-wrapper">
+            <div v-if="loading" class="canvas-loading">
+              <a-spin size="large" :tip="t('graphIde.canvasLoading')" />
+            </div>
+            <GraphCanvas
+              ref="graphCanvasRef"
+              :graph-id="graphId"
+              :nodes="nodes"
+              :edges="edges"
+              :layout="currentLayout"
+              :tool="currentTool"
+              :show-minimap="showMinimap"
+              :aggregation-mode="aggregationMode"
+              :selected-node="selectedNode"
+              @node-click="handleNodeClick"
+              @node-dblclick="handleNodeDblClick"
+              @node-contextmenu="handleNodeContextMenu"
             />
           </div>
-
-          <a-button type="primary" @click="showCascadeModal = true">
-            {{ t('graphIde.cascadeEdit') }}
-          </a-button>
-        </div>
-
-        <!-- Canvas -->
-        <div class="canvas-wrapper">
-          <div v-if="loading" class="canvas-loading">
-            <a-spin size="large" :tip="t('graphIde.canvasLoading')" />
-          </div>
-          <GraphCanvas
-            ref="graphCanvasRef"
-            :graph-id="graphId"
-            :nodes="nodes"
-            :edges="edges"
-            :layout="currentLayout"
-            :tool="currentTool"
-            :show-minimap="showMinimap"
-            :aggregation-mode="aggregationMode"
-            :selected-node="selectedNode"
-            @node-click="handleNodeClick"
-            @node-dblclick="handleNodeDblClick"
-            @node-contextmenu="handleNodeContextMenu"
-          />
-        </div>
+          </template>
         </template>
+        <div v-if="canvasCollapsed" class="canvas-expand-btn-wrap">
+          <a-tooltip :title="t('graphIde.expandCanvas')">
+            <a-button type="text" size="large" class="canvas-expand-btn" @click="canvasCollapsed = false">
+              ⯈
+            </a-button>
+          </a-tooltip>
+        </div>
       </div>
 
       <!-- Right Panel -->
-      <aside class="ide-panel" :class="{ collapsed: !showPanel }">
-        <!-- V5.0: Episode 类型详情面板 -->
-        <template v-if="sidebarTab === 'episodes' && selectedEpisodeType">
+      <aside class="ide-panel" :class="{ collapsed: panelCollapsed }">
+        <template v-if="!panelCollapsed">
+          <!-- V5.0: Episode 类型详情面板 -->
+          <template v-if="sidebarTab === 'episodes' && selectedEpisodeType">
           <div class="panel-header">
             <span class="panel-title">{{ selectedEpisodeType.typeName || t('graphIde.panelTypeDetail') }}</span>
             <a-button type="text" size="small" @click="selectedEpisodeType = null">
@@ -581,10 +629,18 @@
           </div>
         </template>
 
-        <div v-else class="panel-empty">
+        <div v-else-if="!panelCollapsed" class="panel-empty">
           <InboxOutlined class="empty-icon" />
           <div class="empty-title">{{ t('graphIde.emptySelectNodeOrClass') }}</div>
           <div class="empty-desc">{{ t('graphIde.emptyDescClickNode') }}</div>
+        </div>
+        </template>
+        <div v-if="panelCollapsed" class="panel-expand-btn-wrap">
+          <a-tooltip :title="t('graphIde.expandPanel')">
+            <a-button type="text" size="large" class="panel-expand-btn" @click="panelCollapsed = false">
+              ⯇
+            </a-button>
+          </a-tooltip>
         </div>
       </aside>
     </div>
@@ -754,6 +810,11 @@ const sidebarTab = ref<'ontology' | 'episodes' | 'communities'>('ontology')
 const ontologyMode = ref<'class' | 'episodes' | 'communities'>('class')
 const selectedOntClassId = ref<number | null>(null) // 当前在本体视图中选中的类ID（用于右侧详情面板）
 
+// 三栏折叠状态
+const sidebarCollapsed = ref(false)
+const canvasCollapsed = ref(false)
+const panelCollapsed = ref(false)
+
 // Canvas
 const graphCanvasRef = ref()
 const currentTool = ref<EditTool>('select')
@@ -763,7 +824,6 @@ const aggregationMode = ref(false)
 const searchKeyword = ref('')
 
 // Panels
-const showPanel = ref(false)
 const selectedNode = ref<GraphIDENode | null>(null)
 const selectedClass = ref<SchemaClass | null>(null)
 const currentDetailTab = ref<DetailPanelTab>('info')
@@ -952,7 +1012,7 @@ const getNodeColor = (type: string): string => {
 const handleNodeClick = (node: GraphIDENode) => {
   selectedNode.value = node
   selectedClass.value = null
-  showPanel.value = true
+  panelCollapsed.value = false
   currentDetailTab.value = 'info'
   loadNodeRelations(node.uuid)
 }
@@ -1013,7 +1073,7 @@ const deleteNodeContext = async () => {
       nodes.value = nodes.value.filter(n => n.uuid !== contextMenu.node!.uuid)
       if (selectedNode.value?.uuid === contextMenu.node.uuid) {
         selectedNode.value = null
-        showPanel.value = false
+        panelCollapsed.value = true
       }
       message.success('删除成功')
     } catch (error) {
@@ -1033,7 +1093,7 @@ const loadNodeRelations = async (uuid: string) => {
 }
 
 const closePanel = () => {
-  showPanel.value = false
+  panelCollapsed.value = true
   selectedNode.value = null
   selectedClass.value = null
 }
@@ -1051,7 +1111,7 @@ const deleteSelected = async () => {
       await graphApi.deleteNode(effectiveGraphId.value, selectedNode.value.uuid)
       nodes.value = nodes.value.filter(n => n.uuid !== selectedNode.value!.uuid)
       selectedNode.value = null
-      showPanel.value = false
+      panelCollapsed.value = true
       message.success('删除成功')
     } catch (error) {
       message.error('删除失败')
@@ -1347,7 +1407,7 @@ const handleEpisodeTypeSelect = async (payload: { typeId: number; typeCode: stri
   nodes.value = []
   edges.value = []
   ontologyMode.value = 'episodes'
-  showPanel.value = true
+  panelCollapsed.value = false
   loading.value = true
 
   try {
@@ -1418,7 +1478,7 @@ const handleEpisodeTypeDelete = async (typeId: number) => {
     await episodeTypeApi.delete(effectiveGraphId.value, typeId)
     message.success('类型已删除')
     selectedEpisodeType.value = null
-    showPanel.value = false
+    panelCollapsed.value = true
     nodes.value = []
     edges.value = []
   } catch (e: any) {
@@ -1481,7 +1541,7 @@ const handleEpisodeNodeClick = async (payload?: { stageNode?: any; processNode?:
   ontologyMode.value = 'episodes'
   selectedEpisode.value = null
   selectedEpisodeType.value = null
-  showPanel.value = false
+  panelCollapsed.value = true
   loading.value = true
 
   try {
@@ -1493,7 +1553,7 @@ const handleEpisodeNodeClick = async (payload?: { stageNode?: any; processNode?:
       const first = payload.stageNode.episodes[0]
       const detail = await graphApi.getEpisodeDetail(effectiveGraphId.value, first.uuid)
       selectedEpisode.value = detail
-      showPanel.value = true
+      panelCollapsed.value = false
     }
   } catch (error) {
     console.error('加载剧集数据失败:', error)
@@ -1507,7 +1567,7 @@ const handleCommunityNodeClick = async (node?: any) => {
   sidebarTab.value = 'communities'
   ontologyMode.value = 'communities'
   selectedCommunityDetail.value = null
-  showPanel.value = false
+  panelCollapsed.value = true
   loading.value = true
 
   try {
@@ -1520,7 +1580,7 @@ const handleCommunityNodeClick = async (node?: any) => {
       if (first.uuid) {
         const detail = await graphApi.getCommunityDetail(effectiveGraphId.value, first.uuid)
         selectedCommunityDetail.value = detail
-        showPanel.value = true
+        panelCollapsed.value = false
       }
     }
   } catch (error) {
@@ -1539,7 +1599,7 @@ const handleOntClassSelected = async (classId: number) => {
 
   selectedClass.value = schemaClass
   selectedNode.value = null
-  showPanel.value = true
+  panelCollapsed.value = false
   currentDetailTab.value = 'info'
 
   // 打开类列表标签页（显示类管理界面）
@@ -1710,15 +1770,73 @@ watch(currentDetailTab, (newTab) => {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  transition: width 0.2s;
+
+  &.collapsed {
+    width: 48px;
+  }
 
   .sidebar-header {
     padding: 12px;
     border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
   }
 
   .sidebar-tabs {
     display: flex;
     gap: 4px;
+  }
+
+  .sidebar-collapse-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    .collapse-btn {
+      color: #8b949e;
+      font-size: 14px;
+      padding: 4px 6px;
+
+      &:hover {
+        color: #e6edf3;
+        background: #21262d;
+      }
+    }
+  }
+
+  .sidebar-collapsed-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 4px;
+  }
+
+  .sidebar-collapsed-tab {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #8b949e;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      color: #e6edf3;
+      background: #21262d;
+      border-color: #58a6ff;
+    }
+
+    &.active {
+      background: #21262d;
+      color: #58a6ff;
+      border-color: #58a6ff;
+    }
   }
 
   .sidebar-tab {
@@ -1805,6 +1923,31 @@ watch(currentDetailTab, (newTab) => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: min-width 0.2s;
+
+  &.collapsed {
+    flex: 0;
+    min-width: 48px;
+    width: 48px;
+  }
+
+  .canvas-expand-btn-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .canvas-expand-btn {
+    color: #8b949e;
+    font-size: 18px;
+    padding: 12px;
+
+    &:hover {
+      color: #e6edf3;
+      background: #21262d;
+    }
+  }
 
   .canvas-toolbar {
     height: 48px;
@@ -2213,6 +2356,29 @@ watch(currentDetailTab, (newTab) => {
   .empty-desc {
     font-size: 13px;
     color: #6e7681;
+  }
+}
+
+.panel-expand-btn-wrap {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+}
+
+.panel-expand-btn {
+  color: #8b949e;
+  font-size: 18px;
+  padding: 12px 8px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+
+  &:hover {
+    color: #e6edf3;
+    background: #30363d;
   }
 }
 
