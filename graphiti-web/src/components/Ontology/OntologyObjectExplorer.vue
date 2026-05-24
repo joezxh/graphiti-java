@@ -169,6 +169,7 @@ function handleNodeSelect(keys: (string | number)[]) {
   switch (node.type) {
     case 'class':
       emit('open-tab', { type: 'class-editor', title: `类: ${node.title}`, classId: node.classId })
+      emit('class-selected', node.classId)
       break
     case 'property':
       emit('open-tab', { type: 'property-editor', title: `属性: ${node.title}`, propertyId: node.propertyId })
