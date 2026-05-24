@@ -28,8 +28,9 @@
         <div class="pagination">
           <button
             class="page-btn"
-            :disabled="page <= 1"
-            @click="prevPage"
+            :disabled="true"
+            style="opacity: 0.4; cursor: not-allowed;"
+            title="仅支持向前翻页"
           >
             ◀
           </button>
@@ -91,6 +92,8 @@ import type { GraphIDENode, GraphIDEEdge, SchemaClass } from '@/api/graph'
 import GraphCanvas from '@/components/Graph/GraphCanvas.vue'
 import InstanceDataTable from './InstanceDataTable.vue'
 
+const DEFAULT_DEPTH = 2
+
 interface Props {
   graphId: string
   schemaClass: SchemaClass | null
@@ -101,6 +104,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'instance-click', node: GraphIDENode): void
   (e: 'instance-dblclick', node: GraphIDENode): void
+  (e: 'instance-edit', data: any): void
 }>()
 
 // ---- State ----
@@ -129,7 +133,7 @@ async function loadData(append: boolean) {
     const result = await graphApi.getEntitiesVisualizationByClass(
       props.graphId,
       props.schemaClass.localName,
-      { page: page.value, pageSize: pageSize.value, depth: 2 }
+      { page: page.value, pageSize: pageSize.value, depth: DEFAULT_DEPTH }
     )
 
     // 更新分页信息
@@ -179,12 +183,6 @@ function nextPage() {
   loadData(true)
 }
 
-function prevPage() {
-  if (page.value <= 1) return
-  page.value--
-  loadData(false)
-}
-
 function handlePageChange(p: number, ps: number) {
   page.value = p
   pageSize.value = ps
@@ -210,7 +208,7 @@ function handleGraphNodeDblclick(node: GraphIDENode) {
 }
 
 function handleInstanceEdit(data: any) {
-  // Forward to parent
+  emit('instance-edit', data)
 }
 
 // ---- Watch ----

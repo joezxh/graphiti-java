@@ -372,13 +372,6 @@ function handleView(record: any) {
   detailDrawerVisible.value = true
 }
 
-function getCellText(record: any, column: any) {
-  const val = record[column.dataIndex]
-  if (val === null || val === undefined) return '-'
-  if (typeof val === 'object') return JSON.stringify(val)
-  return String(val)
-}
-
 function truncateUuid(uuid: string) {
   if (!uuid) return '-'
   return uuid.length > 16 ? uuid.slice(0, 16) + '...' : uuid
