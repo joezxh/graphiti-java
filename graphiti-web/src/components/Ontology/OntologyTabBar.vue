@@ -26,16 +26,19 @@
     </div>
 
     <!-- 右键菜单 -->
-    <a-menu
+    <div
       v-if="contextMenu.visible"
-      :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px', position: 'fixed', zIndex: 9999 }"
-      @click="handleContextMenuAction"
+      class="ctx-menu"
+      :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
+      @click.stop
     >
-      <a-menu-item key="close">{{ $t('ontology.closeCurrent') }}</a-menu-item>
-      <a-menu-item key="close-others">{{ $t('ontology.closeOthers') }}</a-menu-item>
-      <a-menu-item key="close-right">{{ $t('ontology.closeRight') }}</a-menu-item>
-      <a-menu-item key="close-all">{{ $t('ontology.closeAll') }}</a-menu-item>
-    </a-menu>
+      <a-menu @click="handleContextMenuAction">
+        <a-menu-item key="close">{{ $t('ontology.closeCurrent') }}</a-menu-item>
+        <a-menu-item key="close-others">{{ $t('ontology.closeOthers') }}</a-menu-item>
+        <a-menu-item key="close-right">{{ $t('ontology.closeRight') }}</a-menu-item>
+        <a-menu-item key="close-all">{{ $t('ontology.closeAll') }}</a-menu-item>
+      </a-menu>
+    </div>
   </div>
 </template>
 
@@ -219,6 +222,32 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
     transition: color 0.15s;
 
     &:hover { color: #e6edf3; }
+  }
+}
+</style>
+
+<style lang="less">
+.ctx-menu {
+  position: fixed;
+  z-index: 9999;
+
+  .ant-menu {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .ant-menu-item {
+    color: #e6edf3;
+    font-size: 13px;
+    border-radius: 4px;
+    margin: 2px 0;
+    height: 32px;
+    line-height: 32px;
+
+    &:hover { background: #21262d; }
   }
 }
 </style>

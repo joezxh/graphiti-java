@@ -92,7 +92,7 @@
               :graph-id="effectiveGraphId"
               :ontology-mode="ontologyMode"
               @open-tab="handleOntologyOpenTab"
-              @class-selected="handleOntClassSelected"
+              @class-selected="handleClassSelected"
               @open-episode="handleEpisodeNodeClick"
               @open-community="handleCommunityNodeClick"
             />
@@ -145,22 +145,15 @@
       <!-- Canvas Area -->
       <div class="ide-canvas" :class="{ collapsed: canvasCollapsed }">
         <template v-if="!canvasCollapsed">
-          <!-- 本体类视图（点击左侧树中类时显示） -->
-          <OntologyClassView
-            v-if="ontologyClassViewActive && ontologyClassViewClass"
-            :graph-id="effectiveGraphId"
-            :schema-class="ontologyClassViewClass"
-            @instance-click="handleClassViewInstanceClick"
-            @instance-dblclick="handleClassViewInstanceDblClick"
-          />
-          <!-- Ontology Workbench（本体模式+class 且未激活类视图时显示） -->
+          <!-- OntologyWorkbench：本体模式下显示，支持图谱/列表切换 -->
           <OntologyWorkbench
-            v-else-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
+            v-if="sidebarTab === 'ontology' && ontologyMode === 'class'"
             :graph-id="effectiveGraphId"
-            :selected-class-id="selectedOntClassId"
-            @class-selected="handleOntClassSelected"
+            @instance-click="handleOntologyInstanceClick"
+            @instance-dblclick="handleOntologyInstanceDblclick"
+            @edit-instance="handleOntologyEditInstance"
           />
-          <!-- Graph Canvas（其余情况） -->
+          <!-- Graph Canvas（其余情况，包括 class-instance-view / class-editor 时） -->
           <template v-else>
           <!-- Toolbar -->
           <div class="canvas-toolbar">
@@ -430,21 +423,67 @@
           </div>
         </template>
 
-        <!-- 本体类视图时：显示类编辑器 -->
-        <template v-else-if="ontologyClassViewActive && ontologyClassViewClass">
+        <!-- 左侧类树选择 → 右侧显示类编辑器，不影响中间 OntologyWorkbench -->
+        <template v-if="selectedClassId">
           <div class="panel-header">
-            <span class="panel-title">{{ ontologyClassViewClass.localName }}</span>
-            <a-button type="text" size="small" @click="exitOntologyClassView" title="关闭">
+            <span class="panel-title">类: {{ ontologyStore.classes.find(c => c.id === selectedClassId)?.localName || `#${selectedClassId}` }}</span>
+            <a-button type="text" size="small" @click="selectedClassId = null" title="关闭">
               <template #icon><CloseOutlined /></template>
             </a-button>
           </div>
-          <div class="panel-content" style="overflow-y: auto; flex: 1;">
+          <div class="panel-content" style="overflow-y: auto; flex: 1; padding: 0;">
             <ClassEditor
-              :class-id="ontologyClassViewClass.id"
+              :class-id="selectedClassId"
               :graph-id="effectiveGraphId"
-              :is-new="false"
-              :read-only="false"
-              @saved="exitOntologyClassView"
+              @saved="ontologyStore.loadFullOntology(effectiveGraphId)"
+            />
+          </div>
+        </template>
+
+        <template v-else-if="ontologyStore.activeTab && ontologyStore.activeTab.type === 'class-editor'">
+          <div class="panel-header">
+            <span class="panel-title">{{ ontologyStore.activeTab.title }}</span>
+            <a-button type="text" size="small" @click="ontologyStore.closeTab(ontologyStore.activeTabId!)" title="关闭">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <div class="panel-content" style="overflow-y: auto; flex: 1; padding: 0;">
+            <ClassEditor
+              :class-id="ontologyStore.activeTab.classId"
+              :graph-id="effectiveGraphId"
+              @saved="ontologyStore.loadFullOntology(effectiveGraphId)"
+            />
+          </div>
+        </template>
+
+        <template v-else-if="ontologyStore.activeTab && ontologyStore.activeTab.type === 'property-editor'">
+          <div class="panel-header">
+            <span class="panel-title">{{ ontologyStore.activeTab.title }}</span>
+            <a-button type="text" size="small" @click="ontologyStore.closeTab(ontologyStore.activeTabId!)" title="关闭">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <div class="panel-content" style="overflow-y: auto; flex: 1; padding: 0;">
+            <PropertyEditor
+              :property-id="ontologyStore.activeTab.propertyId"
+              :graph-id="effectiveGraphId"
+              @saved="ontologyStore.loadFullOntology(effectiveGraphId)"
+            />
+          </div>
+        </template>
+
+        <template v-else-if="ontologyStore.activeTab && ontologyStore.activeTab.type === 'constraint-editor'">
+          <div class="panel-header">
+            <span class="panel-title">{{ ontologyStore.activeTab.title }}</span>
+            <a-button type="text" size="small" @click="ontologyStore.closeTab(ontologyStore.activeTabId!)" title="关闭">
+              <template #icon><CloseOutlined /></template>
+            </a-button>
+          </div>
+          <div class="panel-content" style="overflow-y: auto; flex: 1; padding: 0;">
+            <ConstraintEditor
+              :constraint-id="ontologyStore.activeTab.constraintId"
+              :graph-id="effectiveGraphId"
+              @saved="ontologyStore.loadFullOntology(effectiveGraphId)"
             />
           </div>
         </template>
@@ -808,8 +847,9 @@ import NodeEditModal from '@/components/Graph/NodeEditModal.vue'
 import AddEdgeModal from '@/components/Graph/AddEdgeModal.vue'
 import OntologyObjectExplorer from '@/components/Ontology/OntologyObjectExplorer.vue'
 import OntologyWorkbench from '@/components/Ontology/OntologyWorkbench.vue'
-import OntologyClassView from '@/components/Ontology/OntologyClassView.vue'
 import ClassEditor from '@/components/Ontology/ClassEditor.vue'
+import PropertyEditor from '@/components/Ontology/PropertyEditor.vue'
+import ConstraintEditor from '@/components/Ontology/ConstraintEditor.vue'
 import EpisodeTypeExplorer from '@/components/Ontology/EpisodeTypeExplorer.vue'
 import EpisodeTypeDetailPanel from '@/components/Ontology/EpisodeTypeDetailPanel.vue'
 import EpisodeTypeEditModal from '@/components/Ontology/EpisodeTypeEditModal.vue'
@@ -837,12 +877,14 @@ const showSettings = ref(false)
 // Sidebar
 const sidebarTab = ref<'ontology' | 'episodes' | 'communities'>('ontology')
 const ontologyMode = ref<'class' | 'episodes' | 'communities'>('class')
-const selectedOntClassId = ref<number | null>(null) // 当前在本体视图中选中的类ID（用于右侧详情面板）
 
 // 三栏折叠状态
 const sidebarCollapsed = ref(false)
 const canvasCollapsed = ref(false)
 const panelCollapsed = ref(false)
+
+// 右侧面板：类编辑器（独立于 ontologyStore.activeTab，不影响中间 OntologyWorkbench）
+const selectedClassId = ref<number | null>(null)
 
 // Canvas
 const graphCanvasRef = ref()
@@ -858,9 +900,6 @@ const selectedClass = ref<SchemaClass | null>(null)
 const currentDetailTab = ref<DetailPanelTab>('info')
 
 // 本体类视图状态
-const ontologyClassViewActive = ref(false)
-const ontologyClassViewClass = ref<SchemaClass | null>(null)
-
 // Context Menu
 const contextMenu = reactive({
   visible: false,
@@ -1384,18 +1423,49 @@ const handleGraphChange = (value: string) => {
 import { useOntologyStore } from '@/store/modules/ontology'
 const ontologyStore = useOntologyStore()
 
-const handleOntologyOpenTab = (payload: { type: string; title: string; classId?: number; propertyId?: number; classType?: string }) => {
+const handleOntologyOpenTab = (payload: { type: string; title: string; classId?: number; propertyId?: number; constraintId?: number; classType?: string; schemaClass?: any }) => {
   ontologyStore.openTab({
-    id: payload.classId ? `class-editor-${payload.classId}` :
+    id: payload.classId ? `class-instance-${payload.classId}` :
         payload.propertyId ? `property-editor-${payload.propertyId}` :
+        payload.constraintId ? `constraint-editor-${payload.constraintId}` :
         `tab-${payload.type}-${Date.now()}`,
     type: payload.type as any,
     title: payload.title,
     classId: payload.classId,
     propertyId: payload.propertyId,
-    classType: payload.classType
+    constraintId: payload.constraintId,
+    classType: payload.classType,
+    schemaClass: payload.schemaClass
   })
-  ontologyMode.value = 'class'
+  // 只有打开 class-editor 才切换到类视图模式（覆盖中间窗体）
+  if (payload.type === 'class-editor') {
+    ontologyMode.value = 'class'
+  }
+}
+
+// 左侧类树叶子节点点击 → 在右侧面板打开类编辑器，不影响中间窗体
+const handleClassSelected = (classId: number) => {
+  selectedClassId.value = classId
+  panelCollapsed.value = false  // 自动展开右侧面板
+}
+
+// OntologyClassView 事件处理
+function handleOntologyInstanceClick(node: any) {
+  // 可选：选中节点高亮等
+  console.debug('[ide] ontology instance-click', node)
+}
+
+function handleOntologyInstanceDblclick(node: any) {
+  console.debug('[ide] ontology instance-dblclick', node)
+}
+
+function handleOntologyEditInstance(data: any) {
+  ontologyStore.openTab({
+    id: `instance-editor-${data.uuid || 'new'}`,
+    type: 'instance-editor',
+    title: `实例: ${data.name || '新建'}`,
+    classType: data.type
+  })
 }
 
 // V5.0: 加载 Episode 类型可视化数据
@@ -1624,36 +1694,6 @@ const handleCommunityNodeClick = async (node?: any) => {
 }
 
 // 事件流点击（顶级节点）
-// 本体树中选中某个类 → 打开类列表标签页 + 右侧面板显示类统计信息
-const handleOntClassSelected = async (classId: number) => {
-  const schemaClass = schemaClasses.value.find(c => c.id === classId)
-  if (!schemaClass) return
-
-  selectedOntClassId.value = classId
-  ontologyClassViewActive.value = true
-  ontologyClassViewClass.value = schemaClass
-  selectedNode.value = null
-  panelCollapsed.value = false
-}
-
-// 退出本体类视图
-const exitOntologyClassView = () => {
-  ontologyClassViewActive.value = false
-  ontologyClassViewClass.value = null
-}
-
-// 本体类视图中点击实例
-const handleClassViewInstanceClick = (node: GraphIDENode) => {
-  selectedNode.value = node
-}
-
-// 本体类视图中双击实例（打开节点编辑）
-const handleClassViewInstanceDblClick = (node: GraphIDENode) => {
-  selectedNode.value = node
-  editingNode.value = node
-  showNodeEditModal.value = true
-}
-
 const loadAllData = async () => {
   await Promise.all([
     loadGraphMetadata(),
@@ -2054,7 +2094,7 @@ watch(currentDetailTab, (newTab) => {
 
 // Right Panel
 .ide-panel {
-  width: 320px;
+  width: 480px;
   background: #161b22;
   border-left: 1px solid #30363d;
   display: flex;

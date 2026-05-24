@@ -1,0 +1,31 @@
+<h2>IDE 布局调整方案 — 三栏可缩放 + 本体模式新交互</h2>
+<p class="subtitle">请选择一个方案，A 是推荐方案</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>推荐：独立 Resize 分割条（保守改动）</h3>
+      <p>三个面板通过可拖拽的分割条调整宽度，每个面板有独立的展开/收起到最小宽度按钮。结构清晰，改动最小。</p>
+      <ul>
+        <li>左侧树：展开 260px / 收缩 48px（只显示图标+Tab切换按钮）</li>
+        <li>中间图谱：展开 flex:1 / 收缩 48px（工具栏保持可见）</li>
+        <li>右侧编辑窗：展开 360px / 收缩 0px（完全隐藏，显示浮动按钮）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案 B：侧边折叠按钮（视觉更紧凑）</h3>
+      <p>每个面板头部放置一个折叠/展开按钮，替代分割条交互。折叠时面板完全隐藏，点击按钮恢复。</p>
+      <ul>
+        <li>侧边栏折叠按钮在右上角（⯆ ⯈）</li>
+        <li>中间面板折叠按钮在左侧分隔线上</li>
+        <li>右侧面板折叠按钮在左侧分隔线上</li>
+        <li>展开时记录历史宽度，折叠后恢复</li>
+      </ul>
+    </div>
+  </div>
+</div>

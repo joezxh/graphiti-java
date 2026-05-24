@@ -24,6 +24,7 @@
     </div>
 
     <div class="check-result">
+      <div class="result-wrapper">
       <a-result
         v-if="checkResult !== null"
         :status="checkResult.valid ? 'success' : 'error'"
@@ -38,6 +39,7 @@
           </a-space>
         </template>
       </a-result>
+      </div>
 
       <div v-if="checkResult" class="stats-cards">
         <div class="stat-card">
@@ -188,7 +190,19 @@ function handleExport() {
 .consistency-check-panel {
   display: flex; flex-direction: column; height: 100%; overflow-y: auto; padding: 16px; gap: 16px;
   .panel-toolbar { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-  .check-result { background: #161b22; border-radius: 8px; padding: 16px; border: 1px solid #30363d; }
+  .check-result {
+    background: #161b22;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #30363d;
+
+    .result-wrapper {
+      :deep(.ant-result-title) { color: #ffffff !important; }
+      :deep(.ant-result-subtitle) { color: #c9d1d9 !important; }
+      :deep(.ant-result-icon .anticon) { color: #ffffff !important; }
+      :deep(.ant-result-extra) { color: #c9d1d9 !important; }
+    }
+  }
   .stats-cards { display: flex; gap: 16px; margin-top: 16px;
     .stat-card { flex: 1; background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 16px; text-align: center;
       .stat-value { font-size: 28px; font-weight: 700; color: #e6edf3; &.green { color: #3fb950; } &.purple { color: #a371f7; } &.orange { color: #d29922; } &.blue { color: #58a6ff; } &.red { color: #f85149; } }
@@ -197,6 +211,8 @@ function handleExport() {
   }
   .issues-list, .reasoner-status { background: #161b22; border-radius: 8px; padding: 16px; border: 1px solid #30363d;
     .section-header { margin-bottom: 12px; .section-title { font-size: 14px; font-weight: 600; color: #e6edf3; } }
+    :deep(.ant-descriptions-item-label) { color: #c9d1d9 !important; }
+    :deep(.ant-descriptions-item-content) { color: #ffffff !important; }
   }
 }
 </style>

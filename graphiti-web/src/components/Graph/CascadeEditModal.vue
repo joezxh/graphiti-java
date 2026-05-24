@@ -1,21 +1,36 @@
 <template>
   <a-modal
     :open="visible"
-    title="属性级联编辑"
+    :title="t('graphIde.cascadeEdit.title')"
     width="640px"
     :footer="null"
     @cancel="handleClose"
   >
     <div class="cascade-edit-modal">
+      <!-- Node Type Selection -->
+      <div class="section">
+        <div class="section-title">{{ t('graphIde.cascadeEdit.nodeType') }}</div>
+        <a-select
+          v-model:value="classType"
+          :placeholder="t('graphIde.cascadeEdit.selectNodeType')"
+          style="width: 100%"
+          size="small"
+        >
+          <a-select-option v-for="cls in classes" :key="cls.localName" :value="cls.localName">
+            {{ cls.localName }} ({{ cls.propertyCount || 0 }} {{ t('graphIde.cascadeEdit.properties') }})
+          </a-select-option>
+        </a-select>
+      </div>
+
       <!-- Filter Section -->
       <div class="section">
-        <div class="section-title">筛选条件</div>
+        <div class="section-title">{{ t('graphIde.cascadeEdit.filterSection') }}</div>
         
         <div class="condition-list">
           <div v-for="(condition, index) in conditions" :key="index" class="condition-row">
             <a-select
               v-model:value="condition.propertyName"
-              placeholder="选择属性"
+              :placeholder="t('graphIde.cascadeEdit.selectProperty')"
               style="width: 140px"
               size="small"
               allow-clear
@@ -30,24 +45,24 @@
               style="width: 100px"
               size="small"
             >
-              <a-select-option value="eq">等于</a-select-option>
-              <a-select-option value="ne">不等于</a-select-option>
-              <a-select-option value="gt">大于</a-select-option>
-              <a-select-option value="lt">小于</a-select-option>
-              <a-select-option value="gte">大于等于</a-select-option>
-              <a-select-option value="lte">小于等于</a-select-option>
-              <a-select-option value="contains">包含</a-select-option>
-              <a-select-option value="not_contains">不包含</a-select-option>
-              <a-select-option value="in">在列表中</a-select-option>
-              <a-select-option value="not_in">不在列表</a-select-option>
-              <a-select-option value="is_null">为空</a-select-option>
-              <a-select-option value="is_not_null">不为空</a-select-option>
+              <a-select-option value="eq">{{ t('graphIde.cascadeEdit.op.eq') }}</a-select-option>
+              <a-select-option value="ne">{{ t('graphIde.cascadeEdit.op.ne') }}</a-select-option>
+              <a-select-option value="gt">{{ t('graphIde.cascadeEdit.op.gt') }}</a-select-option>
+              <a-select-option value="lt">{{ t('graphIde.cascadeEdit.op.lt') }}</a-select-option>
+              <a-select-option value="gte">{{ t('graphIde.cascadeEdit.op.gte') }}</a-select-option>
+              <a-select-option value="lte">{{ t('graphIde.cascadeEdit.op.lte') }}</a-select-option>
+              <a-select-option value="contains">{{ t('graphIde.cascadeEdit.op.contains') }}</a-select-option>
+              <a-select-option value="not_contains">{{ t('graphIde.cascadeEdit.op.notContains') }}</a-select-option>
+              <a-select-option value="in">{{ t('graphIde.cascadeEdit.op.in') }}</a-select-option>
+              <a-select-option value="not_in">{{ t('graphIde.cascadeEdit.op.notIn') }}</a-select-option>
+              <a-select-option value="is_null">{{ t('graphIde.cascadeEdit.op.isNull') }}</a-select-option>
+              <a-select-option value="is_not_null">{{ t('graphIde.cascadeEdit.op.isNotNull') }}</a-select-option>
             </a-select>
             
             <a-input
               v-if="!isNoValueOperator(condition.operator)"
               v-model:value="condition.value"
-              placeholder="值"
+              :placeholder="t('graphIde.cascadeEdit.value')"
               style="flex: 1"
               size="small"
             />
@@ -67,7 +82,7 @@
         
         <a-button type="link" size="small" @click="addCondition">
           <template #icon><PlusOutlined /></template>
-          添加条件
+          {{ t('graphIde.cascadeEdit.addCondition') }}
         </a-button>
         
         <div class="logic-selector" v-if="conditions.length > 1">
@@ -75,7 +90,7 @@
             <a-select-option value="AND">AND</a-select-option>
             <a-select-option value="OR">OR</a-select-option>
           </a-select>
-          <span class="logic-hint">多个条件的组合方式</span>
+          <span class="logic-hint">{{ t('graphIde.cascadeEdit.logicHint') }}</span>
         </div>
       </div>
       
@@ -83,7 +98,7 @@
       <div class="section">
         <a-button type="primary" ghost @click="handlePreview" :loading="previewLoading">
           <template #icon><SearchOutlined /></template>
-          预览影响范围
+          {{ t('graphIde.cascadeEdit.previewImpact') }}
         </a-button>
       </div>
       
@@ -91,16 +106,16 @@
       <div v-if="previewResult" class="preview-result">
         <div class="preview-header">
           <span class="preview-icon">📊</span>
-          <span class="preview-title">影响范围预览</span>
+          <span class="preview-title">{{ t('graphIde.cascadeEdit.previewTitle') }}</span>
         </div>
         
         <div class="preview-stat">
           <span class="stat-number">{{ previewResult.totalMatch }}</span>
-          <span class="stat-label">个节点匹配</span>
+          <span class="stat-label">{{ t('graphIde.cascadeEdit.nodesMatched') }}</span>
         </div>
         
         <div v-if="previewResult.distribution.length > 0" class="preview-distribution">
-          <div class="distribution-title">分布</div>
+          <div class="distribution-title">{{ t('graphIde.cascadeEdit.distribution') }}</div>
           <div
             v-for="dist in previewResult.distribution"
             :key="dist.value"
@@ -120,12 +135,12 @@
       
       <!-- Update Section -->
       <div v-if="previewResult" class="section">
-        <div class="section-title">修改内容</div>
+        <div class="section-title">{{ t('graphIde.cascadeEdit.updateSection') }}</div>
         
         <div class="update-row">
           <a-select
             v-model:value="updateProperty"
-            placeholder="选择属性"
+            :placeholder="t('graphIde.cascadeEdit.selectProperty')"
             style="width: 140px"
             size="small"
           >
@@ -138,7 +153,7 @@
           
           <a-input
             v-model:value="updateValue"
-            placeholder="新值"
+            :placeholder="t('graphIde.cascadeEdit.newValue')"
             style="flex: 1"
             size="small"
           />
@@ -146,7 +161,7 @@
         
         <a-button type="link" size="small" @click="addUpdateProperty" v-if="updateValues.length <= 2">
           <template #icon><PlusOutlined /></template>
-          添加更多修改
+          {{ t('graphIde.cascadeEdit.addMoreUpdates') }}
         </a-button>
         
         <div v-for="(uv, index) in updateValues" :key="'uv-' + index" class="update-row" style="margin-top: 8px">
@@ -168,7 +183,7 @@
           :loading="executeLoading"
           @click="handleExecute"
         >
-          确认修改 {{ previewResult ? `(${previewResult.totalMatch} 个节点)` : '' }}
+          {{ t('graphIde.cascadeEdit.confirmUpdate') }} {{ previewResult ? `(${previewResult.totalMatch} ${t('graphIde.cascadeEdit.nodes')})` : '' }}
         </a-button>
       </div>
     </div>
@@ -176,13 +191,14 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
 import { ref, reactive, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { PlusOutlined, MinusOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { graphApi } from '@/api/graph'
 import type { SchemaClass, CascadePreviewResponse } from '@/api/graph'
-import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   visible: boolean
@@ -249,13 +265,13 @@ const removeCondition = (index: number) => {
 
 const handlePreview = async () => {
   if (!classType.value) {
-    message.warning(t('TODO_请选择节点类型'))
+    message.warning(t('graphIde.cascadeEdit.selectNodeClassFirst'))
     return
   }
   
   const validConditions = conditions.filter(c => c.propertyName)
   if (validConditions.length === 0) {
-    message.warning(t('TODO_请至少添加一个筛选条件'))
+    message.warning(t('graphIde.cascadeEdit.addFilterCondition'))
     return
   }
   
@@ -272,7 +288,7 @@ const handlePreview = async () => {
     })
     previewResult.value = result
   } catch (error) {
-    message.error(t('TODO_预览失败'))
+    message.error(t('graphIde.cascadeEdit.previewFailed'))
     console.error(error)
   } finally {
     previewLoading.value = false
@@ -293,7 +309,7 @@ const removeUpdateProperty = (index: number) => {
 
 const handleExecute = async () => {
   if (!previewResult.value || previewResult.value.totalMatch === 0) {
-    message.warning(t('TODO_没有匹配的节点'))
+    message.warning(t('graphIde.cascadeEdit.noMatchedNodes'))
     return
   }
   
@@ -308,7 +324,7 @@ const handleExecute = async () => {
   })
   
   if (Object.keys(updates).length === 0) {
-    message.warning(t('TODO_请设置要修改的属性'))
+    message.warning(t('graphIde.cascadeEdit.setUpdateProperty'))
     return
   }
   
@@ -326,14 +342,14 @@ const handleExecute = async () => {
     })
     
     if (result.success) {
-      message.success(`成功修改 ${result.affectedCount} 个节点`)
+      message.success(t('graphIde.cascadeEdit.executeSuccess', { count: result.affectedCount }))
       emit('success')
       handleClose()
     } else {
-      message.warning(`部分失败: ${result.failedCount} 个`)
+      message.warning(t('graphIde.cascadeEdit.executePartialFailed', { count: result.failedCount }))
     }
   } catch (error) {
-    message.error(t('TODO_执行失败'))
+    message.error(t('graphIde.cascadeEdit.executeFailed'))
     console.error(error)
   } finally {
     executeLoading.value = false

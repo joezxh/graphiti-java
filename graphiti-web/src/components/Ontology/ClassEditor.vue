@@ -1,6 +1,6 @@
 /**
  * 类编辑器 — 本体工作台内嵌形式，支持多Tab
- * [基本信息] [属性列表] [继承关系] [约束规则] [实例数据]
+ * [基本信息] [属性列表] [继承关系] [约束规则]
  */
 <template>
   <div class="class-editor">
@@ -187,32 +187,6 @@
           <div v-if="classConstraints.length === 0" class="empty-tip">{{ t('classEditor.noConstraints') }}</div>
         </div>
       </a-tab-pane>
-
-      <a-tab-pane key="instances" :tab="t('classEditor.tabInstances')">
-        <div class="tab-content">
-          <div class="instance-stats-bar">
-            <div class="stat-item">
-              <span class="stat-label">{{ t('classEditor.instanceCount') }}</span>
-              <span class="stat-value">{{ instanceCount }}</span>
-            </div>
-          </div>
-          <a-table
-            :columns="instanceColumns"
-            :data-source="instanceList"
-            :pagination="instancePagination"
-            :loading="instanceLoading"
-            row-key="uuid"
-            size="small"
-            @change="handleInstanceTableChange"
-          >
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'name'">
-                <a-button type="link" size="small" @click="viewInstance(record)">{{ record.name }}</a-button>
-              </template>
-            </template>
-          </a-table>
-        </div>
-      </a-tab-pane>
     </a-tabs>
 
     <!-- 新建/编辑属性 Modal -->
@@ -286,9 +260,7 @@ import { useI18n } from 'vue-i18n'
 import { SaveOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { useOntologyStore } from '@/store/modules/ontology'
 import { ontologyApi } from '@/api/ontology'
-import { graphApi } from '@/api/graph'
 import type { OntClassVO, OntPropertyVO, OntConstraintVO } from '@/api/ontology'
-import type { ClassInstance } from '@/api/graph'
 import ConstraintValueEditor from './ConstraintValueEditor.vue'
 
 const { t } = useI18n()
@@ -300,7 +272,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'saved'): void
-  (e: 'edit-instance', data: ClassInstance): void
 }>()
 
 const store = useOntologyStore()
@@ -353,14 +324,14 @@ const propertyColumns = computed(() => [
   { title: t('classEditor.colType'), key: 'propertyType' },
   { title: t('classEditor.colDataType'), dataIndex: 'rangeDataType', key: 'rangeDataType' },
   { title: t('classEditor.colRequired'), key: 'isRequired' },
-  { title: t('classEditor.colActions'), width: 160 }
+  { title: t('classEditor.colActions'), key: 'action', width: 160 }
 ])
 
 const constraintColumns = computed(() => [
   { title: t('classEditor.colConstraintType'), dataIndex: 'constraintType', key: 'constraintType' },
   { title: t('classEditor.colConstraintValue'), dataIndex: 'value', key: 'value', ellipsis: true },
   { title: t('classEditor.colSeverity'), key: 'severity' },
-  { title: t('classEditor.colActions'), width: 140 }
+  { title: t('classEditor.colActions'), key: 'action', width: 140 }
 ])
 
 const classOptions = computed(() =>
@@ -395,31 +366,11 @@ const subclasses = computed(() =>
   store.classes.filter(c => c.parentClassId === props.classId)
 )
 
-const instanceCount = ref(0)
-const instanceList = ref<ClassInstance[]>([])
-const instanceLoading = ref(false)
-const instancePagination = reactive({
-  current: 1,
-  pageSize: 10,
-  total: 0,
-  showSizeChanger: true,
-  pageSizeOptions: ['10', '20', '50'],
-  showTotal: (total: number) => `共 ${total} 条`
-})
-
-const instanceColumns = computed(() => [
-  { title: t('classEditor.colInstanceName'), dataIndex: 'name', key: 'name' },
-  { title: t('classEditor.colInstanceUUID'), dataIndex: 'uuid', key: 'uuid', ellipsis: true },
-  { title: t('classEditor.colInstanceType'), dataIndex: 'type', key: 'type' },
-  { title: t('classEditor.colInstanceCreatedAt'), dataIndex: 'createdAt', key: 'createdAt' }
-])
-
 async function loadData() {
   if (!props.classId) return
   const cls = store.classes.find(c => c.id === props.classId)
   if (!cls) return
 
-  // 将后端返回的 URI/localName 字符串数组转换为类ID数组
   const equivIds: number[] = []
   if (Array.isArray(cls.equivalentTo)) {
     for (const uri of cls.equivalentTo) {
@@ -447,8 +398,6 @@ async function loadData() {
     equivalentTo: equivIds,
     disjointWith: disjointIds
   })
-
-  await loadInstances()
 }
 
 async function handleSave() {
@@ -526,7 +475,6 @@ async function handleAddProperty() {
   addingProperty.value = true
   try {
     if (editingPropertyId.value) {
-      // 更新属性
       await ontologyApi.updateProperty(props.graphId, editingPropertyId.value, {
         localName: propertyForm.localName,
         propertyType: propertyForm.propertyType as any,
@@ -538,7 +486,6 @@ async function handleAddProperty() {
       })
       message.success(t('classEditor.propertyUpdated'))
     } else {
-      // 新建属性
       await ontologyApi.createProperty(props.graphId, {
         localName: propertyForm.localName,
         propertyType: propertyForm.propertyType as any,
@@ -561,7 +508,6 @@ async function handleAddProperty() {
 }
 
 function openProperty(prop: OntPropertyVO) {
-  // 填充表单数据
   editingPropertyId.value = prop.id
   propertyForm.localName = prop.localName
   propertyForm.propertyType = prop.propertyType || 'DATATYPE'
@@ -569,8 +515,6 @@ function openProperty(prop: OntPropertyVO) {
   propertyForm.isRequired = prop.isRequired || false
   propertyForm.minCardinality = prop.minCardinality || 0
   propertyForm.maxCardinality = prop.maxCardinality
-  
-  // 打开 Modal
   showAddProperty.value = true
 }
 
@@ -578,14 +522,10 @@ async function deleteProperty(prop: OntPropertyVO) {
   try {
     await ontologyApi.deleteProperty(props.graphId, prop.id)
     message.success(t('classEditor.propertyDeleted'))
-    
-    // 先从本地 store 移除，确保列表立即更新
     const idx = store.properties.findIndex(x => x.id === prop.id)
     if (idx !== -1) {
       store.properties.splice(idx, 1)
     }
-    
-    // 再刷新完整数据确保一致性
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
     message.error(e.message || t('common.deleteFailed'))
@@ -593,15 +533,12 @@ async function deleteProperty(prop: OntPropertyVO) {
 }
 
 function openConstraint(c: OntConstraintVO) {
-  // 填充表单数据
   editingConstraintId.value = c.id
   constraintForm.constraintType = c.constraintType || 'REQUIRED'
   constraintForm.value = c.value || ''
   constraintForm.severity = c.severity || 'ERROR'
   constraintForm.errorMessage = c.errorMessage || ''
   constraintForm.description = c.description || ''
-  
-  // 打开 Modal
   showAddConstraint.value = true
 }
 
@@ -609,7 +546,6 @@ async function handleAddConstraint() {
   addingConstraint.value = true
   try {
     if (editingConstraintId.value) {
-      // 更新约束
       await ontologyApi.updateConstraint(props.graphId, editingConstraintId.value, {
         classId: props.classId,
         constraintType: constraintForm.constraintType,
@@ -620,7 +556,6 @@ async function handleAddConstraint() {
       })
       message.success(t('classEditor.constraintUpdated'))
     } else {
-      // 新建约束
       await ontologyApi.createConstraint(props.graphId, {
         classId: props.classId,
         constraintType: constraintForm.constraintType,
@@ -645,14 +580,10 @@ async function deleteConstraint(c: OntConstraintVO) {
   try {
     await ontologyApi.deleteConstraint(props.graphId, c.id)
     message.success(t('classEditor.constraintDeleted'))
-    
-    // 先从本地 store 移除，确保列表立即更新
     const idx = store.constraints.findIndex(x => x.id === c.id)
     if (idx !== -1) {
       store.constraints.splice(idx, 1)
     }
-    
-    // 再刷新完整数据确保一致性
     await store.loadFullOntology(props.graphId)
   } catch (e: any) {
     message.error(e.message || t('common.deleteFailed'))
@@ -665,48 +596,6 @@ function openSubclass(cls: OntClassVO) {
 
 function openParentClass(cls: OntClassVO) {
   store.openTab({ id: `class-editor-${cls.id}`, type: 'class-editor', title: `${t('classEditor.class')}: ${cls.localName}`, classId: cls.id })
-}
-
-async function loadInstances() {
-  if (!props.classId || !form.localName) {
-    instanceList.value = []
-    instanceCount.value = 0
-    instancePagination.total = 0
-    return
-  }
-  instanceLoading.value = true
-  try {
-    const res = await graphApi.getClassInstances(props.graphId, form.localName, {
-      page: instancePagination.current,
-      pageSize: instancePagination.pageSize
-    })
-    instanceList.value = res.data || []
-    instanceCount.value = res.total || 0
-    instancePagination.total = res.total || 0
-  } catch (e: any) {
-    message.error(e.message || t('classEditor.errorLoadInstances'))
-  } finally {
-    instanceLoading.value = false
-  }
-}
-
-function handleInstanceTableChange(pagination: any) {
-  instancePagination.current = pagination.current
-  instancePagination.pageSize = pagination.pageSize
-  loadInstances()
-}
-
-async function viewInstance(record: ClassInstance) {
-  // 通知父组件设置完整的实例数据
-  emit('edit-instance', record)
-  
-  // 打开实例编辑 tab
-  store.openTab({
-    id: `instance-editor-${record.uuid}`,
-    type: 'instance-editor',
-    title: `${t('classEditor.instance')}: ${record.name}`,
-    classType: record.type
-  })
 }
 
 function getPropertyTypeColor(type: string) {
@@ -776,7 +665,7 @@ watch(() => props.classId, () => loadData())
   }
 
   .tab-content {
-    padding: 20px;
+    padding: 5px;
   }
 
   .basic-form {
@@ -858,34 +747,6 @@ watch(() => props.classId, () => loadData())
 
           &:hover { background: rgba(230, 237, 243, 0.2); }
         }
-      }
-    }
-  }
-
-  .instance-stats-bar {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 16px;
-    padding: 12px 16px;
-    background: #161b22;
-    border-radius: 8px;
-    border: 1px solid #30363d;
-
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .stat-label {
-        font-size: 13px;
-        color: #8b949e;
-      }
-
-      .stat-value {
-        font-size: 16px;
-        font-weight: 600;
-        color: #e6edf3;
       }
     }
   }

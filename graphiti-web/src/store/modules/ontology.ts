@@ -17,6 +17,7 @@ import type {
 export type OntologyTabType =
   | 'class-list'
   | 'class-editor'
+  | 'class-instance-view'  // 类实例视图：图谱/列表切换
   | 'property-list'
   | 'property-editor'
   | 'constraint-list'
@@ -36,7 +37,8 @@ export interface OntologyTab {
   type: OntologyTabType
   title: string
   dirty?: boolean           // 未保存标记
-  classId?: number           // 用于 class-editor
+  classId?: number           // 用于 class-editor / class-instance-view
+  schemaClass?: any          // 用于 class-instance-view（完整类对象）
   propertyId?: number       // 用于 property-editor
   constraintId?: number     // 用于 constraint-editor
   classType?: string        // 用于 instance-table

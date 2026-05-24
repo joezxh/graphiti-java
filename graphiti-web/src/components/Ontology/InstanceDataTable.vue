@@ -112,18 +112,21 @@
     </div>
 
     <!-- 右键菜单 -->
-    <a-menu
+    <div
       v-if="contextMenu.visible"
-      :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px', position: 'fixed', zIndex: 9999 }"
-      @click="handleCtxAction"
+      class="ctx-menu"
+      :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
+      @click.stop
     >
-      <a-menu-item key="view" @click="handleView(contextMenu.record)">查看详情</a-menu-item>
-      <a-menu-item key="edit">编辑节点</a-menu-item>
-      <a-menu-divider />
-      <a-menu-item key="copy-uuid" @click="copyUuid(contextMenu.record?.uuid)">复制UUID</a-menu-item>
-      <a-menu-divider />
-      <a-menu-item key="delete" style="color: #f85149" @click="handleDelete(contextMenu.record)">{{ t('common.delete') }}</a-menu-item>
-    </a-menu>
+      <a-menu @click="handleCtxAction">
+        <a-menu-item key="view" @click="handleView(contextMenu.record)">查看详情</a-menu-item>
+        <a-menu-item key="edit">编辑节点</a-menu-item>
+        <a-menu-divider />
+        <a-menu-item key="copy-uuid" @click="copyUuid(contextMenu.record?.uuid)">复制UUID</a-menu-item>
+        <a-menu-divider />
+        <a-menu-item key="delete" style="color: #f85149" @click="handleDelete(contextMenu.record)">{{ t('common.delete') }}</a-menu-item>
+      </a-menu>
+    </div>
 
     <!-- 查看详情抽屉 -->
     <a-drawer
@@ -490,5 +493,29 @@ onMounted(() => {
 
 .import-step-content {
   min-height: 200px;
+}
+
+.ctx-menu {
+  position: fixed;
+  z-index: 9999;
+
+  .ant-menu {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .ant-menu-item {
+    color: #e6edf3;
+    font-size: 13px;
+    border-radius: 4px;
+    margin: 2px 0;
+    height: 32px;
+    line-height: 32px;
+
+    &:hover { background: #21262d; }
+  }
 }
 </style>

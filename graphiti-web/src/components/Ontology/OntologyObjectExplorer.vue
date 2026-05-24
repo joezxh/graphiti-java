@@ -46,38 +46,41 @@
     </div>
 
     <!-- 右键菜单 -->
-    <a-menu
+    <div
       v-if="ctxMenu.visible"
-      :style="{ left: ctxMenu.x + 'px', top: ctxMenu.y + 'px', position: 'fixed', zIndex: 9999 }"
-      @click="handleCtxMenuAction"
+      class="ctx-menu"
+      :style="{ left: ctxMenu.x + 'px', top: ctxMenu.y + 'px' }"
+      @click.stop
     >
-      <template v-if="ctxMenu.nodeType === 'class'">
-        <a-menu-item key="edit">编辑类</a-menu-item>
-        <a-menu-item key="new-subclass">新建子类</a-menu-item>
-        <a-menu-item key="view-instances">查看实例</a-menu-item>
-        <a-menu-divider />
-        <a-menu-item key="delete" style="color: #f85149">删除类</a-menu-item>
-      </template>
-      <template v-else-if="ctxMenu.nodeType === 'class-group'">
-        <a-menu-item key="new-class">新建类</a-menu-item>
-      </template>
-      <template v-else-if="ctxMenu.nodeType === 'property-group'">
-        <a-menu-item key="new-property">新建属性</a-menu-item>
-      </template>
-      <template v-else-if="ctxMenu.nodeType === 'property'">
-        <a-menu-item key="edit-property">编辑属性</a-menu-item>
-        <a-menu-divider />
-        <a-menu-item key="delete-property" style="color: #f85149">删除属性</a-menu-item>
-      </template>
-      <template v-else-if="ctxMenu.nodeType === 'instance-class'">
-        <a-menu-item key="view-instances">查看实例</a-menu-item>
-        <a-menu-item key="import-instances">导入实例</a-menu-item>
-        <a-menu-item key="export-instances">导出实例</a-menu-item>
-      </template>
-      <template v-else>
-        <a-menu-item key="refresh">刷新</a-menu-item>
-      </template>
-    </a-menu>
+      <a-menu @click="handleCtxMenuAction">
+        <template v-if="ctxMenu.nodeType === 'class'">
+          <a-menu-item key="edit">编辑类</a-menu-item>
+          <a-menu-item key="new-subclass">新建子类</a-menu-item>
+          <a-menu-item key="view-instances">查看实例</a-menu-item>
+          <a-menu-divider />
+          <a-menu-item key="delete" style="color: #f85149">删除类</a-menu-item>
+        </template>
+        <template v-else-if="ctxMenu.nodeType === 'class-group'">
+          <a-menu-item key="new-class">新建类</a-menu-item>
+        </template>
+        <template v-else-if="ctxMenu.nodeType === 'property-group'">
+          <a-menu-item key="new-property">新建属性</a-menu-item>
+        </template>
+        <template v-else-if="ctxMenu.nodeType === 'property'">
+          <a-menu-item key="edit-property">编辑属性</a-menu-item>
+          <a-menu-divider />
+          <a-menu-item key="delete-property" style="color: #f85149">删除属性</a-menu-item>
+        </template>
+        <template v-else-if="ctxMenu.nodeType === 'instance-class'">
+          <a-menu-item key="view-instances">查看实例</a-menu-item>
+          <a-menu-item key="import-instances">导入实例</a-menu-item>
+          <a-menu-item key="export-instances">导出实例</a-menu-item>
+        </template>
+        <template v-else>
+          <a-menu-item key="refresh">刷新</a-menu-item>
+        </template>
+      </a-menu>
+    </div>
   </div>
 </template>
 
@@ -94,7 +97,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'open-tab', payload: { type: string; title: string; classId?: number; propertyId?: number; constraintId?: number; classType?: string }): void
+  (e: 'open-tab', payload: { type: string; title: string; classId?: number; propertyId?: number; constraintId?: number; classType?: string; schemaClass?: any }): void
   (e: 'class-selected', classId: number): void
   (e: 'open-episode', payload?: { stageNode?: any; processNode?: any }): void
   (e: 'open-community', payload?: { node?: any }): void
@@ -104,13 +107,36 @@ const store = useOntologyStore()
 const searchKeyword = ref('')
 const selectedKeys = ref<string[]>([])
 
-const expandedKeys = computed(() => Array.from(store.expandedTreeKeys))
+const hiddenGroupKeys = new Set(['properties', 'constraints', 'instances'])
+
+const expandedKeys = computed(() => {
+  const keys = Array.from(store.expandedTreeKeys)
+  return props.ontologyMode === 'class'
+    ? keys.filter(k => !hiddenGroupKeys.has(k))
+    : keys
+})
 
 const treeData = computed(() => {
   const tree = store.buildExplorerTree()
 
-  if (!searchKeyword.value.trim()) return [tree]
-  return filterTree([tree], searchKeyword.value.trim().toLowerCase())
+  if (!searchKeyword.value.trim()) {
+    if (props.ontologyMode === 'class') {
+      return [tree].map(t => ({
+        ...t,
+        children: t.children?.filter(c => !hiddenGroupKeys.has(c.key))
+      }))
+    }
+    return [tree]
+  }
+
+  const filtered = filterTree([tree], searchKeyword.value.trim().toLowerCase())
+  if (props.ontologyMode === 'class') {
+    return filtered.map(f => ({
+      ...f,
+      children: f?.children?.filter(c => !hiddenGroupKeys.has(c.key))
+    }))
+  }
+  return filtered
 })
 
 function filterTree(nodes: OntologyExplorerNode[], keyword: string): OntologyExplorerNode[] {
@@ -167,10 +193,12 @@ function handleNodeSelect(keys: (string | number)[]) {
   if (!node) return
 
   switch (node.type) {
-    case 'class':
-      emit('open-tab', { type: 'class-editor', title: `类: ${node.title}`, classId: node.classId })
+    case 'class': {
+      const schemaClass = store.classes.find(c => c.id === node.classId)
+      emit('open-tab', { type: 'class-instance-view', title: `实例: ${node.title}`, classId: node.classId, schemaClass })
       emit('class-selected', node.classId)
       break
+    }
     case 'property':
       emit('open-tab', { type: 'property-editor', title: `属性: ${node.title}`, propertyId: node.propertyId })
       break
@@ -453,6 +481,39 @@ onBeforeUnmount(() => {
 
   .ant-tree-iconEle {
     display: none;
+  }
+}
+</style>
+
+<style lang="less">
+.ctx-menu {
+  position: fixed;
+  z-index: 9999;
+
+  .ant-menu {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .ant-menu-item {
+    color: #e6edf3;
+    font-size: 13px;
+    border-radius: 4px;
+    margin: 2px 0;
+    height: 32px;
+    line-height: 32px;
+
+    &:hover {
+      background: #21262d;
+    }
+  }
+
+  .ant-menu-divider {
+    background: #30363d;
+    margin: 4px 0;
   }
 }
 </style>

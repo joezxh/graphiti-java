@@ -65,15 +65,11 @@ public class CascadeEditService {
             Result countResult = session.run(countCypher, params);
             long total = countResult.hasNext() ? countResult.next().get("total").asLong() : 0;
             
-            // 获取分布
+            // 获取分布 - 基于常见属性动态分组统计
             List<CascadePreviewRespVO.DistributionItem> distribution = new ArrayList<>();
             
-            // 按某个属性分组统计（这里使用一个常见属性演示）
-            String distCypher = "MATCH (n:Entity) " + whereClause + 
-                    " RETURN n.city as value, count(n) as count ORDER BY count DESC LIMIT 10";
-            
-            // 尝试不同的分组属性
-            String[] groupByProps = {"city", "status", "company", "type"};
+            // 尝试不同的分组属性，选择有数据的属性进行分布统计
+            String[] groupByProps = {"status", "city", "company", "type", "category"};
             for (String prop : groupByProps) {
                 String groupByCypher = "MATCH (n:Entity) " + whereClause + 
                         " WHERE n." + prop + " IS NOT NULL " +
@@ -95,6 +91,7 @@ public class CascadeEditService {
                     }
                 }
                 
+                // 如果这个属性有分布数据，就使用它
                 if (hasResults) break;
             }
             

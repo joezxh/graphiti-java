@@ -85,15 +85,8 @@
 
     <!-- 工作区内容 -->
     <div v-else class="workbench-content">
-      <ClassEditor
-        v-if="store.activeTab.type === 'class-editor'"
-        :graph-id="graphId"
-        :class-id="store.activeTab.classId"
-        @saved="handleSaved"
-        @edit-instance="handleEditInstance"
-      />
       <PropertyEditor
-        v-else-if="store.activeTab.type === 'property-editor'"
+        v-if="store.activeTab.type === 'property-editor'"
         :graph-id="graphId"
         :property-id="store.activeTab.propertyId"
         @saved="handleSaved"
@@ -153,6 +146,14 @@
         v-else-if="store.activeTab.type === 'ontology-graph'"
         :graph-id="graphId"
       />
+      <OntologyClassView
+        v-else-if="store.activeTab.type === 'class-instance-view'"
+        :graph-id="graphId"
+        :schema-class="store.activeTab.schemaClass ?? null"
+        @instance-click="handleInstanceClick"
+        @instance-dblclick="handleInstanceDblclick"
+        @instance-edit="handleEditInstance"
+      />
       <InstanceForm
         v-else-if="store.activeTab.type === 'instance-editor'"
         :graph-id="graphId"
@@ -194,9 +195,16 @@ const ConstraintListPanel = defineAsyncComponent(() => import('./ConstraintListP
 const ConstraintEditor = defineAsyncComponent(() => import('./ConstraintEditor.vue'))
 const DomainRuleListPanel = defineAsyncComponent(() => import('./DomainRuleListPanel.vue'))
 const DefinitionEditor = defineAsyncComponent(() => import('./DefinitionEditor.vue'))
+const OntologyClassView = defineAsyncComponent(() => import('./OntologyClassView.vue'))
 const DataImportExportModal = defineAsyncComponent(() => import('./DataImportExportModal.vue'))
 
-const props = defineProps<{ graphId: string; selectedClassId?: number | null }>()
+const props = defineProps<{ graphId: string }>()
+
+const emit = defineEmits<{
+  (e: 'instance-click', node: any): void
+  (e: 'instance-dblclick', node: any): void
+  (e: 'edit-instance', data: any): void
+}>()
 
 const store = useOntologyStore()
 const showAddMenu = ref(false)
@@ -232,9 +240,16 @@ function handleSaved() {
   store.loadFullOntology(props.graphId)
 }
 
+function handleInstanceClick(node: any) {
+  emit('instance-click', node)
+}
+
+function handleInstanceDblclick(node: any) {
+  emit('instance-dblclick', node)
+}
+
 function handleInstanceSaved() {
   editingInstance.value = undefined
-  // 保存成功后关闭当前实例编辑 tab
   if (store.activeTabId) {
     store.closeTab(store.activeTabId)
   }
@@ -242,12 +257,7 @@ function handleInstanceSaved() {
 
 function handleEditInstance(data: any) {
   editingInstance.value = data
-  store.openTab({
-    id: `instance-editor-${data.uuid || 'new'}`,
-    type: 'instance-editor',
-    title: `实例: ${data.name || '新建'}`,
-    classType: data.type
-  })
+  emit('edit-instance', data)
 }
 
 function openClassEditor(classId: number) {
