@@ -67,6 +67,22 @@ public class GraphIDEController {
         );
     }
 
+    /**
+     * 按类名分页获取实体 + N跳邻居图谱数据
+     */
+    @Operation(summary = "按类名获取实体可视化数据", description = "分页获取指定类名的实体节点及其N跳邻居的图谱数据")
+    @GetMapping("/{graphId}/visualization/entities/by-class")
+    public CommonResult<GraphVisualizationRespVO> getEntitiesVisualizationByClass(
+            @PathVariable @Parameter(description = "图谱ID") String graphId,
+            @RequestParam @Parameter(description = "类本地名") String className,
+            @RequestParam(required = false, defaultValue = "1") @Parameter(description = "页码") Integer page,
+            @RequestParam(required = false, defaultValue = "20") @Parameter(description = "每页数量") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "2") @Parameter(description = "邻居跳数") Integer depth) {
+        return CommonResult.success(
+                graphVisualizationService.getEntitiesVisualizationByClass(graphId, className, page, pageSize, depth)
+        );
+    }
+
     @Operation(summary = "按多个类别获取可视化数据", description = "获取指定类别及子类的所有节点和边，用于类树节点点击过滤")
     @GetMapping("/{graphId}/visualization/by-types")
     public CommonResult<GraphVisualizationRespVO> getVisualizationByTypes(

@@ -94,6 +94,23 @@ public interface GraphVisualizationService {
             Integer depth);
 
     /**
+     * 按类名分页获取实体 + N跳邻居图谱数据
+     *
+     * @param graphId   图谱ID
+     * @param className 类本地名（如 "CourtCase"）
+     * @param page      页码（从1开始）
+     * @param pageSize  每页数量
+     * @param depth     邻居跳数（默认2）
+     * @return 图谱可视化数据
+     */
+    GraphVisualizationRespVO getEntitiesVisualizationByClass(
+            String graphId,
+            String className,
+            Integer page,
+            Integer pageSize,
+            Integer depth);
+
+    /**
      * 获取社区可视化数据
      */
     GraphVisualizationRespVO getCommunityVisualization(String graphId, int limit);
