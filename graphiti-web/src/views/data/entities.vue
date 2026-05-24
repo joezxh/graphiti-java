@@ -1,314 +1,75 @@
 <template>
-  <div class="entities-page">
-    <div class="page-header">
-      <h1 class="page-title">{{ $t('entities.title') }}</h1>
-      <p class="page-desc">{{ $t('entities.titleDesc') }}</p>
-    </div>
-
-    <a-card class="filter-card">
-      <a-row :gutter="16" align="middle">
-        <a-col :span="6">
-          <a-input-search
-            v-model:value="searchKeyword"
-            :placeholder="t('common.search') + ' ' + t('entities.name')"
-            allow-clear
-            @search="handleSearch"
-          />
-        </a-col>
-        <a-col :span="4">
-          <a-select v-model:value="filterType" :placeholder="t('entities.entityType')" allow-clear style="width: 100%" @change="handleSearch">
-            <a-select-option v-for="t in entityTypes" :key="t" :value="t">{{ t }}</a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :span="4">
-          <a-select v-model:value="filterGraph" :placeholder="t('data.targetGraph')" allow-clear style="width: 100%" @change="handleSearch">
-            <a-select-option v-for="g in graphOptions" :key="g.id" :value="g.id">{{ g.name }}</a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :span="10" style="text-align: right">
-          <a-button type="primary" @click="handleSearch">
-            <SearchOutlined /> {{ t('common.query') }}
-          </a-button>
-          <a-button style="margin-left: 8px" @click="resetFilter">
-            <ReloadOutlined /> {{ t('common.reset') }}
-          </a-button>
-        </a-col>
-      </a-row>
-    </a-card>
-
-    <a-card class="table-card">
-      <a-table
-        :columns="columns"
-        :data-source="entityList"
-        :loading="loading"
-        row-key="uuid"
-        :pagination="pagination"
-        @change="handleTableChange"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'properties'">
-            <div class="prop-tags">
-              <a-tag v-for="(val, key) in getDisplayProps(record.properties)" :key="key" size="small">
-                {{ key }}: {{ String(val).slice(0, 30) }}
-              </a-tag>
-            </div>
-          </template>
-          <template v-if="column.key === 'action'">
-            <a-space>
-              <a-button type="link" size="small" @click="openEditModal(record)">
-                <EditOutlined /> {{ t('common.edit') }}
-              </a-button>
-              <a-popconfirm :title="t('entities.confirmDelete')" @confirm="deleteEntity(record.uuid)">
-                <a-button type="link" size="small" danger>
-                  <DeleteOutlined /> {{ t('common.delete') }}
-                </a-button>
-              </a-popconfirm>
-            </a-space>
-          </template>
-        </template>
-      </a-table>
-    </a-card>
-
-    <!-- 编辑模态框 -->
-    <a-modal
-      v-model:open="editVisible"
-      :title="t('entities.editEntity')"
-      @ok="saveEntity"
-      :confirm-loading="editSaving"
-    >
-      <a-form :model="editForm" layout="vertical">
-        <a-form-item :label="t('common.id')">
-          <a-input v-model:value="editForm.uuid" disabled />
-        </a-form-item>
-        <a-form-item :label="t('common.name')">
-          <a-input v-model:value="editForm.name" />
-        </a-form-item>
-        <a-form-item :label="t('common.type')">
-          <a-input v-model:value="editForm.type" disabled />
-        </a-form-item>
-        <a-divider orientation="left">{{ t('common.properties') || t('entities.properties') }}</a-divider>
-        <div v-for="(_val, key) in editForm.properties" :key="key" class="prop-edit-row">
-          <span class="prop-key">{{ key }}</span>
-          <a-input v-model:value="editForm.properties[key]" />
-        </div>
-      </a-form>
-    </a-modal>
-  </div>
+  <DataManagerLayout title="实体管理">
+    <template #main-table>
+      <InstanceDataTable
+        :graph-id="graphId"
+        :class-type="selectedClassType"
+        @edit-instance="handleEditInstance"
+      />
+    </template>
+    <template #right-panel>
+      <InstanceForm
+        v-if="selectedInstance"
+        :graph-id="graphId"
+        :instance-data="selectedInstance"
+        @saved="handleSaved"
+      />
+      <div v-else class="empty-state">
+        <InboxOutlined class="empty-icon" />
+        <div class="empty-title">选择一个实体</div>
+        <div class="empty-desc">点击表格中的实体进行编辑</div>
+      </div>
+    </template>
+  </DataManagerLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { message } from 'ant-design-vue'
-import { SearchOutlined, ReloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
-import { dataApi, type EntityItem, type EntityListParams } from '@/api/data'
-import { graphApi, type Graph } from '@/api/graph'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { InboxOutlined } from '@ant-design/icons-vue'
+import DataManagerLayout from '@/components/Layout/DataManagerLayout.vue'
+import InstanceDataTable from '@/components/Ontology/InstanceDataTable.vue'
+import InstanceForm from '@/components/Ontology/InstanceForm.vue'
 
-const { t } = useI18n()
+const route = useRoute()
+const graphId = ref(route.query.graphId as string || '')
+const selectedClassType = ref<string | undefined>(undefined)
+const selectedInstance = ref<any | null>(null)
 
-const searchKeyword = ref('')
-const filterType = ref<string | undefined>(undefined)
-const filterGraph = ref<string | undefined>(undefined)
-const entityTypes = ref<string[]>([])
-const graphOptions = ref<Graph[]>([])
-
-const loading = ref(false)
-const entityList = ref<EntityItem[]>([])
-const pagination = reactive({
-  current: 1,
-  pageSize: 10,
-  total: 0,
-  showSizeChanger: true,
-  showTotal: (total: number) => `${t('common.total')} ${total}`
-})
-
-const columns = [
-  { title: t('common.id'), dataIndex: 'uuid', key: 'uuid', width: 200 },
-  { title: t('common.name'), dataIndex: 'name', key: 'name' },
-  { title: t('common.type'), dataIndex: 'type', key: 'type', width: 120 },
-  { title: t('common.properties') || t('entities.properties'), key: 'properties' },
-  { title: t('common.actions'), key: 'action', width: 150, fixed: 'right' }
-]
-
-const loadGraphs = async () => {
-  try {
-    graphOptions.value = await graphApi.getList()
-  } catch (err) {
-    console.error(t('entities.loadGraphsFailed'), err)
-  }
+function handleEditInstance(instance: any) {
+  selectedInstance.value = instance
 }
 
-const loadEntityTypes = async () => {
-  if (!filterGraph.value) {
-    entityTypes.value = []
-    return
-  }
-  try {
-    entityTypes.value = await dataApi.getEntityTypes(filterGraph.value)
-  } catch (err) {
-    console.error(t('entities.loadTypesFailed'), err)
-  }
+function handleSaved() {
+  selectedInstance.value = null
 }
-
-const loadEntities = async () => {
-  if (!filterGraph.value) {
-    entityList.value = []
-    pagination.total = 0
-    return
-  }
-  loading.value = true
-  try {
-    const params: EntityListParams = {
-      page: pagination.current,
-      pageSize: pagination.pageSize,
-      keyword: searchKeyword.value || undefined,
-      type: filterType.value,
-      graphId: filterGraph.value
-    }
-    const res = await dataApi.listEntities(params)
-    entityList.value = res.list
-    pagination.total = res.total
-  } catch (err: any) {
-    message.error(err.message || t('common.loadFailed'))
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleSearch = () => {
-  pagination.current = 1
-  loadEntities()
-}
-
-const resetFilter = () => {
-  searchKeyword.value = ''
-  filterType.value = undefined
-  filterGraph.value = undefined
-  pagination.current = 1
-  entityTypes.value = []
-  loadEntities()
-}
-
-const handleTableChange = (pag: any) => {
-  pagination.current = pag.current
-  pagination.pageSize = pag.pageSize
-  loadEntities()
-}
-
-const getDisplayProps = (props: Record<string, any>) => {
-  // 排除 name 属性，已在表格中单独展示
-  const { name, ...rest } = props
-  return rest
-}
-
-// 编辑
-const editVisible = ref(false)
-const editSaving = ref(false)
-const editForm = reactive<{ uuid: string; name: string; type: string; properties: Record<string, any> }>({
-  uuid: '',
-  name: '',
-  type: '',
-  properties: {}
-})
-
-const openEditModal = (record: EntityItem) => {
-  editForm.uuid = record.uuid
-  editForm.name = record.name
-  editForm.type = record.type
-  editForm.properties = JSON.parse(JSON.stringify(record.properties || {}))
-  editVisible.value = true
-}
-
-const saveEntity = async () => {
-  if (!filterGraph.value) {
-    message.error(t('entities.selectGraphFirst'))
-    return
-  }
-  editSaving.value = true
-  try {
-    // 只提交可编辑的属性（排除内部字段）
-    const editableProps: Record<string, any> = {}
-    for (const [k, v] of Object.entries(editForm.properties)) {
-      if (!k.startsWith('_')) editableProps[k] = v
-    }
-    await dataApi.updateEntity(editForm.uuid, { graphId: filterGraph.value, name: editForm.name, ...editableProps })
-    message.success(t('common.saveSuccess'))
-    editVisible.value = false
-    loadEntities()
-  } catch (err: any) {
-    message.error(err.message || t('common.saveFailed'))
-  } finally {
-    editSaving.value = false
-  }
-}
-
-const deleteEntity = async (uuid: string) => {
-  if (!filterGraph.value) {
-    message.error(t('entities.selectGraphFirst'))
-    return
-  }
-  try {
-    await dataApi.deleteEntity(uuid, filterGraph.value)
-    message.success(t('common.deleteSuccess'))
-    loadEntities()
-  } catch (err: any) {
-    message.error(err.message || t('common.deleteFailed'))
-  }
-}
-
-onMounted(() => {
-  loadGraphs()
-  loadEntityTypes()
-  loadEntities()
-})
 </script>
 
 <style scoped lang="less">
-@import '@/assets/styles/dark.less';
-
-.entities-page {
-  padding: 24px;
-}
-
-.page-header {
-  margin-bottom: 24px;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: @text-primary;
-  margin-bottom: 4px;
-}
-
-.page-desc {
-  color: @text-secondary;
-  font-size: 14px;
-}
-
-.filter-card, .table-card {
-  background: @bg-container;
-  border: 1px solid @border-color;
-  margin-bottom: 16px;
-}
-
-.prop-tags {
+.empty-state {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.prop-edit-row {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
 
-  .prop-key {
-    width: 80px;
-    color: @text-secondary;
+  .empty-icon {
+    font-size: 48px;
+    color: #30363d;
+    margin-bottom: 16px;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #e6edf3;
+    margin-bottom: 8px;
+  }
+
+  .empty-desc {
     font-size: 13px;
-    flex-shrink: 0;
+    color: #6e7681;
   }
 }
 </style>

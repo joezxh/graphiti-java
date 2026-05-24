@@ -42,12 +42,7 @@
           </template>
           {{ $t('nav.temporalHistory') }}
         </a-menu-item>
-        <a-menu-item key="/communities">
-          <template #icon>
-            <ClusterOutlined />
-          </template>
-          {{ $t('nav.communityDetection') }}
-        </a-menu-item>
+
       </a-sub-menu>
 
       <a-sub-menu key="data-management">
@@ -80,7 +75,7 @@
           </template>
           {{ $t('nav.entityManagement') }}
         </a-menu-item>
-        <a-menu-item key="/edges">
+        <a-menu-item key="/data/edges">
           <template #icon>
             <LinkOutlined />
           </template>
@@ -92,7 +87,13 @@
           </template>
           {{ $t('nav.communityEpisodeManagement') }}
         </a-menu-item>
-        <a-menu-item key="/episodes">
+        <a-menu-item key="/data/communities">
+          <template #icon>
+            <ClusterOutlined />
+          </template>
+          {{ $t('nav.communityDetection') }}
+        </a-menu-item>
+        <a-menu-item key="/data/episodes">
           <template #icon>
             <FileTextOutlined />
           </template>

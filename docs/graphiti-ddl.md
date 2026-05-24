@@ -7,25 +7,21 @@
 ### 📊 核心概念层级总览
 
 ```
-GraphitiNamespaceFactory (顶层入口)
+Service 层 (业务入口)
 │
-├── NodeNamespace (节点命名空间)
-│   ├── EntityNodeNamespace → Entity (实体/节点)
-│   ├── EpisodeNodeNamespace → Episode (事件/片段)
-│   └── CommunityNodeNamespace → Community (社区)
-│
-├── EdgeNamespace (边命名空间)
-│   └── EntityEdgeNamespace → Edge (关系/边)
-│
-└── GraphNamespace (图谱命名空间)
-    ├── GraphMetadataNamespace → GraphMetadata (图谱元数据)
-    └── OntologyNamespace (本体命名空间)
-        ├── OntologyDefinition (版本化本体容器)
-        ├── OntClass (类定义)
-        ├── OntProperty (属性定义)
-        ├── OntConstraint (约束定义)
-        ├── OntDraft (草稿)
-        └── OntVersionHistory (版本历史)
+├── NodeService / NodeServiceImpl → Entity (实体/节点)
+├── EdgeService / EdgeServiceImpl → Edge (关系/边)
+├── EpisodeService / EpisodeServiceImpl → Episode (事件/片段)
+├── CommunityService / CommunityServiceImpl → Community (社区)
+├── GraphitiService / GraphitiServiceImpl → GraphMetadata (图谱元数据)
+├── OntologyClassService / OntologyClassServiceImpl → Ontology (本体)
+│   ├── OntologyDefinition (版本化本体容器)
+│   ├── OntClass (类定义)
+│   ├── OntProperty (属性定义)
+│   ├── OntConstraint (约束定义)
+│   ├── OntDraft (草稿)
+│   └── OntVersionHistory (版本历史)
+└── SearchService / SearchServiceImpl → Search (检索)
 ```
 
 ---

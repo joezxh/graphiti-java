@@ -117,7 +117,7 @@ Graphiti-Java实现 (Java + Jena + Neo4j)
 - **本体建模**: OntClass、OntProperty、OntConstraint
 - **推理引擎**: Apache Jena OWL 2 RL Reasoner
 - **验证体系**: 6层验证引擎
-- **数据存储**: MySQL(元数据) + Neo4j(图数据)
+- **数据存储**: 关系数据库(元数据) + Neo4j(图数据)
 
 ---
 
@@ -150,21 +150,21 @@ Graphiti-Java实现 (Java + Jena + Neo4j)
 **三大核心作用**:
 
 1. **类型系统**(Type System)
-   - 定义知识图谱中有哪些类型的实体(如Person、Company、Law)
-   - 定义实体之间的关系类型(如WORKS_AT、OWNS)
-   - **作用**: 保证数据的一致性和规范性
+   - 定义知识图谱中有哪些类型的实体(如Party当事人、Court法院、Case案件)
+   - 定义实体之间的关系类型(如CASE_PARTY当事人参与、CASE_COURT案件审理)
+   - **作用**: 保证法律数据的一致性和规范性
 
 2. **验证框架**(Validation Framework)
-   - 必填属性检查(如Person必须有name)
-   - 数据类型检查(如age必须是整数)
-   - 约束规则(如email必须符合格式)
+   - 必填属性检查(如Party必须有partyName当事人姓名)
+   - 数据类型检查(如Case.filingDate必须是日期)
+   - 约束规则(如caseNumber必须符合法院编号格式)
    - **作用**: 在数据写入前拦截错误
 
 3. **推理基础**(Reasoning Foundation)
-   - 类层次推理(如CEO是Person的子类)
-   - 属性推断(如WORKS_AT的逆属性是EMPLOYS)
-   - 一致性检查(如某人不能既是Person又是Company)
-   - **作用**: 从已有知识推导新知识
+   - 类层次推理(如Plaintiff原告是Party的子类)
+   - 属性推断(如CASE_PARTY的逆关系是CASE_HAS_PARTY)
+   - 一致性检查(如某实体不能既是Party又是Court)
+   - **作用**: 从已有法律知识推导新知识
 
 ### 2.3 形式化本体的四个要素
 
@@ -179,29 +179,34 @@ A (Axioms):      公理集合,即约束(Constraint)
 I (Instances):   实例集合,即个体(Individual)
 ```
 
-**示例:法律知识图谱本体**
+**示例:公司解散纠纷法律知识图谱本体**
 
 ```java
-// 概念 (Concepts)
-Class: Person, Company, Law, Contract
+// 概念 (Concepts) - 法律实体类
+Class: Party, Court, Case, LegalProvision, Judge, Evidence
 
-// 关系 (Relations)
+// 关系 (Relations) - 法律关系
 Property: 
-  - WORKS_AT(Person → Company)
-  - OWNS(Person → Company)
-  - REGULATES(Law → Company)
+  - CASE_PARTY(Party → Case)         // 当事人参与案件
+  - CASE_COURT(Case → Court)         // 案件由法院审理
+  - CASE_JUDGE(Case → Judge)         // 法官审理案件
+  - CASE_LEGAL_BASIS(Case → LegalProvision)  // 案件适用法条
+  - APPEALED_CASE(Case → Case)       // 上诉关系
 
-// 公理 (Axioms)
+// 公理 (Axioms) - 法律约束
 Constraint:
-  - Person.age >= 18 (成年人)
-  - Company.registeredCapital > 0
-  - Contract.startDate < Contract.endDate
+  - Case.caseNumber 符合格式: ^（\d{4}）[\u4e00-\u9fa5]{2,6}民[初终]{1}\d{3,8}号$
+  - Party.partyType ∈ ["自然人", "法人", "非法人组织"]
+  - Party.partyRole ∈ ["原告", "被告", "第三人", "上诉人", "被上诉人"]
+  - Court.courtLevel ∈ ["最高人民法院", "高级人民法院", "中级人民法院", "基层人民法院"]
 
-// 实例 (Instances) - 存储在Neo4j中
+// 实例 (Instances) - 存储在Neo4j中,来自真实案例
 Individual:
-  - 张三 (type: Person, age: 45)
-  - 阿里巴巴 (type: Company)
-  - 《劳动合同法》 (type: Law)
+  - 徐某骥 (type: Party, partyRole: 原告, partyType: 自然人)
+  - 上海某物业管理有限公司 (type: Party, partyRole: 被告, partyType: 法人)
+  - 公司解散纠纷案 (type: Case, caseNumber: （2022）沪0105民初21387号)
+  - 上海市长宁区人民法院 (type: Court, courtLevel: 基层人民法院)
+  - 《公司法》第182条 (type: LegalProvision)
 ```
 
 ### 2.4 知识图谱的8层架构体系
@@ -290,7 +295,7 @@ Graphiti-Java的知识图谱系统采用**8层架构**,本体只是其中一层:
 
 本章详细讲解本体的核心构成要素,每个要素都包含:
 - 理论定义(本体论层面)
-- 数据模型(MySQL表结构)
+- 数据模型(关系数据库表结构)
 - 代码实现(Java VO/DO)
 - 使用示例(API调用)
 
@@ -306,20 +311,32 @@ Graphiti-Java的知识图谱系统采用**8层架构**,本体只是其中一层:
 - 类之间可以有**等价关系**(equivalentTo)
 - 类之间可以有**不相交关系**(disjointWith)
 
-**示例**:
+**示例** (法律知识图谱):
 ```
-Thing (根类)
-  └─ Agent (代理)
-      ├─ Person (人)
-      │   └─ Employee (员工)
-      │       └─ CEO (首席执行官)
-      └─ Organization (组织)
+LegalEntity (法律实体 - 根类)
+  └─ Party (当事人)
+      ├─ NaturalPerson (自然人)
+      │   └─ Plaintiff (原告)
+      │   └─ Defendant (被告)
+      └─ LegalPerson (法人)
           └─ Company (公司)
+  └─ Court (法院)
+      ├─ SupremeCourt (最高人民法院)
+      └─ LocalCourt (地方法院)
+  └─ Case (案件)
+      ├─ CivilCase (民事案件)
+      └─ CriminalCase (刑事案件)
 ```
+
+**实际案例**: 徐某骥与上海某物业管理有限公司公司解散纠纷案
+- 徐某骥 → type: NaturalPerson (自然人当事人)
+- 上海某物业管理有限公司 → type: LegalPerson (法人当事人)
+- 上海市长宁区人民法院 → type: Court (法院)
+- 公司解散纠纷案 → type: CivilCase (民事案件)
 
 #### 3.1.2 数据模型
 
-**MySQL表**: `ont_class`
+**关系数据库表** (支持MySQL/PostgreSQL): `ont_class`
 
 | 字段 | 类型 | 说明 | 示例 |
 |------|------|------|------|
@@ -331,7 +348,7 @@ Thing (根类)
 | equivalent_to | TEXT | 等价类(JSON数组) | `[{"uri": "...", "name": "Human"}]` |
 | disjoint_with | TEXT | 不相交类(JSON数组) | `[{"uri": "...", "name": "Company"}]` |
 | description | TEXT | 类描述 | "表示自然人个体" |
-| example | TEXT | 使用示例 | "张三、李四" |
+| example | TEXT | 使用示例 | "徐某骥、上海某物业管理有限公司" |
 | domain_hint | VARCHAR(32) | 领域分类标记 | "法律主体" |
 | metadata | TEXT | 扩展元数据(JSON) | `{"color": "blue"}` |
 
@@ -391,18 +408,30 @@ public class OntClassDO {
 
 #### 3.1.4 使用示例
 
-**创建类**(curl):
+**创建类**(curl) - 法律领域示例:
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/classes' \
+# 创建法律根类: LegalEntity
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
   -H 'Authorization: Bearer <token>' \
   -H 'Content-Type: application/json' \
   -d '{
-    "localName": "Person",
-    "classUri": "http://legal-ai.cc/ontology#Person",
+    "localName": "LegalEntity",
+    "classUri": "http://legal-ai.cc/ontology#LegalEntity",
+    "description": "法律领域实体的顶层抽象类",
+    "domainHint": "KNOWLEDGE"
+  }'
+
+# 创建法律子类: Party (当事人)
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "localName": "Party",
+    "classUri": "http://legal-ai.cc/ontology#Party",
     "parentClassId": 1,
-    "description": "表示自然人个体",
-    "example": "张三、李四",
-    "domainHint": "法律主体"
+    "description": "案件中的当事人,包括自然人、法人和非法人组织。",
+    "example": "{\"partyName\": \"徐某骥\", \"partyType\": \"自然人\", \"partyRole\": \"原告\"}",
+    "domainHint": "KNOWLEDGE"
   }'
 ```
 
@@ -412,15 +441,53 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/classes' \
   "code": 0,
   "data": {
     "id": 10,
-    "definitionId": 5,
-    "classUri": "http://legal-ai.cc/ontology#Person",
-    "localName": "Person",
+    "definitionId": 1,
+    "classUri": "http://legal-ai.cc/ontology#Party",
+    "localName": "Party",
     "parentClassId": 1,
-    "parentClassUri": "http://legal-ai.cc/ontology#Agent",
-    "description": "表示自然人个体",
-    "createdAt": "2026-05-21T10:30:00"
+    "parentClassUri": "http://legal-ai.cc/ontology#LegalEntity",
+    "description": "案件中的当事人,包括自然人、法人和非法人组织。",
+    "example": "{\"partyName\": \"徐某骥\", \"partyType\": \"自然人\", \"partyRole\": \"原告\"}",
+    "domainHint": "KNOWLEDGE",
+    "createdAt": "2026-05-23T10:30:00"
   }
 }
+```
+
+**法律领域常用类定义**:
+
+```sql
+-- PostgreSQL 法律本体类定义示例
+INSERT INTO ont_class (id, definition_id, class_uri, local_name, parent_class_id, description, example, domain_hint) VALUES
+-- 法律根类
+(5, 1, 'http://legal-ai.cc/ontology/LegalEntity', 'LegalEntity', NULL,
+ '法律领域实体的顶层抽象类', NULL, 'KNOWLEDGE'),
+
+-- 核心法律实体类
+(10, 1, 'http://legal-ai.cc/ontology/Party', 'Party', 5, 
+ '案件中的当事人,包括自然人、法人和非法人组织。',
+ '{"partyName": "徐某骥", "partyType": "自然人", "partyRole": "原告"}',
+ 'KNOWLEDGE'),
+
+(20, 1, 'http://legal-ai.cc/ontology/Court', 'Court', 5,
+ '审判机关,包括最高人民法院、高级人民法院、中级人民法院、基层人民法院。',
+ '{"courtName": "上海市第一中级人民法院", "courtLevel": "中级人民法院"}',
+ 'KNOWLEDGE'),
+
+(30, 1, 'http://legal-ai.cc/ontology/Case', 'Case', 5,
+ '法律诉讼案件,包括民事、刑事、行政案件。',
+ '{"caseName": "公司解散纠纷案", "caseNumber": "（2022）沪0105民初21387号"}',
+ 'KNOWLEDGE'),
+
+(40, 1, 'http://legal-ai.cc/ontology/Judge', 'Judge', 5,
+ '案件审判人员,包括审判长、审判员、人民陪审员。',
+ '{"judgeName": "张某", "judgeTitle": "审判长"}',
+ 'KNOWLEDGE'),
+
+(50, 1, 'http://legal-ai.cc/ontology/LegalProvision', 'LegalProvision', 5,
+ '法律条文,包括法律、法规、司法解释的具体条款。',
+ '{"lawName": "中华人民共和国公司法", "articleNumber": "第182条"}',
+ 'KNOWLEDGE');
 ```
 
 **重要规则**:
@@ -440,29 +507,33 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/classes' \
 
 **OWL中的两种属性**:
 
-| 类型 | 英文名称 | 连接对象 | Neo4j存储 | 示例 |
+| 类型 | 英文名称 | 连接对象 | Neo4j存储 | 法律领域示例 |
 |------|---------|---------|-----------|------|
-| **对象属性** | Object Property | 类 → 类 | **Edge(边)** | WORKS_AT(Person→Company) |
-| **数据属性** | Datatype Property | 类 → 数据类型 | **Node Property(节点属性)** | Person.age(integer) |
+| **对象属性** | Object Property | 类 → 类 | **Edge(边)** | CASE_PARTY(Party→Case) |
+| **数据属性** | Datatype Property | 类 → 数据类型 | **Node Property(节点属性)** | Party.partyName(string) |
 
 **属性的域和范围**:
 - **Domain(定义域)**: 属性可以出现在哪个类上
 - **Range(值域)**: 属性的值可以是什么类型
 
-**示例**:
+**示例** (法律知识图谱):
 ```
-WORKS_AT (对象属性)
-  Domain: Person (只能人"就职于")
-  Range: Company (就职的对象是公司)
+CASE_PARTY (对象属性 - 案件当事人关系)
+  Domain: Party (只能是当事人"参与案件")
+  Range: Case (参与的对象是案件)
   
-age (数据属性)
-  Domain: Person
-  Range: xsd:integer (整数)
+partyName (数据属性 - 当事人姓名)
+  Domain: Party
+  Range: xsd:string (字符串)
+
+caseNumber (数据属性 - 案件编号)
+  Domain: Case
+  Range: xsd:string (字符串, 格式:（年份）法院简称+案件类型+编号)
 ```
 
 #### 3.2.2 数据模型
 
-**MySQL表**: `ont_property`
+**关系数据库表** (支持MySQL/PostgreSQL): `ont_property`
 
 | 字段 | 类型 | 说明 | 示例 |
 |------|------|------|------|
@@ -499,37 +570,63 @@ public enum PropertyType {
 
 #### 3.2.3 代码示例
 
-**创建数据属性**(Person.age):
+**创建数据属性**(Party.partyName) - 法律领域示例:
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/properties' \
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/properties' \
   -H 'Content-Type: application/json' \
   -d '{
-    "localName": "age",
-    "propertyUri": "http://legal-ai.cc/ontology#age",
+    "localName": "partyName",
+    "propertyUri": "http://legal-ai.cc/ontology#hasPartyName",
     "propertyType": "DATATYPE",
     "domainClassId": 10,
-    "rangeDataType": "integer",
+    "rangeDataType": "string",
     "isRequired": true,
-    "minValue": 0,
-    "maxValue": 150,
-    "description": "年龄(0-150岁)"
+    "description": "当事人姓名或名称"
   }'
 ```
 
-**创建对象属性**(Person.WORKS_AT Company):
+**创建对象属性**(Party.CASE_PARTY Case) - 法律领域示例:
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/properties' \
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/properties' \
   -H 'Content-Type: application/json' \
   -d '{
-    "localName": "WORKS_AT",
-    "propertyUri": "http://legal-ai.cc/ontology#WORKS_AT",
+    "localName": "CASE_PARTY",
+    "propertyUri": "http://legal-ai.cc/ontology#hasCaseParty",
     "propertyType": "OBJECT",
     "domainClassId": 10,
-    "rangeClassId": 20,
-    "isRequired": false,
+    "rangeClassId": 30,
+    "isRequired": true,
     "isMultiple": true,
-    "description": "就职于某公司"
+    "description": "当事人参与案件的关系,包括原告、被告、第三人"
   }'
+```
+
+**法律领域常用属性定义**:
+
+```sql
+-- PostgreSQL 法律本体属性定义示例
+INSERT INTO ont_property (id, definition_id, property_uri, local_name, property_type, domain_class_id, range_data_type, is_required, description) VALUES
+-- Party 类属性
+(101, 1, 'http://legal-ai.cc/ontology/hasPartyName', 'partyName', 'DATATYPE', 10, 'string', TRUE,
+ '当事人姓名或名称'),
+(102, 1, 'http://legal-ai.cc/ontology/hasPartyType', 'partyType', 'DATATYPE', 10, 'string', TRUE,
+ '当事人类型:自然人/法人/非法人组织'),
+(103, 1, 'http://legal-ai.cc/ontology/hasPartyRole', 'partyRole', 'DATATYPE', 10, 'string', TRUE,
+ '当事人在案件中的角色:原告/被告/第三人'),
+
+-- Case 类属性
+(201, 1, 'http://legal-ai.cc/ontology/hasCaseNumber', 'caseNumber', 'DATATYPE', 30, 'string', TRUE,
+ '案件编号,格式:(年份)法院简称+案件类型+编号'),
+(202, 1, 'http://legal-ai.cc/ontology/hasCaseType', 'caseType', 'DATATYPE', 30, 'string', TRUE,
+ '案件类型:民事案件/刑事案件/行政案件'),
+(203, 1, 'http://legal-ai.cc/ontology/hasFilingDate', 'filingDate', 'DATATYPE', 30, 'date', FALSE,
+ '案件立案日期'),
+
+-- Court 类属性
+(301, 1, 'http://legal-ai.cc/ontology/hasCourtName', 'courtName', 'DATATYPE', 20, 'string', TRUE,
+ '法院名称'),
+(302, 1, 'http://legal-ai.cc/ontology/hasCourtLevel', 'courtLevel', 'DATATYPE', 20, 'string', FALSE,
+ '法院级别:最高/高级/中级/基层');
 ```
 
 **关键点**:
@@ -546,20 +643,20 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/properties' \
 
 **约束类型**:
 
-| 类型 | 说明 | 值格式 | 示例 |
+| 类型 | 说明 | 值格式 | 法律领域示例 |
 |------|------|--------|------|
-| **CARDINALITY** | 基数约束 | `min:max` | `1:10`(至少1个,最多10个) |
-| **PATTERN** | 正则表达式 | Java Regex | `^\d{18}$`(18位数字) |
-| **RANGE** | 数值范围 | `min:max` | `18:150`(年龄18-150) |
-| **ENUM** | 枚举约束 | 逗号分隔 | `MALE,FEMALE,OTHER` |
-| **NOT_NULL** | 非空约束 | `true` | 必填字段 |
-| **UNIQUE** | 唯一约束 | `true` | 不重复 |
-| **LENGTH** | 长度约束 | `min:max` | `6:20`(6-20字符) |
+| **CARDINALITY** | 基数约束 | `min:max` | `1:100`(一个案件至少1个当事人,最多100个) |
+| **PATTERN** | 正则表达式 | Java Regex | `^（\d{4}）[\u4e00-\u9fa5]{2,6}民[初终]{1}\d{3,8}号$` (案件编号) |
+| **RANGE** | 数值范围 | `min:max` | `0:10000000000`(争议金额0-100亿) |
+| **ENUM** | 枚举约束 | JSON数组 | `["自然人", "法人", "非法人组织"]` (当事人类型) |
+| **NOT_NULL** | 非空约束 | `true` | partyName(当事人姓名)必填 |
+| **UNIQUE** | 唯一约束 | `true` | caseNumber(案件编号)不重复 |
+| **LENGTH** | 长度约束 | `min:max` | `2:100`(当事人姓名2-100字符) |
 | **CUSTOM_SPARQL** | 自定义SPARQL | SPARQL查询 | 高级验证逻辑 |
 
 #### 3.3.2 数据模型
 
-**MySQL表**: `ont_constraint`
+**关系数据库表** (支持MySQL/PostgreSQL): `ont_constraint`
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
@@ -575,31 +672,127 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/properties' \
 
 #### 3.3.3 使用示例
 
-**创建邮箱格式约束**:
+**创建案件编号格式约束** (PATTERN) - 法律领域示例:
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/constraints' \
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/constraints' \
   -H 'Content-Type: application/json' \
   -d '{
-    "propertyId": 100,
+    "propertyId": 201,
     "constraintType": "PATTERN",
-    "value": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
-    "errorMessage": "邮箱格式不正确,请使用user@domain.com格式",
+    "value": "{\"pattern\": \"^（\\\\d{4}）[\\\\u4e00-\\\\u9fa5]{2,6}\\\\u6c11[\\\\u521d\\\\u7ec8]{1}\\\\d{3,8}号$\"}",
+    "errorMessage": "案件编号格式错误,应为:(年份)法院简称+案件类型+编号,如(2022)沪0105民初21387号",
     "severity": "ERROR",
-    "description": "验证邮箱格式符合RFC 5322标准"
+    "description": "案件编号必须符合中国法院标准格式"
   }'
 ```
 
-**创建年龄范围约束**:
+**创建当事人类型枚举约束** (ENUM) - 法律领域示例:
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/constraints' \
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/constraints' \
   -H 'Content-Type: application/json' \
   -d '{
-    "propertyId": 101,
-    "constraintType": "RANGE",
-    "value": "{\"min\": 18, \"max\": 150}",
-    "errorMessage": "年龄必须在18-150岁之间",
-    "severity": "ERROR"
+    "propertyId": 102,
+    "constraintType": "ENUM",
+    "value": "{\"allowed_values\": [\"自然人\", \"法人\", \"非法人组织\"]}",
+    "errorMessage": "当事人类型必须是:自然人、法人或非法人组织",
+    "severity": "ERROR",
+    "description": "当事人类型枚举约束"
   }'
+```
+
+**法律领域常用约束定义**:
+
+```sql
+-- PostgreSQL 法律本体约束定义示例
+INSERT INTO ont_constraint (id, definition_id, class_id, property_id, constraint_type, value, error_message, severity, description) VALUES
+-- 1. 案件编号格式约束 (PATTERN)
+(1, 1, 30, 201, 'PATTERN',
+ '{"pattern": "^（\\\\d{4}）[\\\\u4e00-\\\\u9fa5]{2,6}\\\\u6c11[\\\\u521d\\\\u7ec8]{1}\\\\d{3,8}号$"}',
+ '案件编号格式错误,应为:(年份)法院简称+案件类型+编号',
+ 'ERROR',
+ '案件编号必须符合中国法院标准格式'),
+
+-- 2. 当事人类型枚举约束 (ENUM)
+(2, 1, 10, 102, 'ENUM',
+ '{"allowed_values": ["自然人", "法人", "非法人组织"]}',
+ '当事人类型必须是:自然人、法人或非法人组织',
+ 'ERROR',
+ '当事人类型枚举约束'),
+
+-- 3. 当事人角色枚举约束 (ENUM)
+(3, 1, 10, 103, 'ENUM',
+ '{"allowed_values": ["原告", "被告", "第三人", "上诉人", "被上诉人"]}',
+ '当事人角色必须是:原告、被告、第三人、上诉人或被上诉人',
+ 'ERROR',
+ '当事人诉讼角色枚举约束'),
+
+-- 4. 法院级别枚举约束 (ENUM)
+(4, 1, 20, 302, 'ENUM',
+ '{"allowed_values": ["最高人民法院", "高级人民法院", "中级人民法院", "基层人民法院", "专门法院"]}',
+ '法院级别必须是:最高人民法院、高级人民法院、中级人民法院、基层人民法院或专门法院',
+ 'ERROR',
+ '中国法院五级体系约束'),
+
+-- 5. 争议金额范围约束 (RANGE)
+(6, 1, 30, NULL, 'RANGE',
+ '{"property": "amountInDispute", "min": 0, "max": 10000000000}',
+ '争议金额必须在 0 到 100亿元之间',
+ 'WARNING',
+ '案件争议金额合理范围约束'),
+
+-- 6. 当事人姓名长度约束 (LENGTH)
+(7, 1, 10, 101, 'LENGTH',
+ '{"min": 2, "max": 100}',
+ '当事人姓名长度必须在 2 到 100 个字符之间',
+ 'ERROR',
+ '当事人姓名长度约束'),
+
+-- 7. 身份证号格式约束 (PATTERN)
+(9, 1, 10, NULL, 'PATTERN',
+ '{"property": "idNumber", "pattern": "^(\\\\d{15}|\\\\d{18}|\\\\d{17}X)$"}',
+ '身份证号码格式错误,应为15位或18位',
+ 'ERROR',
+ '中国大陆身份证号码格式约束');
+```
+
+**约束验证流程示例** (Java 伪代码):
+
+```java
+// Java 后端法律约束验证流程示例
+public ValidationResult validateParty(Map<String, Object> properties) {
+    // 1. 根据 entity.type="Party" 找到 ont_class.id=10
+    OntClassDO partyClass = classMapper.findByLocalName("Party");
+    
+    // 2. 查询该类的所有约束
+    List<OntConstraintDO> constraints = constraintMapper.findByClassId(partyClass.getId());
+    
+    // 3. 逐条验证
+    List<ValidationError> errors = new ArrayList<>();
+    
+    // 验证 partyType 枚举约束
+    if (!List.of("自然人", "法人", "非法人组织").contains(properties.get("partyType"))) {
+        errors.add(new ValidationError(
+            "ONT004", 
+            "当事人类型必须是:自然人、法人或非法人组织",
+            "partyType",
+            properties.get("partyType")
+        ));
+    }
+    
+    // 验证 idNumber 格式约束
+    String idNumber = (String) properties.get("idNumber");
+    if (idNumber != null && !idNumber.matches("^(\\d{15}|\\d{18}|\\d{17}X)$")) {
+        errors.add(new ValidationError(
+            "ONT004",
+            "身份证号码格式错误,应为15位或18位",
+            "idNumber",
+            idNumber
+        ));
+    }
+    
+    // 返回验证结果
+    return errors.isEmpty() ? ValidationResult.pass() : ValidationResult.fail(errors);
+}
 ```
 
 ---
@@ -613,53 +806,58 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/constraints' \
 | 维度 | OntProperty(本体属性) | Edge(图数据库边) |
 |------|---------------------|------------------|
 | **层次** | Schema层(元数据) | Data层(实例数据) |
-| **存储** | MySQL `ont_property`表 | Neo4j 边关系 |
+| **存储** | 关系数据库 `ont_property`表 | Neo4j 边关系 |
 | **作用** | **定义**边的类型和约束 | **存储**具体的关系实例 |
 | **数量** | 几十到几百个定义 | 数千到数百万条实例 |
 | **类比** | 数据库表结构定义 | 数据库表中的记录 |
 
-**映射关系**:
+**映射关系** (法律领域示例):
 ```
 OntProperty (定义)
    ↓ 指导创建
 Edge (实例)
 
 示例:
-OntProperty: WORKS_AT (定义域:Person, 值域:Company)
+OntProperty: CASE_PARTY (定义域:Party, 值域:Case)
    ↓
-Edge: (张三)-[WORKS_AT]->(阿里巴巴)
-      {validAt: "2020-01-01", invalidAt: null}
+Edge: (徐某骥)-[CASE_PARTY {role: "原告"}]->(公司解散纠纷案)
+      {validAt: "2022-11-15", invalidAt: null}
 ```
 
 #### 3.4.2 对象属性→边的转换
 
 **规则**: 只有 `OBJECT` 类型的OntProperty才会在Neo4j中存储为Edge
 
-**完整流程**:
+**完整流程** (法律领域示例):
 ```
-1. 定义本体属性 (MySQL)
-   POST /ontology/graph-001/properties
+1. 定义本体属性 (关系数据库)
+   POST /ontology/legal-kg/properties
    {
-     "localName": "WORKS_AT",
+     "localName": "CASE_PARTY",
      "propertyType": "OBJECT",
-     "domainClassId": 10,  // Person
-     "rangeClassId": 20    // Company
+     "domainClassId": 10,  // Party
+     "rangeClassId": 30    // Case
    }
 
 2. 创建实体节点 (Neo4j)
-   CREATE (p:Entity {type: "Person", name: "张三"})
-   CREATE (c:Entity {type: "Company", name: "阿里巴巴"})
+   CREATE (p:Entity {type: "Party", name: "徐某骥", partyName: "徐某骥", partyRole: "原告"})
+   CREATE (c:Entity {type: "Case", name: "公司解散纠纷案", caseNumber: "（2022）沪0105民初21387号"})
 
 3. 创建关系边 (Neo4j) - 受本体约束
-   CREATE (p)-[r:WORKS_AT {
-     validAt: timestamp(),
-     invalidAt: null
+   CREATE (p)-[r:RELATES_TO {
+     uuid: "rel-party-case-001",
+     type: "CASE_PARTY",
+     fact: "徐某骥作为原告提起公司解散纠纷诉讼",
+     role: "原告",
+     valid_at: timestamp('2022-11-15'),
+     invalid_at: null
    }]->(c)
 
 4. 验证边是否符合本体
-   - source节点type必须是Person(domain)
-   - target节点type必须是Company(range)
-   - 边类型WORKS_AT必须在ont_property中定义
+   - source节点type必须是Party(domain)
+   - target节点type必须是Case(range)
+   - 边类型CASE_PARTY必须在ont_property中定义
+```
 ```
 
 #### 3.4.3 边的验证机制
@@ -688,48 +886,126 @@ public ValidationResultVO validateEdge(String graphId, String edgeType,
 }
 ```
 
-**边的常见属性**:
+**边的常见属性** (法律关系边示例):
 ```json
 {
-  "uuid": "edge-001",
-  "type": "WORKS_AT",
-  "fact": "张三在阿里巴巴担任CTO",
-  "validAt": "2020-01-01T00:00:00Z",
-  "invalidAt": null,
+  "uuid": "rel-party-case-001",
+  "type": "CASE_PARTY",
+  "fact": "徐某骥作为原告提起公司解散纠纷诉讼",
+  "role": "原告",
+  "valid_at": 1668470400000,
+  "invalid_at": null,
   "embedding": [0.1, 0.2, ...]
 }
 ```
 
-#### 3.4.4 代码示例:创建符合本体的边
+#### 3.4.4 代码示例:创建符合本体的法律关系边
 
-**Java代码**:
+**Java代码** (法律领域示例):
 ```java
 // 1. 先验证边是否符合本体
 ValidationResultVO validation = ontologyValidationService.validateEdge(
     graphId, 
-    "WORKS_AT", 
-    Map.of("fact", "张三在阿里巴巴担任CTO")
+    "CASE_PARTY", 
+    Map.of("fact", "徐某骥作为原告提起公司解散纠纷诉讼", "role", "原告")
 );
 
 if (!validation.isPassed()) {
     throw new OntologyValidationException(validation.getErrors());
 }
 
-// 2. 在Neo4j中创建边
+// 2. 在Neo4j中创建法律关系边
 String cypher = """
     MATCH (source:Entity {uuid: $sourceUuid})
     MATCH (target:Entity {uuid: $targetUuid})
-    CREATE (source)-[r:WORKS_AT {
+    CREATE (source)-[r:RELATES_TO {
         uuid: $edgeUuid,
+        type: 'CASE_PARTY',
         fact: $fact,
+        role: $role,
         valid_at: $validAt,
         invalid_at: null,
-        group_id: $graphId
+        graph_id: $graphId
     }]->(target)
     """;
 
 neo4jSession.run(cypher, parameters);
 ```
+
+**法律领域关系边完整示例** (Cypher):
+
+```cypher
+// 1. 案件当事人关系 (CASE_PARTY)
+(party:Entity {uuid: "party-001", name: "徐某骥", type: "Party"})
+-[:RELATES_TO {
+    uuid: "rel-party-case-001",
+    type: "CASE_PARTY",
+    fact: "徐某骥作为原告提起公司解散纠纷诉讼",
+    role: "原告",
+    valid_at: 1668470400000,         // 2022-11-15 立案日期
+    invalid_at: null
+}]->
+(case:Entity {uuid: "case-001", name: "公司解散纠纷案", type: "Case"})
+
+// 2. 案件法院关系 (CASE_COURT)
+(case:Entity {uuid: "case-001", name: "公司解散纠纷案"})
+-[:RELATES_TO {
+    uuid: "rel-case-court-001",
+    type: "CASE_COURT",
+    fact: "上海市长宁区人民法院审理此案",
+    courtRole: "一审法院",
+    valid_at: 1668470400000,
+    invalid_at: null
+}]->
+(court:Entity {uuid: "court-002", name: "上海市长宁区人民法院", type: "Court"})
+
+// 3. 案件法律条文关系 (CASE_LEGAL_BASIS)
+(case:Entity {uuid: "case-001"})
+-[:RELATES_TO {
+    uuid: "rel-case-law-001",
+    type: "CASE_LEGAL_BASIS",
+    fact: "案件适用《中华人民共和国公司法》第182条",
+    applicableProvision: "《公司法》第182条",
+    valid_at: 1668470400000,
+    invalid_at: null
+}]->
+(law:Entity {
+    uuid: "law-001", 
+    name: "公司法第182条", 
+    type: "LegalProvision",
+    lawName: "中华人民共和国公司法",
+    articleNumber: "第182条"
+})
+
+// 4. 上诉关系时序示例 (APPEALED_CASE)
+(case1:Entity {uuid: "case-001", name: "公司解散纠纷案一审"})
+-[:RELATES_TO {
+    uuid: "rel-appeal-001",
+    type: "APPEALED_CASE",
+    fact: "徐某骥不服一审判决,提起上诉",
+    appealDate: date('2023-01-20'),
+    valid_at: 1674172800000,         // 2023-01-20
+    invalid_at: 1698105600000        // 2023-10-24 二审判决后失效
+}]->
+(case2:Entity {
+    uuid: "case-002", 
+    name: "公司解散纠纷案二审",
+    caseNumber: "（2023）沪01民终11293号"
+})
+```
+
+**法律领域关系类型完整列表**:
+
+| 关系类型 | 源实体类型 | 目标实体类型 | 说明 | 示例 |
+|---------|----------|------------|------|------|
+| CASE_PARTY | Party | Case | 当事人参与案件 | 原告、被告、第三人 |
+| CASE_COURT | Case | Court | 案件由某法院审理 | 一审法院、二审法院 |
+| CASE_JUDGE | Case | Judge | 法官审理案件 | 审判长、审判员 |
+| CASE_LEGAL_BASIS | Case | LegalProvision | 案件适用某法条 | 《公司法》第182条 |
+| CASE_EVIDENCE | Case | Evidence | 案件证据 | 书证、物证、证人证言 |
+| APPEALED_CASE | Case | Case | 上诉关系 | 一审→二审 |
+| MENTIONS | Episode | Entity/Edge | Episode 提及实体/关系 | 文书→当事人 |
+| HAS_MEMBER | Community | Entity | 社区包含成员 | 案件社区→当事人 |
 
 **重要规则**:
 - ✅ 边类型**未定义时允许通过**(向后兼容),但会记录警告
@@ -744,42 +1020,56 @@ neo4jSession.run(cypher, parameters);
 
 **Instance(实例)** 是类的具体化,也称为Individual(个体)。
 
-**OWL语义**:
+**OWL语义** (法律领域示例):
 ```
-Class: Person
-Instance: 张三 (type: Person)
-Instance: 李四 (type: Person)
+Class: Party
+Instance: 徐某骥 (type: Party, partyRole: 原告)
+Instance: 上海某物业管理有限公司 (type: Party, partyRole: 被告)
+
+Class: Case
+Instance: 公司解散纠纷案 (type: Case, caseNumber: （2022）沪0105民初21387号)
 ```
 
 **在Graphiti-Java中的实现**:
-- 实例存储在**Neo4j**中,而不是MySQL
+- 实例存储在**Neo4j**中,而不是关系数据库
 - 实例节点使用 `type` 字段关联到OntClass的 `local_name`
 
 #### 3.5.2 Entity节点结构
 
-**Neo4j Entity节点**:
+**Neo4j Entity节点** (法律领域示例):
 ```json
 {
-  "uuid": "entity-001",
-  "name": "张三",
-  "type": "Person",  ← 对应 ont_class.local_name
-  "summary": "张三,男,1980年生,现任阿里巴巴CTO",
+  "uuid": "party-001",
+  "graph_id": "legal-knowledge-graph",
+  "name": "徐某骥",
+  "type": "Party",  ← 对应 ont_class.local_name = "Party"
+  "partyName": "徐某骥",
+  "partyType": "自然人",
+  "partyRole": "原告",
+  "idNumber": "310105199001011234",
+  "summary": "案件原告方,自然人当事人",
   "embedding": [0.1, 0.2, ...],
-  "valid_at": 1715404800000,
-  "invalid_at": null,
-  "properties": {
-    "age": 44,
-    "gender": "male",
-    "email": "zhangsan@example.com"
-  }
+  "valid_at": 1668470400000,
+  "invalid_at": null
 }
+```
+
+**法律实体节点类型示例**:
+```
+Party (当事人): 徐某骥、上海某物业管理有限公司
+Case (案件): 公司解散纠纷案、上诉案
+Court (法院): 上海市长宁区人民法院、上海市第一中级人民法院
+Judge (法官): 张某法官
+LegalProvision (法律条文): 公司法第182条
+Evidence (证据): 财务报表、审计报告
+JudgmentDocument (裁判文书): 一审判决书、二审判决书
 ```
 
 **与本体类的映射**:
 ```
 Neo4j Entity.type = "Person"
    ↓ 查找
-MySQL ont_class WHERE local_name = "Person" AND definition_id = ?
+关系数据库 ont_class WHERE local_name = "Person" AND definition_id = ?
    ↓ 获取
 本体定义: 父类、属性、约束
    ↓ 验证
@@ -789,20 +1079,30 @@ Entity.properties 是否符合本体定义
 #### 3.5.3 实例验证流程
 
 ```java
-// 创建节点时的验证
-public void createNode(String graphId, NodeCreateReqVO req) {
-    // 1. 根据type查找本体类定义
-    OntClassDO classDef = classMapper.findByLocalName(graphId, req.getType());
+// 创建法律实体节点时的验证 (Java 代码示例)
+public void createPartyNode(String graphId, NodeCreateReqVO req) {
+    // 1. 根据type="Party"查找本体类定义
+    OntClassDO classDef = classMapper.findByLocalName(graphId, "Party");
     if (classDef == null) {
-        throw new OntologyValidationException("类型未定义: " + req.getType());
+        throw new OntologyValidationException("类型未定义: Party");
     }
     
     // 2. 执行6层验证
     ValidationResultVO result = validationService.validateNode(
-        graphId, req.getType(), req.getProperties()
+        graphId, 
+        "Party", 
+        Map.of(
+            "partyName", "徐某骥",
+            "partyType", "自然人",
+            "partyRole", "原告",
+            "idNumber", "310105199001011234"
+        )
     );
     
     if (!result.isPassed()) {
+        // 错误示例: 
+        // - partyType必须是:自然人、法人或非法人组织
+        // - 身份证号码格式错误,应为15位或18位
         throw new OntologyValidationException(result.getErrors());
     }
     
@@ -849,28 +1149,80 @@ private ClassHierarchyVO buildClassHierarchy(OntClassDO parent,
 }
 ```
 
-**API响应示例**:
+**API响应示例** (法律领域):
 ```json
 [
   {
-    "classUri": "http://legal-ai.cc/ontology#Agent",
-    "localName": "Agent",
+    "classUri": "http://legal-ai.cc/ontology#LegalEntity",
+    "localName": "LegalEntity",
+    "description": "法律领域实体的顶层抽象类",
     "children": [
       {
-        "classUri": "http://legal-ai.cc/ontology#Person",
-        "localName": "Person",
+        "classUri": "http://legal-ai.cc/ontology#Party",
+        "localName": "Party",
+        "description": "案件中的当事人",
         "children": [
           {
-            "classUri": "http://legal-ai.cc/ontology#Employee",
-            "localName": "Employee",
+            "classUri": "http://legal-ai.cc/ontology#NaturalPerson",
+            "localName": "NaturalPerson",
+            "children": [
+              {
+                "classUri": "http://legal-ai.cc/ontology#Plaintiff",
+                "localName": "Plaintiff",
+                "description": "原告",
+                "children": []
+              },
+              {
+                "classUri": "http://legal-ai.cc/ontology#Defendant",
+                "localName": "Defendant",
+                "description": "被告",
+                "children": []
+              }
+            ]
+          },
+          {
+            "classUri": "http://legal-ai.cc/ontology#LegalPerson",
+            "localName": "LegalPerson",
+            "description": "法人当事人",
             "children": []
           }
         ]
       },
       {
-        "classUri": "http://legal-ai.cc/ontology#Organization",
-        "localName": "Organization",
-        "children": []
+        "classUri": "http://legal-ai.cc/ontology#Court",
+        "localName": "Court",
+        "description": "审判机关",
+        "children": [
+          {
+            "classUri": "http://legal-ai.cc/ontology#SupremeCourt",
+            "localName": "SupremeCourt",
+            "children": []
+          },
+          {
+            "classUri": "http://legal-ai.cc/ontology#LocalCourt",
+            "localName": "LocalCourt",
+            "children": []
+          }
+        ]
+      },
+      {
+        "classUri": "http://legal-ai.cc/ontology#Case",
+        "localName": "Case",
+        "description": "法律诉讼案件",
+        "children": [
+          {
+            "classUri": "http://legal-ai.cc/ontology#CivilCase",
+            "localName": "CivilCase",
+            "description": "民事案件",
+            "children": []
+          },
+          {
+            "classUri": "http://legal-ai.cc/ontology#CriminalCase",
+            "localName": "CriminalCase",
+            "description": "刑事案件",
+            "children": []
+          }
+        ]
       }
     ]
   }
@@ -879,13 +1231,17 @@ private ClassHierarchyVO buildClassHierarchy(OntClassDO parent,
 
 #### 3.6.2 属性层次(Property Hierarchy)
 
-属性也支持父子关系,用于属性继承:
+属性也支持父子关系,用于属性继承 (法律领域示例):
 
 ```
-hasContactInfo (父属性)
-  ├─ hasEmail (子属性)
-  ├─ hasPhone (子属性)
-  └─ hasAddress (子属性)
+hasContactInfo (父属性 - 联系信息)
+  ├─ hasEmail (子属性 - 邮箱)
+  ├─ hasPhone (子属性 - 电话)
+  └─ hasAddress (子属性 - 地址)
+
+hasPartyName (父属性 - 当事人名称)
+  ├─ hasNaturalPersonName (子属性 - 自然人姓名)
+  └─ hasLegalPersonName (子属性 - 法人名称)
 ```
 
 **查询属性祖先链**:
@@ -1000,28 +1356,56 @@ erDiagram
 3. **知识抽取源**: LLM从Episode中抽取Entity和Edge
 4. **增量更新**: 新数据到来时,只处理新Episode,不影响已有数据
 
-**类比理解**:
-- **Episode** = 原始素材(如新闻文章)
-- **Entity** = 从素材中提取的关键人物/组织/地点
-- **Edge** = 从素材中提取的关系
+**类比理解** (法律领域示例):
+- **Episode** = 裁判文书、法律条文、合同文本
+- **Entity** = 从文书中提取的当事人(徐某骥)、公司(上海某物业管理有限公司)、法院(上海市长宁区人民法院)
+- **Edge** = 从文书中提取的关系(CASE_PARTY、CASE_COURT、CASE_LEGAL_BASIS)
 
 #### 4.1.2 EpisodeType元数据分类
 
-**EpisodeType**定义Episode的业务分类体系:
+**EpisodeType**定义Episode的业务分类体系 (法律领域示例):
 
 ```
-法律流程 (legalProcess)
-├─ 立法程序
-│  ├─ 草案提出
-│  ├─ 审议中
-│  └─ 审议通过
-├─ 司法程序
-│  ├─ 立案
-│  ├─ 审理中
-│  └─ 判决
-└─ 执法程序
-   ├─ 调查
-   └─ 处罚
+裁判文书 (JUDGMENT_DOCUMENT)
+├─ 民事判决
+│  ├─ 一审民事判决
+│  ├─ 二审民事判决
+│  └─ 再审民事判决
+├─ 刑事判决
+│  ├─ 一审刑事判决
+│  └─ 二审刑事判决
+└─ 行政判决
+   ├─ 一审行政判决
+   └─ 二审行政判决
+
+法律条文 (LEGAL_PROVISION)
+├─ 法律
+│  ├─ 公司法
+│  ├─ 民法典
+│  └─ 刑法
+├─ 司法解释
+│  ├─ 公司法司法解释
+│  └─ 民法典司法解释
+└─ 地方性法规
+
+案件材料 (CASE_MATERIAL)
+├─ 起诉状
+├─ 答辩状
+├─ 证据材料
+└─ 庭审笔录
+```
+
+**法律领域EpisodeType定义示例**:
+```sql
+INSERT INTO episode_type (id, name, local_name, parent_id, description, domain_hint, status) VALUES
+(1, '裁判文书', 'JUDGMENT_DOCUMENT', NULL, '法院作出的裁判文书', 'LEGAL', 'ACTIVE'),
+(2, '民事判决', 'CIVIL_JUDGMENT', 1, '民事案件的一审或二审判决', 'LEGAL', 'ACTIVE'),
+(3, '一审民事判决', 'FIRST_INSTANCE_CIVIL', 2, '基层或中级人民法院作出的一审民事判决', 'LEGAL', 'ACTIVE'),
+(4, '二审民事判决', 'SECOND_INSTANCE_CIVIL', 2, '高级人民法院作出的二审民事判决', 'LEGAL', 'ACTIVE'),
+(10, '法律条文', 'LEGAL_PROVISION', NULL, '法律法规条文', 'LEGAL', 'ACTIVE'),
+(11, '法律', 'LAW', 10, '全国人大及其常委会制定的法律', 'LEGAL', 'ACTIVE'),
+(20, '案件材料', 'CASE_MATERIAL', NULL, '案件相关的起诉状、答辩状、证据等', 'LEGAL', 'ACTIVE'),
+(21, '起诉状', 'COMPLAINT', 20, '原告提交的起诉状', 'LEGAL', 'ACTIVE');
 ```
 
 **代码中的体现**:
@@ -1034,44 +1418,60 @@ String stageLabel = (String) episodeData.get("stage_label");
 
 #### 4.1.3 Episode数据结构
 
-**示例**:
+**示例** (法律裁判文书):
 ```json
 {
   "uuid": "episode-001",
-  "name": "2024年公司法修订新闻",
-  "source": "NEWS_ARTICLE",
-  "content": "2024年3月15日,全国人大常委会通过了新的公司法修订案...",
-  "episodeType": "LEGAL_AMENDMENT",
-  "legalProcess": "立法程序",
-  "stageLabel": "审议通过",
-  "processed": false,
-  "createdAt": "2024-03-15T10:00:00Z"
+  "graph_id": "legal-knowledge-graph",
+  "name": "徐某骥与上海某物业管理有限公司公司解散纠纷案一审判决书",
+  "source": "COURT_JUDGMENT",
+  "content": "上海市长宁区人民法院民事判决书（2022）沪0105民初21387号。原告徐某骥诉被告上海某物业管理有限公司公司解散纠纷一案...",
+  "episode_type": "FIRST_INSTANCE_CIVIL",
+  "legal_process": "司法程序",
+  "stage_label": "一审判决",
+  "case_number": "（2022）沪0105民初21387号",
+  "court_name": "上海市长宁区人民法院",
+  "judgment_date": "2023-10-24",
+  "processed": true,
+  "processed_at": "2024-01-15T10:00:00Z",
+  "created_at": "2024-01-15T09:00:00Z"
 }
 ```
 
 **关键字段**:
 - `uuid`: Episode唯一标识
-- `source`: 数据来源(NEWS_ARTICLE/COURT_CASE/CONTRACT等)
-- `content`: 原始文本内容
-- `episodeType`: 业务分类
-- `processed`: 是否已被LLM处理(false=待处理)
+- `source`: 数据来源(COURT_JUDGMENT/LEGAL_PROVISION/CONTRACT等)
+- `content`: 裁判文书原文或法律条文原文
+- `episode_type`: 业务分类(对应episode_type.local_name)
+- `case_number`: 案件编号(法律领域特有)
+- `court_name`: 法院名称(法律领域特有)
+- `processed`: 是否已被LLM处理(true=已抽取实体和关系)
+- `processed_at`: LLM处理时间
 
 #### 4.1.4 Episode与Entity/Edge的关系
 
+**法律领域示例**:
 ```
-Episode (原始数据)
+Episode (一审裁判文书)
    │
-   ├─[LLM抽取]→ Entity (提取出实体: 全国人大常委会、公司法)
+   ├─[LLM抽取]→ Entity: 徐某骥 (type: Party, partyRole: 原告)
+   │              Entity: 上海某物业管理有限公司 (type: Party, partyRole: 被告)
+   │              Entity: 上海市长宁区人民法院 (type: Court)
+   │              Entity: 公司解散纠纷案 (type: Case)
+   │              Entity: 公司法第182条 (type: LegalProvision)
    │
-   ├─[LLM抽取]→ Edge (提取出关系: 修订了)
+   ├─[LLM抽取]→ Edge: (徐某骥)-[CASE_PARTY]->(公司解散纠纷案)
+   │              (公司解散纠纷案)-[CASE_COURT]->(上海市长宁区人民法院)
+   │              (公司解散纠纷案)-[CASE_LEGAL_BASIS]->(公司法第182条)
    │
-   └─[MENTIONS关系]→ 记录Episode提及了哪些Entity/Edge
+   └─[MENTIONS关系]→ Episode提及了上述所有Entity和Edge
 ```
 
-**为什么需要Episode?**
-- **可追溯性**: 知道某个实体是从哪篇文章中提取的
-- **质量评估**: 可以对比不同Episode抽取结果的准确性
-- **上下文保留**: 原始数据永远保存,支持重新抽取
+**为什么需要Episode?** (法律领域视角)
+- **可追溯性**: 知道某个当事人实体是从哪份裁判文书中提取的
+- **质量评估**: 可以对比一审和二审文书抽取结果的差异
+- **上下文保留**: 裁判文书原文永远保存,支持重新抽取或补充抽取
+- **时效性管理**: 一审判决被二审改判后,可以通过invalid_at标记失效
 
 ---
 
@@ -1081,54 +1481,73 @@ Episode (原始数据)
 
 **Entity**是知识图谱中的基本节点,代表现实世界中的对象。
 
-**类型示例**:
+**类型示例** (法律领域):
 ```
-Person (人): 张三、李四
-Company (公司): 阿里巴巴、腾讯
-Law (法律): 《民法典》、《公司法》
-Product (产品): iPhone、微信
-Location (地点): 北京、上海
-Event (事件): 2024年春节、COVID-19疫情
+Party (当事人): 徐某骥、上海某物业管理有限公司、第三人张某
+Court (法院): 上海市长宁区人民法院、上海市第一中级人民法院、最高人民法院
+Case (案件): 公司解散纠纷案、上诉案、再审案
+Judge (法官): 张某审判长、李某审判员
+LegalProvision (法律条文): 《公司法》第182条、《民法典》第580条
+Evidence (证据): 财务报表、审计报告、证人证言
+JudgmentDocument (裁判文书): 一审判决书、二审判决书、再审裁定书
 ```
 
 #### 4.2.2 Entity属性结构
 
-**Neo4j存储**:
+**Neo4j存储** (法律当事人实体):
 ```json
 {
-  "uuid": "entity-001",
-  "name": "张三",
-  "type": "Person",
-  "summary": "张三,男,1980年生,现任阿里巴巴CTO",
+  "uuid": "party-001",
+  "graph_id": "legal-knowledge-graph",
+  "name": "徐某骥",
+  "type": "Party",
+  "partyName": "徐某骥",
+  "partyType": "自然人",
+  "partyRole": "原告",
+  "idNumber": "310105199001011234",
+  "summary": "案件原告方,自然人当事人,持有公司10%股权",
   "embedding": [0.1, 0.2, ...],
-  "validAt": "2020-01-01T00:00:00Z",
-  "invalidAt": null,
-  "properties": {
-    "age": 44,
-    "gender": "male",
-    "company": "阿里巴巴"
-  }
+  "valid_at": 1668470400000,
+  "invalid_at": null,
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}
+```
+
+**法律法院实体示例**:
+```json
+{
+  "uuid": "court-002",
+  "graph_id": "legal-knowledge-graph",
+  "name": "上海市长宁区人民法院",
+  "type": "Court",
+  "courtName": "上海市长宁区人民法院",
+  "courtLevel": "基层人民法院",
+  "summary": "本案一审法院,作出(2022)沪0105民初21387号民事判决",
+  "embedding": [0.2, 0.3, ...],
+  "valid_at": 1668470400000,
+  "invalid_at": null
 }
 ```
 
 **关键字段**:
 - `uuid`: 实体唯一标识
-- `type`: 实体类型(对应OntClass.localName)
-- `summary`: 实体摘要(LLM生成)
-- `embedding`: 向量嵌入(用于语义搜索)
-- `validAt/invalidAt`: 时序管理
-- `properties`: 自定义属性键值对
+- `type`: 实体类型(对应OntClass.localName,如Party/Court/Case)
+- `summary`: 实体摘要(LLM从裁判文书中生成)
+- `embedding`: 向量嵌入(用于语义搜索相似案件)
+- `valid_at/invalid_at`: 时序管理(如一审判决被二审改判后失效)
+- 领域属性: partyName/partyRole/courtName/courtLevel等(直接作为节点属性)
 
 #### 4.2.3 Entity与OntClass的映射
 
 ```
-Neo4j Entity.type = "Person"
+Neo4j Entity.type = "Party"
    ↓ 查找
-MySQL ont_class WHERE local_name = "Person"
+关系数据库 ont_class WHERE local_name = "Party" AND graph_id = 'legal-knowledge-graph'
    ↓ 获取
-本体定义: 父类、属性、约束
+本体定义: 父类(LegalEntity)、属性(partyName/partyType/partyRole)、约束
    ↓ 验证
-Entity.properties 是否符合本体定义
+Entity的属性是否符合本体定义(如partyRole必须是:原告/被告/第三人)
 ```
 
 ---
@@ -1139,27 +1558,50 @@ Entity.properties 是否符合本体定义
 
 **Edge**是连接两个实体的有向关系。
 
-**核心属性**:
+**核心属性** (法律关系边示例):
 ```json
 {
-  "uuid": "edge-001",
-  "source": "entity-001",
-  "target": "entity-002",
-  "type": "WORKS_AT",
-  "fact": "张三在阿里巴巴担任CTO",
+  "uuid": "rel-party-case-001",
+  "graph_id": "legal-knowledge-graph",
+  "source_node_uuid": "party-001",
+  "target_node_uuid": "case-001",
+  "type": "CASE_PARTY",
+  "fact": "徐某骥作为原告提起公司解散纠纷诉讼",
+  "role": "原告",
   "embedding": [0.3, 0.4, ...],
-  "validAt": "2020-01-01",
-  "invalidAt": null
+  "valid_at": 1668470400000,
+  "invalid_at": null,
+  "created_at": "2024-01-15T10:00:00Z"
 }
 ```
 
-#### 4.3.2 关系类型
+**法律法院关系边示例**:
+```json
+{
+  "uuid": "rel-case-court-001",
+  "graph_id": "legal-knowledge-graph",
+  "source_node_uuid": "case-001",
+  "target_node_uuid": "court-002",
+  "type": "CASE_COURT",
+  "fact": "上海市长宁区人民法院审理此案",
+  "courtRole": "一审法院",
+  "valid_at": 1668470400000,
+  "invalid_at": null
+}
+```
 
-| 类型 | 说明 | 示例 |
-|------|------|------|
-| `RELATES_TO` | 通用实体关系 | 张三 WORKS_AT 阿里巴巴 |
-| `MENTIONS` | Episode提及Entity | 新闻提及张三 |
-| `IN_COMMUNITY` | Entity属于Community | 张三属于"阿里巴巴生态"社区 |
+#### 4.3.2 关系类型 (法律领域)
+
+| 关系类型 | 源实体类型 | 目标实体类型 | 说明 | 法律示例 |
+|---------|----------|------------|------|------|
+| `CASE_PARTY` | Party | Case | 当事人参与案件 | 原告、被告、第三人 |
+| `CASE_COURT` | Case | Court | 案件由某法院审理 | 一审法院、二审法院 |
+| `CASE_JUDGE` | Case | Judge | 法官审理案件 | 审判长、审判员 |
+| `CASE_LEGAL_BASIS` | Case | LegalProvision | 案件适用某法条 | 《公司法》第182条 |
+| `CASE_EVIDENCE` | Case | Evidence | 案件证据 | 书证、物证、证人证言 |
+| `APPEALED_CASE` | Case | Case | 上诉关系 | 一审→二审 |
+| `MENTIONS` | Episode | Entity/Edge | Episode提及实体/关系 | 裁判文书→当事人 |
+| `HAS_MEMBER` | Community | Entity | 社区包含成员 | 案件社区→当事人 |
 
 ---
 
@@ -1180,36 +1622,64 @@ Entity.properties 是否符合本体定义
 
 #### 4.4.2 社区元数据
 
-**分类维度**:
+**分类维度** (法律领域示例):
 ```java
-domain_type: "法律"           // 领域类型
-community_type: "法规簇"     // 社区类型
-region: "REGION_CN"          // 地域
-scenario_type: "SCENARIO_ROOT"  // 场景类型
+domain_type: "法律"                    // 领域类型
+community_type: "案件簇"               // 社区类型(公司法案件簇/劳动争议案件簇)
+region: "REGION_SHANGHAI"              // 地域(上海地区)
+scenario_type: "公司解散纠纷"           // 场景类型
+legal_process: "司法程序"               // 法律流程
+court_level: "基层人民法院"             // 法院级别
+```
+
+**法律社区元数据示例**:
+```sql
+INSERT INTO community (id, graph_id, name, summary, domain_type, community_type, region, scenario_type) VALUES
+(1, 'legal-knowledge-graph', '上海地区公司解散纠纷案件社区', 
+ '包含上海地区2022-2024年公司解散纠纷相关案件、当事人、法院和法律条文',
+ '法律', '案件簇', 'REGION_SHANGHAI', '公司解散纠纷'),
+(2, 'legal-knowledge-graph', '劳动合同法相关实体社区',
+ '包含劳动合同法相关法条、劳动争议案例、劳动监察部门',
+ '法律', '法规簇', 'REGION_CN', '劳动争议');
 ```
 
 #### 4.4.3 实际应用场景
 
-**法律知识图谱示例**:
+**法律知识图谱示例** (基于真实案例):
 ```
-┌──────────────────────────────────────┐
-│ 社区1: "劳动合同法相关实体"           │
-│  - 节点数: 45                        │
-│  - 法条: 《劳动合同法》第1-50条      │
-│  - 案例: 10个劳动争议案例            │
-│  - 机构: 劳动监察部门                │
-├──────────────────────────────────────┤
-│ 社区2: "刑法盗窃罪相关实体"           │
-│  - 节点数: 78                        │
-│  - 法条: 《刑法》第264条及相关解释   │
-│  - 案例: 25个盗窃案例                │
-│  - 人物: 相关法官、律师              │
+┌─────────────────────────────────────────────────────────┐
+│ 社区1: "上海地区公司解散纠纷案件社区"                     │
+│  - community_id: community-001                          │
+│  - 节点数: 56                                           │
+│  - 案件: 公司解散纠纷案一审、二审                         │
+│  - 当事人: 徐某骥(原告)、上海某物业管理有限公司(被告)     │
+│  - 法院: 上海市长宁区人民法院、上海市第一中级人民法院     │
+│  - 法条: 《公司法》第182条、《民法典》第580条            │
+│  - 法官: 张某审判长、李某审判员                          │
+│  - 证据: 财务报表、审计报告、股东会决议                   │
+├─────────────────────────────────────────────────────────┤
+│ 社区2: "公司法司法解释相关实体社区"                       │
+│  - community_id: community-002                          │
+│  - 节点数: 128                                          │
+│  - 法条: 《公司法》及司法解释(一)(二)(三)(四)(五)        │
+│  - 案例: 85个公司治理相关案例                            │
+│  - 法院: 上海地区各级人民法院                            │
+│  - 主题: 股东权利、公司决议效力、董事责任                 │
+├─────────────────────────────────────────────────────────┤
+│ 社区3: "劳动争议案件社区"                                │
+│  - community_id: community-003                          │
+│  - 节点数: 234                                          │
+│  - 法条: 《劳动合同法》《劳动争议调解仲裁法》            │
+│  - 案例: 156个劳动争议案例                               │
+│  - 机构: 劳动监察部门、劳动仲裁委员会                    │
+│  - 当事人: 劳动者、用人单位                              │
 ```
 
-**用途**:
-- **快速导航**: 用户不搜索,直接浏览社区
-- **知识发现**: 发现意想不到的关联
-- **推荐系统**: 浏览某社区时,推荐相关社区
+**用途** (法律领域视角):
+- **类案检索**: 浏览"公司解散纠纷"社区,快速找到相似案件和适用法条
+- **知识发现**: 发现同一法官审理的多个案件,分析裁判倾向
+- **法律推荐**: 浏览某案件时,推荐相关的司法解释和类似案例
+- **裁判规律分析**: 通过社区发现同一法院对某类案件的裁判标准
 
 ---
 
@@ -1231,27 +1701,48 @@ invalid_at:  Timestamp when this fact became false (null = currently true)
 
 #### 4.5.2 时序示例
 
-**张三的职业变迁**:
+**法律案件上诉时序示例**:
 ```
-2010-2015: (张三)-[WORKS_AT {validAt: 2010, invalidAt: 2015}]->(腾讯)
-2015-2020: (张三)-[WORKS_AT {validAt: 2015, invalidAt: 2020}]->(百度)
-2020-至今: (张三)-[WORKS_AT {validAt: 2020, invalidAt: null}]->(阿里巴巴)
+2022-11-15: (徐某骥)-[CASE_PARTY {role: "原告", valid_at: 2022-11-15, invalid_at: null}]->(公司解散纠纷案一审)
+            (公司解散纠纷案一审)-[CASE_COURT {courtRole: "一审法院", valid_at: 2022-11-15, invalid_at: null}]->(上海市长宁区人民法院)
+
+2023-10-24: 一审判决后,部分关系失效
+            (公司解散纠纷案一审)-[CASE_COURT {courtRole: "一审法院", valid_at: 2022-11-15, invalid_at: 2023-10-24}]->(上海市长宁区人民法院)
+
+2023-11-10: 提起上诉,创建二审关系
+            (公司解散纠纷案一审)-[APPEALED_CASE {valid_at: 2023-11-10, invalid_at: null}]->(公司解散纠纷案二审)
+            (公司解散纠纷案二审)-[CASE_COURT {courtRole: "二审法院", valid_at: 2023-11-10, invalid_at: null}]->(上海市第一中级人民法院)
+
+2024-03-15: 二审判决维持原判
+            (公司解散纠纷案二审)-[CASE_COURT {courtRole: "二审法院", valid_at: 2023-11-10, invalid_at: 2024-03-15}]->(上海市第一中级人民法院)
 ```
 
-**查询2018年张三在哪里工作**:
+**查询指定时间的案件状态** (Cypher):
 ```cypher
-MATCH (p:Entity {name: "张三"})-[r:WORKS_AT]->(c:Entity)
-WHERE r.valid_at <= timestamp('2018-01-01') 
-  AND (r.invalid_at > timestamp('2018-01-01') OR r.invalid_at IS NULL)
-RETURN c.name
-// 输出: 百度
+// 查询2023-12-01时,徐某骥的案件状态
+MATCH (party:Party {partyName: "徐某骥"})
+-[:CASE_PARTY {valid_at: <= 1701360000000, invalid_at: > 1701360000000 OR invalid_at IS NULL}]->
+(case:Case)
+RETURN case.caseNumber, case.caseName
 ```
 
-#### 4.5.3 时序数据的业务价值
+**查询一审判决时徐某骥的诉讼地位** (Cypher):
+```cypher
+// 查询2023-05-01(一审期间),徐某骥的案件角色
+MATCH (party:Party {partyName: "徐某骥"})
+-[:CASE_PARTY {valid_at: <= 1682899200000, invalid_at: > 1682899200000 OR invalid_at IS NULL}]->
+(case:Case)
+WHERE case.caseNumber = '（2022）沪0105民初21387号'
+RETURN party.partyRole, case.caseName
+// 输出: 原告 | 公司解散纠纷案一审
+```
 
-- **历史追溯**: 某法条何时生效、某人何时就职
-- **趋势分析**: 社区随时间的演变
-- **事实准确性**: 确保查询的时间点上下文准确
+#### 4.5.3 时序在法律领域的应用
+
+- **案件进展追溯**: 追踪案件从立案、一审、二审到执行的全过程
+- **法条时效性**: 某法条何时生效、何时被修订或废止
+- **裁判标准演变**: 同一法院对某类案件的裁判标准随时间的变化
+- **当事人状态管理**: 当事人诉讼地位变化(原告→上诉人→被上诉人)
 
 ---
 
@@ -1317,9 +1808,10 @@ graph TB
 
 **社区检测(Community Detection)** 是图论中的经典算法,用于**自动发现图中紧密连接的节点群组**。
 
-**通俗理解**:
-- 社交网络中,找出"朋友圈"(互相认识的人聚集在一起)
-- 知识图谱中,找出"主题簇"(讨论同一主题的实体聚集在一起)
+**通俗理解** (法律领域示例):
+- 法律知识图谱中,找出"公司解散纠纷案件簇"(相关案件、当事人、法院、法条聚集在一起)
+- 法律条文网络中,找出"民法典合同编相关法条簇"(互相引用的法条聚集在一起)
+- 裁判文书网络中,找出"同一法官审理的类似案件簇"(裁判标准一致的案件)
 
 ### 5.2 标签传播算法(LPA)原理
 
@@ -1439,30 +1931,54 @@ List<CompletableFuture<CommunityBuildResult>> futures = new ArrayList<>();
 
 #### 5.4.3 自动命名
 
-**示例**:
+**示例** (法律领域):
+```java
+// 获取社区内所有节点的摘要
+List<String> summaries = getMemberSummaries(graphId, memberUuids);
+// 例如: ["徐某骥,案件原告,持有公司10%股权", "上海某物业管理有限公司,案件被告", 
+//        "公司解散纠纷案,案号(2022)沪0105民初21387号", "《公司法》第182条,公司僵局救济"]
+
+// LLM 合并摘要(二叉树方式高效处理大量文本)
+String mergedSummary = summarizer.summarize(summaries);
+// 输出: "上海地区公司解散纠纷相关实体,包含原告徐某骥、被告上海某物业管理有限公司、审理法院上海市长宁区人民法院及适用法条《公司法》第182条"
+
+// LLM 生成社区名称
+String communityName = summarizer.generateCommunityName(mergedSummary);
+// 例如:"上海地区公司解散纠纷案件簇"、"《公司法》司法解释相关实体"、"劳动争议案件群体"
+```
+
+**法律社区命名示例**:
 ```
 社区检测结果:
-┌──────────────────────────────────────┐
-│ 社区: "阿里巴巴生态"                  │
-│  - 节点: 阿里巴巴、淘宝、天猫、支付宝│
-│  - 关联公司: 蚂蚁金服、菜鸟物流      │
-│  - 人物: 马云、张勇                  │
-├──────────────────────────────────────┤
-│ 社区: "腾讯生态"                      │
-│  - 节点: 腾讯、微信、QQ、腾讯云      │
-│  - 关联公司: 京东(腾讯投资)          │
-│  - 人物: 马化腾                      │
+┌─────────────────────────────────────────────────┐
+│ 社区: "上海地区公司解散纠纷案件簇"                │
+│  - 案件: 公司解散纠纷案一审、二审                 │
+│  - 当事人: 徐某骥(原告)、上海某物业管理有限公司  │
+│  - 法院: 上海市长宁区法院、上海市第一中院         │
+│  - 法条: 《公司法》第182条、《民法典》第580条    │
+│  - 法官: 张某审判长、李某审判员                   │
+├─────────────────────────────────────────────────┤
+│ 社区: "公司治理相关法条簇"                        │
+│  - 法条: 《公司法》第1-50条及相关司法解释         │
+│  - 案例: 85个公司治理案例                         │
+│  - 主题: 股东权利、公司决议效力、董事责任         │
+├─────────────────────────────────────────────────┤
+│ 社区: "劳动争议案件群体"                          │
+│  - 案件: 156个劳动争议案例                        │
+│  - 法条: 《劳动合同法》《劳动争议调解仲裁法》     │
+│  - 机构: 劳动监察部门、劳动仲裁委员会             │
 ```
 
 ### 5.5 应用场景与最佳实践
 
 #### 5.5.1 应用场景
 
-| 场景 | 应用 |
+| 场景 | 法律领域应用 |
 |------|------|
-| **法律知识图谱** | 发现"劳动合同法相关实体簇" |
-| **商业知识图谱** | 发现"阿里系企业"、"腾讯系企业" |
-| **社交网络** | 发现"朋友圈"、"兴趣群体" |
+| **法律知识图谱** | 发现"公司解散纠纷案件簇"、"劳动合同法相关实体簇" |
+| **类案检索** | 自动发现相似案件群体,辅助法官裁判 |
+| **法律推荐** | 浏览某案件时,推荐相关法条和类似案例 |
+| **裁判规律分析** | 发现同一法院/法官对某类案件的裁判标准 |
 | **推荐系统** | 基于社区推荐相关内容 |
 
 #### 5.5.2 最佳实践
@@ -1565,64 +2081,747 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/validate/batch' \
   -H 'Content-Type: application/json' \
   -d '{
     "nodes": [
-      {"type": "Person", "properties": {"name": "张三", "age": 30}}
+      {"type": "Party", "properties": {"partyName": "徐某骥", "partyType": "自然人", "partyRole": "原告"}}
     ],
     "edges": [
-      {"type": "WORKS_AT", "source": "entity-001", "target": "entity-002"}
+      {"type": "CASE_PARTY", "source": "party-001", "target": "case-001", "fact": "徐某骥作为原告提起公司解散纠纷诉讼"}
     ]
   }'
 ```
 
-### 6.2 OWL 2 RL推理机
+### 6.2 Apache Jena 推理引擎框架
 
-#### 6.2.1 Jena实现
+#### 6.2.1 Jena 推理引擎概述
+
+**Apache Jena** 是一个开源的 Java 语义网(Semantic Web)和知识图谱框架,由 Apache 软件基金会维护。它提供了完整的 RDF/OWL 处理能力,包括:
+
+- **RDF 数据存储和查询**
+- **OWL 本体建模**
+- **推理引擎(Reasoner)**
+- **SPARQL 查询语言**
+
+**在 Graphiti-Java 架构中的位置**:
+
+```
+┌─────────────────────────────────────────────────────┐
+│ 6️⃣  推理层 (Reasoning) - Jena 推理引擎               │
+│     ┌───────────────────────────────────────────┐   │
+│     │ OntologyReasoner (推理服务接口)            │   │
+│     │   ↓                                       │   │
+│     │ OntologyReasonerImpl (Jena 实现)          │   │
+│     │   ↓                                       │   │
+│     │ InfModel (Jena 推理模型)                  │   │
+│     │   ↓                                       │   │
+│     │ Reasoner (Jena OWL 推理机)                │   │
+│     │   ↓                                       │   │
+│     │ OntModel (Jena 本体模型)                  │   │
+│     └───────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────┤
+│ 1️⃣  本体层 (Ontology)                               │
+│     OntClass、OntProperty、OntConstraint            │
+│     (从关系数据库加载本体定义到 Jena 模型)            │
+└─────────────────────────────────────────────────────┘
+```
+
+**设计理念**:
+
+1. **缓存优先**: 推理机预热后将 InfModel 缓存到内存,避免重复推理
+2. **读写分离**: 使用 ReentrantReadWriteLock 保证并发安全
+3. **按需推理**: 支持按 graphId 独立预热,多图谱隔离
+4. **生产就绪**: 选择 OWL 2 RL 配置文件,平衡性能和推理能力
+
+#### 6.2.2 Apache Jena 推理机架构
+
+**核心组件**:
+
+```
+┌─────────────────────────────────────────┐
+│         Jena 推理引擎架构                 │
+├─────────────────────────────────────────┤
+│                                         │
+│  InfModel (推理模型)                     │
+│     ↓ 暴露推理结果                       │
+│  Reasoner (推理机)                       │
+│     ↓ 执行推理规则                       │
+│  OntModel (本体模型)                     │
+│     ↓ 存储本体定义                       │
+│  BaseModel (基础RDF模型)                 │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**推理流程**:
 
 ```java
-// OntologyReasonerImpl.java
-public synchronized void warmUp(String graphId) {
-    if (infModelCache.containsKey(graphId)) return;
-    
-    // 创建本体模型
-    OntModel baseModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-    
-    // 绑定OWL 2 RL推理机
-    Reasoner reasoner = ReasonerRegistry.getOWLReasoner().bindSchema(baseModel);
-    InfModel infModel = ModelFactory.createInfModel(reasoner, baseModel);
-    
-    infModelCache.put(graphId, infModel);
-    ontModelCache.put(graphId, baseModel);
+// 1. 创建基础模型(存储本体定义)
+OntModel baseModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+
+// 2. 绑定推理机
+Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+InfModel infModel = ModelFactory.createInfModel(reasoner, baseModel);
+
+// 3. 加载本体数据
+baseModel.read("ontology.owl");
+
+// 4. 执行推理(自动推导隐含知识)
+// 推理结果可通过 infModel 查询
+```
+
+#### 6.2.3 Jena 支持的推理机类型
+
+| 推理机 | 配置方法 | 特点 | 适用场景 |
+|--------|---------|------|---------|
+| **OWL Mini** | `ReasonerRegistry.getOWLReasoner()` | 轻量级,支持OWL核心特性 | 快速原型开发 |
+| **OWL Micro** | 自定义配置 | 最轻量,仅支持OWL Lite | 资源受限环境 |
+| **OWL DL** | `OWLDLReasonerFactory` | 完整OWL DL支持,可判定 | 学术/研究场景 |
+| **OWL 2 RL** | `OWLFBRuleReasoner` | 规则驱动,高性能 | **生产环境推荐** ✅ |
+
+**其他推理机**:
+
+| 推理机 | 说明 |
+|--------|------|
+| **RDFS** | 仅支持RDF Schema推理,最轻量 |
+| **Transitive** | 仅支持传递性推理 |
+| **Custom Rules** | 自定义规则推理(最灵活) |
+
+#### 6.2.4 OWL 2 RL 推理机特性
+
+**为什么选择 OWL 2 RL?**
+
+```
+OWL 2 RL 的优势:
+✅ 高性能: 基于规则的推理,复杂度 Polynomial Time
+✅ 可扩展: 适合百万级三元组的大规模知识图谱
+✅ 可判定: 保证推理终止,不会死循环
+✅ 实用性: 覆盖90%业务场景需求
+✅ 标准化: W3C官方标准,兼容性好
+```
+
+**支持的推理特性**:
+
+**1. 类层次推理**
+
+```java
+// 本体定义
+Class: LegalEntity (法律实体 - 根类)
+  └─ Party (当事人)
+      └─ NaturalPerson (自然人)
+          └─ Plaintiff (原告)
+
+// 实例
+Individual: 徐某骥 type: Plaintiff
+
+// 推理结果(自动推导)
+徐某骥 type: Plaintiff        // 显式声明
+徐某骥 type: NaturalPerson    // ✅ 推理得出
+徐某骥 type: Party            // ✅ 推理得出
+徐某骥 type: LegalEntity      // ✅ 推理得出
+```
+
+**2. 属性继承推理**
+
+```java
+// 本体定义
+Property: hasContactInfo (联系信息)
+  ├─ hasEmail (邮箱)
+  └─ hasPhone (电话)
+
+Property: hasPartyName (当事人名称)
+  ├─ hasNaturalPersonName (自然人姓名)
+  └─ hasLegalPersonName (法人名称)
+
+// 推理:子类属性自动继承父属性的约束
+```
+
+**3. 逆关系推理**
+
+```java
+// 本体定义
+ObjectProperty: CASE_PARTY (当事人参与案件)
+  InverseOf: CASE_HAS_PARTY (案件包含当事人)
+
+// 显式声明
+(徐某骥)-[CASE_PARTY]->(公司解散纠纷案)
+
+// 推理结果
+✅ (公司解散纠纷案)-[CASE_HAS_PARTY]->(徐某骥)  // 自动推导
+```
+
+**4. 传递性推理**
+
+```java
+// 本体定义
+ObjectProperty: APPEALED_CASE (上诉关系) 
+  Characteristics: Transitive (传递性)
+
+// 显式声明
+(一审案件)-[APPEALED_CASE]->(二审案件)
+(二审案件)-[APPEALED_CASE]->(再审案件)
+
+// 推理结果
+✅ (一审案件)-[APPEALED_CASE]->(再审案件)  // 自动推导传递关系
+```
+
+**5. 对称性推理**
+
+```java
+// 本体定义
+ObjectProperty: EQUIVALENT_CASE (等效案件)
+  Characteristics: Symmetric (对称性)
+
+// 显式声明
+(案件A)-[EQUIVALENT_CASE]->(案件B)
+
+// 推理结果
+✅ (案件B)-[EQUIVALENT_CASE]->(案件A)  // 自动推导对称关系
+```
+
+**6. 等价类推理**
+
+```java
+// 本体定义
+Class: Plaintiff (原告)
+  EquivalentTo: Person AND (hasRole value "原告")
+
+// 显式声明
+徐某骥 type: Person
+徐某骥 hasRole: "原告"
+
+// 推理结果
+✅ 徐某骥 type: Plaintiff  // 自动归类为原告
+```
+
+**7. 不相交类检查**
+
+```java
+// 本体定义
+Class: Party (当事人)
+  DisjointWith: Court (法院)
+
+// 错误检测
+❌ 某实体不能同时是 Party 和 Court
+// 推理机会报告一致性冲突
+```
+
+#### 6.2.5 Jena 推理机 vs 其他推理机对比
+
+| 特性 | Jena | HermiT | Pellet | Fact++ |
+|------|------|--------|--------|--------|
+| **OWL 2 支持** | ✅ RL配置文件 | ✅ 完整支持 | ✅ 完整支持 | ✅ 完整支持 |
+| **性能** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
+| **可扩展性** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐ |
+| **内存占用** | 低 | 高 | 高 | 中 |
+| **Java集成** | 原生 | 需桥接 | 需桥接 | 需桥接 |
+| **生产适用** | ✅ 推荐 | ❌ 研究用 | ❌ 研究用 | ❌ 研究用 |
+| **社区支持** | Apache基金 | 学术团队 | 学术团队 | 学术团队 |
+
+#### 6.2.6 Graphiti-Java 中的 Jena 实现
+
+**OntologyReasoner 接口定义**:
+
+```java
+package com.graphiti.module.graphiti.service;
+
+import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
+import com.graphiti.module.graphiti.vo.ontology.InferredTypeVO;
+import java.util.List;
+import java.util.Map;
+
+public interface OntologyReasoner {
+
+    // 推理机生命周期管理
+    void warmUp(String graphId);
+    void shutdown(String graphId);
+    boolean isWarmedUp(String graphId);
+
+    // 类层次推理
+    List<String> getAncestorClasses(String graphId, String classUri);
+    List<String> getDescendantClasses(String graphId, String classUri);
+
+    // 类型推断
+    List<InferredTypeVO> inferTypes(String graphId, Map<String, Object> properties);
+
+    // 一致性检查
+    ConsistencyResultVO checkConsistency(String graphId);
+    boolean isSatisfiable(String graphId, String classUri);
+
+    // 属性域和范围查询
+    List<String> getPropertyDomains(String graphId, String propertyUri);
+    List<String> getPropertyRanges(String graphId, String propertyUri);
 }
 ```
 
-#### 6.2.2 一致性检查
+**OntologyReasonerImpl 核心实现**:
 
 ```java
-public ConsistencyResultVO checkConsistency(String graphId) {
-    InfModel infModel = infModelCache.get(graphId);
-    if (infModel == null) {
-        return ConsistencyResultVO.builder()
-            .consistent(true)
-            .inconsistencies(List.of("推理机未初始化"))
-            .build();
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class OntologyReasonerImpl implements OntologyReasoner {
+
+    private final OntDefinitionMapper definitionMapper;
+    private final OntClassMapper classMapper;
+    private final OntPropertyMapper propertyMapper;
+    private final OntConstraintMapper constraintMapper;
+
+    // 推理模型缓存(线程安全)
+    private final Map<String, InfModel> infModelCache = new ConcurrentHashMap<>();
+    private final Map<String, OntModel> ontModelCache = new ConcurrentHashMap<>();
+    private final Map<String, ReentrantReadWriteLock> locks = new ConcurrentHashMap<>();
+
+    private ReentrantReadWriteLock getLock(String graphId) {
+        return locks.computeIfAbsent(graphId, k -> new ReentrantReadWriteLock());
     }
-    
-    // 检查核心类的可满足性
-    String[] coreClasses = {
-        "http://www.w3.org/2002/07/owl#Thing",
-        "http://www.w3.org/2000/01/rdf-schema#Resource"
-    };
-    
-    for (String clsUri : coreClasses) {
-        if (!isSatisfiable(graphId, clsUri)) {
-            unsatisfiable.add(clsUri);
+
+    private Long resolveDefinitionId(String graphId) {
+        LambdaQueryWrapper<OntDefinitionDO> w = new LambdaQueryWrapper<>();
+        w.eq(OntDefinitionDO::getGraphId, graphId);
+        w.eq(OntDefinitionDO::getStatus, "ACTIVE");
+        w.last("LIMIT 1");
+        OntDefinitionDO def = definitionMapper.selectOne(w);
+        return def != null ? def.getId() : null;
+    }
+
+    /**
+     * 推理机预热: 从关系数据库加载本体定义,构建 Jena 推理模型
+     */
+    @Override
+    public void warmUp(String graphId) {
+        ReentrantReadWriteLock lock = getLock(graphId);
+        lock.writeLock().lock();
+        try {
+            if (infModelCache.containsKey(graphId)) return;
+            log.info("推理机预热中:graphId={}", graphId);
+
+            Long defId = resolveDefinitionId(graphId);
+            if (defId == null) {
+                log.warn("图谱无活跃本体定义,跳过预热:graphId={}", graphId);
+                return;
+            }
+
+            // 1. 创建本体模型
+            OntModel baseModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+            String ns = "http://graphiti.io/ontology/" + graphId + "/";
+            baseModel.setNsPrefix("gt", ns);
+            baseModel.setNsPrefix("rdfs", RDFS.getURI());
+            baseModel.setNsPrefix("owl", OWL.getURI());
+            baseModel.setNsPrefix("rdf", RDF.getURI());
+
+            // 2. 加载类定义
+            List<OntClassDO> classes = classMapper.selectList(
+                new LambdaQueryWrapper<OntClassDO>().eq(OntClassDO::getDefinitionId, defId));
+            Map<Long, OntClass> classMap = new HashMap<>();
+            for (OntClassDO cls : classes) {
+                OntClass ontClass = baseModel.createClass(cls.getClassUri());
+                classMap.put(cls.getId(), ontClass);
+            }
+            // 3. 建立类层次关系
+            for (OntClassDO cls : classes) {
+                if (cls.getParentClassId() != null && classMap.containsKey(cls.getParentClassId())) {
+                    classMap.get(cls.getId()).addSuperClass(classMap.get(cls.getParentClassId()));
+                }
+            }
+
+            // 4. 加载属性定义
+            List<OntPropertyDO> props = propertyMapper.selectList(
+                new LambdaQueryWrapper<OntPropertyDO>().eq(OntPropertyDO::getDefinitionId, defId));
+            for (OntPropertyDO prop : props) {
+                if ("OBJECT".equals(prop.getPropertyType())) {
+                    ObjectProperty op = baseModel.createObjectProperty(prop.getPropertyUri());
+                    if (prop.getDomainClassId() != null && classMap.containsKey(prop.getDomainClassId())) {
+                        op.addDomain(classMap.get(prop.getDomainClassId()));
+                    }
+                    if (prop.getRangeClassId() != null && classMap.containsKey(prop.getRangeClassId())) {
+                        op.addRange(classMap.get(prop.getRangeClassId()));
+                    }
+                } else {
+                    DatatypeProperty dp = baseModel.createDatatypeProperty(prop.getPropertyUri());
+                    if (prop.getDomainClassId() != null && classMap.containsKey(prop.getDomainClassId())) {
+                        dp.addDomain(classMap.get(prop.getDomainClassId()));
+                    }
+                }
+            }
+
+            // 5. 绑定 OWL 推理机
+            Reasoner reasoner = ReasonerRegistry.getOWLReasoner().bindSchema(baseModel);
+            InfModel infModel = ModelFactory.createInfModel(reasoner, baseModel);
+
+            // 6. 缓存推理模型
+            infModelCache.put(graphId, infModel);
+            ontModelCache.put(graphId, baseModel);
+            log.info("推理机预热完成:graphId={}", graphId);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
+
+    /**
+     * 关闭推理机,释放内存
+     */
+    @Override
+    public void shutdown(String graphId) {
+        ReentrantReadWriteLock lock = getLock(graphId);
+        lock.writeLock().lock();
+        try {
+            InfModel removed = infModelCache.remove(graphId);
+            ontModelCache.remove(graphId);
+            if (removed != null) {
+                removed.removeAll();
+                log.info("推理机已关闭:graphId={}", graphId);
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * 查询祖先类(递归)
+     */
+    @Override
+    public List<String> getAncestorClasses(String graphId, String classUri) {
+        InfModel infModel = infModelCache.get(graphId);
+        if (infModel == null) return List.of();
+
+        Resource cls = infModel.getResource(classUri);
+        if (cls == null) return List.of();
+
+        Set<String> ancestors = new LinkedHashSet<>();
+        collectAncestors(infModel, cls, ancestors);
+        ancestors.remove(classUri);
+        return new ArrayList<>(ancestors);
+    }
+
+    /**
+     * 查询后代类(递归)
+     */
+    @Override
+    public List<String> getDescendantClasses(String graphId, String classUri) {
+        InfModel infModel = infModelCache.get(graphId);
+        if (infModel == null) return List.of();
+
+        Resource cls = infModel.getResource(classUri);
+        if (cls == null) return List.of();
+
+        Set<String> descendants = new LinkedHashSet<>();
+        collectDescendants(infModel, cls, descendants);
+        descendants.remove(classUri);
+        return new ArrayList<>(descendants);
+    }
+
+    /**
+     * 类型推断: 根据属性匹配度推断实体可能属于的类
+     */
+    @Override
+    public List<InferredTypeVO> inferTypes(String graphId, Map<String, Object> properties) {
+        ReentrantReadWriteLock lock = getLock(graphId);
+        lock.readLock().lock();
+        try {
+            InfModel infModel = infModelCache.get(graphId);
+            if (infModel == null || properties == null || properties.isEmpty()) {
+                return List.of();
+            }
+
+            // 统计每个类的属性匹配数量
+            Map<String, Integer> classMatchCount = new HashMap<>();
+            for (String propertyUri : properties.keySet()) {
+                Property prop = infModel.getProperty(propertyUri);
+                if (prop == null) continue;
+
+                // 查询属性的定义域
+                StmtIterator it = infModel.listStatements(prop, RDFS.domain, (RDFNode) null);
+                while (it.hasNext()) {
+                    RDFNode domain = it.nextStatement().getObject();
+                    if (domain.isResource()) {
+                        String domainUri = domain.asResource().getURI();
+                        if (domainUri != null) {
+                            classMatchCount.merge(domainUri, 1, Integer::sum);
+                            // 累加祖先类的匹配度
+                            Set<String> ancestors = new HashSet<>();
+                            collectAncestors(infModel, domain.asResource(), ancestors);
+                            for (String ancestorUri : ancestors) {
+                                if (!ancestorUri.equals(domainUri)) {
+                                    classMatchCount.merge(ancestorUri, 1, Integer::sum);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 按匹配度排序
+            return classMatchCount.entrySet().stream()
+                .map(e -> InferredTypeVO.builder()
+                    .classUri(e.getKey())
+                    .confidence(e.getValue() * 1.0)
+                    .reason("匹配属性数量: " + e.getValue())
+                    .build())
+                .sorted((a, b) -> Double.compare(b.getConfidence(), a.getConfidence()))
+                .toList();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * 一致性检查: 检查本体定义是否存在逻辑冲突
+     */
+    @Override
+    public ConsistencyResultVO checkConsistency(String graphId) {
+        InfModel infModel = infModelCache.get(graphId);
+        if (infModel == null) {
+            return ConsistencyResultVO.builder()
+                .consistent(true)
+                .inconsistencies(List.of("推理机未初始化"))
+                .build();
+        }
+
+        List<String> satisfiable = new ArrayList<>();
+        List<String> unsatisfiable = new ArrayList<>();
+
+        // 检查核心类的可满足性
+        String[] coreClasses = {
+            "http://www.w3.org/2002/07/owl#Thing",
+            "http://www.w3.org/2000/01/rdf-schema#Resource"
+        };
+        for (String clsUri : coreClasses) {
+            if (isSatisfiable(graphId, clsUri)) {
+                satisfiable.add(clsUri);
+            } else {
+                unsatisfiable.add(clsUri);
+            }
+        }
+
+        return ConsistencyResultVO.builder()
+            .consistent(unsatisfiable.isEmpty())
+            .satisfiableClasses(satisfiable)
+            .unsatisfiableClasses(unsatisfiable)
+            .build();
+    }
+
+    /**
+     * 类可满足性检查
+     */
+    @Override
+    public boolean isSatisfiable(String graphId, String classUri) {
+        InfModel infModel = infModelCache.get(graphId);
+        if (infModel == null) return true;
+        Resource cls = infModel.getResource(classUri);
+        if (cls == null) return true;
+        return !infModel.listStatements(null, RDF.type, cls).toList().isEmpty()
+            || !infModel.listStatements(cls, RDFS.subClassOf, (RDFNode) null).toList().isEmpty();
+    }
+
+    /**
+     * 查询属性的定义域
+     */
+    @Override
+    public List<String> getPropertyDomains(String graphId, String propertyUri) {
+        ReentrantReadWriteLock lock = getLock(graphId);
+        lock.readLock().lock();
+        try {
+            InfModel infModel = infModelCache.get(graphId);
+            if (infModel == null || propertyUri == null) return List.of();
+
+            Property prop = infModel.getProperty(propertyUri);
+            if (prop == null) return List.of();
+
+            Set<String> domains = new LinkedHashSet<>();
+            StmtIterator it = infModel.listStatements(prop, RDFS.domain, (RDFNode) null);
+            while (it.hasNext()) {
+                RDFNode obj = it.nextStatement().getObject();
+                if (obj.isResource()) {
+                    String uri = obj.asResource().getURI();
+                    if (uri != null) domains.add(uri);
+                }
+            }
+            return new ArrayList<>(domains);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * 查询属性的值域
+     */
+    @Override
+    public List<String> getPropertyRanges(String graphId, String propertyUri) {
+        ReentrantReadWriteLock lock = getLock(graphId);
+        lock.readLock().lock();
+        try {
+            InfModel infModel = infModelCache.get(graphId);
+            if (infModel == null || propertyUri == null) return List.of();
+
+            Property prop = infModel.getProperty(propertyUri);
+            if (prop == null) return List.of();
+
+            Set<String> ranges = new LinkedHashSet<>();
+            StmtIterator it = infModel.listStatements(prop, RDFS.range, (RDFNode) null);
+            while (it.hasNext()) {
+                RDFNode obj = it.nextStatement().getObject();
+                if (obj.isResource()) {
+                    String uri = obj.asResource().getURI();
+                    if (uri != null) ranges.add(uri);
+                }
+            }
+            return new ArrayList<>(ranges);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    // 递归收集祖先类
+    private void collectAncestors(InfModel model, Resource cls, Set<String> result) {
+        StmtIterator it = model.listStatements(cls, RDFS.subClassOf, (RDFNode) null);
+        while (it.hasNext()) {
+            RDFNode parent = it.nextStatement().getObject();
+            if (parent.isResource()) {
+                String parentUri = parent.asResource().getURI();
+                if (parentUri != null && !parentUri.equals(cls.getURI())) {
+                    result.add(parentUri);
+                    collectAncestors(model, parent.asResource(), result);
+                }
+            }
+        }
+    }
+
+    // 递归收集后代类
+    private void collectDescendants(InfModel model, Resource cls, Set<String> result) {
+        StmtIterator it = model.listStatements(null, RDFS.subClassOf, cls);
+        while (it.hasNext()) {
+            Resource child = it.nextStatement().getSubject();
+            String childUri = child.getURI();
+            if (childUri != null && !childUri.equals(cls.getURI())) {
+                result.add(childUri);
+                collectDescendants(model, child, result);
+            }
+        }
+    }
+}
+```
+
+#### 6.2.7 推理机的性能优化
+
+**1. 缓存策略**
+
+```java
+// 推理模型缓存(避免重复推理)
+Map<String, InfModel> infModelCache = new ConcurrentHashMap<>();
+
+// 推理结果缓存
+Map<String, List<String>> inferenceCache = new ConcurrentHashMap<>();
+```
+
+**2. 按需推理**
+
+```java
+// 不要全局推理,只推理需要的部分
+public void selectiveReasoning(String graphId, String focusClass) {
+    InfModel infModel = infModelCache.get(graphId);
     
-    return ConsistencyResultVO.builder()
-        .consistent(unsatisfiable.isEmpty())
-        .satisfiableClasses(satisfiable)
-        .unsatisfiableClasses(unsatisfiable)
-        .build();
+    // 只推理特定类的子类
+    String sparql = """
+        SELECT ?subclass WHERE {
+          ?subclass rdfs:subClassOf* <%s> .
+        }
+    """.formatted(focusClass);
+    
+    // 执行查询...
+}
+```
+
+**3. 异步预热**
+
+```java
+// 后台预热推理机
+@Async
+public void warmUpAsync(String graphId) {
+    warmUp(graphId);
+    log.info("推理机预热完成: {}", graphId);
+}
+```
+
+#### 6.2.8 Jena 推理机的局限性
+
+**不支持的特性**:
+
+❌ **OWL 2 Full**: 表达能力最强但不可判定  
+❌ **复杂角色包含**: 如 `hasParent o hasBrother ⊑ hasUncle`  
+❌ **基数约束推理**: 如 `exactly(2, hasChild)`  
+❌ **数据类型推理**: 如 `xsd:integer + xsd:integer = xsd:integer`
+
+**解决方案**:
+
+对于不支持的特性,可以使用:
+
+1. **自定义规则推理**:
+```java
+String rules = """
+    [hasUncleRule: 
+      (?p hasParent ?grandparent)
+      (?grandparent hasChild ?uncle)
+      (?uncle gender male)
+      -> (?p hasUncle ?uncle)]
+""";
+
+Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(rules));
+```
+
+2. **混合推理策略**:
+```
+Jena OWL 2 RL (基础推理)
+   +
+自定义规则 (业务逻辑)
+   +
+SPARQL查询 (复杂查询)
+```
+
+#### 6.2.9 实际应用场景
+
+**法律知识图谱推理**:
+
+```java
+// 场景: 自动推导案件适用法律
+public List<String> inferApplicableLaws(String caseUri) {
+    InfModel infModel = infModelCache.get("legal-kg");
+    
+    String sparql = """
+        PREFIX legal: <http://legal-ai.cc/ontology#>
+        
+        SELECT ?law WHERE {
+          <%s> legal:CASE_LEGAL_BASIS ?law .
+          
+          # 推理: 如果案件属于民事案件,则适用民法典
+          <%s> legal:caseType "民事案件" .
+          ?law legal:belongsTo legal:CivilCode .
+        }
+    """.formatted(caseUri, caseUri);
+    
+    // 执行查询...
+}
+```
+
+**类案推荐推理**:
+
+```java
+// 场景: 基于推理的类案推荐
+public List<String> recommendSimilarCases(String caseUri) {
+    InfModel infModel = infModelCache.get("legal-kg");
+    
+    // 推理: 同一法官审理的类似案件可能有相似裁判
+    String sparql = """
+        PREFIX legal: <http://legal-ai.cc/ontology#>
+        
+        SELECT ?similarCase WHERE {
+          <%s> legal:CASE_JUDGE ?judge .
+          ?similarCase legal:CASE_JUDGE ?judge .
+          ?similarCase legal:caseType <%s>.legal:caseType .
+          
+          # 排除自身
+          FILTER(?similarCase != <%s>)
+        }
+    """.formatted(caseUri, caseUri, caseUri);
+    
+    // 执行查询...
 }
 ```
 
@@ -1714,16 +2913,16 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/import/schema-org'
 │ - OntConstraintMapper                       │
 ├─────────────────────────────────────────────┤
 │ 数据存储层                                  │
-│ - MySQL (本体元数据)                         │
+│ - 关系数据库 (本体元数据)                         │
 │ - Neo4j (图数据)                            │
 │ - Redis (缓存)                              │
 └─────────────────────────────────────────────┘
 ```
 
-### 7.2 MySQL+Neo4j双存储架构
+### 7.2 关系数据库+Neo4j双存储架构
 
 ```
-MySQL (Metadata)                          Neo4j (Graph Data)
+关系数据库 (Metadata) [支持MySQL/PostgreSQL]    Neo4j (Graph Data)
 ─────────────────────                    ────────────────────────────────────────
 graphiti_graph_metadata                   Entity 节点 (type -> ontClassId)
 ont_definition                            Episode 节点 (原始数据容器)
@@ -1746,7 +2945,7 @@ Layer 3: Neo4j type 字段
 flowchart LR
     A[客户端] -->|REST API| B[Controller]
     B -->|调用| C[Service]
-    C -->|读写| D[(MySQL)]
+    C -->|读写| D[(关系数据库)]
     C -->|读写| E[(Neo4j)]
     C -->|缓存| F[(Redis)]
     
@@ -1986,7 +3185,7 @@ const personClass = await ontologyApi.createClass('graph-001', {
 
 // 3. 批量验证
 const validationResult = await ontologyApi.validateBatch('graph-001', {
-  nodes: [{ type: 'Person', properties: { name: '张三', age: 30 } }],
+  nodes: [{ type: 'Party', properties: { partyName: '徐某骥', partyType: '自然人', partyRole: '原告' } }],
   edges: []
 })
 
@@ -2225,7 +3424,7 @@ curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/edges'
 - 知识图谱核心概念:Episode、Entity、Community、Temporal Graph
 - 社区检测算法:LPA原理与Graphiti-Java实现
 - 系统功能:6层验证、OWL推理、版本管理
-- 系统架构:MySQL+Neo4j双存储、分层设计
+- 系统架构:关系数据库+Neo4j双存储、分层设计
 
 **应用篇** (第8-10章):
 - REST API完整参考(25+个接口)
@@ -2356,15 +3555,17 @@ flowchart TD
 
 #### 10.3.1 场景描述
 
-**背景**: 某律师事务所需要构建"公司法"知识图谱,用于辅助律师快速查询相关法律条文、案例和人物关系。
+**背景**: 某律师事务所需要构建"公司法"知识图谱,用于辅助律师快速查询公司解散纠纷相关的法律条文、案例和当事人关系。
+
+**主线案例**: 徐某骥与上海某物业管理有限公司公司解散纠纷案（案号:（2022）沪0105民初21387号）
 
 **需求**:
-1. 导入法律文档(新闻、法条、案例)
-2. 自动抽取实体(人物、公司、法律、案例)
-3. 构建关系网络(就职、控股、违反、判决)
-4. 支持时间线查询(某法条何时生效、某人何时就职)
-5. 发现关联案例(与某案例相关的其他案例)
-6. 为LLM提供精准上下文,辅助法律分析
+1. 导入裁判文书(一审判决书、二审判决书)
+2. 自动抽取实体(当事人徐某骥、公司上海某物业管理有限公司、法院上海市长宁区人民法院)
+3. 构建关系网络(CASE_PARTY当事人参与、CASE_COURT案件审理、CASE_LEGAL_BASIS法律依据)
+4. 支持时间线查询(案件何时立案、何时一审判决、何时上诉)
+5. 发现关联案例(类似公司解散纠纷案件、适用相同法条的案例)
+6. 为LLM提供精准上下文,辅助法律分析和类案检索
 
 #### 10.3.2 步骤1: 创建本体定义
 
@@ -2399,7 +3600,7 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/definition' \
 
 #### 10.3.3 步骤2: 定义类(Class)
 
-**创建核心类**:
+**创建核心类** (公司解散纠纷场景):
 
 ```bash
 # 创建根类: LegalEntity(法律实体)
@@ -2407,55 +3608,66 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
   -H 'Content-Type: application/json' \
   -d '{
     "localName": "LegalEntity",
-    "description": "法律主体(根类)"
+    "classUri": "http://legal-ai.cc/ontology#LegalEntity",
+    "description": "法律领域实体的顶层抽象类"
   }'
 
-# 创建子类: Person(自然人)
+# 创建子类: Party(当事人)
 curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
   -H 'Content-Type: application/json' \
   -d '{
-    "localName": "Person",
+    "localName": "Party",
     "parentClassId": 1,
-    "description": "自然人",
-    "example": "张三、李四"
+    "description": "案件中的当事人,包括自然人、法人和非法人组织",
+    "example": "徐某骥(原告)、上海某物业管理有限公司(被告)"
   }'
 
-# 创建子类: Company(公司)
+# 创建子类: Court(法院)
 curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
   -H 'Content-Type: application/json' \
   -d '{
-    "localName": "Company",
+    "localName": "Court",
     "parentClassId": 1,
-    "description": "企业法人",
-    "example": "阿里巴巴、腾讯"
+    "description": "审判机关",
+    "example": "上海市长宁区人民法院、上海市第一中级人民法院"
   }'
 
-# 创建子类: Law(法律)
-curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "localName": "Law",
-    "description": "法律法规",
-    "example": "《公司法》《民法典》"
-  }'
-
-# 创建子类: Case(案例)
+# 创建子类: Case(案件)
 curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
   -H 'Content-Type: application/json' \
   -d '{
     "localName": "Case",
-    "description": "司法案例",
-    "example": "(2024)最高法民终123号"
+    "parentClassId": 1,
+    "description": "法律诉讼案件",
+    "example": "（2022）沪0105民初21387号公司解散纠纷案"
+  }'
+
+# 创建子类: LegalProvision(法律条文)
+curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/classes' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "localName": "LegalProvision",
+    "parentClassId": 1,
+    "description": "法律法规条文",
+    "example": "《公司法》第182条"
   }'
 ```
 
 **类层次结构**:
 ```
 LegalEntity (法律实体)
-  └─ Person (自然人)
-  └─ Company (公司)
-Law (法律)
-Case (案例)
+  ├─ Party (当事人)
+  │   ├─ NaturalPerson (自然人) - 如: 徐某骥
+  │   └─ LegalPerson (法人) - 如: 上海某物业管理有限公司
+  ├─ Court (法院)
+  │   ├─ LocalCourt (地方法院) - 如: 上海市长宁区人民法院
+  │   └─ IntermediateCourt (中级法院) - 如: 上海市第一中级人民法院
+  ├─ Case (案件)
+  │   ├─ CivilCase (民事案件) - 如: 公司解散纠纷案
+  │   └─ CriminalCase (刑事案件)
+  └─ LegalProvision (法律条文)
+      ├─ Law (法律) - 如: 《公司法》
+      └─ JudicialInterpretation (司法解释)
 ```
 
 #### 10.3.4 步骤3: 定义属性(Property)
@@ -2587,16 +3799,16 @@ curl -X POST 'http://localhost:8080/api/v1/graphiti/data/batch' \
     "graphId": "legal-kg",
     "episodes": [
       {
-        "name": "张三诉阿里巴巴劳动争议案",
-        "source": "COURT_CASE",
-        "content": "2023年5月,前阿里巴巴员工张三因违法解除劳动合同提起诉讼...",
-        "episodeType": "LABOR_DISPUTE"
+        "name": "徐某骥与上海某物业管理有限公司公司解散纠纷案",
+        "source": "COURT_JUDGMENT",
+        "content": "上海市长宁区人民法院民事判决书（2022）沪0105民初21387号。原告徐某骥诉被告上海某物业管理有限公司公司解散纠纷一案...",
+        "episodeType": "FIRST_INSTANCE_CIVIL"
       },
       {
-        "name": "腾讯反垄断处罚案例",
-        "source": "REGULATORY_ACTION",
-        "content": "2024年1月,市场监管总局对腾讯控股有限公司作出反垄断处罚...",
-        "episodeType": "ANTITRUST"
+        "name": "公司法第182条",
+        "source": "LEGAL_PROVISION",
+        "content": "《中华人民共和国公司法》第182条:公司经营管理发生严重困难,继续存续会使股东利益受到重大损失...",
+        "episodeType": "LAW"
       }
     ]
   }'
@@ -2637,76 +3849,75 @@ print(result.edges)
 
 #### 10.3.7 步骤6: 手动创建实体和关系(当前实现)
 
-**创建实体节点**:
+**创建实体节点** (法律领域):
 
 ```bash
-# 创建人物: 张三
+# 创建当事人: 徐某骥
 curl -X POST 'http://localhost:8080/api/v1/graph/legal-kg/nodes' \
   -H 'Content-Type: application/json' \
   -d '{
-    "name": "张三",
-    "type": "Person",
-    "summary": "前阿里巴巴员工,2023年提起劳动争议诉讼",
-    "properties": {
-      "age": 35,
-      "occupation": "软件工程师"
-    },
-    "validAt": "2023-01-01T00:00:00Z"
+    "name": "徐某骥",
+    "type": "Party",
+    "partyName": "徐某骥",
+    "partyType": "自然人",
+    "partyRole": "原告",
+    "summary": "公司解散纠纷案原告,持有公司10%股权",
+    "valid_at": 1668470400000
   }'
 
-# 创建公司: 阿里巴巴
+# 创建当事人: 上海某物业管理有限公司
 curl -X POST 'http://localhost:8080/api/v1/graph/legal-kg/nodes' \
   -H 'Content-Type: application/json' \
   -d '{
-    "name": "阿里巴巴",
-    "type": "Company",
-    "summary": "阿里巴巴集团控股有限公司",
-    "properties": {
-      "registeredCapital": 5000000000.00,
-      "industry": "互联网"
-    },
-    "validAt": "2023-01-01T00:00:00Z"
+    "name": "上海某物业管理有限公司",
+    "type": "Party",
+    "partyName": "上海某物业管理有限公司",
+    "partyType": "法人",
+    "partyRole": "被告",
+    "summary": "公司解散纠纷案被告",
+    "valid_at": 1668470400000
   }'
 
-# 创建法律: 《劳动合同法》
+# 创建案件: 公司解散纠纷案
 curl -X POST 'http://localhost:8080/api/v1/graph/legal-kg/nodes' \
   -H 'Content-Type: application/json' \
   -d '{
-    "name": "《劳动合同法》",
-    "type": "Law",
-    "summary": "规范劳动合同关系的法律",
-    "properties": {
-      "effectiveDate": "2008-01-01",
-      "latestAmendment": "2012-12-28"
-    },
-    "validAt": "2008-01-01T00:00:00Z"
+    "name": "公司解散纠纷案",
+    "type": "Case",
+    "caseNumber": "（2022）沪0105民初21387号",
+    "caseType": "民事案件",
+    "summary": "徐某骥诉上海某物业管理有限公司公司解散纠纷案",
+    "valid_at": 1668470400000
   }'
 ```
 
-**创建关系边**:
+**创建关系边** (法律领域):
 
 ```bash
-# 张三 WORKS_AT 阿里巴巴
+# 徐某骥 CASE_PARTY 公司解散纠纷案
 curl -X POST 'http://localhost:8080/api/v1/graph/legal-kg/edges' \
   -H 'Content-Type: application/json' \
   -d '{
-    "sourceUuid": "entity-zhangsan",
-    "targetUuid": "entity-alibaba",
-    "type": "WORKS_AT",
-    "fact": "张三在阿里巴巴担任软件工程师",
-    "validAt": "2020-06-01T00:00:00Z",
-    "invalidAt": "2023-03-15T00:00:00Z"  // 离职时间
+    "sourceUuid": "party-001",
+    "targetUuid": "case-001",
+    "type": "CASE_PARTY",
+    "fact": "徐某骥作为原告提起公司解散纠纷诉讼",
+    "role": "原告",
+    "valid_at": 1668470400000,
+    "invalid_at": null
   }'
 
-# 张三 INVOLVED_IN 劳动争议案
+# 公司解散纠纷案 CASE_COURT 上海市长宁区人民法院
 curl -X POST 'http://localhost:8080/api/v1/graph/legal-kg/edges' \
   -H 'Content-Type: application/json' \
   -d '{
-    "sourceUuid": "entity-zhangsan",
-    "targetUuid": "case-labor-dispute",
-    "type": "INVOLVED_IN",
-    "fact": "张三提起劳动争议诉讼",
-    "validAt": "2023-05-10T00:00:00Z"
+    "sourceUuid": "case-001",
+    "targetUuid": "court-002",
+    "type": "CASE_COURT",
+    "fact": "上海市长宁区人民法院审理此案",
+    "courtRole": "一审法院",
+    "valid_at": 1668470400000,
+    "invalid_at": null
   }'
 ```
 
@@ -2729,64 +3940,66 @@ curl -X POST 'http://localhost:8080/api/v1/graph/legal-kg/communities/build' \
     "communities": [
       {
         "uuid": "community-001",
-        "name": "劳动争议相关实体",
-        "nodeCount": 15,
-        "domainType": "劳动法",
-        "communityType": "案例簇"
+        "name": "上海地区公司解散纠纷案件簇",
+        "nodeCount": 56,
+        "domainType": "公司法",
+        "communityType": "案件簇"
       },
       {
         "uuid": "community-002",
-        "name": "阿里巴巴生态相关企业",
-        "nodeCount": 28,
+        "name": "公司法司法解释相关实体",
+        "nodeCount": 128,
         "domainType": "公司法",
-        "communityType": "企业簇"
+        "communityType": "法规簇"
       }
     ]
   }
 }
 ```
 
-**社区检测结果可视化**:
+**社区检测结果可视化** (法律领域):
 ```
-┌──────────────────────────────────────┐
-│ 社区1: "劳动争议相关实体"              │
-│  节点数: 15                           │
-│  ├─ 人物: 张三、李四、王五            │
-│  ├─ 公司: 阿里巴巴、腾讯              │
-│  ├─ 法律: 《劳动合同法》              │
-│  └─ 案例: 10个劳动争议案例            │
-├──────────────────────────────────────┤
-│ 社区2: "阿里巴巴生态相关企业"          │
-│  节点数: 28                           │
-│  ├─ 公司: 阿里巴巴、淘宝、天猫        │
-│  ├─ 人物: 马云、张勇                  │
-│  └─ 关联: 蚂蚁金服、菜鸟物流          │
+┌─────────────────────────────────────────────────┐
+│ 社区1: "上海地区公司解散纠纷案件簇"                │
+│  节点数: 56                                      │
+│  ├─ 案件: 公司解散纠纷案一审、二审                 │
+│  ├─ 当事人: 徐某骥(原告)、上海某物业管理有限公司  │
+│  ├─ 法院: 上海市长宁区人民法院、上海市第一中院     │
+│  ├─ 法条: 《公司法》第182条、《民法典》第580条    │
+│  └─ 法官: 张某审判长、李某审判员                   │
+├─────────────────────────────────────────────────┤
+│ 社区2: "公司法司法解释相关实体"                    │
+│  节点数: 128                                     │
+│  ├─ 法条: 《公司法》及司法解释(一)(二)(三)(四)(五)│
+│  ├─ 案例: 85个公司治理相关案例                    │
+│  ├─ 法院: 上海地区各级人民法院                    │
+│  └─ 主题: 股东权利、公司决议效力、董事责任         │
 ```
 
 #### 10.3.9 步骤8: 上下文提取与组装
 
-**场景**: 律师需要分析"张三诉阿里巴巴劳动争议案",要求AI提供法律意见。
+**场景**: 律师需要分析"徐某骥与上海某物业管理有限公司公司解散纠纷案",要求AI提供法律意见。
 
 **步骤1: 提取内容上下文**
 
 ```bash
-# 查询与张三相关的所有实体
-curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/nodes?relatedTo=entity-zhangsan'
+# 查询与徐某骥相关的所有实体
+curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/nodes?relatedTo=party-001'
 
-# 查询张三所属的社区
-curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/communities?memberUuid=entity-zhangsan'
+# 查询徐某骥所属的社区
+curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/communities?memberUuid=party-001'
 ```
 
 **步骤2: 提取时间上下文**
 
 ```bash
-# 查询2023年5月(诉讼发生时)的上下文
+# 查询2022年11月(立案时)的上下文
 curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/temporal/query' \
   -H 'Content-Type: application/json' \
   -d '{
     "graphId": "legal-kg",
-    "queryTime": "2023-05-10T00:00:00Z",
-    "centerNode": "entity-zhangsan",
+    "queryTime": "2022-11-15T00:00:00Z",
+    "centerNode": "party-001",
     "maxDepth": 2
   }'
 ```
@@ -2797,27 +4010,30 @@ curl -X GET 'http://localhost:8080/api/v1/graph/legal-kg/temporal/query' \
 # 上下文组装(伪代码)
 context = {
     "case_info": {
-        "name": "张三诉阿里巴巴劳动争议案",
-        "date": "2023-05-10",
-        "type": "违法解除劳动合同"
+        "name": "徐某骥与上海某物业管理有限公司公司解散纠纷案",
+        "caseNumber": "（2022）沪0105民初21387号",
+        "date": "2022-11-15",
+        "type": "公司解散纠纷"
     },
     "related_entities": [
-        {"name": "张三", "type": "Person", "role": "原告"},
-        {"name": "阿里巴巴", "type": "Company", "role": "被告"},
-        {"name": "《劳动合同法》", "type": "Law", "relevance": "高"}
+        {"name": "徐某骥", "type": "Party", "partyRole": "原告", "partyType": "自然人"},
+        {"name": "上海某物业管理有限公司", "type": "Party", "partyRole": "被告", "partyType": "法人"},
+        {"name": "上海市长宁区人民法院", "type": "Court", "courtLevel": "基层人民法院"},
+        {"name": "《公司法》第182条", "type": "LegalProvision", "relevance": "高"}
     ],
     "timeline": [
-        {"date": "2020-06-01", "event": "张三入职阿里巴巴"},
-        {"date": "2023-03-15", "event": "张三离职"},
-        {"date": "2023-05-10", "event": "张三提起诉讼"}
+        {"date": "2022-11-15", "event": "徐某骥提起公司解散纠纷诉讼"},
+        {"date": "2023-10-24", "event": "上海市长宁区人民法院一审判决"},
+        {"date": "2023-11-10", "event": "徐某骥不服判决,提起上诉"},
+        {"date": "2024-03-15", "event": "上海市第一中级人民法院二审判决"}
     ],
     "similar_cases": [
-        {"name": "李四诉腾讯劳动争议案", "similarity": 0.85},
-        {"name": "王五诉字节跳动劳动争议案", "similarity": 0.78}
+        {"name": "李某诉上海某科技公司公司解散纠纷案", "similarity": 0.92, "caseNumber": "（2021）沪0115民初12345号"},
+        {"name": "王某诉杭州某电商公司公司解散纠纷案", "similarity": 0.87, "caseNumber": "（2022）浙0106民初6789号"}
     ],
     "applicable_laws": [
-        {"name": "《劳动合同法》第39条", "content": "用人单位单方解除劳动合同"},
-        {"name": "《劳动合同法》第47条", "content": "经济补偿标准"}
+        {"name": "《公司法》第182条", "content": "公司经营管理发生严重困难,继续存续会使股东利益受到重大损失"},
+        {"name": "《民法典》第580条", "content": "当事人一方不履行非金钱债务或者履行非金钱债务不符合约定的"}
     ]
 }
 ```
@@ -2827,7 +4043,7 @@ context = {
 ```python
 # 构建LLM提示词
 prompt = f"""
-你是一位资深劳动法律师,请根据以下上下文信息,为张三提供法律意见:
+你是一位资深公司法律师,请根据以下上下文信息,为徐某骥提供法律意见:
 
 ## 案件信息
 {context['case_info']}
@@ -2845,9 +4061,9 @@ prompt = f"""
 {context['applicable_laws']}
 
 请分析:
-1. 张三的诉求是否合理?
-2. 阿里巴巴是否存在违法解除行为?
-3. 张三可获得多少经济补偿?
+1. 徐某骥的诉求是否合理?
+2. 上海某物业管理有限公司是否存在公司僵局?
+3. 是否符合《公司法》第182条的解散条件?
 4. 诉讼策略建议
 """
 
@@ -2856,26 +4072,28 @@ response = llm.generate(prompt, max_tokens=2000)
 print(response)
 ```
 
-**LLM输出示例**:
+**LLM输出示例** (法律领域):
 ```
 根据上下文信息分析:
 
-1. **张三的诉求合理性**: ✅ 合理
-   - 张三2020年6月入职,2023年3月被解除,工作2年9个月
-   - 如公司无法定理由,构成违法解除
+1. **徐某骥的诉求合理性**: ✅ 合理
+   - 徐某骥持有公司10%股权,符合《公司法》第182条的股东资格
+   - 如公司经营管理发生严重困难,继续存续会使股东利益受到重大损失,可请求解散公司
 
-2. **阿里巴巴违法解除行为**: ⚠️ 需进一步举证
-   - 公司需提供解除的法定理由(如严重违纪)
-   - 如无法举证,则构成违法解除
+2. **公司僵局认定**: ⚠️ 需进一步举证
+   - 需提供股东会长期无法召开、董事会无法作出决议等证据
+   - 需证明公司经营管理发生严重困难
 
-3. **经济补偿计算**:
-   - 正常工作2年9个月 → 3个月工资
-   - 如认定为违法解除 → 6个月工资(双倍赔偿)
+3. **解散条件分析**:
+   - 股东持股比例: 10% ✅ 符合法定要求
+   - 公司僵局证据: 需补充股东会记录、董事会决议等
+   - 继续存续损害: 需补充财务报表、经营数据等
 
 4. **诉讼策略建议**:
-   - 收集解除通知、工作记录等证据
-   - 参考类似案例(李四诉腾讯案胜诉)
-   - 主张违法解除,要求双倍赔偿
+   - 收集公司僵局的证据(股东会记录、董事会决议、财务报表)
+   - 参考类似案例(李某诉上海某科技公司案胜诉,相似度92%)
+   - 主张公司符合《公司法》第182条解散条件
+   - 考虑调解方案(股权转让、公司分立等替代方案)
 ```
 
 #### 10.3.10 步骤9: 本体验证确保上下文质量
@@ -2889,20 +4107,22 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/legal-kg/validate/batch' \
   -d '{
     "nodes": [
       {
-        "type": "Person",
+        "type": "Party",
         "properties": {
-          "name": "赵六",
-          "age": 25
+          "partyName": "张某",
+          "partyType": "自然人",
+          "partyRole": "第三人"
         }
       }
     ],
     "edges": [
       {
-        "type": "WORKS_AT",
-        "source": "entity-zhaoliu",
-        "target": "entity-alibaba",
+        "type": "CASE_PARTY",
+        "source": "party-003",
+        "target": "case-002",
         "properties": {
-          "fact": "赵六在阿里巴巴工作"
+          "fact": "第三人张某参与公司解散纠纷案",
+          "role": "第三人"
         }
       }
     ]

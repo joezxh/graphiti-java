@@ -129,21 +129,21 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'nav.temporalHistory', requiresAuth: true }
       },
       {
-        path: 'episodes',
-        name: 'Episodes',
-        component: () => import('@/views/episodes/index.vue'),
+        path: 'data/episodes',
+        name: 'DataEpisodes',
+        component: () => import('@/views/data/episodes.vue'),
         meta: { title: 'nav.episodeManagement', requiresAuth: true }
       },
       {
-        path: 'edges',
-        name: 'Edges',
-        component: () => import('@/views/edges/index.vue'),
+        path: 'data/edges',
+        name: 'DataEdges',
+        component: () => import('@/views/data/edges.vue'),
         meta: { title: 'nav.edgeManagement', requiresAuth: true }
       },
       {
-        path: 'communities',
-        name: 'Communities',
-        component: () => import('@/views/communities/index.vue'),
+        path: 'data/communities',
+        name: 'DataCommunities',
+        component: () => import('@/views/data/communities.vue'),
         meta: { title: 'nav.communityDetection', requiresAuth: true }
       },
       {

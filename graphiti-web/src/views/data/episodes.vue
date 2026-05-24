@@ -155,7 +155,7 @@ import { ReloadOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { graphApi } from '@/api/graph'
 import { episodeApi, type EpisodeListItem, type EpisodeMentions } from '@/api/episode'
-import { EPISODE_TYPE_COLORS, type EpisodeV3 } from '@/types/legal-graph-v3'
+import { EPISODE_TYPE_COLORS } from '@/types/legal-graph-v3'
 
 const { t } = useI18n()
 
