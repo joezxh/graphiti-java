@@ -373,6 +373,17 @@ export const graphApi = {
     })
   },
 
+  // 按类获取实例 + N跳邻居图谱数据（分页）
+  async getEntitiesVisualizationByClass(
+    graphId: string,
+    className: string,
+    params?: { page?: number; pageSize?: number; depth?: number }
+  ): Promise<GraphVisualizationData> {
+    return request.get(`/graph/${graphId}/visualization/entities/by-class`, {
+      params: { className, ...params }
+    })
+  },
+
   // 获取所有边数据（不超过500个）
   async getEdgesVisualization(
     graphId: string,

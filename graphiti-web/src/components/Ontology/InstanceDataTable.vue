@@ -167,13 +167,20 @@ import PropertyValueCell from './PropertyValueCell.vue'
 import { formatPropertyValue } from '@/composables/usePropertyType'
 import { useI18n } from 'vue-i18n'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   graphId: string
   classType?: string
-}>()
+  page?: number
+  pageSize?: number
+}>(), {
+  page: 1,
+  pageSize: 20
+})
 
 const emit = defineEmits<{
   (e: 'edit-instance', data: any): void
+  (e: 'page-change', page: number, pageSize: number): void
+  (e: 'row-click', record: any): void
 }>()
 
 const store = useOntologyStore()
@@ -271,6 +278,7 @@ async function handleRefresh() {
 function handleTableChange(pagination: any) {
   page.value = pagination.current
   pageSize.value = pagination.pageSize
+  emit('page-change', page.value, pageSize.value)
   loadData()
 }
 
@@ -387,8 +395,8 @@ async function copyUuid(uuid: string) {
 }
 
 // ---- Context Menu ----
-function handleRowClick(_record: any) {
-  // Reserved for future row click behavior
+function handleRowClick(record: any) {
+  emit('row-click', record)
 }
 
 function handleContextMenu(e: MouseEvent, _record: any) {
