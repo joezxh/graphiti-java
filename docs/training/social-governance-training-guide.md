@@ -1,4 +1,4 @@
-# Graphiti-Java 知识图谱与本体论全栈技术培训（社会治理版）
+# OntoGraph 知识图谱与本体论全栈技术培训（社会治理版）
 
 > **文档版本**: v1.0  
 > **适用对象**: 全栈开发工程师、知识图谱工程师、系统架构师  
@@ -10,7 +10,7 @@
 
 ## 文档导览
 
-本培训文档面向全栈技术团队,系统讲解知识图谱与本体论的理论知识及Graphiti-Java项目在社会治理领域的完整实现。文档分为三大板块:
+本培训文档面向全栈技术团队,系统讲解知识图谱与本体论的理论知识及OntoGraph项目在社会治理领域的完整实现。文档分为三大板块:
 
 **📖 理论篇** (第1-2章): 本体论历史、核心概念、知识图谱架构体系  
 **🔧 实践篇** (第3-7章): 本体要素、核心概念、社区检测、验证推理、系统架构  
@@ -95,14 +95,14 @@
 | **OWL 2 RL** | 2009 | 规则语言,适合大规模推理 | 中低 |
 | OWL 2 EL | 2009 | 存在量词优化,适合本体大规模 | 低 |
 
-**Graphiti-Java选择OWL 2 RL的原因**:
+**OntoGraph选择OWL 2 RL的原因**:
 - **性能**: 基于规则的推理,适合大规模知识图谱
 - **可判定性**: 推理复杂度可控(Polynomial time)
 - **实用性**: 覆盖了90%的业务场景需求
 
-### 1.5 Graphiti-Java的本体论实践
+### 1.5 OntoGraph的本体论实践
 
-Graphiti-Java将本体论理论应用到工业级知识图谱系统中:
+OntoGraph将本体论理论应用到工业级知识图谱系统中:
 
 ```
 哲学本体论 (研究"存在")
@@ -111,7 +111,7 @@ Graphiti-Java将本体论理论应用到工业级知识图谱系统中:
     ↓
 OWL标准 (W3C规范)
     ↓
-Graphiti-Java实现 (Java + Jena + Neo4j)
+OntoGraph实现 (Java + Jena + Neo4j)
 ```
 
 **核心实现**:
@@ -212,7 +212,7 @@ Individual:
 
 ### 2.4 知识图谱的8层架构体系
 
-Graphiti-Java的知识图谱系统采用**8层架构**,本体只是其中一层:
+OntoGraph的知识图谱系统采用**8层架构**,本体只是其中一层:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -1031,7 +1031,7 @@ Class: Dispute
 Instance: 网贷利率纠纷案 (type: Dispute, disputeNumber: SZ2024-0001)
 ```
 
-**在Graphiti-Java中的实现**:
+**在OntoGraph中的实现**:
 - 实例存储在**Neo4j**中,而不是关系数据库
 - 实例节点使用 `type` 字段关联到OntClass的 `local_name`
 
@@ -1803,7 +1803,7 @@ graph TB
 
 ## 第五章 社区检测功能详解
 
-> **本章定位**: 深入讲解社区检测算法的原理、Graphiti-Java的实现机制、以及最佳实践。
+> **本章定位**: 深入讲解社区检测算法的原理、OntoGraph的实现机制、以及最佳实践。
 
 ### 5.1 社区检测算法概述
 
@@ -1844,7 +1844,7 @@ graph TB
 | **适合大规模图** | 可处理百万级节点 |
 | **可能不稳定** | 不同运行可能得到不同结果 |
 
-### 5.3 Graphiti-Java的实现机制
+### 5.3 OntoGraph的实现机制
 
 #### 5.3.1 完整流程
 
@@ -1888,7 +1888,7 @@ public CommunityDetectionResult detectCommunities(String graphId) {
 
 **传统算法**: 社区只是数字ID(Community-1, Community-2)
 
-**Graphiti-Java**: 使用LLM理解内容,生成有意义的名称
+**OntoGraph**: 使用LLM理解内容,生成有意义的名称
 
 ```java
 // 获取社区内所有节点的摘要
@@ -2001,7 +2001,7 @@ String communityName = summarizer.generateCommunityName(mergedSummary);
 
 ## 第六章 系统功能特性
 
-> **本章定位**: 详细讲解Graphiti-Java的核心功能特性,包括6层验证引擎、OWL推理、版本管理等。
+> **本章定位**: 详细讲解OntoGraph的核心功能特性,包括6层验证引擎、OWL推理、版本管理等。
 
 ### 6.1 6层验证引擎详解
 
@@ -2101,7 +2101,7 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/validate/batch' \
 - **推理引擎(Reasoner)**
 - **SPARQL 查询语言**
 
-**在 Graphiti-Java 架构中的位置**:
+**在 OntoGraph 架构中的位置**:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -2316,15 +2316,15 @@ Class: Party (当事人)
 | **生产适用** | ✅ 推荐 | ❌ 研究用 | ❌ 研究用 | ❌ 研究用 |
 | **社区支持** | Apache基金 | 学术团队 | 学术团队 | 学术团队 |
 
-#### 6.2.6 Graphiti-Java 中的 Jena 实现
+#### 6.2.6 OntoGraph 中的 Jena 实现
 
 **OntologyReasoner 接口定义**:
 
 ```java
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
-import com.graphiti.module.graphiti.vo.ontology.InferredTypeVO;
+import com.ontograph.module.graphiti.vo.ontology.ConsistencyResultVO;
+import com.ontograph.module.graphiti.vo.ontology.InferredTypeVO;
 import java.util.List;
 import java.util.Map;
 
@@ -2402,7 +2402,7 @@ public class OntologyReasonerImpl implements OntologyReasoner {
 
             // 1. 创建本体模型
             OntModel baseModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-            String ns = "http://graphiti.io/ontology/" + graphId + "/";
+            String ns = "http://ontograph.io/ontology/" + graphId + "/";
             baseModel.setNsPrefix("gt", ns);
             baseModel.setNsPrefix("rdfs", RDFS.getURI());
             baseModel.setNsPrefix("owl", OWL.getURI());
@@ -2890,7 +2890,7 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/import/schema-org'
 
 ## 第七章 系统架构设计
 
-> **本章定位**: 从架构视角讲解Graphiti-Java的整体设计、模块关系、数据流向。
+> **本章定位**: 从架构视角讲解OntoGraph的整体设计、模块关系、数据流向。
 
 ### 7.1 分层架构
 
@@ -2925,7 +2925,7 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/graph-001/import/schema-org'
 ```
 关系数据库 (Metadata) [支持MySQL/PostgreSQL]    Neo4j (Graph Data)
 ─────────────────────                    ────────────────────────────────────────
-graphiti_graph_metadata                   Entity 节点 (type -> ontClassId)
+ontograph_graph_metadata                   Entity 节点 (type -> ontClassId)
 ont_definition                            Episode 节点 (原始数据容器)
 ont_class                                 RELATES_TO 边 (fact -> embedding)
 ont_property                              ───────────────────────────────────────
@@ -3403,9 +3403,9 @@ curl -X GET 'http://localhost:8080/api/v1/graph/social-gov-kg/edges'
 - **Neo4j Cypher手册**: https://neo4j.com/docs/cypher-manual/
 - **图论算法**: https://graphstream-project.org/
 
-#### A.5.3 Graphiti-Java项目
+#### A.5.3 OntoGraph项目
 
-- **项目源码**: `d:/projects/graphiti-java`
+- **项目源码**: `d:/projects/ontograph-java`
 - **API文档**: `docs/manual/API接口文档/`
 - **架构设计**: `docs/manual/架构设计/`
 
@@ -3418,12 +3418,12 @@ curl -X GET 'http://localhost:8080/api/v1/graph/social-gov-kg/edges'
 **理论篇** (第1-2章):
 - 本体论从哲学到计算机科学的演进
 - 本体在知识图谱中的三大作用
-- Graphiti-Java的8层架构体系
+- OntoGraph的8层架构体系
 
 **实践篇** (第3-7章):
 - 本体核心要素:Class、Property、Constraint、Edge、Instance
 - 知识图谱核心概念:Episode、Entity、Community、Temporal Graph
-- 社区检测算法:LPA原理与Graphiti-Java实现
+- 社区检测算法:LPA原理与OntoGraph实现
 - 系统功能:6层验证、OWL推理、版本管理
 - 系统架构:关系数据库+Neo4j双存储、分层设计
 
@@ -3439,14 +3439,14 @@ curl -X GET 'http://localhost:8080/api/v1/graph/social-gov-kg/edges'
 
 希望本文档能帮助您:
 1. 深入理解本体论和知识图谱的核心概念
-2. 掌握Graphiti-Java系统的完整实现
+2. 掌握OntoGraph系统的完整实现
 3. 应用上下文工程提升AI输出质量
 
 ---
 
 **文档版本**: v1.0  
 **更新日期**: 2026-05-25  
-**维护者**: Graphiti-Java团队  
+**维护者**: OntoGraph团队  
 **反馈渠道**: 请在项目中提Issue或PR
 
 ---
@@ -3454,7 +3454,7 @@ curl -X GET 'http://localhost:8080/api/v1/graph/social-gov-kg/edges'
 
 ## 第十章 上下文工程应用
 
-> **本章定位**: 将前面章节的本体论、知识图谱概念、验证推理等理论知识,整合到一个实际应用场景中,展示Graphiti-Java如何作为**上下文工程(Context Engineering)**工具使用。
+> **本章定位**: 将前面章节的本体论、知识图谱概念、验证推理等理论知识,整合到一个实际应用场景中,展示OntoGraph如何作为**上下文工程(Context Engineering)**工具使用。
 
 ### 10.1 什么是上下文工程?
 
@@ -3485,19 +3485,19 @@ curl -X GET 'http://localhost:8080/api/v1/graph/social-gov-kg/edges'
 
 #### 10.1.3 上下文工程的三个维度
 
-| 维度 | 问题 | Graphiti-Java支持 |
+| 维度 | 问题 | OntoGraph支持 |
 |------|------|------------------|
 | **内容上下文** | "与什么相关?" | 社区检测发现关联实体 |
 | **时间上下文** | "何时有效?" | 时序图谱提供时间线 |
 | **业务上下文** | "属于什么类型?" | 本体定义提供类型系统 |
 
-### 10.2 Graphiti-Java如何支持上下文工程?
+### 10.2 OntoGraph如何支持上下文工程?
 
 #### 10.2.1 核心能力映射
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│           Graphiti-Java 上下文工程能力                  │
+│           OntoGraph 上下文工程能力                  │
 ├──────────────────────────────────────────────────────┤
 │                                                      │
 │  1️⃣ Episode (上下文容器)                              │
@@ -3766,7 +3766,7 @@ curl -X POST 'http://localhost:8080/api/v1/ontology/social-gov-kg/properties' \
 **导入社会治理新闻**:
 
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/graphiti/data/add' \
+curl -X POST 'http://localhost:8080/api/v1/ontograph/data/add' \
   -H 'Content-Type: application/json' \
   -d '{
     "graphId": "social-gov-kg",
@@ -3794,7 +3794,7 @@ curl -X POST 'http://localhost:8080/api/v1/graphiti/data/add' \
 **批量导入案例**:
 
 ```bash
-curl -X POST 'http://localhost:8080/api/v1/graphiti/data/batch' \
+curl -X POST 'http://localhost:8080/api/v1/ontograph/data/batch' \
   -H 'Content-Type: application/json' \
   -d '{
     "graphId": "social-gov-kg",
@@ -3821,9 +3821,9 @@ curl -X POST 'http://localhost:8080/api/v1/graphiti/data/batch' \
 
 ```python
 # 预期工作流程(伪代码)
-from graphiti import GraphitiClient
+from ontograph import OntoGraphClient
 
-client = GraphitiClient("http://localhost:8080")
+client = OntoGraphClient("http://localhost:8080")
 
 # 从Episode抽取Entity和Edge
 result = client.extract_entities_and_edges(
@@ -4263,7 +4263,7 @@ def build_context(query, max_tokens=8000):
 
 ### 10.6 本章小结
 
-本章通过社会治理知识图谱的完整案例,展示了Graphiti-Java如何作为上下文工程工具:
+本章通过社会治理知识图谱的完整案例,展示了OntoGraph如何作为上下文工程工具:
 
 **核心能力**:
 1. ✅ **Episode** 作为上下文容器,保留原始数据

@@ -13,7 +13,7 @@ with open('ontology-training-guide.md', 'r', encoding='utf-8') as f:
 # 定义替换规则（按优先级排序）
 replacements = [
     # 文档元信息
-    ("Graphiti-Java 知识图谱与本体论全栈技术培训", "Graphiti-Java 知识图谱与本体论全栈技术培训（社会治理版）"),
+    ("OntoGraph 知识图谱与本体论全栈技术培训", "OntoGraph 知识图谱与本体论全栈技术培训（社会治理版）"),
     ("2026-05-21", "2026-05-25"),
     
     # 主线案例替换
@@ -113,7 +113,7 @@ for old, new in replacements:
 # 更新文档导览
 content = content.replace(
     "系统讲解知识图谱与本体论的理论知识及Graphiti-Java项目的完整实现",
-    "系统讲解知识图谱与本体论的理论知识及Graphiti-Java项目在社会治理领域的完整实现"
+    "系统讲解知识图谱与本体论的理论知识及OntoGraph项目在社会治理领域的完整实现",
 )
 
 # 更新适用对象行后的业务领域说明

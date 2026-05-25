@@ -30,8 +30,8 @@
 ### 1.2 启动服务
 
 ```bash
-# 启动Graphiti-Java服务
-cd graphiti-java
+# 启动OntoGraph服务
+cd ontograph-java
 mvn spring-boot:run
 
 # 服务启动后访问
