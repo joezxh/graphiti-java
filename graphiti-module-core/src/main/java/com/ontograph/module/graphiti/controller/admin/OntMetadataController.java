@@ -1,12 +1,12 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.module.graphiti.dal.mysql.metadata.OntEpisodeTypeMapper;
-import com.graphiti.module.graphiti.service.EpisodeService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.metadata.OntMetadataService;
-import com.graphiti.module.graphiti.vo.episode.EpisodeListRespVO;
-import com.graphiti.module.graphiti.vo.metadata.*;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.module.graphiti.dal.mysql.metadata.OntEpisodeTypeMapper;
+import com.ontograph.module.graphiti.service.EpisodeService;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.service.metadata.OntMetadataService;
+import com.ontograph.module.graphiti.vo.episode.EpisodeListRespVO;
+import com.ontograph.module.graphiti.vo.metadata.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,4 +1,4 @@
-package com.graphiti.system.dto;
+package com.ontograph.system.dto;
 
 import lombok.Data;
 import java.io.Serializable;

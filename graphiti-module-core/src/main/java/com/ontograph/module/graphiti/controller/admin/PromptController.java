@@ -1,10 +1,10 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.module.graphiti.dal.dataobject.PromptTemplateDO;
-import com.graphiti.module.graphiti.dal.dataobject.PromptVersionDO;
-import com.graphiti.module.graphiti.service.PromptTemplateService;
-import com.graphiti.module.graphiti.vo.prompt.*;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.module.graphiti.dal.dataobject.PromptTemplateDO;
+import com.ontograph.module.graphiti.dal.dataobject.PromptVersionDO;
+import com.ontograph.module.graphiti.service.PromptTemplateService;
+import com.ontograph.module.graphiti.vo.prompt.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

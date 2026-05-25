@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.dto.DomainInferenceResult;
-import com.graphiti.module.graphiti.dto.SubTypeInferenceResult;
-import com.graphiti.module.graphiti.dal.dataobject.metadata.OntCommunityTypeDO;
+import com.ontograph.module.graphiti.dto.DomainInferenceResult;
+import com.ontograph.module.graphiti.dto.SubTypeInferenceResult;
+import com.ontograph.module.graphiti.dal.dataobject.metadata.OntCommunityTypeDO;
 
 import java.util.List;
 

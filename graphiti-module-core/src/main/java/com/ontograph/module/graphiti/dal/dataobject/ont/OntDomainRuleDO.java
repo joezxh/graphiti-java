@@ -1,10 +1,10 @@
-package com.graphiti.module.graphiti.dal.dataobject.ont;
+package com.ontograph.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.graphiti.module.graphiti.typehandler.PgJsonbTypeHandler;
+import com.ontograph.module.graphiti.typehandler.PgJsonbTypeHandler;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;

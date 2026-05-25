@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.DomainRuleVO;
+import com.ontograph.module.graphiti.vo.ontology.DomainRuleVO;
 import java.util.List;
 import java.util.Map;
 

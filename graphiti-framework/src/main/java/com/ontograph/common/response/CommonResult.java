@@ -1,6 +1,6 @@
-package com.graphiti.common.response;
+package com.ontograph.common.response;
 
-import com.graphiti.common.constants.ResultCode;
+import com.ontograph.common.constants.ResultCode;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.service.EpisodeService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.vo.episode.EpisodeInfoRespVO;
-import com.graphiti.module.graphiti.vo.episode.EpisodeListRespVO;
-import com.graphiti.module.graphiti.vo.episode.EpisodeMentionsRespVO;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.service.EpisodeService;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.vo.episode.EpisodeInfoRespVO;
+import com.ontograph.module.graphiti.vo.episode.EpisodeListRespVO;
+import com.ontograph.module.graphiti.vo.episode.EpisodeMentionsRespVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

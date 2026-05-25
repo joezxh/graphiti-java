@@ -1,6 +1,6 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
-import com.graphiti.system.dal.dataobject.NotificationSettingsDO;
+import com.ontograph.system.dal.dataobject.NotificationSettingsDO;
 
 /**
  * 用户通知设置服务接口

@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service.validator;
+package com.ontograph.module.graphiti.service.validator;
 
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.vo.ontology.GraphIntegrityResultVO;
-import com.graphiti.module.graphiti.vo.ontology.GraphIntegrityResultVO.ViolationVO;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.vo.ontology.GraphIntegrityResultVO;
+import com.ontograph.module.graphiti.vo.ontology.GraphIntegrityResultVO.ViolationVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Driver;

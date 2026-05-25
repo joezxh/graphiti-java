@@ -1,10 +1,10 @@
-package com.graphiti.system.service.impl;
+package com.ontograph.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.system.dal.dataobject.MenuDO;
-import com.graphiti.system.dal.mysql.MenuMapper;
-import com.graphiti.system.service.MenuService;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.system.dal.dataobject.MenuDO;
+import com.ontograph.system.dal.mysql.MenuMapper;
+import com.ontograph.system.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

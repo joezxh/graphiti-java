@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.exception;
+package com.ontograph.module.graphiti.exception;
 
-import com.graphiti.common.exception.BusinessException;
+import com.ontograph.common.exception.BusinessException;
 import lombok.Getter;
 
 /**

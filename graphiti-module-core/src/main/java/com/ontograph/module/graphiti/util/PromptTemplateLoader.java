@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.util;
+package com.ontograph.module.graphiti.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;

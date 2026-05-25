@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.util;
+package com.ontograph.module.graphiti.util;
 
-import com.graphiti.module.graphiti.service.LlmClientService;
+import com.ontograph.module.graphiti.service.LlmClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

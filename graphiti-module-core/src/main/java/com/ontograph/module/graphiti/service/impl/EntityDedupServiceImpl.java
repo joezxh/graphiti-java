@@ -1,15 +1,15 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.service.EmbedderService;
-import com.graphiti.module.graphiti.service.EntityDedupService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.LlmClientService;
-import com.graphiti.module.graphiti.util.MinHashLSH;
-import com.graphiti.module.graphiti.util.StringNormalizer;
-import com.graphiti.module.graphiti.util.UnionFind;
-import com.graphiti.module.graphiti.vo.dedup.DedupResultVO;
+import com.ontograph.module.graphiti.service.EmbedderService;
+import com.ontograph.module.graphiti.service.EntityDedupService;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.service.LlmClientService;
+import com.ontograph.module.graphiti.util.MinHashLSH;
+import com.ontograph.module.graphiti.util.StringNormalizer;
+import com.ontograph.module.graphiti.util.UnionFind;
+import com.ontograph.module.graphiti.vo.dedup.DedupResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

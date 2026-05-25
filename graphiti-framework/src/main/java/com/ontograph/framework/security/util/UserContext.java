@@ -1,6 +1,6 @@
-package com.graphiti.framework.security.util;
+package com.ontograph.framework.security.util;
 
-import com.graphiti.common.exception.BusinessException;
+import com.ontograph.common.exception.BusinessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

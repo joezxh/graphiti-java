@@ -1,12 +1,12 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.dal.dataobject.metadata.OntCommunityTypeDO;
-import com.graphiti.module.graphiti.dto.DomainInferenceResult;
-import com.graphiti.module.graphiti.dto.SubTypeInferenceResult;
-import com.graphiti.module.graphiti.service.DomainInferenceService;
-import com.graphiti.module.graphiti.service.LlmClientService;
+import com.ontograph.module.graphiti.dal.dataobject.metadata.OntCommunityTypeDO;
+import com.ontograph.module.graphiti.dto.DomainInferenceResult;
+import com.ontograph.module.graphiti.dto.SubTypeInferenceResult;
+import com.ontograph.module.graphiti.service.DomainInferenceService;
+import com.ontograph.module.graphiti.service.LlmClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

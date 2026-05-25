@@ -1,6 +1,6 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
-import com.graphiti.system.dal.dataobject.RoleDO;
+import com.ontograph.system.dal.dataobject.RoleDO;
 
 /**
  * 角色管理服务接口

@@ -1,16 +1,16 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntDefinitionDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntPropertyDO;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
-import com.graphiti.module.graphiti.service.OntologyReasoner;
-import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
-import com.graphiti.module.graphiti.vo.ontology.InferredTypeVO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntClassDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntDefinitionDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntPropertyDO;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntClassMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntConstraintMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntPropertyMapper;
+import com.ontograph.module.graphiti.service.OntologyReasoner;
+import com.ontograph.module.graphiti.vo.ontology.ConsistencyResultVO;
+import com.ontograph.module.graphiti.vo.ontology.InferredTypeVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jena.ontology.DatatypeProperty;

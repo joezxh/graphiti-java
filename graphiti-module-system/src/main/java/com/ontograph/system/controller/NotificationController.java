@@ -1,12 +1,12 @@
-package com.graphiti.system.controller;
+package com.ontograph.system.controller;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.framework.security.util.UserContext;
-import com.graphiti.system.dal.dataobject.NotificationDO;
-import com.graphiti.system.dal.dataobject.NotificationSettingsDO;
-import com.graphiti.system.service.NotificationService;
-import com.graphiti.system.service.NotificationSettingsService;
-import com.graphiti.system.service.UserService;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.framework.security.util.UserContext;
+import com.ontograph.system.dal.dataobject.NotificationDO;
+import com.ontograph.system.dal.dataobject.NotificationSettingsDO;
+import com.ontograph.system.service.NotificationService;
+import com.ontograph.system.service.NotificationSettingsService;
+import com.ontograph.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

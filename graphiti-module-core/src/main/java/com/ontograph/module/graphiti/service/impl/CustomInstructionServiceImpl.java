@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.graphiti.module.graphiti.dal.dataobject.CustomInstructionDO;
-import com.graphiti.module.graphiti.dal.mysql.CustomInstructionMapper;
-import com.graphiti.module.graphiti.service.CustomInstructionService;
-import com.graphiti.module.graphiti.vo.custom_instruction.CreateCustomInstructionReqVO;
-import com.graphiti.module.graphiti.vo.custom_instruction.CustomInstructionRespVO;
+import com.ontograph.module.graphiti.dal.dataobject.CustomInstructionDO;
+import com.ontograph.module.graphiti.dal.mysql.CustomInstructionMapper;
+import com.ontograph.module.graphiti.service.CustomInstructionService;
+import com.ontograph.module.graphiti.vo.custom_instruction.CreateCustomInstructionReqVO;
+import com.ontograph.module.graphiti.vo.custom_instruction.CustomInstructionRespVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

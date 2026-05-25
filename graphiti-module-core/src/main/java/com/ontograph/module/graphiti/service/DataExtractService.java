@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.extractor.DataExtractReqVO;
-import com.graphiti.module.graphiti.vo.extractor.DataExtractResultVO;
+import com.ontograph.module.graphiti.vo.extractor.DataExtractReqVO;
+import com.ontograph.module.graphiti.vo.extractor.DataExtractResultVO;
 
 /**
  * 数据提取服务接口

@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.ontograph.module.graphiti.vo.ontology.ValidationResultVO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

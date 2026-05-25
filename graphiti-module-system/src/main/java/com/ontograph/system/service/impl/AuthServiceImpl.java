@@ -1,10 +1,10 @@
-package com.graphiti.system.service.impl;
+package com.ontograph.system.service.impl;
 
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.framework.security.jwt.JwtTokenProvider;
-import com.graphiti.system.dto.LoginRequest;
-import com.graphiti.system.dto.LoginResponse;
-import com.graphiti.system.service.AuthService;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.framework.security.jwt.JwtTokenProvider;
+import com.ontograph.system.dto.LoginRequest;
+import com.ontograph.system.dto.LoginResponse;
+import com.ontograph.system.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;

@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.episode.EpisodeInfoRespVO;
-import com.graphiti.module.graphiti.vo.episode.EpisodeListRespVO;
-import com.graphiti.module.graphiti.vo.episode.EpisodeMentionsRespVO;
+import com.ontograph.module.graphiti.vo.episode.EpisodeInfoRespVO;
+import com.ontograph.module.graphiti.vo.episode.EpisodeListRespVO;
+import com.ontograph.module.graphiti.vo.episode.EpisodeMentionsRespVO;
 
 import java.util.Map;
 

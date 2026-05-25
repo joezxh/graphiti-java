@@ -1,4 +1,4 @@
-package com.graphiti;
+package com.ontograph;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

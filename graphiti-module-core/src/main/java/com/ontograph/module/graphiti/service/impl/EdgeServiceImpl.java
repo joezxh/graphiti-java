@@ -1,15 +1,15 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.service.EdgeService;
-import com.graphiti.module.graphiti.service.EmbedderService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.OntologyValidationService;
-import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
-import com.graphiti.module.graphiti.vo.edge.EdgeInfoRespVO;
-import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.exception.OntologyValidationException;
+import com.ontograph.module.graphiti.service.EdgeService;
+import com.ontograph.module.graphiti.service.EmbedderService;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.service.OntologyValidationService;
+import com.ontograph.module.graphiti.vo.edge.EdgeFilterReqVO;
+import com.ontograph.module.graphiti.vo.edge.EdgeInfoRespVO;
+import com.ontograph.module.graphiti.vo.edge.EdgeListRespVO;
+import com.ontograph.module.graphiti.vo.ontology.ValidationResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

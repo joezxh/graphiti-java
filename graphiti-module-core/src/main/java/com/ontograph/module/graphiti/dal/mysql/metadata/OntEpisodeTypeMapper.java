@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.dal.mysql.metadata;
+package com.ontograph.module.graphiti.dal.mysql.metadata;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.graphiti.module.graphiti.dal.dataobject.metadata.OntEpisodeTypeDO;
+import com.ontograph.module.graphiti.dal.dataobject.metadata.OntEpisodeTypeDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

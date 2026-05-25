@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.service.impl.ai;
+package com.ontograph.module.graphiti.service.impl.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.service.LlmClientService;
+import com.ontograph.module.graphiti.service.LlmClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.anthropic.AnthropicChatModel;

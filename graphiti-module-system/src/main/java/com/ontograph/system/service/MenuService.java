@@ -1,6 +1,6 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
-import com.graphiti.system.dal.dataobject.MenuDO;
+import com.ontograph.system.dal.dataobject.MenuDO;
 
 /**
  * 菜单管理服务接口

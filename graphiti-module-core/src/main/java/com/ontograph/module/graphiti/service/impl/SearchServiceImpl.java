@@ -1,10 +1,10 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.module.graphiti.service.EmbedderService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.SearchService;
-import com.graphiti.module.graphiti.util.RerankingUtils;
-import com.graphiti.module.graphiti.vo.search.*;
+import com.ontograph.module.graphiti.service.EmbedderService;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.service.SearchService;
+import com.ontograph.module.graphiti.util.RerankingUtils;
+import com.ontograph.module.graphiti.vo.search.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

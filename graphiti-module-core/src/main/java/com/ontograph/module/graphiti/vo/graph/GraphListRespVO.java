@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.graph;
+package com.ontograph.module.graphiti.vo.graph;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

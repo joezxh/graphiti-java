@@ -1,10 +1,10 @@
-package com.graphiti.system.service.impl;
+package com.ontograph.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.graphiti.system.dal.dataobject.NotificationDO;
-import com.graphiti.system.dal.mysql.NotificationMapper;
-import com.graphiti.system.service.NotificationService;
+import com.ontograph.system.dal.dataobject.NotificationDO;
+import com.ontograph.system.dal.mysql.NotificationMapper;
+import com.ontograph.system.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

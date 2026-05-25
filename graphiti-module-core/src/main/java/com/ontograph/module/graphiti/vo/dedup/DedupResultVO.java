@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.dedup;
+package com.ontograph.module.graphiti.vo.dedup;
 
 import lombok.Data;
 

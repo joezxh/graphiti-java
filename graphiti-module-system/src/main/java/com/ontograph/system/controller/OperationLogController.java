@@ -1,8 +1,8 @@
-package com.graphiti.system.controller;
+package com.ontograph.system.controller;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.system.dal.dataobject.OperationLogDO;
-import com.graphiti.system.service.OperationLogService;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.system.dal.dataobject.OperationLogDO;
+import com.ontograph.system.service.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

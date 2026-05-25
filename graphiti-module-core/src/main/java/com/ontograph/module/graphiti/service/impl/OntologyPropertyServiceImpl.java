@@ -1,15 +1,15 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.dal.dataobject.ont.*;
-import com.graphiti.module.graphiti.dal.mysql.ont.*;
-import com.graphiti.module.graphiti.service.OntologyPropertyService;
-import com.graphiti.module.graphiti.service.OntologyReasoner;
-import com.graphiti.module.graphiti.vo.ontology.OntConstraintVO;
-import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
-import com.graphiti.module.graphiti.vo.ontology.OntVersionHistoryVO;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.dal.dataobject.ont.*;
+import com.ontograph.module.graphiti.dal.mysql.ont.*;
+import com.ontograph.module.graphiti.service.OntologyPropertyService;
+import com.ontograph.module.graphiti.service.OntologyReasoner;
+import com.ontograph.module.graphiti.vo.ontology.OntConstraintVO;
+import com.ontograph.module.graphiti.vo.ontology.OntPropertyVO;
+import com.ontograph.module.graphiti.vo.ontology.OntVersionHistoryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

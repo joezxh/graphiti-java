@@ -1,4 +1,4 @@
-package com.graphiti;
+package com.ontograph;
 
 import org.springframework.ai.model.anthropic.autoconfigure.AnthropicChatAutoConfiguration;
 import org.springframework.ai.model.azure.openai.autoconfigure.AzureOpenAiChatAutoConfiguration;

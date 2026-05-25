@@ -1,12 +1,12 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntDraftDO;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDraftMapper;
-import com.graphiti.module.graphiti.service.BusinessInfoService;
-import com.graphiti.module.graphiti.service.LlmClientService;
-import com.graphiti.module.graphiti.vo.business.*;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntDraftDO;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntDraftMapper;
+import com.ontograph.module.graphiti.service.BusinessInfoService;
+import com.ontograph.module.graphiti.service.LlmClientService;
+import com.ontograph.module.graphiti.vo.business.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

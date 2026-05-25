@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ide.GraphVisualizationRespVO;
-import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
+import com.ontograph.module.graphiti.vo.ide.GraphVisualizationRespVO;
+import com.ontograph.module.graphiti.vo.node.NodeInfoRespVO;
 
 import java.util.List;
 import java.util.Map;

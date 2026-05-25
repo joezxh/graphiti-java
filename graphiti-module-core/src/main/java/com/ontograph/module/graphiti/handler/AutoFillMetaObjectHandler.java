@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.handler;
+package com.ontograph.module.graphiti.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;

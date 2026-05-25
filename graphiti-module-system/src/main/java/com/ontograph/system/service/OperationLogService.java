@@ -1,6 +1,6 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
-import com.graphiti.system.dal.dataobject.OperationLogDO;
+import com.ontograph.system.dal.dataobject.OperationLogDO;
 import java.util.List;
 import java.util.Map;
 

@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.business.*;
+import com.ontograph.module.graphiti.vo.business.*;
 import java.util.List;
 
 /**

@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.edge;
+package com.ontograph.module.graphiti.vo.edge;
 
 import lombok.Data;
 import java.io.Serializable;

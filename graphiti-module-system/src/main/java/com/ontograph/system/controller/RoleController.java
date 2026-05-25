@@ -1,8 +1,8 @@
-package com.graphiti.system.controller;
+package com.ontograph.system.controller;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.system.dal.dataobject.RoleDO;
-import com.graphiti.system.service.RoleService;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.system.dal.dataobject.RoleDO;
+import com.ontograph.system.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

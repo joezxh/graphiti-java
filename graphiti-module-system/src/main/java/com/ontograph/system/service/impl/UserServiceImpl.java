@@ -1,11 +1,11 @@
-package com.graphiti.system.service.impl;
+package com.ontograph.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.system.dal.dataobject.UserDO;
-import com.graphiti.system.dal.mysql.UserMapper;
-import com.graphiti.system.service.UserService;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.system.dal.dataobject.UserDO;
+import com.ontograph.system.dal.mysql.UserMapper;
+import com.ontograph.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

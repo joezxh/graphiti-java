@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.BatchValidationReqVO;
-import com.graphiti.module.graphiti.vo.ontology.BatchValidationRespVO;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.ontograph.module.graphiti.vo.ontology.BatchValidationReqVO;
+import com.ontograph.module.graphiti.vo.ontology.BatchValidationRespVO;
+import com.ontograph.module.graphiti.vo.ontology.ValidationResultVO;
 import java.util.Map;
 
 /**

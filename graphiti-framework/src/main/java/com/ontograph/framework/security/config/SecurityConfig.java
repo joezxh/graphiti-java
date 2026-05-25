@@ -1,7 +1,7 @@
-package com.graphiti.framework.security.config;
+package com.ontograph.framework.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.framework.security.jwt.JwtAuthenticationFilter;
+import com.ontograph.framework.security.jwt.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

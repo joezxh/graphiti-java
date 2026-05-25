@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.module.graphiti.service.DataQualityService;
+import com.ontograph.module.graphiti.service.DataQualityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.*;

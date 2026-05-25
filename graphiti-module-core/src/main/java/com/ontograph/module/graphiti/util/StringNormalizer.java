@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.util;
+package com.ontograph.module.graphiti.util;
 
 /**
  * 字符串规范化工具类

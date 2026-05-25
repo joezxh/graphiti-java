@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.llm;
+package com.ontograph.module.graphiti.vo.llm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

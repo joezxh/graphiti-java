@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.service.EntityExtractorService;
-import com.graphiti.module.graphiti.service.LlmClientService;
-import com.graphiti.module.graphiti.service.PromptTemplateService;
-import com.graphiti.module.graphiti.vo.extractor.ExtractedEntityVO;
+import com.ontograph.module.graphiti.service.EntityExtractorService;
+import com.ontograph.module.graphiti.service.LlmClientService;
+import com.ontograph.module.graphiti.service.PromptTemplateService;
+import com.ontograph.module.graphiti.vo.extractor.ExtractedEntityVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

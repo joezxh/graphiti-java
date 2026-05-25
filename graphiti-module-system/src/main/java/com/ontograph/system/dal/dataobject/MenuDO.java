@@ -1,4 +1,4 @@
-package com.graphiti.system.dal.dataobject;
+package com.ontograph.system.dal.dataobject;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

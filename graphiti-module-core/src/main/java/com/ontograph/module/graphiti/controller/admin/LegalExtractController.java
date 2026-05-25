@@ -1,10 +1,10 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.module.graphiti.service.LegalExtractService;
-import com.graphiti.module.graphiti.vo.legal.LegalExtractResultVO;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.module.graphiti.service.LegalExtractService;
+import com.ontograph.module.graphiti.vo.legal.LegalExtractResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

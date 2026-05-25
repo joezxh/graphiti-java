@@ -1,12 +1,12 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.module.graphiti.service.DataExtractService;
-import com.graphiti.module.graphiti.vo.extractor.DataExtractReqVO;
-import com.graphiti.module.graphiti.vo.extractor.DataExtractResultVO;
-import com.graphiti.module.graphiti.vo.extractor.ExtractedEntityVO;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.module.graphiti.service.DataExtractService;
+import com.ontograph.module.graphiti.vo.extractor.DataExtractReqVO;
+import com.ontograph.module.graphiti.vo.extractor.DataExtractResultVO;
+import com.ontograph.module.graphiti.vo.extractor.ExtractedEntityVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

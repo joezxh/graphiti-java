@@ -1,10 +1,10 @@
-package com.graphiti.module.graphiti.service.validator;
+package com.ontograph.module.graphiti.service.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntDomainRuleDO;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDomainRuleMapper;
-import com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntClassDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntDomainRuleDO;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntDomainRuleMapper;
+import com.ontograph.module.graphiti.vo.ontology.ValidationErrorVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;

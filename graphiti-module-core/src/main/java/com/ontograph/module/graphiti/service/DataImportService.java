@@ -1,9 +1,9 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
-import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
-import com.graphiti.module.graphiti.vo.imports.AddMessagesReqVO;
-import com.graphiti.module.graphiti.vo.imports.FactTripleReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddDataBatchReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddDataReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddMessagesReqVO;
+import com.ontograph.module.graphiti.vo.imports.FactTripleReqVO;
 
 /**
  * 数据导入服务接口

@@ -1,9 +1,9 @@
-package com.graphiti.system.controller;
+package com.ontograph.system.controller;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.system.dto.LoginRequest;
-import com.graphiti.system.dto.LoginResponse;
-import com.graphiti.system.service.AuthService;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.system.dto.LoginRequest;
+import com.ontograph.system.dto.LoginResponse;
+import com.ontograph.system.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

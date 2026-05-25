@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.custom_instruction;
+package com.ontograph.module.graphiti.vo.custom_instruction;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

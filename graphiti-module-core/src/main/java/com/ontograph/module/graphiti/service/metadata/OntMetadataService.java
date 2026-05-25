@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service.metadata;
+package com.ontograph.module.graphiti.service.metadata;
 
-import com.graphiti.module.graphiti.vo.metadata.*;
+import com.ontograph.module.graphiti.vo.metadata.*;
 import java.util.List;
 
 /**

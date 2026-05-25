@@ -1,9 +1,9 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.dal.dataobject.PromptTemplateDO;
-import com.graphiti.module.graphiti.dal.dataobject.PromptVariableDO;
-import com.graphiti.module.graphiti.vo.prompt.CreatePromptTemplateReqVO;
-import com.graphiti.module.graphiti.vo.prompt.PromptTemplateVO;
+import com.ontograph.module.graphiti.dal.dataobject.PromptTemplateDO;
+import com.ontograph.module.graphiti.dal.dataobject.PromptVariableDO;
+import com.ontograph.module.graphiti.vo.prompt.CreatePromptTemplateReqVO;
+import com.ontograph.module.graphiti.vo.prompt.PromptTemplateVO;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

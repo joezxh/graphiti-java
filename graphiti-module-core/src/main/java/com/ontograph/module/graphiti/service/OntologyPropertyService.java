@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.OntConstraintVO;
-import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
-import com.graphiti.module.graphiti.vo.ontology.OntVersionHistoryVO;
+import com.ontograph.module.graphiti.vo.ontology.OntConstraintVO;
+import com.ontograph.module.graphiti.vo.ontology.OntPropertyVO;
+import com.ontograph.module.graphiti.vo.ontology.OntVersionHistoryVO;
 import java.util.List;
 
 public interface OntologyPropertyService {

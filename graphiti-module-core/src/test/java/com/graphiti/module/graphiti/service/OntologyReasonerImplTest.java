@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper;
-import com.graphiti.module.graphiti.service.impl.OntologyReasonerImpl;
-import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntClassMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntConstraintMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntPropertyMapper;
+import com.ontograph.module.graphiti.service.impl.OntologyReasonerImpl;
+import com.ontograph.module.graphiti.vo.ontology.ConsistencyResultVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

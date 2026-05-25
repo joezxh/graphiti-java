@@ -1,4 +1,4 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.search;
+package com.ontograph.module.graphiti.vo.search;
 
 /**
  * 搜索配方枚举

@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.edge.EdgeFilterReqVO;
-import com.graphiti.module.graphiti.vo.edge.EdgeInfoRespVO;
-import com.graphiti.module.graphiti.vo.edge.EdgeListRespVO;
+import com.ontograph.module.graphiti.vo.edge.EdgeFilterReqVO;
+import com.ontograph.module.graphiti.vo.edge.EdgeInfoRespVO;
+import com.ontograph.module.graphiti.vo.edge.EdgeListRespVO;
 import java.util.List;
 import java.util.Map;
 

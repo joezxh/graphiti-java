@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.metadata;
+package com.ontograph.module.graphiti.vo.metadata;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,9 +1,9 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.service.SearchService;
-import com.graphiti.module.graphiti.vo.search.*;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.service.SearchService;
+import com.ontograph.module.graphiti.vo.search.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

@@ -1,6 +1,6 @@
-package com.graphiti.common.exception;
+package com.ontograph.common.exception;
 
-import com.graphiti.common.constants.ResultCode;
+import com.ontograph.common.constants.ResultCode;
 import lombok.Getter;
 
 /**

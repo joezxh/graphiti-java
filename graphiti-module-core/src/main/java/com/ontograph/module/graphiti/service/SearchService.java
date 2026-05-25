@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.search.*;
+import com.ontograph.module.graphiti.vo.search.*;
 
 /**
  * 搜索检索服务接口

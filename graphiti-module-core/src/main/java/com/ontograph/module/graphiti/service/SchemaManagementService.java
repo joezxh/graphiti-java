@@ -1,9 +1,9 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ide.SchemaChangeValidateReqVO;
-import com.graphiti.module.graphiti.vo.ide.SchemaChangeValidateRespVO;
-import com.graphiti.module.graphiti.vo.ide.SchemaClassRespVO;
-import com.graphiti.module.graphiti.vo.ide.SchemaPropertyRespVO;
+import com.ontograph.module.graphiti.vo.ide.SchemaChangeValidateReqVO;
+import com.ontograph.module.graphiti.vo.ide.SchemaChangeValidateRespVO;
+import com.ontograph.module.graphiti.vo.ide.SchemaClassRespVO;
+import com.ontograph.module.graphiti.vo.ide.SchemaPropertyRespVO;
 
 import java.util.List;
 import java.util.Map;

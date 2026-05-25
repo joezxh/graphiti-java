@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.config;
+package com.ontograph.module.graphiti.config;
 
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;

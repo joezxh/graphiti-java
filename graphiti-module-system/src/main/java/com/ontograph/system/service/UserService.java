@@ -1,6 +1,6 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
-import com.graphiti.system.dal.dataobject.UserDO;
+import com.ontograph.system.dal.dataobject.UserDO;
 
 /**
  * 用户管理服务接口

@@ -1,7 +1,7 @@
-package com.graphiti.system.service;
+package com.ontograph.system.service;
 
-import com.graphiti.system.dto.LoginRequest;
-import com.graphiti.system.dto.LoginResponse;
+import com.ontograph.system.dto.LoginRequest;
+import com.ontograph.system.dto.LoginResponse;
 
 /**
  * 认证服务接口

@@ -1,8 +1,8 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.module.graphiti.service.*;
-import com.graphiti.module.graphiti.vo.legal.ImportLegalKGReqVO;
-import com.graphiti.module.graphiti.vo.legal.LegalImportResultRespVO;
+import com.ontograph.module.graphiti.service.*;
+import com.ontograph.module.graphiti.vo.legal.ImportLegalKGReqVO;
+import com.ontograph.module.graphiti.vo.legal.LegalImportResultRespVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

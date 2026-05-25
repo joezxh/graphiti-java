@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service.impl.ai;
+package com.ontograph.module.graphiti.service.impl.ai;
 
-import com.graphiti.module.graphiti.service.EmbedderService;
+import com.ontograph.module.graphiti.service.EmbedderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.embedding.Embedding;

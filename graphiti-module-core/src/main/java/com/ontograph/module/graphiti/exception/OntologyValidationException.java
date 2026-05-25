@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.exception;
+package com.ontograph.module.graphiti.exception;
 
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.vo.ontology.ValidationResultVO;
 import lombok.Getter;
 
 @Getter

@@ -1,4 +1,4 @@
-package com.graphiti.common.constants;
+package com.ontograph.common.constants;
 
 /**
  * 结果码常量接口

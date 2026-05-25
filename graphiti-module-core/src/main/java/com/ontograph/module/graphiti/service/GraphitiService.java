@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.graph.CreateGraphReqVO;
-import com.graphiti.module.graphiti.vo.graph.GraphDeletePreviewRespVO;
-import com.graphiti.module.graphiti.vo.graph.GraphInfoRespVO;
-import com.graphiti.module.graphiti.vo.graph.GraphListRespVO;
-import com.graphiti.module.graphiti.vo.graph.GraphStatsRespVO;
-import com.graphiti.module.graphiti.vo.graph.UpdateGraphReqVO;
+import com.ontograph.module.graphiti.vo.graph.CreateGraphReqVO;
+import com.ontograph.module.graphiti.vo.graph.GraphDeletePreviewRespVO;
+import com.ontograph.module.graphiti.vo.graph.GraphInfoRespVO;
+import com.ontograph.module.graphiti.vo.graph.GraphListRespVO;
+import com.ontograph.module.graphiti.vo.graph.GraphStatsRespVO;
+import com.ontograph.module.graphiti.vo.graph.UpdateGraphReqVO;
 import java.util.List;
 import java.util.Map;
 

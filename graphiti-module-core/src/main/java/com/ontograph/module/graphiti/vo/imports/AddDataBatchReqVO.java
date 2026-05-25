@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.vo.imports;
+package com.ontograph.module.graphiti.vo.imports;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.graphiti.module.graphiti.vo.imports.BatchDataItemVO;
+import com.ontograph.module.graphiti.vo.imports.BatchDataItemVO;
 /**
  * 批量添加数据请求 VO
  */

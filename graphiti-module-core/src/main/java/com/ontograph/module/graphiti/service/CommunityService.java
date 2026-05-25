@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.dto.CommunityCreateContext;
+import com.ontograph.module.graphiti.dto.CommunityCreateContext;
 
 import java.util.List;
 import java.util.Map;

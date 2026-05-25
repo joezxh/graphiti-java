@@ -1,13 +1,13 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.module.graphiti.service.CascadeEditService;
-import com.graphiti.module.graphiti.service.CommunityService;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.GraphVisualizationService;
-import com.graphiti.module.graphiti.service.SchemaManagementService;
-import com.graphiti.module.graphiti.vo.ide.*;
-import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.module.graphiti.service.CascadeEditService;
+import com.ontograph.module.graphiti.service.CommunityService;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.service.GraphVisualizationService;
+import com.ontograph.module.graphiti.service.SchemaManagementService;
+import com.ontograph.module.graphiti.vo.ide.*;
+import com.ontograph.module.graphiti.vo.node.NodeInfoRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

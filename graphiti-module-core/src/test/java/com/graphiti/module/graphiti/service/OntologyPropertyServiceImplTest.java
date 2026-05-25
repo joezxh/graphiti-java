@@ -1,6 +1,6 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
+import com.ontograph.module.graphiti.vo.ontology.OntPropertyVO;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
 public interface OntologySyncService {
 

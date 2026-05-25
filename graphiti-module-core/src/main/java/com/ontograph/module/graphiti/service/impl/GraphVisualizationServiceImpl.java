@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.module.graphiti.dal.dataobject.GraphMetadataDO;
-import com.graphiti.module.graphiti.dal.mysql.GraphMetadataMapper;
-import com.graphiti.module.graphiti.service.GraphNeo4jService;
-import com.graphiti.module.graphiti.service.GraphVisualizationService;
-import com.graphiti.module.graphiti.vo.ide.GraphVisualizationRespVO;
-import com.graphiti.module.graphiti.vo.node.NodeInfoRespVO;
+import com.ontograph.module.graphiti.dal.dataobject.GraphMetadataDO;
+import com.ontograph.module.graphiti.dal.mysql.GraphMetadataMapper;
+import com.ontograph.module.graphiti.service.GraphNeo4jService;
+import com.ontograph.module.graphiti.service.GraphVisualizationService;
+import com.ontograph.module.graphiti.vo.ide.GraphVisualizationRespVO;
+import com.ontograph.module.graphiti.vo.node.NodeInfoRespVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Driver;

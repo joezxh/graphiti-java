@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
 import org.neo4j.driver.Driver;
 

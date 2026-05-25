@@ -1,7 +1,7 @@
-package com.graphiti.system.dal.mysql;
+package com.ontograph.system.dal.mysql;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.graphiti.system.dal.dataobject.RoleDO;
+import com.ontograph.system.dal.dataobject.RoleDO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

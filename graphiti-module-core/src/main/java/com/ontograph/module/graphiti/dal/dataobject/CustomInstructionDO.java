@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.dal.dataobject;
+package com.ontograph.module.graphiti.dal.dataobject;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

@@ -1,12 +1,12 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntDefinitionDO;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
-import com.graphiti.module.graphiti.service.EpisodeTypeInferenceService;
-import com.graphiti.module.graphiti.vo.ontology.InferredTypeVO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntClassDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntDefinitionDO;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntClassMapper;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntDefinitionMapper;
+import com.ontograph.module.graphiti.service.EpisodeTypeInferenceService;
+import com.ontograph.module.graphiti.vo.ontology.InferredTypeVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

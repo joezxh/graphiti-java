@@ -1,11 +1,11 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntDomainRuleDO;
-import com.graphiti.module.graphiti.dal.mysql.ont.OntDomainRuleMapper;
-import com.graphiti.module.graphiti.service.DomainRuleService;
-import com.graphiti.module.graphiti.vo.ontology.DomainRuleVO;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntDomainRuleDO;
+import com.ontograph.module.graphiti.dal.mysql.ont.OntDomainRuleMapper;
+import com.ontograph.module.graphiti.service.DomainRuleService;
+import com.ontograph.module.graphiti.vo.ontology.DomainRuleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.expression.Expression;

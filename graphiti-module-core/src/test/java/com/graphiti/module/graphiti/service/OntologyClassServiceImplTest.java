@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.ontology.ClassHierarchyVO;
-import com.graphiti.module.graphiti.vo.ontology.OntClassVO;
+import com.ontograph.module.graphiti.vo.ontology.ClassHierarchyVO;
+import com.ontograph.module.graphiti.vo.ontology.OntClassVO;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 

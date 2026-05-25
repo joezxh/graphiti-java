@@ -1,15 +1,15 @@
-package com.graphiti.module.graphiti.controller.admin;
+package com.ontograph.module.graphiti.controller.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.framework.security.util.UserContext;
-import com.graphiti.module.graphiti.service.DataImportService;
-import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
-import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
-import com.graphiti.module.graphiti.vo.imports.AddMessagesReqVO;
-import com.graphiti.module.graphiti.vo.imports.FactTripleReqVO;
-import com.graphiti.system.dal.dataobject.OperationLogDO;
-import com.graphiti.system.service.OperationLogService;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.framework.security.util.UserContext;
+import com.ontograph.module.graphiti.service.DataImportService;
+import com.ontograph.module.graphiti.vo.imports.AddDataBatchReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddDataReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddMessagesReqVO;
+import com.ontograph.module.graphiti.vo.imports.FactTripleReqVO;
+import com.ontograph.system.dal.dataobject.OperationLogDO;
+import com.ontograph.system.service.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

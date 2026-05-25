@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.dal.mysql.ont;
+package com.ontograph.module.graphiti.dal.mysql.ont;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

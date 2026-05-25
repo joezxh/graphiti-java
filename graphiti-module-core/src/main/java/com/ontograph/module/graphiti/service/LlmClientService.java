@@ -1,10 +1,10 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.vo.llm.ExtractEntitiesResultVO;
-import com.graphiti.module.graphiti.vo.llm.ExtractRelationsResultVO;
-import com.graphiti.module.graphiti.vo.llm.ExtractedEntityVO;
-import com.graphiti.module.graphiti.vo.llm.ExtractedRelationVO;
+import com.ontograph.module.graphiti.vo.llm.ExtractEntitiesResultVO;
+import com.ontograph.module.graphiti.vo.llm.ExtractRelationsResultVO;
+import com.ontograph.module.graphiti.vo.llm.ExtractedEntityVO;
+import com.ontograph.module.graphiti.vo.llm.ExtractedRelationVO;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

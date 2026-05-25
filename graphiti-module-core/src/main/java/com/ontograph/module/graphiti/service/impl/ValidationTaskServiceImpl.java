@@ -1,9 +1,9 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.module.graphiti.service.ValidationTaskService;
-import com.graphiti.module.graphiti.service.validator.GraphIntegrityValidator;
-import com.graphiti.module.graphiti.vo.ontology.GraphIntegrityResultVO;
-import com.graphiti.module.graphiti.vo.ontology.ValidationTaskVO;
+import com.ontograph.module.graphiti.service.ValidationTaskService;
+import com.ontograph.module.graphiti.service.validator.GraphIntegrityValidator;
+import com.ontograph.module.graphiti.vo.ontology.GraphIntegrityResultVO;
+import com.ontograph.module.graphiti.vo.ontology.ValidationTaskVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

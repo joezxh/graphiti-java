@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
-import com.graphiti.module.graphiti.vo.custom_instruction.CreateCustomInstructionReqVO;
-import com.graphiti.module.graphiti.vo.custom_instruction.CustomInstructionRespVO;
+import com.ontograph.module.graphiti.vo.custom_instruction.CreateCustomInstructionReqVO;
+import com.ontograph.module.graphiti.vo.custom_instruction.CustomInstructionRespVO;
 import java.util.List;
 
 /**

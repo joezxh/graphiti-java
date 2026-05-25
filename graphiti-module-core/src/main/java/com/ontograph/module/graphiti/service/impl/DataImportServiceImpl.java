@@ -1,15 +1,15 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.common.exception.BusinessException;
-import com.graphiti.module.graphiti.exception.OntologyValidationException;
-import com.graphiti.module.graphiti.service.*;
-import com.graphiti.module.graphiti.vo.imports.AddDataBatchReqVO;
-import com.graphiti.module.graphiti.vo.imports.AddDataReqVO;
-import com.graphiti.module.graphiti.vo.imports.AddMessagesReqVO;
-import com.graphiti.module.graphiti.vo.imports.FactTripleReqVO;
-import com.graphiti.module.graphiti.vo.llm.ExtractedEntityVO;
-import com.graphiti.module.graphiti.vo.llm.ExtractedRelationVO;
-import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.exception.OntologyValidationException;
+import com.ontograph.module.graphiti.service.*;
+import com.ontograph.module.graphiti.vo.imports.AddDataBatchReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddDataReqVO;
+import com.ontograph.module.graphiti.vo.imports.AddMessagesReqVO;
+import com.ontograph.module.graphiti.vo.imports.FactTripleReqVO;
+import com.ontograph.module.graphiti.vo.llm.ExtractedEntityVO;
+import com.ontograph.module.graphiti.vo.llm.ExtractedRelationVO;
+import com.ontograph.module.graphiti.vo.ontology.ValidationResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

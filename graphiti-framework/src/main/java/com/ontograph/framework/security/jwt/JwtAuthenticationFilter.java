@@ -1,4 +1,4 @@
-package com.graphiti.framework.security.jwt;
+package com.ontograph.framework.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

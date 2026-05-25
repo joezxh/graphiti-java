@@ -1,7 +1,7 @@
-package com.graphiti.module.graphiti.service.impl;
+package com.ontograph.module.graphiti.service.impl;
 
-import com.graphiti.module.graphiti.service.SchemaOrgImportService;
-import com.graphiti.module.graphiti.vo.ontology.SchemaOrgImportReqVO;
+import com.ontograph.module.graphiti.service.SchemaOrgImportService;
+import com.ontograph.module.graphiti.vo.ontology.SchemaOrgImportReqVO;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.rdf4j.model.*;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;

@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.dto;
+package com.ontograph.module.graphiti.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

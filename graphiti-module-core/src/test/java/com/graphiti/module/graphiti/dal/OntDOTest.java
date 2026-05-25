@@ -1,9 +1,9 @@
-package com.graphiti.module.graphiti.dal;
+package com.ontograph.module.graphiti.dal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntConstraintDO;
-import com.graphiti.module.graphiti.dal.dataobject.ont.OntPropertyDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntClassDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntConstraintDO;
+import com.ontograph.module.graphiti.dal.dataobject.ont.OntPropertyDO;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;

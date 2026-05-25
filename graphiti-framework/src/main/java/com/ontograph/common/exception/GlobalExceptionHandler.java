@@ -1,6 +1,6 @@
-package com.graphiti.common.exception;
+package com.ontograph.common.exception;
 
-import com.graphiti.common.response.CommonResult;
+import com.ontograph.common.response.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;

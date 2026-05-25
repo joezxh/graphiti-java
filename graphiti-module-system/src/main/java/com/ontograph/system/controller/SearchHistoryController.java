@@ -1,7 +1,7 @@
-package com.graphiti.system.controller;
+package com.ontograph.system.controller;
 
-import com.graphiti.common.response.CommonResult;
-import com.graphiti.system.service.SearchHistoryService;
+import com.ontograph.common.response.CommonResult;
+import com.ontograph.system.service.SearchHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

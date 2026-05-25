@@ -1,4 +1,4 @@
-package com.graphiti.module.graphiti.service;
+package com.ontograph.module.graphiti.service;
 
 import java.util.List;
 import java.util.Map;
