@@ -221,7 +221,7 @@ public class DataImportController {
         long start = System.currentTimeMillis();
         try {
             // 清空操作需要特殊处理，暂时返回不支持
-            throw new com.graphiti.common.exception.BusinessException(
+            throw new com.ontograph.common.exception.BusinessException(
                 501, "请使用 DELETE /graph/{graphId}/clear 清空指定图谱数据");
         } catch (Exception e) {
             saveDataOpLog("清空所有图谱数据", "POST /graph/data/clear", null, null, 0, e.getMessage(), start);

@@ -43,7 +43,7 @@ public class NotificationController {
         String username = userContext.getCurrentUsername();
         Long userId = userService.getUserIdByUsername(username);
         if (userId == null) {
-            throw new com.graphiti.common.exception.BusinessException(401, "用户不存在");
+            throw new com.ontograph.common.exception.BusinessException(401, "用户不存在");
         }
         return userId;
     }

@@ -90,7 +90,7 @@ public interface PromptTemplateService {
     /**
      * 获取版本历史
      */
-    List<com.graphiti.module.graphiti.dal.dataobject.PromptVersionDO> getVersionHistory(Long templateId);
+    List<com.ontograph.module.graphiti.dal.dataobject.PromptVersionDO> getVersionHistory(Long templateId);
 
     /**
      * 回滚到指定版本

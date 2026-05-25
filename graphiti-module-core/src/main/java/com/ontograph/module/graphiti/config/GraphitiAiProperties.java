@@ -1,10 +1,10 @@
 package com.ontograph.module.graphiti.config;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.Positive;
+import lombok.Data;
 
 /**
  * OntoGraph AI 配置属性

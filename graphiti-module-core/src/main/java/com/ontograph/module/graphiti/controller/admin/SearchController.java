@@ -69,7 +69,7 @@ public class SearchController {
             @PathVariable("uuid") @Parameter(description = "边UUID", required = true) String uuid) {
         FactResultVO result = searchService.getEntityEdge(uuid);
         if (result == null) {
-            throw new com.graphiti.common.exception.BusinessException(404, "边不存在");
+            throw new com.ontograph.common.exception.BusinessException(404, "边不存在");
         }
         return CommonResult.success(result);
     }

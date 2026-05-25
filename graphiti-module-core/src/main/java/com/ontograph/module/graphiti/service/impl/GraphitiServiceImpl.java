@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GraphitiServiceImpl implements GraphitiService {
     private final GraphMetadataMapper graphMetadataMapper;
-    private final com.graphiti.module.graphiti.service.GraphNeo4jService graphNeo4jService;
+    private final com.ontograph.module.graphiti.service.GraphNeo4jService graphNeo4jService;
     // 本体定义相关 Mapper
     private final OntDefinitionMapper ontDefinitionMapper;
     private final OntClassMapper ontClassMapper;
