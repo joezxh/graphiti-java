@@ -1,5 +1,5 @@
 # ============================================================
-# Graphiti-Java 开发/测试环境 docker-compose
+# OntoGraph 开发/测试环境 docker-compose
 # ============================================================
 # 使用方式:
 #   docker-compose up -d          # 后台启动所有服务
@@ -11,10 +11,10 @@
 
 services:
   # -------------------------------------------
-  # graphiti-java 应用 (8080)
+  # ontograph-java 应用 (8080)
   # -------------------------------------------
-  graphiti-java:
-    container_name: graphiti-java
+  ontograph-java:
+    container_name: ontograph-java
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -42,29 +42,29 @@ services:
       - SPRING_AI_OLLAMA_BASE-URL=${SPRING_AI_OLLAMA_BASE-URL:-}
       - SPRING_AI_AZURE_OPENAI_API-KEY=${SPRING_AI_AZURE_OPENAI_API-KEY:-}
       - SPRING_AI_AZURE_OPENAI_ENDPOINT=${SPRING_AI_AZURE_OPENAI_ENDPOINT:-}
-      # Graphiti AI Provider 选择
-      - GRAPHTI_AI_LLM_PROVIDER=${GRAPHTI_AI_LLM_PROVIDER:-openai}
-      - GRAPHTI_AI_EMBEDDING_PROVIDER=${GRAPHTI_AI_EMBEDDING_PROVIDER:-openai}
-      - GRAPHTI_AI_RERANK_PROVIDER=${GRAPHTI_AI_RERANK_PROVIDER:-custom}
+      # OntoGraph AI Provider 选择
+      - ONTOGRAPH_AI_LLM_PROVIDER=${ONTOGRAPH_AI_LLM_PROVIDER:-openai}
+      - ONTOGRAPH_AI_EMBEDDING_PROVIDER=${ONTOGRAPH_AI_EMBEDDING_PROVIDER:-openai}
+      - ONTOGRAPH_AI_RERANK_PROVIDER=${ONTOGRAPH_AI_RERANK_PROVIDER:-custom}
       # JWT
-      - GRAPHTI_SECURITY_JWT_SECRET=${JWT_SECRET:-mySecretKeyForJWTTokenGenerationWhichShouldBeAtLeast512BitsLong}
-      - GRAPHTI_SECURITY_JWT_EXPIRATION=${JWT_EXPIRATION:-86400}
+      - ONTOGRAPH_SECURITY_JWT_SECRET=${JWT_SECRET:-mySecretKeyForJWTTokenGenerationWhichShouldBeAtLeast512BitsLong}
+      - ONTOGRAPH_SECURITY_JWT_EXPIRATION=${JWT_EXPIRATION:-86400}
       # 日志级别
       - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT:-INFO}
-      - LOGGING_LEVEL_COM_GRAPHTI=${LOGGING_LEVEL_COM_GRAPHTI:-DEBUG}
+      - LOGGING_LEVEL_COM_ONTOGRAPH=${LOGGING_LEVEL_COM_ONTOGRAPH:-DEBUG}
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_started
     networks:
-      - graphiti-network
+      - ontograph-network
 
   # -------------------------------------------
   # PostgreSQL (5432)
   # -------------------------------------------
   postgres:
-    container_name: graphiti-postgres
+    container_name: ontograph-postgres
     image: postgres:16-alpine
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
@@ -84,13 +84,13 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - graphiti-network
+      - ontograph-network
 
   # -------------------------------------------
   # Redis (6379)
   # -------------------------------------------
   redis:
-    container_name: graphiti-redis
+    container_name: ontograph-redis
     image: redis:7-alpine
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     ports:
@@ -104,11 +104,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - graphiti-network
+      - ontograph-network
 
 # -------------------------------------------
 # 网络
 # -------------------------------------------
 networks:
-  graphiti-network:
+  ontograph-network:
     driver: bridge
