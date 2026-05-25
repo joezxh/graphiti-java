@@ -5,20 +5,20 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.graphiti</groupId>
+        <groupId>com.ontograph</groupId>
         <artifactId>graphiti-java</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>graphiti-module-core</artifactId>
-    <name>Graphiti Core Module</name>
+    <artifactId>ontograph-module-core</artifactId>
+    <name>OntoGraph Core Module</name>
     <description>核心业务模块：图谱管理、本体管理、检索服务、数据导入等</description>
     <packaging>jar</packaging>
     
     <dependencies>
         <!-- 系统模块 -->
         <dependency>
-            <groupId>com.graphiti</groupId>
-            <artifactId>graphiti-module-system</artifactId>
+            <groupId>com.ontograph</groupId>
+            <artifactId>ontograph-module-system</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- Web -->

@@ -6,14 +6,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.graphiti</groupId>
+        <groupId>com.ontograph</groupId>
         <artifactId>graphiti-java</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>graphiti-framework</artifactId>
+    <artifactId>ontograph-framework</artifactId>
     <packaging>jar</packaging>
-    <name>Graphiti Framework</name>
+    <name>OntoGraph Framework</name>
     <description>
         统一框架模块：包含通用工具、Spring Security + JWT、MyBatis-Plus、Redis 等基础能力
     </description>
