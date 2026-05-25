@@ -32,4 +32,10 @@ public class AddDataBatchReqVO implements Serializable {
 
     @Schema(description = "是否更新社区")
     private Boolean updateCommunities = false;
+
+    @Schema(description = "LLM 内容拼接批次大小")
+    private Integer contentChunkSize = 50;
+
+    @Schema(description = "Neo4j 事务批次大小")
+    private Integer neo4jChunkSize = 200;
 }
