@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.Positive;
 
 /**
- * Graphiti AI 配置属性
+ * OntoGraph AI 配置属性
  * 读取 application-dev.yml 中 graphiti.ai.* 配置
  */
 @Data

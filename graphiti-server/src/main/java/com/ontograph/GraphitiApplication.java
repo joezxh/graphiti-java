@@ -13,7 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Graphiti 知识图谱后端服务启动类
+ * OntoGraph 知识图谱后端服务启动类
  */
 @SpringBootApplication(
         scanBasePackages = "com.graphiti",

@@ -7,36 +7,36 @@ class OntMapperTest {
     @Test
     void testOntDefinitionMapper_interfaceCompiles() {
         assertDoesNotThrow(() -> Class.forName(
-            "com.graphiti.module.graphiti.dal.mysql.ont.OntDefinitionMapper"));
+            "com.ontograph.module.graphiti.dal.mysql.ont.OntDefinitionMapper"));
     }
 
     @Test
     void testOntClassMapper_interfaceCompiles() {
         assertDoesNotThrow(() -> Class.forName(
-            "com.graphiti.module.graphiti.dal.mysql.ont.OntClassMapper"));
+            "com.ontograph.module.graphiti.dal.mysql.ont.OntClassMapper"));
     }
 
     @Test
     void testOntPropertyMapper_interfaceCompiles() {
         assertDoesNotThrow(() -> Class.forName(
-            "com.graphiti.module.graphiti.dal.mysql.ont.OntPropertyMapper"));
+            "com.ontograph.module.graphiti.dal.mysql.ont.OntPropertyMapper"));
     }
 
     @Test
     void testOntConstraintMapper_interfaceCompiles() {
         assertDoesNotThrow(() -> Class.forName(
-            "com.graphiti.module.graphiti.dal.mysql.ont.OntConstraintMapper"));
+            "com.ontograph.module.graphiti.dal.mysql.ont.OntConstraintMapper"));
     }
 
     @Test
     void testOntVersionHistoryMapper_interfaceCompiles() {
         assertDoesNotThrow(() -> Class.forName(
-            "com.graphiti.module.graphiti.dal.mysql.ont.OntVersionHistoryMapper"));
+            "com.ontograph.module.graphiti.dal.mysql.ont.OntVersionHistoryMapper"));
     }
 
     @Test
     void testOntMappingMapper_interfaceCompiles() {
         assertDoesNotThrow(() -> Class.forName(
-            "com.graphiti.module.graphiti.dal.mysql.ont.OntMappingMapper"));
+            "com.ontograph.module.graphiti.dal.mysql.ont.OntMappingMapper"));
     }
 }

@@ -18,10 +18,10 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     
-    @Value("${graphiti.security.jwt.secret}")
+    @Value("${ontograph.security.jwt.secret}")
     private String jwtSecret;
     
-    @Value("${graphiti.security.jwt.expiration:86400}")
+    @Value("${ontograph.security.jwt.expiration:86400}")
     private int jwtExpirationInSeconds;
     
     /**

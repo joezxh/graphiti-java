@@ -176,7 +176,7 @@ public class NodeServiceImpl implements NodeService {
      * @param delta 变化量（+1 或 -1）
      */
     private void updateGraphNodeCount(String graphId, int delta) {
-        // TODO: 调用 GraphitiService 更新节点数量
+        // TODO: 调用 OntoGraphService 更新节点数量
         log.info("更新图谱节点数量：graphId={}, delta={}", graphId, delta);
     }
 

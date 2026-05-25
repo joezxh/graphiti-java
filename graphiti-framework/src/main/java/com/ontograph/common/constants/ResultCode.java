@@ -12,7 +12,7 @@ public interface ResultCode {
     int NOT_FOUND = 404;
     int INTERNAL_SERVER_ERROR = 500;
     
-    // Graphiti 业务错误码 (1001-1099)
+    // OntoGraph 业务错误码 (1001-1099)
     int GRAPH_NOT_FOUND = 1001;
     int ONTOLOGY_NOT_DEFINED = 1002;
     int NODE_NOT_FOUND = 1003;

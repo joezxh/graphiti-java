@@ -61,7 +61,7 @@ class NodeServiceImplTest {
     void createNode_withOntology_failsValidation() {
         when(validationService.hasOntology("graph-3")).thenReturn(true);
         var errors = java.util.List.of(
-            new com.graphiti.module.graphiti.vo.ontology.ValidationErrorVO(
+            new com.ontograph.module.graphiti.vo.ontology.ValidationErrorVO(
                 2, "ONT002", "缺少必需属性: age", "age", null));
         when(validationService.validateNode(eq("graph-3"), eq("Person"), any(Map.class)))
             .thenReturn(ValidationResultVO.fail(2, errors));
