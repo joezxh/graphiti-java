@@ -1,8 +1,8 @@
-# Graphiti-Java
+# OntoGraph
 
 <p align="center">
-  <strong>时序知识图谱后端系统</strong><br>
-  <em>基于 Java 实现的 Graphiti 知识图谱系统，支持 LLM 自动实体关系提取、混合检索和时序事实管理。</em>
+  <strong>本体成为可运行的结构</strong><br>
+  <em>生产级知识图谱系统，支持本体建模、语义关系管理、LLM 自动实体关系提取、混合检索和时序事实管理。</em>
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@
 
 ## 项目概述
 
-Graphiti-Java 是一个生产级的知识图谱后端系统，将时序知识图谱能力引入 Java 生态。系统利用大型语言模型（LLM）从非结构化文本中自动提取实体和关系，将其以向量嵌入的形式存储在 Neo4j 中，并提供结合全文检索、语义搜索和图遍历的混合检索能力。
+OntoGraph 是一个生产级的知识图谱后端系统，将时序知识图谱能力引入 Java 生态。系统利用大型语言模型（LLM）从非结构化文本中自动提取实体和关系，将其以向量嵌入的形式存储在 Neo4j 中，并提供结合全文检索、语义搜索和图遍历的混合检索能力。
 
 ### 核心能力
 
@@ -79,20 +79,20 @@ Graphiti-Java 是一个生产级的知识图谱后端系统，将时序知识图
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              graphiti-web                                    │
+│                              ontograph-web                                   │
 │                    Vue 3 + Vite + Ant Design Vue                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              graphiti-server                                 │
+│                              ontograph-server                                │
 │                        Spring Boot 3.5.5 (入口模块)                           │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
             ┌─────────────────────────┼─────────────────────────┐
             ▼                         ▼                         ▼
 ┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
-│ graphiti-module-core│   │ graphiti-module-sys │   │ graphiti-framework  │
+│ ontograph-module-core│  │ontograph-module-sys │   │ ontograph-framework  │
 │    知识图谱核心      │   │   用户/角色/菜单/认证│   │   公共/安全/        │
 │  - 图谱 CRUD        │   │  - JWT 认证         │   │   MyBatis Starter   │
 │  - 检索/导入        │   │  - RBAC 权限        │   │   Redis Starter     │
@@ -240,7 +240,7 @@ graphiti-java/
 
 ```bash
 git clone <repository-url>
-cd graphiti-java
+cd ontograph-java
 mvn clean install -DskipTests
 ```
 
@@ -328,7 +328,7 @@ pnpm dev
 ```bash
 # 1. 克隆代码库
 git clone <repository-url>
-cd graphiti-java
+cd ontograph-java
 
 # 2. 配置环境变量
 cp .env.example .env
@@ -338,7 +338,7 @@ cp .env.example .env
 docker-compose up -d
 
 # 4. 查看日志
-docker-compose logs -f graphiti-java
+docker-compose logs -f ontograph-java
 
 # 5. 停止服务
 docker-compose down
@@ -356,7 +356,7 @@ docker-compose down
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| graphiti-java | 8080 | Spring Boot 应用 |
+| ontograph-java | 8080 | Spring Boot 应用 |
 | postgres | 5432 | PostgreSQL 16（元数据与系统数据） |
 | redis | 6379 | Redis 7（缓存与会话） |
 
@@ -454,10 +454,10 @@ ports:
 docker-compose ps
 
 # 查看详细日志
-docker-compose logs graphiti-java
+docker-compose logs ontograph-java
 
 # 重启特定服务
-docker-compose restart graphiti-java
+docker-compose restart ontograph-java
 ```
 
 #### 5. 数据库连接被拒绝
@@ -468,7 +468,7 @@ PostgreSQL 可能在应用启动时尚未就绪。docker-compose.yml 已包含�
 # 等待 PostgreSQL 就绪
 docker-compose up -d postgres
 sleep 10
-docker-compose up -d graphiti-java
+docker-compose up -d ontograph-java
 ```
 
 #### 6. 数据持久化
@@ -500,7 +500,7 @@ rm -rf ./data
 3. **资源限制**（在 docker-compose.yml 中添加）：
    ```yaml
    services:
-     graphiti-java:
+     ontograph-java:
        deploy:
          resources:
            limits:
@@ -518,11 +518,11 @@ rm -rf ./data
 
 ```bash
 # 构建镜像
-docker build -t graphiti-java:latest -f docker/Dockerfile .
+docker build -t ontograph-java:latest -f docker/Dockerfile .
 
 # 运行容器
 docker run -d \
-  --name graphiti-java \
+  --name ontograph-java \
   -p 8080:8080 \
   --env-file .env \
   graphiti-java:latest
@@ -656,7 +656,7 @@ curl -X POST http://localhost:8080/api/v1/graph/your-graph-id/communities/build 
 在 `application-dev.yml` 中设置：
 
 ```yaml
-graphiti:
+ontograph:
   ai:
     llm-provider: openai      # 在此切换厂商
     embedding-provider: openai
@@ -802,7 +802,7 @@ chore: 构建/配置变更
 
 ## 致谢
 
-Graphiti-Java 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
+OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 
 ---
 
