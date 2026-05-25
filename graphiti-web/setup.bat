@@ -1,6 +1,6 @@
 @echo off
 echo ===================================
-echo Graphiti Console - 安装依赖
+echo OntoGraph Console - 安装依赖
 echo ===================================
 
 cd /d %~dp0

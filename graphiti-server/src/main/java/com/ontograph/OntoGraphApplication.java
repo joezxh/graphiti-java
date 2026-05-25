@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * OntoGraph 知识图谱后端服务启动类
  */
 @SpringBootApplication(
-        scanBasePackages = "com.graphiti",
+        scanBasePackages = "com.ontograph",
         exclude = {
                 // Anthropic
                 AnthropicChatAutoConfiguration.class,

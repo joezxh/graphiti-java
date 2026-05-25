@@ -1,5 +1,5 @@
 @echo off
-cd /d D:\projects\graphiti-java\graphiti-web
+cd /d D:\projects\ontograph-java\graphiti-web
 echo Installing dependencies...
 npm install
 echo.

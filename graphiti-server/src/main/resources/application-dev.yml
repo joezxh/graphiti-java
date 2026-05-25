@@ -1,5 +1,5 @@
 # ============================================================
-# Graphiti 知识图谱后端服务 - 开发环境配置
+# OntoGraph 知识图谱后端服务 - 开发环境配置
 # ============================================================
 #
 # 【Spring AI Embedding/Rerank 模型配置】
@@ -637,7 +637,7 @@ management:
 # 日志配置 (开发详细日志)
 logging:
   level:
-    com.graphiti: DEBUG
+    com.ontograph: DEBUG
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
     org.springframework.boot: DEBUG
