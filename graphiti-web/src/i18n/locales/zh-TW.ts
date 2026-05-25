@@ -1,7 +1,7 @@
 // Traditional Chinese (zh-TW) locale
 export default {
   app: {
-    name: 'Graphiti Console',
+    name: 'OntoGraph Console',
     logout: '登出',
     personalCenter: '個人中心',
     notification: '通知中心',
@@ -145,7 +145,7 @@ export default {
     partialLoadFailed: '部分資料載入失敗，請稍後重試',
   },
   login: {
-    title: 'Graphiti-Java',
+    title: 'OntoGraph',
     subtitle: '知識圖譜管理系統',
     username: '使用者名稱',
     password: '密碼',

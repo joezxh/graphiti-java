@@ -64,7 +64,7 @@
         <a-row :gutter="16">
           <a-col :span="12">
             <a-form-item label="命名空间">
-              <a-input v-model:value="form.namespace" placeholder="http://graphiti.io/ontology" />
+              <a-input v-model:value="form.namespace" placeholder="http://ontograph.io/ontology" />
             </a-form-item>
           </a-col>
           <a-col :span="12">

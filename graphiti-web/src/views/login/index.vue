@@ -77,7 +77,7 @@
 
     <!-- 页脚 -->
     <div class="footer">
-      © 2026 Graphiti-Java · All rights reserved
+      © 2026 OntoGraph · All rights reserved
     </div>
   </div>
 </template>

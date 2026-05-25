@@ -1,5 +1,5 @@
 // ============================================================
-// Shared TypeScript type definitions for graphiti-java
+// Shared TypeScript type definitions for OntoGraph
 // Aligned with backend Java VO/DO structures
 // ============================================================
 

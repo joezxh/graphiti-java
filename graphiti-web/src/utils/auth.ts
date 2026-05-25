@@ -1,5 +1,5 @@
-const TOKEN_KEY = 'graphiti_token'
-const USER_KEY = 'graphiti_user'
+const TOKEN_KEY = 'ontograph_token'
+const USER_KEY = 'ontograph_user'
 
 export interface LoginResult {
   token: string

@@ -34,7 +34,7 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item :label="t('propertyEditor.propertyUri')">
-                  <a-input v-model:value="form.propertyUri" placeholder="http://graphiti.io/ontology/name" />
+                  <a-input v-model:value="form.propertyUri" placeholder="http://ontograph.io/ontology/name" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -350,7 +350,7 @@ async function handleSave() {
       equivalentTo: form.equivalentTo?.length
         ? form.equivalentTo.map((id: number) => {
             const p = store.properties.find(x => x.id === id)
-            return p?.propertyUri || `http://graphiti.io/${p?.localName || id}`
+            return p?.propertyUri || `http://ontograph.io/${p?.localName || id}`
           }).filter(Boolean)
         : undefined,
       domainClassId: form.domainClassId,

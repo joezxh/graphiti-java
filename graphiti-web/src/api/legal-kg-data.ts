@@ -7,7 +7,7 @@
  *   或:  curl -X POST http://localhost:8080/api/v1/graph/legal/import -H "Content-Type: application/json" -d @scripts/legal-seed-data.json
  *
  * 说明:
- *   本脚本通过 graphiti-java REST API 批量导入法律领域数据。
+ *   本脚本通过 OntoGraph REST API 批量导入法律领域数据。
  *   导入顺序: 本体定义 -> 节点 -> 边
  */
 

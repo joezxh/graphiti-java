@@ -37,7 +37,7 @@
               </a-col>
               <a-col :span="12">
                 <a-form-item :label="t('classEditor.classUri')">
-                  <a-input v-model:value="form.classUri" placeholder="http://graphiti.io/ontology/Person" />
+                  <a-input v-model:value="form.classUri" placeholder="http://ontograph.io/ontology/Person" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -414,7 +414,7 @@ async function handleSave() {
       equivalentTo: form.equivalentTo?.length
         ? form.equivalentTo.map((id: number) => {
             const cls = store.classes.find(c => c.id === id)
-            return cls?.classUri || `http://graphiti.io/${cls?.localName || id}`
+            return cls?.classUri || `http://ontograph.io/${cls?.localName || id}`
           }).filter(Boolean)
         : undefined,
       disjointWith: form.disjointWith?.length

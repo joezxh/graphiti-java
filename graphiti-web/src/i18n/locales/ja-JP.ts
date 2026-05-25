@@ -1,7 +1,7 @@
 // Japanese (ja-JP) locale
 export default {
   app: {
-    name: 'Graphiti Console',
+    name: 'OntoGraph Console',
     logout: 'ログアウト',
     personalCenter: '個人設定',
     notification: '通知センター',
@@ -146,7 +146,7 @@ export default {
     partialLoadFailed: '一部のデータの読み込みに失敗しました。後でもう一度お試しください。',
   },
   login: {
-    title: 'Graphiti-Java',
+    title: 'OntoGraph',
     subtitle: 'ナレッジグラフ管理システム',
     username: 'ユーザー名',
     password: 'パスワード',

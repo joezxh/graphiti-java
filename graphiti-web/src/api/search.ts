@@ -125,10 +125,10 @@ export const searchApi = {
 
   /**
    * 获取搜索历史
-   * 后端: GET /admin/graphiti/search-history/list
+   * 后端: GET /admin/ontograph/search-history/list
    */
   async getSearchHistory(pageNo: number = 1, pageSize: number = 20): Promise<{ list: SearchHistory[]; total: number }> {
-    const resp = await request.get<any>('/admin/graphiti/search-history/list', {
+    const resp = await request.get<any>('/admin/ontograph/search-history/list', {
       params: { pageNo, pageSize }
     })
     const data = resp as any
@@ -146,20 +146,20 @@ export const searchApi = {
 
   /**
    * 保存搜索历史
-   * 后端: POST /admin/graphiti/search-history/save
+   * 后端: POST /admin/ontograph/search-history/save
    */
   async saveSearchHistory(query: string, mode: string, resultCount: number): Promise<void> {
-    await request.post('/admin/graphiti/search-history/save', null, {
+    await request.post('/admin/ontograph/search-history/save', null, {
       params: { query, mode, resultCount }
     })
   },
 
   /**
    * 清空搜索历史
-   * 后端: DELETE /admin/graphiti/search-history/clear
+   * 后端: DELETE /admin/ontograph/search-history/clear
    */
   async clearSearchHistory(): Promise<void> {
-    await request.delete('/admin/graphiti/search-history/clear')
+    await request.delete('/admin/ontograph/search-history/clear')
   }
 }
 

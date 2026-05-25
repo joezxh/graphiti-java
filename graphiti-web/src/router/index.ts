@@ -250,7 +250,7 @@ router.beforeEach(async (to, _from) => {
   if (to.meta.title) {
     const titleKey = to.meta.title as string
     const translated = i18n.global.t(titleKey)
-    document.title = `${translated} - Graphiti Console`
+    document.title = `${translated} - OntoGraph Console`
   }
 
   return true

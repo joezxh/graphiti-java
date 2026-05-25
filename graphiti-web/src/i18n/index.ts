@@ -14,7 +14,7 @@ export const SUPPORTED_LOCALES: { key: LocaleKey; label: string; flag: string }[
   { key: 'ja-JP', label: '日本語', flag: '🇯🇵' },
 ]
 
-const LOCALE_STORAGE_KEY = 'graphiti-locale'
+const LOCALE_STORAGE_KEY = 'ontograph-locale'
 
 function getDefaultLocale(): LocaleKey {
   const stored = localStorage.getItem(LOCALE_STORAGE_KEY)

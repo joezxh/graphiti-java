@@ -5,7 +5,7 @@
         <svg viewBox="0 0 24 24" class="logo-icon">
           <path d="M12 2L2 7l10 5 10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
         </svg>
-        <span class="logo-text">Graphiti Console</span>
+        <span class="logo-text">OntoGraph Console</span>
       </div>
 
     </div>

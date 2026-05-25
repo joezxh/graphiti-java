@@ -1,7 +1,7 @@
 // English (en-US) locale
 export default {
   app: {
-    name: 'Graphiti Console',
+    name: 'OntoGraph Console',
     logout: 'Logout',
     personalCenter: 'Personal Center',
     notification: 'Notification Center',
@@ -145,7 +145,7 @@ export default {
     partialLoadFailed: 'Some data failed to load. Please try again later.',
   },
   login: {
-    title: 'Graphiti-Java',
+    title: 'OntoGraph',
     subtitle: 'Knowledge Graph Management System',
     username: 'Username',
     password: 'Password',

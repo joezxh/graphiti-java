@@ -16,7 +16,7 @@
               </linearGradient>
             </defs>
           </svg>
-          <span class="logo-text">Graphiti</span>
+          <span class="logo-text">OntoGraph</span>
         </div>
         
         <div class="breadcrumb">
