@@ -1,4 +1,4 @@
-﻿# API接口文档
+# API接口文档
 
 <!--<cite>
 **本文引用的文件**
@@ -35,7 +35,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件为 Graphiti-Java 的完整 API 接口文档，基于 Swagger/OpenAPI 规范整理，覆盖认证、系统管理、知识图谱、实体关系、搜索、数据导入、本体管理等模块。文档提供各端点的 HTTP 方法、URL 模式、请求参数、响应格式、错误码说明，并给出统一响应结构、认证机制（JWT）、权限控制策略、分页/过滤/排序通用参数、API 版本与兼容性说明，以及使用示例与最佳实践。
+本文件为 ontograph-java 的完整 API 接口文档，基于 Swagger/OpenAPI 规范整理，覆盖认证、系统管理、知识图谱、实体关系、搜索、数据导入、本体管理等模块。文档提供各端点的 HTTP 方法、URL 模式、请求参数、响应格式、错误码说明，并给出统一响应结构、认证机制（JWT）、权限控制策略、分页/过滤/排序通用参数、API 版本与兼容性说明，以及使用示例与最佳实践。
 
 ## 项目结构
 后端采用多模块架构，核心控制器位于 core 模块的 admin 包中，系统管理控制器位于 system 模块，统一响应与常量位于 framework-common 模块，OpenAPI 文档通过 SwaggerConfig 配置。
@@ -804,7 +804,7 @@ SWG --> SCC
 - [CommonResult.java:14-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
 
 ## 结论
-本文档基于 Swagger/OpenAPI 规范，系统梳理了 Graphiti-Java 的全部 RESTful 接口，明确了认证与权限控制、统一响应结构、错误码体系、分页与过滤参数、以及各模块的功能边界。建议在集成过程中严格遵循统一响应与错误码约定，并结合性能建议优化调用方式。
+本文档基于 Swagger/OpenAPI 规范，系统梳理了 ontograph-java 的全部 RESTful 接口，明确了认证与权限控制、统一响应结构、错误码体系、分页与过滤参数、以及各模块的功能边界。建议在集成过程中严格遵循统一响应与错误码约定，并结合性能建议优化调用方式。
 
 ## 附录
 

@@ -1,8 +1,8 @@
-# Graphiti-Java 功能对齐实施计划
+# ontograph-java 功能对齐实施计划
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 通过4个阶段使 graphiti-java 具备与 Python 原版 graphiti 相同的核心能力，包括时序事实管理、LLM自动提取、混合检索、嵌入向量、社区发现等。
+**Goal:** 通过4个阶段使 ontograph-java 具备与 Python 原版 graphiti 相同的核心能力，包括时序事实管理、LLM自动提取、混合检索、嵌入向量、社区发现等。
 
 **Architecture:** 在现有Maven多模块架构基础上，逐步添加新模块和服务，保持向后兼容。
 
@@ -99,7 +99,7 @@ graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
 **Step 3: 验证依赖**
 
 ```bash
-cd d:\projects\graphiti-java && mvn clean install -DskipTests
+cd d:\projects\ontograph-java && mvn clean install -DskipTests
 ```
 
 Expected: BUILD SUCCESS

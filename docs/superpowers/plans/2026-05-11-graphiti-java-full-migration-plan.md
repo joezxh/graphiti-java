@@ -1,4 +1,4 @@
-# Graphiti-Java 全量迁移实施计划
+# ontograph-java 全量迁移实施计划
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Java 21, Spring Boot 3.5.5, Spring AI 1.1.2, Neo4j 5.26, MySQL/PostgreSQL, Redis, MyBatis-Plus 3.5.12, Lombok, Jackson
 
-**Worktree:** `d:\projects\graphiti-java\.worktrees\feature-full-alignment`
+**Worktree:** `d:\projects\ontograph-java\.worktrees\feature-full-alignment`
 
 **Status:** ✅ **已完成** - 本体系统（B. 中等约束型）已由 Cursor 实现，包括类继承、Domain/Range 约束、属性校验、默认值注入、批量验证等功能。
 
@@ -164,7 +164,7 @@ if (ontologyValidationService.hasOntology(graphId)) {
 </dependency>
 ```
 
-验证：`cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+验证：`cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 创建 LlmClientConfig.java**
@@ -443,13 +443,13 @@ graphiti:
 
 - [ ] **Step 7: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 8: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/pom.xml
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
@@ -574,7 +574,7 @@ git commit -m "feat: integrate Spring AI with multi-provider LLM and embedding s
 - [ ] **Step 6: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/resources/prompts/
 git commit -m "feat: optimize prompt engineering with few-shot examples and system prompt"
 ```
@@ -750,13 +750,13 @@ public int getDimensions() {
 
 - [ ] **Step 5: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
@@ -1074,13 +1074,13 @@ public List<Map<String, Object>> mmrRerank(List<Map<String, Object>> results, fl
 
 - [ ] **Step 7: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 8: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java
@@ -1312,13 +1312,13 @@ private String findOrCreateNode(String graphId, String nodeName) {
 
 - [ ] **Step 5: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java
@@ -1423,13 +1423,13 @@ public CommonResult<List<Map<String, Object>>> listCommunities(@PathVariable Str
 
 - [ ] **Step 3: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java
 git commit -m "feat: enhance community detection with clustering algorithm and LLM summary"
@@ -1548,13 +1548,13 @@ public class BfsSearchReqVO implements Serializable {
 
 - [ ] **Step 4: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 5: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/
 git commit -m "feat: extend SearchController with hybrid, semantic and BFS endpoints"
@@ -1719,13 +1719,13 @@ public class MaintenanceController {
 
 - [ ] **Step 3: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/MaintenanceController.java
 git commit -m "feat: implement data quality deduplication and maintenance APIs"
@@ -1877,13 +1877,13 @@ public class SagaServiceImpl implements SagaService {
 
 - [ ] **Step 3: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git commit -m "feat: implement Saga management with episode chaining"
@@ -2000,13 +2000,13 @@ public class Neo4jDriverAdapter implements GraphDriverService {
 
 - [ ] **Step 3: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java
 git commit -m "feat: implement GraphDriver abstraction with Neo4j adapter"
@@ -2159,16 +2159,16 @@ class TemporalServiceImplTest {
 
 - [ ] **Step 4: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
-Run: `cd d:\projects\graphiti-java && mvn test -pl graphiti-module-core -q`
+Run: `cd d:\projects\ontograph-java && mvn test -pl graphiti-module-core -q`
 Expected: Tests run, some may fail if mocks incomplete (acceptable at this stage)
 
 - [ ] **Step 5: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/test/
 git commit -m "test: add unit tests for Embedder, Search and Temporal services"
 ```
@@ -2276,13 +2276,13 @@ public List<Map<String, Object>> getEpisodeMentions(String graphId, String episo
 
 - [ ] **Step 5: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java
 git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java
@@ -2344,7 +2344,7 @@ export const searchApi = {
 - [ ] **Step 3: Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add graphiti-web/src/api/
 git commit -m "feat: sync frontend APIs for hybrid search, saga and maintenance"
 ```
@@ -2354,27 +2354,27 @@ git commit -m "feat: sync frontend APIs for hybrid search, saga and maintenance"
 ### Task 14: 最终验证与文档更新
 
 **Files:**
-- Modify: `docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md` (标记完成)
-- Modify: `docs/graphiti-java-vs-python-comparison.md` (更新状态)
+- Modify: `docs/superpowers/plans/2026-05-11-ontograph-java-full-migration-plan.md` (标记完成)
+- Modify: `docs/ontograph-java-vs-python-comparison.md` (更新状态)
 
 **Step 1: 编译验证**
 
-Run: `cd d:\projects\graphiti-java && mvn clean install -DskipTests -q`
+Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
 **Step 2: 运行测试**
 
-Run: `cd d:\projects\graphiti-java && mvn test -pl graphiti-module-core -q`
+Run: `cd d:\projects\ontograph-java && mvn test -pl graphiti-module-core -q`
 Expected: Tests run (允许部分 mock 测试需要调整)
 
 **Step 3: 更新对比文档状态**
 
-在 `docs/graphiti-java-vs-python-comparison.md` 中更新状态列，将已完成的功能标记为 `✅`。
+在 `docs/ontograph-java-vs-python-comparison.md` 中更新状态列，将已完成的功能标记为 `✅`。
 
 **Step 4: 最终 Commit**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 git add docs/
 git commit -m "docs: update comparison and finalize full migration"
 ```
@@ -2402,4 +2402,4 @@ git commit -m "docs: update comparison and finalize full migration"
 
 **计划版本**: 1.0  
 **创建时间**: 2026-05-11  
-**关联设计文档**: 2026-05-11-graphiti-java-full-migration-design.md
+**关联设计文档**: 2026-05-11-ontograph-java-full-migration-design.md

@@ -13,10 +13,10 @@
     <description>OntoGraph知识图谱后端服务</description>
     
     <modules>
-        <module>graphiti-framework</module>
-        <module>graphiti-module-system</module>
-        <module>graphiti-module-core</module>
-        <module>graphiti-server</module>
+        <module>ontograph-framework</module>
+        <module>ontograph-module-system</module>
+        <module>ontograph-module-core</module>
+        <module>ontograph-server</module>
     </modules>
     
     <properties>

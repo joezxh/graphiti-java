@@ -3,7 +3,7 @@
 ## 1. 概述
 
 本文档定义法律领域知识图谱的本体论（Ontology），涵盖典型案例分析、商事调解、民事诉讼等场景。
-基于 graphiti-java 框架的 Entity-Edge 双层模型设计。
+基于 ontograph-java 框架的 Entity-Edge 双层模型设计。
 
 ## 2. 系统架构
 

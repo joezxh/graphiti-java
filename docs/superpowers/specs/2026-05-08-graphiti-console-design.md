@@ -1,4 +1,4 @@
-# Graphiti-Java 控制台前端设计文档
+# ontograph-java 控制台前端设计文档
 
 > 基于 Ontology 本体论的图谱关系管理系统 · 深色科技风 UI 设计
 > 
@@ -11,7 +11,7 @@
 
 ### 1.1 项目背景
 
-Graphiti-Java 是一个基于 Java 的独立本体论知识图谱服务。现有后端已完成，具备完整的 REST API（独立部署的 graphiti-java 服务）。本次设计目标是为其构建一个**科技感十足的控制台前端**，充分体现基于 Ontology 本体论的图谱关系管理功能。
+ontograph-java 是一个基于 Java 的独立本体论知识图谱服务。现有后端已完成，具备完整的 REST API（独立部署的 ontograph-java 服务）。本次设计目标是为其构建一个**科技感十足的控制台前端**，充分体现基于 Ontology 本体论的图谱关系管理功能。
 
 **后端服务信息**：
 - 服务地址：<code>http://localhost:8080</code> (可配置)
@@ -487,7 +487,7 @@ graphiti-web/
 
 ### 5.4 API 对接方案
 
-基于独立的 **graphiti-java 服务** 的 REST API，前端需要对接以下 API 组：
+基于独立的 **ontograph-java 服务** 的 REST API，前端需要对接以下 API 组：
 
 | API 组 | 端点前缀 | 功能 | 对应前端模块 |
 |--------|----------|------|---------------|
@@ -708,7 +708,7 @@ api/ontology.ts → PUT /api/v1/ontology
 
 ### B. 相关文档
 
-- `docs/01-项目概述.md` - Graphiti-Java 项目背景
+- `docs/01-项目概述.md` - ontograph-java 项目背景
 - `docs/02-系统架构设计.md` - 后端架构设计
 - `docs/04-数据库设计-Neo4j.md` - Neo4j 图数据模型
 - `docs/05-API接口规范与开发计划.md` - API 接口定义
@@ -716,5 +716,5 @@ api/ontology.ts → PUT /api/v1/ontology
 ---
 
 **文档状态**：已审阅并确认 ✓
-**后端服务**：独立 graphiti-java 服务 (<code>http://localhost:8080/api/v1</code>)
+**后端服务**：独立 ontograph-java 服务 (<code>http://localhost:8080/api/v1</code>)
 **下一步**：启动 `writing-plans` 技能制定实施计划

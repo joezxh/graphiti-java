@@ -8,7 +8,7 @@
 
 ## 1. 重构目标
 
-将项目从 **Graphiti-Java** 品牌全面迁移至 **OntoGraph** 品牌，包括：
+将项目从 **ontograph-java** 品牌全面迁移至 **OntoGraph** 品牌，包括：
 - 产品名称：OntoGraph
 - Slogan：Where ontology becomes living structure.
 - 中文感受：本体成为可运行的结构。
@@ -57,7 +57,7 @@
 | `graphiti-*/pom.xml` | groupId、artifactId |
 | `application.yml` | spring.application.name、graphiti 配置前缀 → ontograph |
 | `.env.example` | GRAPHTI_AI_ → ONTOGRAPH_AI_、注释中的品牌名 |
-| `docker-compose.yml` | 服务名 graphiti-java → ontograph-java |
+| `docker-compose.yml` | 服务名 ontograph-java → ontograph-java |
 | `docker/Dockerfile` | 应用名引用 |
 
 ### 3.3 后端代码层
@@ -82,9 +82,9 @@
 
 | 文件/范围 | 改动内容 |
 |----------|---------|
-| `src/i18n/locales/*.ts` (4个文件) | `Graphiti Console` → `OntoGraph Console`, `Graphiti-Java` → `OntoGraph` |
+| `src/i18n/locales/*.ts` (4个文件) | `Graphiti Console` → `OntoGraph Console`, `ontograph-java` → `OntoGraph` |
 | `src/views/graph/ide.vue` | Logo 文本 "Graphiti" → "OntoGraph" |
-| `src/views/login/index.vue` | 版权 "Graphiti-Java" → "OntoGraph" |
+| `src/views/login/index.vue` | 版权 "ontograph-java" → "OntoGraph" |
 | `src/router/index.ts` | 页面标题 "Graphiti Console" → "OntoGraph Console" |
 | `src/utils/auth.ts` | TOKEN_KEY/USER_KEY: `graphiti_*` → `ontograph_*` |
 | `src/i18n/index.ts` | LOCALE_STORAGE_KEY: `graphiti-locale` → `ontograph-locale` |
@@ -255,7 +255,7 @@ git reset --hard <pre-refactor-commit>
 ```markdown
 ## Acknowledgements
 
-OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
+OntoGraph (原 ontograph-java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 ```
 
 ### 9.2 URI 示例更新

@@ -11,13 +11,13 @@
 编写一份详细的中文技术文档，指导开发者如何将 Graphiti 用作 AI 会话的上下文记忆系统。文档需同时满足：
 - **概念理解**：让读者理解时序上下文图的工作原理
 - **实战落地**：提供可直接复制使用的 Java 代码示例
-- **架构对齐**：与 graphiti-java 项目现有 Service 层和 REST API 保持一致
+- **架构对齐**：与 ontograph-java 项目现有 Service 层和 REST API 保持一致
 
 ## 2. 目标读者
 
 - 已了解 Spring Boot 和基础图数据库概念的 Java 开发者
 - 希望在 AI 应用中引入持久化记忆能力的架构师
-- 使用 graphiti-java 项目的后端开发人员
+- 使用 ontograph-java 项目的后端开发人员
 
 ## 3. 参考来源
 
@@ -87,7 +87,7 @@
 ### 第 3 章：实现流程（约 1200 字）
 
 **3.1 初始化与连接**
-- 方式一：Spring Boot 自动配置（graphiti-java 项目默认方式）
+- 方式一：Spring Boot 自动配置（ontograph-java 项目默认方式）
   - 依赖 `graphiti-spring-boot-starter-neo4j`
   - `application.yml` 配置 Neo4j URI、用户名、密码
   - Service 层通过 `@RequiredArgsConstructor` 自动注入

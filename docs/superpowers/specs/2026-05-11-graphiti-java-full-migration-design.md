@@ -1,4 +1,4 @@
-# Graphiti-Java 全量迁移设计文档
+# ontograph-java 全量迁移设计文档
 
 > **目标**: 将 Python 版 graphiti 全部核心能力迁移至 Java 版，实现功能完全对齐。
 > **版本**: 2.0
@@ -447,4 +447,4 @@ Phase 4: 收尾（1 周）
 
 **文档版本**: 2.0  
 **创建时间**: 2026-05-11  
-**关联文档**: graphiti-java-vs-python-comparison.md, 2026-05-10-graphiti-java-full-alignment-design.md
+**关联文档**: ontograph-java-vs-python-comparison.md, 2026-05-10-ontograph-java-full-alignment-design.md

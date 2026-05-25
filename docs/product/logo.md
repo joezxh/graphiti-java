@@ -21,4 +21,4 @@
 
 ## 命名历史
 
-OntoGraph 项目前身为 Graphiti-Java，是受 Zep AI 的 [Graphiti](https://github.com/getzep/graphiti) Python 库启发而开发的 Java 实现版本。2026年5月正式更名为 OntoGraph，以更准确地反映产品在本体建模和语义关系管理方面的核心定位。
+OntoGraph 项目前身为 ontograph-java，是受 Zep AI 的 [Graphiti](https://github.com/getzep/graphiti) Python 库启发而开发的 Java 实现版本。2026年5月正式更名为 OntoGraph，以更准确地反映产品在本体建模和语义关系管理方面的核心定位。

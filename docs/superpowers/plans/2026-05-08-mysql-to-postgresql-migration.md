@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 将 graphiti-java 项目的数据库从 MySQL 8.0 迁移到 PostgreSQL 15+，包括依赖、配置、SQL 脚本和代码的适配。
+**Goal:** 将 ontograph-java 项目的数据库从 MySQL 8.0 迁移到 PostgreSQL 15+，包括依赖、配置、SQL 脚本和代码的适配。
 
 **Architecture:** 使用 PostgreSQL 原生驱动和语法，利用 PostgreSQL 的 `GENERATED ALWAYS AS IDENTITY` 替代 MySQL 的 `AUTO_INCREMENT`，使用 `JSONB` 类型替代 MySQL 的 `JSON` 类型以获得更好的性能。保持 MyBatis-Plus 的抽象层，最小化代码修改。
 
@@ -34,9 +34,9 @@
 ## Task 1: 更新 Maven 依赖（PostgreSQL 驱动）
 
 **Files:**
-- Modify: `d:/projects/graphiti-java/pom.xml:39,142-147`
-- Modify: `d:/projects/graphiti-java/graphiti-module-system/pom.xml:42-44`
-- Modify: `d:/projects/graphiti-java/graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml:27-29`
+- Modify: `d:/projects/ontograph-java/pom.xml:39,142-147`
+- Modify: `d:/projects/ontograph-java/graphiti-module-system/pom.xml:42-44`
+- Modify: `d:/projects/ontograph-java/graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml:27-29`
 
 - [ ] **Step 1: 修改根 pom.xml 的依赖管理**
 
@@ -106,7 +106,7 @@
 
 - [ ] **Step 4: 验证依赖修改**
 
-Run: `cd d:/projects/graphiti-java && mvn clean compile -DskipTests`
+Run: `cd d:/projects/ontograph-java && mvn clean compile -DskipTests`
 
 Expected: BUILD SUCCESS（此时可能仍有配置错误，但编译应通过）
 
@@ -122,8 +122,8 @@ git commit -m "chore: 替换 MySQL 驱动为 PostgreSQL 驱动"
 ## Task 2: 更新应用配置文件（数据库连接）
 
 **Files:**
-- Modify: `d:/projects/graphiti-java/graphiti-server/src/main/resources/application.yml:9-22,36`
-- Modify: `d:/projects/graphiti-java/graphiti-server/src/main/resources/application-dev.yml:3-12`
+- Modify: `d:/projects/ontograph-java/graphiti-server/src/main/resources/application.yml:9-22,36`
+- Modify: `d:/projects/ontograph-java/graphiti-server/src/main/resources/application-dev.yml:3-12`
 
 - [ ] **Step 1: 修改 application.yml 数据库连接配置**
 
@@ -212,7 +212,7 @@ spring:
 
 - [ ] **Step 3: 验证配置修改**
 
-Run: `cd d:/projects/graphiti-java && mvn clean compile -DskipTests`
+Run: `cd d:/projects/ontograph-java && mvn clean compile -DskipTests`
 
 Expected: BUILD SUCCESS
 
@@ -228,13 +228,13 @@ git commit -m "chore: 更新数据库连接配置为 PostgreSQL"
 ## Task 3: 创建 PostgreSQL 数据库 schema 脚本
 
 **Files:**
-- Create: `d:/projects/graphiti-java/sql/postgresql/schema.sql`
-- Reference: `d:/projects/graphiti-java/sql/mysql/schema.sql`
+- Create: `d:/projects/ontograph-java/sql/postgresql/schema.sql`
+- Reference: `d:/projects/ontograph-java/sql/mysql/schema.sql`
 
 - [ ] **Step 1: 创建 PostgreSQL 目录结构**
 
 ```bash
-mkdir -p d:/projects/graphiti-java/sql/postgresql
+mkdir -p d:/projects/ontograph-java/sql/postgresql
 ```
 
 - [ ] **Step 2: 编写 PostgreSQL schema.sql**
@@ -471,8 +471,8 @@ git commit -m "feat: 添加 PostgreSQL 数据库 schema 脚本"
 ## Task 4: 创建 PostgreSQL 初始化数据脚本
 
 **Files:**
-- Create: `d:/projects/graphiti-java/sql/postgresql/init-data.sql`
-- Reference: `d:/projects/graphiti-java/sql/mysql/init-data.sql`
+- Create: `d:/projects/ontograph-java/sql/postgresql/init-data.sql`
+- Reference: `d:/projects/ontograph-java/sql/mysql/init-data.sql`
 
 - [ ] **Step 1: 编写 PostgreSQL init-data.sql**
 
@@ -594,11 +594,11 @@ git commit -m "feat: 添加 PostgreSQL 初始化数据脚本"
 ## Task 5: 检查并适配 Java 实体类
 
 **Files:**
-- Modify: `d:/projects/graphiti-java/graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java:18`
-- Modify: `d:/projects/graphiti-java/graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/OntologyDO.java:18`
-- Reference: `d:/projects/graphiti-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java`
-- Reference: `d:/projects/graphiti-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java`
-- Reference: `d:/projects/graphiti-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java`
+- Modify: `d:/projects/ontograph-java/graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java:18`
+- Modify: `d:/projects/ontograph-java/graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/OntologyDO.java:18`
+- Reference: `d:/projects/ontograph-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java`
+- Reference: `d:/projects/ontograph-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java`
+- Reference: `d:/projects/ontograph-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java`
 
 - [ ] **Step 1: 检查 MyBatis-Plus 实体类的 @TableId 注解**
 
@@ -627,7 +627,7 @@ private Object config;  // 或使用具体的 DTO 类
 
 - [ ] **Step 3: 编译验证**
 
-Run: `cd d:/projects/graphiti-java && mvn clean compile -DskipTests`
+Run: `cd d:/projects/ontograph-java && mvn clean compile -DskipTests`
 
 Expected: BUILD SUCCESS
 
@@ -643,14 +643,14 @@ git commit -m "chore: 适配 PostgreSQL 实体类（如需要）"
 ## Task 6: 创建数据库迁移文档
 
 **Files:**
-- Create: `d:/projects/graphiti-java/docs/database-migration-guide.md`
+- Create: `d:/projects/ontograph-java/docs/database-migration-guide.md`
 
 - [ ] **Step 1: 编写迁移指南文档**
 
 创建文件 `docs/database-migration-guide.md`，内容如下：
 
 ```markdown
-# Graphiti-Java 数据库迁移指南
+# ontograph-java 数据库迁移指南
 
 ## 从 MySQL 8.0 迁移到 PostgreSQL 15+
 
@@ -758,7 +758,7 @@ SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_PASSWORD=your_password
 ### 4. 启动应用
 
 ```bash
-cd graphiti-java
+cd ontograph-java
 mvn clean spring-boot:run -pl graphiti-server
 ```
 
@@ -885,7 +885,7 @@ git commit -m "docs: 添加 MySQL 到 PostgreSQL 迁移指南"
 
 - [ ] **Step 1: 清理并编译项目**
 
-Run: `cd d:/projects/graphiti-java && mvn clean compile -DskipTests`
+Run: `cd d:/projects/ontograph-java && mvn clean compile -DskipTests`
 
 Expected: BUILD SUCCESS
 
@@ -899,7 +899,7 @@ psql -U postgres -d graphiti -f sql/postgresql/init-data.sql
 
 - [ ] **Step 3: 启动应用并测试**
 
-Run: `cd d:/projects/graphiti-java && mvn spring-boot:run -pl graphiti-server`
+Run: `cd d:/projects/ontograph-java && mvn spring-boot:run -pl graphiti-server`
 
 Expected: 应用启动成功，能够连接到 PostgreSQL 数据库
 
@@ -922,7 +922,7 @@ Expected: 所有 API 正常工作
 
 - [ ] **Step 5: 运行自动化测试（如果有）**
 
-Run: `cd d:/projects/graphiti-java && mvn test`
+Run: `cd d:/projects/ontograph-java && mvn test`
 
 Expected: 所有测试通过
 

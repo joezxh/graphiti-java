@@ -159,7 +159,7 @@ public class InferredTypeVO {
 
 - [ ] **Step 5: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -361,7 +361,7 @@ public List<String> getPropertyRanges(String graphId, String propertyUri) {
 
 - [ ] **Step 4: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -486,7 +486,7 @@ case "NOT_NULL" -> {
 
 - [ ] **Step 3: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -550,7 +550,7 @@ public CommonResult<Boolean> testDomainRule(...) { ... }
 
 - [ ] **Step 4: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -642,7 +642,7 @@ public CommonResult<ReasoningReportVO> getReasoningReport(@PathVariable String g
 
 - [ ] **Step 4: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -665,7 +665,7 @@ reasoner.shutdown(graphId);
 
 - [ ] **Step 2: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -733,7 +733,7 @@ export const useOntologyStore = defineStore('ontology', () => {
 
 - [ ] **Step 3: TypeScript 检查**
 
-Run: `cd "d:\projects\graphiti-java\graphiti-web" && npx vue-tsc --noEmit --skipLibCheck 2>&1 | findstr /i "ontology"`
+Run: `cd "d:\projects\ontograph-java\graphiti-web" && npx vue-tsc --noEmit --skipLibCheck 2>&1 | findstr /i "ontology"`
 Expected: 无 Ontology 相关错误（除已有的 CommunityExplorer/EpisodeExplorer 未使用变量警告外）
 
 ---
@@ -874,7 +874,7 @@ void testValidateDomainRule_fail() {
 
 - [ ] **Step 3: 运行测试**
 
-Run: `mvn test -pl graphiti-module-core -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn test -pl graphiti-module-core -f "d:\projects\ontograph-java\pom.xml"`
 Expected: 所有测试通过
 
 ---
@@ -883,12 +883,12 @@ Expected: 所有测试通过
 
 - [ ] **Step 1: 后端全量编译**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\graphiti-java\pom.xml"`
+Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 前端编译**
 
-Run: `cd "d:\projects\graphiti-java\graphiti-web" && npx vue-tsc --noEmit --skipLibCheck`
+Run: `cd "d:\projects\ontograph-java\graphiti-web" && npx vue-tsc --noEmit --skipLibCheck`
 Expected: 无新增 TypeScript 错误（原有错误可忽略）
 
 - [ ] **Step 3: 端到端验证**

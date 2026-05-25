@@ -1,4 +1,4 @@
-## Graphiti-Java 本体概念完整整理
+## ontograph-java 本体概念完整整理
 
 根据代码库探索，我为你整理出完整的本体概念层级关系：
 
@@ -136,11 +136,11 @@ Thing (顶层类)
 
 
 
-## Neo4j 在 graphiti-java 中的作用与存储结构
+## Neo4j 在 ontograph-java 中的作用与存储结构
 
 ### 一、Neo4j 的核心作用
 
-graphiti-java 采用**双存储架构**，Neo4j 负责以下核心职能：
+ontograph-java 采用**双存储架构**，Neo4j 负责以下核心职能：
 
 | 职责 | 说明 |
 |------|------|

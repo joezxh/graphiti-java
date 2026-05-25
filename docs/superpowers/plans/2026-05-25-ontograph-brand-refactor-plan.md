@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 将项目从 Graphiti-Java 品牌全面迁移至 OntoGraph 品牌，包括文档、配置、代码包名、前端界面和视觉资源。
+**Goal:** 将项目从 ontograph-java 品牌全面迁移至 OntoGraph 品牌，包括文档、配置、代码包名、前端界面和视觉资源。
 
 **Architecture:** 采用分层分批渐进式重构策略，按文档层→后端配置→后端代码→前端配置→前端代码→视觉资源→全链路验证的顺序执行，每阶段独立验证。
 
@@ -126,7 +126,7 @@ ontograph:
 
 - [ ] **Step 6: 替换 Docker 相关命令和路径**
 
-将所有 `graphiti-java` 替换为 `ontograph-java`，例如：
+将所有 `ontograph-java` 替换为 `ontograph-java`，例如：
 - 第 326 行：`docker-compose up -d`
 - 第 341 行：`docker-compose logs -f ontograph-java`
 - 第 521 行：`docker build -t ontograph-java:latest -f docker/Dockerfile .`
@@ -138,7 +138,7 @@ ontograph:
 ```markdown
 ## Acknowledgements
 
-OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
+OntoGraph (原 ontograph-java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 ```
 
 - [ ] **Step 8: 提交更改**
@@ -187,7 +187,7 @@ OntoGraph 是一个生产级的知识图谱后端系统，将时序知识图谱�
 ```markdown
 ## 致谢
 
-OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
+OntoGraph (原 ontograph-java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 ```
 
 - [ ] **Step 8: 提交更改**
@@ -416,7 +416,7 @@ git commit -m "config: update .env.example with ONTOGRAPH_AI_ prefix"
 
 - [ ] **Step 1: 替换服务名**
 
-将所有 `graphiti-java` 替换为 `ontograph-java`，包括：
+将所有 `ontograph-java` 替换为 `ontograph-java`，包括：
 - 服务定义名称
 - 环境变量引用
 - 日志命令示例
@@ -756,25 +756,25 @@ cd ..
 
 将文件中的：
 - 第 4 行：`name: 'Graphiti Console'` → `name: 'OntoGraph Console'`
-- 第 148 行：`title: 'Graphiti-Java'` → `title: 'OntoGraph'`
+- 第 148 行：`title: 'ontograph-java'` → `title: 'OntoGraph'`
 
 - [ ] **Step 2: 更新 en-US.ts**
 
 将文件中的：
 - 第 4 行：`name: 'Graphiti Console'` → `name: 'OntoGraph Console'`
-- 第 148 行：`title: 'Graphiti-Java'` → `title: 'OntoGraph'`
+- 第 148 行：`title: 'ontograph-java'` → `title: 'OntoGraph'`
 
 - [ ] **Step 3: 更新 zh-TW.ts**
 
 将文件中的：
 - 第 4 行：`name: 'Graphiti Console'` → `name: 'OntoGraph Console'`
-- 第 148 行：`title: 'Graphiti-Java'` → `title: 'OntoGraph'`
+- 第 148 行：`title: 'ontograph-java'` → `title: 'OntoGraph'`
 
 - [ ] **Step 4: 更新 ja-JP.ts**
 
 将文件中的：
 - 第 4 行：`name: 'Graphiti Console'` → `name: 'OntoGraph Console'`
-- 第 149 行：`title: 'Graphiti-Java'` → `title: 'OntoGraph'`
+- 第 149 行：`title: 'ontograph-java'` → `title: 'OntoGraph'`
 
 - [ ] **Step 5: 提交国际化文件更新**
 
@@ -906,7 +906,7 @@ Rename-Item -Path "graphiti-web/src/types/graphiti.ts" -NewName "ontograph.ts"
 # 更新文件注释
 $file = "graphiti-web/src/types/ontograph.ts"
 $content = Get-Content $file -Raw -Encoding UTF8
-$content = $content -replace "graphiti-java", "OntoGraph"
+$content = $content -replace "ontograph-java", "OntoGraph"
 Set-Content -Path $file -Value $content -Encoding UTF8 -NoNewline
 ```
 
@@ -1022,7 +1022,7 @@ cd ..
 
 ```bash
 # 查找除致谢外的所有 Graphiti 引用
-grep -r "Graphiti" --include="*.md" --include="*.java" --include="*.ts" --include="*.vue" --include="*.yml" --include="*.json" . | grep -v "Acknowledgements" | grep -v "致谢" | grep -v "原 Graphiti-Java"
+grep -r "Graphiti" --include="*.md" --include="*.java" --include="*.ts" --include="*.vue" --include="*.yml" --include="*.json" . | grep -v "Acknowledgements" | grep -v "致谢" | grep -v "原 ontograph-java"
 ```
 
 **Expected:** 仅有致谢部分包含 Graphiti

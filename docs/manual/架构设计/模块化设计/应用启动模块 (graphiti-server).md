@@ -1,4 +1,4 @@
-﻿# 应用启动模块 (graphiti-server)
+# 应用启动模块 (graphiti-server)
 
 <!--<cite>
 **本文引用的文件**
@@ -28,7 +28,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件为 Graphiti-Java 应用启动模块（graphiti-server）的权威部署与配置指南。内容覆盖：
+本文件为 ontograph-java 应用启动模块（graphiti-server）的权威部署与配置指南。内容覆盖：
 - Spring Boot 启动配置与主程序入口
 - 环境配置管理（开发/生产）
 - application.yml 与 application-dev.yml 参数详解

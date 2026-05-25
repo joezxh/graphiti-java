@@ -115,7 +115,7 @@ graphNeo4jService.createRelationship(
 
 - [ ] **Step 2: Build to verify**
 
-Run: `cd D:/projects/graphiti-java && mvn compile -pl graphiti-module-core -am -q`
+Run: `cd D:/projects/ontograph-java && mvn compile -pl graphiti-module-core -am -q`
 Expected: BUILD SUCCESS
 
 ---

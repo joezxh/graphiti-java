@@ -1,8 +1,8 @@
 # 使用 Graphiti 构建 AI 会话上下文记忆系统
 
-> 本文档面向使用 **graphiti-java** 项目的 Java 开发者，介绍如何将 Graphiti 时序上下文图（Temporal Context Graph）用作 AI 会话的持久化记忆系统。
+> 本文档面向使用 **ontograph-java** 项目的 Java 开发者，介绍如何将 Graphiti 时序上下文图（Temporal Context Graph）用作 AI 会话的持久化记忆系统。
 >
-> 文档同时参考了 [Python 原版 Graphiti](https://github.com/getzep/graphiti) 的设计理念和 `graphiti-java` 项目的现有 Java API，确保概念准确且代码可直接落地。
+> 文档同时参考了 [Python 原版 Graphiti](https://github.com/getzep/graphiti) 的设计理念和 `ontograph-java` 项目的现有 Java API，确保概念准确且代码可直接落地。
 
 ---
 
@@ -105,7 +105,7 @@ Graphiti 提供三种互补的检索方式：
 
 结合 **BM25 全文检索** 和 **向量语义检索**，通过 RRF（Reciprocal Rank Fusion）融合两种排序结果。这使得检索既能匹配精确关键词（如产品型号），又能理解语义相似性（如"透气"和"通风"）。
 
-在 `graphiti-java` 中，`SearchService.doSearch()` 实现了这一逻辑，支持通过 `SearchConfigVO` 调整 BM25 与向量检索的权重：
+在 `ontograph-java` 中，`SearchService.doSearch()` 实现了这一逻辑，支持通过 `SearchConfigVO` 调整 BM25 与向量检索的权重：
 
 ```java
 SearchConfigVO config = new SearchConfigVO();
@@ -243,7 +243,7 @@ public class MessageQueryVO implements Serializable {
 
 ### 3.1 初始化与连接
 
-graphiti-java 项目基于 Spring Boot 构建，推荐使用自动配置方式接入 Neo4j。
+ontograph-java 项目基于 Spring Boot 构建，推荐使用自动配置方式接入 Neo4j。
 
 #### 方式一：Spring Boot 自动配置（推荐）
 
@@ -1399,7 +1399,7 @@ public void deleteUserMemory(String graphId) {
 
 ## 附录：Python 原版与 Java 版核心差异速查
 
-| 特性 | Python 原版 | Java 版 (graphiti-java) |
+| 特性 | Python 原版 | Java 版 (ontograph-java) |
 |-----|-----------|------------------------|
 | 初始化 | `Graphiti(uri, user, password)` | Spring Boot 自动配置 |
 | 添加 Episode | `await graphiti.add_episode(...)` | `episodeService.createEpisode(graphId, data)` |
@@ -1412,4 +1412,4 @@ public void deleteUserMemory(String graphId) {
 
 ---
 
-*本文档基于 graphiti-java 项目当前实现编写。随着项目迭代，部分 API 可能会有调整，请以实际源码为准。*
+*本文档基于 ontograph-java 项目当前实现编写。随着项目迭代，部分 API 可能会有调整，请以实际源码为准。*

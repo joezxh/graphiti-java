@@ -2070,7 +2070,7 @@ git commit -m "feat(edges): add V3 relationship metadata selector with color ind
 - [ ] **Step 1: 编译后端模块**
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 mvn compile -pl graphiti-module-core -am -q
 ```
 
@@ -2079,7 +2079,7 @@ mvn compile -pl graphiti-module-core -am -q
 - [ ] **Step 2: 验证前端 TypeScript 类型**
 
 ```bash
-cd d:\projects\graphiti-java\graphiti-web
+cd d:\projects\ontograph-java\graphiti-web
 npx vue-tsc --noEmit --skipLibCheck
 ```
 

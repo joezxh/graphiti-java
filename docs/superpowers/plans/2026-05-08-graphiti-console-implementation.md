@@ -1,8 +1,8 @@
-# Graphiti-Java 控制台前端实施计划
+# ontograph-java 控制台前端实施计划
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 为 graphiti-java 独立服务构建一个深色科技风的控制台前端，支持双视图模式（业务视图 + 开发者视图），充分体现基于 Ontology 本体论的图谱关系管理功能。
+**Goal:** 为 ontograph-java 独立服务构建一个深色科技风的控制台前端，支持双视图模式（业务视图 + 开发者视图），充分体现基于 Ontology 本体论的图谱关系管理功能。
 
 **Architecture:** 采用 Vue 3 + TypeScript + Ant Design Vue 4.x 技术栈，实现双视图架构（业务视图面向数据分析师，开发者视图面向工程师）。核心包括：图谱可视化（ECharts 力导向图）、本体论编辑器（结构化表单 + 预览）、混合检索界面（全文/向量/图遍历）。
 
@@ -226,13 +226,13 @@ export default defineConfig({
 `.env.development`:
 ```
 VITE_API_BASE_URL=http://localhost:8080/api/v1
-VITE_APP_TITLE=Graphiti-Java 控制台
+VITE_APP_TITLE=ontograph-java 控制台
 ```
 
 `.env.production`:
 ```
 VITE_API_BASE_URL=/api/v1
-VITE_APP_TITLE=Graphiti-Java 控制台
+VITE_APP_TITLE=ontograph-java 控制台
 ```
 
 - [ ] **Step 5: 创建 index.html**
@@ -244,7 +244,7 @@ VITE_APP_TITLE=Graphiti-Java 控制台
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphiti-Java 控制台</title>
+    <title>ontograph-java 控制台</title>
   </head>
   <body>
     <div id="app"></div>

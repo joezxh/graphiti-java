@@ -1,10 +1,10 @@
-# Graphiti-Java 功能对齐总体设计
+# ontograph-java 功能对齐总体设计
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** 使 graphiti-java 具备与 Python 原版 graphiti 相同的核心能力，包括时序事实管理、LLM自动提取、混合检索、嵌入向量、社区发现等。
+**Goal:** 使 ontograph-java 具备与 Python 原版 graphiti 相同的核心能力，包括时序事实管理、LLM自动提取、混合检索、嵌入向量、社区发现等。
 
-**Architecture:** 在现有 graphiti-java 多模块Maven架构基础上，逐阶段补齐缺失的核心能力。保持与现有代码的向后兼容性，新增模块遵循现有分层设计（controller → service → dal → vo）。
+**Architecture:** 在现有 ontograph-java 多模块Maven架构基础上，逐阶段补齐缺失的核心能力。保持与现有代码的向后兼容性，新增模块遵循现有分层设计（controller → service → dal → vo）。
 
 **Tech Stack:** Java 21, Spring Boot 3.5.5, Spring AI 1.1.2, Neo4j 5.26, MySQL/PostgreSQL, Redis, MyBatis-Plus 3.5.12
 

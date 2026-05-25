@@ -104,7 +104,7 @@ graphiti-module-core/
 
 - [ ] **Step 2: Verify Maven resolves dependencies**
 
-Run: `cd D:/projects/graphiti-java && mvn dependency:resolve -pl graphiti-module-core -q 2>&1 | grep -i "jena\|rdf4j" | head -20`
+Run: `cd D:/projects/ontograph-java && mvn dependency:resolve -pl graphiti-module-core -q 2>&1 | grep -i "jena\|rdf4j" | head -20`
 Expected: Lists Jena and RDF4J artifacts resolved
 
 - [ ] **Step 3: Commit**

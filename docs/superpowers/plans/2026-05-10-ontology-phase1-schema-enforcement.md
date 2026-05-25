@@ -507,7 +507,7 @@ class OntDOTest {
 
 - [ ] **Step 7: Run tests to verify**
 
-Run: `cd D:/projects/graphiti-java && mvn test -pl graphiti-module-core -Dtest=OntDOTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=OntDOTest -q`
 Expected: Both tests PASS
 
 - [ ] **Step 8: Commit**
@@ -667,7 +667,7 @@ class OntMapperTest {
 
 - [ ] **Step 3: Run compile check**
 
-Run: `cd D:/projects/graphiti-java && mvn compile -pl graphiti-module-core -q`
+Run: `cd D:/projects/ontograph-java && mvn compile -pl graphiti-module-core -q`
 Expected: BUILD SUCCESS (no errors)
 
 - [ ] **Step 4: Commit**
@@ -1219,7 +1219,7 @@ class OntologyValidationServiceImplTest {
 
 - [ ] **Step 6: Run tests**
 
-Run: `cd D:/projects/graphiti-java && mvn test -pl graphiti-module-core -Dtest=OntologyValidationServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=OntologyValidationServiceImplTest -q`
 Expected: All tests PASS
 
 - [ ] **Step 7: Commit**
@@ -1387,7 +1387,7 @@ class NodeServiceImplTest {
 
 - [ ] **Step 5: Run tests**
 
-Run: `cd D:/projects/graphiti-java && mvn test -pl graphiti-module-core -Dtest=NodeServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=NodeServiceImplTest -q`
 Expected: All 3 tests PASS
 
 - [ ] **Step 6: Commit**
@@ -1518,7 +1518,7 @@ class EdgeServiceImplTest {
 
 - [ ] **Step 5: Run tests**
 
-Run: `cd D:/projects/graphiti-java && mvn test -pl graphiti-module-core -Dtest=EdgeServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=EdgeServiceImplTest -q`
 Expected: Both tests PASS
 
 - [ ] **Step 6: Commit**
@@ -1882,7 +1882,7 @@ class DataImportServiceImplTest {
 
 - [ ] **Step 5: Run test**
 
-Run: `cd D:/projects/graphiti-java && mvn test -pl graphiti-module-core -Dtest=DataImportServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=DataImportServiceImplTest -q`
 Expected: Both tests PASS
 
 - [ ] **Step 6: Commit**
@@ -1899,12 +1899,12 @@ git commit -m "phase1: integrate OntologyValidationService into DataImportServic
 
 - [ ] **Step 1: Run full Maven compile**
 
-Run: `cd D:/projects/graphiti-java && mvn compile -pl graphiti-module-core -am -q`
+Run: `cd D:/projects/ontograph-java && mvn compile -pl graphiti-module-core -am -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: Run all new tests**
 
-Run: `cd D:/projects/graphiti-java && mvn test -pl graphiti-module-core -Dtest="OntDOTest,OntMapperTest,OntologyValidationServiceImplTest,NodeServiceImplTest,EdgeServiceImplTest,DataImportServiceImplTest" -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest="OntDOTest,OntMapperTest,OntologyValidationServiceImplTest,NodeServiceImplTest,EdgeServiceImplTest,DataImportServiceImplTest" -q`
 Expected: All tests PASS
 
 - [ ] **Step 3: Commit**
