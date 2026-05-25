@@ -1,8 +1,8 @@
-# Graphiti 知识图谱后端服务配置文件
+# OntoGraph 知识图谱后端服务配置文件
 # 应用配置
 spring:
   application:
-    name: graphiti-java
+    name: ontograph-java
   profiles:
     active: dev
 
@@ -23,7 +23,7 @@ mybatis-plus:
 # Ollama: spring.ai.ollama.base-url
 
 # JWT 配置
-graphiti:
+ontograph:
   security:
     jwt:
       secret: mySecretKeyForJWTTokenGenerationWhichShouldBeAtLeast512BitsLong
@@ -35,7 +35,7 @@ graphiti:
 # 日志配置
 logging:
   level:
-    com.graphiti: debug
+    com.ontograph: debug
     org.springframework.security: debug
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
