@@ -32,8 +32,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
                 MistralAiEmbeddingAutoConfiguration.class
         }
 )
-public class GraphitiApplication {
+public class OntoGraphApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GraphitiApplication.class, args);
+        SpringApplication.run(OntoGraphApplication.class, args);
     }
 }
