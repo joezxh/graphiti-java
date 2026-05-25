@@ -1,8 +1,8 @@
-# Graphiti-Java
+# OntoGraph
 
 <p align="center">
-  <strong>Temporal Knowledge Graph Backend System</strong><br>
-  <em>Java implementation of the Graphiti knowledge graph with LLM-powered entity extraction, hybrid search, and temporal fact management.</em>
+  <strong>Where ontology becomes living structure.</strong><br>
+  <em>A production-ready knowledge graph system for ontology modeling and semantic relationships, powered by Java, Neo4j, and LLMs.</em>
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@
 
 ## Overview
 
-Graphiti-Java is a production-ready knowledge graph backend system that brings the power of temporal knowledge graphs to the Java ecosystem. It automatically extracts entities and relationships from unstructured text using Large Language Models (LLM), stores them in Neo4j with vector embeddings, and provides advanced hybrid search capabilities combining full-text, semantic, and graph traversal.
+OntoGraph is a production-ready knowledge graph backend system that brings the power of temporal knowledge graphs to the Java ecosystem. It automatically extracts entities and relationships from unstructured text using Large Language Models (LLM), stores them in Neo4j with vector embeddings, and provides advanced hybrid search capabilities combining full-text, semantic, and graph traversal.
 
 ### Key Capabilities
 
@@ -79,20 +79,20 @@ Graphiti-Java is a production-ready knowledge graph backend system that brings t
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              graphiti-web                                    │
+│                              ontograph-web                                   │
 │                    Vue 3 + Vite + Ant Design Vue                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              graphiti-server                                 │
+│                              ontograph-server                                │
 │                        Spring Boot 3.5.5 (Entry)                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
             ┌─────────────────────────┼─────────────────────────┐
             ▼                         ▼                         ▼
 ┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
-│ graphiti-module-core│   │ graphiti-module-sys │   │ graphiti-framework  │
+│ ontograph-module-core│  │ontograph-module-sys │   │ ontograph-framework  │
 │  Knowledge Graph    │   │  User/Role/Menu/Auth│   │  Common/Security/   │
 │  - Graph CRUD       │   │  - JWT Auth         │   │  - MyBatis Starter  │
 │  - Search/Import    │   │  - RBAC             │   │  - Redis Starter    │
@@ -240,7 +240,7 @@ graphiti-java/
 
 ```bash
 git clone <repository-url>
-cd graphiti-java
+cd ontograph-java
 mvn clean install -DskipTests
 ```
 
@@ -286,7 +286,7 @@ spring:
       host: localhost
       port: 6379
 
-graphiti:
+ontograph:
   ai:
     llm-provider: openai        # openai | anthropic | qwen | ollama | mistral
     embedding-provider: openai
@@ -328,7 +328,7 @@ The easiest way to run the complete Graphiti-Java service stack is using Docker 
 ```bash
 # 1. Clone the repository
 git clone <repository-url>
-cd graphiti-java
+cd ontograph-java
 
 # 2. Configure environment variables
 cp .env.example .env
@@ -338,7 +338,7 @@ cp .env.example .env
 docker-compose up -d
 
 # 4. View logs
-docker-compose logs -f graphiti-java
+docker-compose logs -f ontograph-java
 
 # 5. Stop services
 docker-compose down
@@ -356,7 +356,7 @@ The `docker-compose.yml` includes the following services:
 
 | Service | Port | Description |
 |---------|------|-------------|
-| graphiti-java | 8080 | Spring Boot application |
+| ontograph-java | 8080 | Spring Boot application |
 | postgres | 5432 | PostgreSQL 16 (metadata & system data) |
 | redis | 6379 | Redis 7 (cache & session) |
 
@@ -454,10 +454,10 @@ Ensure Neo4j is accessible from the Docker container:
 docker-compose ps
 
 # View detailed logs
-docker-compose logs graphiti-java
+docker-compose logs ontograph-java
 
 # Restart specific service
-docker-compose restart graphiti-java
+docker-compose restart ontograph-java
 ```
 
 #### 5. Database Connection Refused
@@ -468,7 +468,7 @@ PostgreSQL may not be ready when the application starts. The docker-compose.yml 
 # Wait for PostgreSQL to be ready
 docker-compose up -d postgres
 sleep 10
-docker-compose up -d graphiti-java
+docker-compose up -d ontograph-java
 ```
 
 #### 6. Data Persistence
@@ -500,7 +500,7 @@ For production environments:
 3. **Resource limits** (add to docker-compose.yml):
    ```yaml
    services:
-     graphiti-java:
+     ontograph-java:
        deploy:
          resources:
            limits:
@@ -518,14 +518,14 @@ To build a custom Docker image:
 
 ```bash
 # Build image
-docker build -t graphiti-java:latest -f docker/Dockerfile .
+docker build -t ontograph-java:latest -f docker/Dockerfile .
 
 # Run container
 docker run -d \
-  --name graphiti-java \
+  --name ontograph-java \
   -p 8080:8080 \
   --env-file .env \
-  graphiti-java:latest
+  ontograph-java:latest
 ```
 
 ---
@@ -802,7 +802,7 @@ chore: build/config changes
 
 ## Acknowledgements
 
-Graphiti-Java is inspired by the original [Graphiti](https://github.com/getzep/graphiti) Python library by Zep AI.
+OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 
 ---
 
