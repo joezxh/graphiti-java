@@ -10,6 +10,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +41,8 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
 
     private final OpenAiChatModel chatModel;
     private final ObjectMapper objectMapper;
+    private final ExecutorService llmExecutor =
+        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
     @Override
     public String chat(String prompt) {
@@ -101,6 +107,34 @@ public class OpenAiLlmClientServiceImpl implements LlmClientService {
         return prompts.stream()
                 .map(this::chat)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> chatBatchAsync(List<String> prompts, int maxConcurrency) {
+        if (prompts == null || prompts.isEmpty()) {
+            return List.of();
+        }
+        Semaphore semaphore = new Semaphore(maxConcurrency);
+
+        List<CompletableFuture<String>> futures = prompts.stream()
+            .map(prompt -> CompletableFuture.supplyAsync(() -> {
+                try {
+                    semaphore.acquire();
+                    try {
+                        return chat(prompt);
+                    } finally {
+                        semaphore.release();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("LLM call interrupted", e);
+                }
+            }, llmExecutor))
+            .toList();
+
+        return futures.stream()
+            .map(CompletableFuture::join)
+            .toList();
     }
 
     @Override

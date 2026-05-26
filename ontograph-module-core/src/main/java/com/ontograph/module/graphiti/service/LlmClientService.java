@@ -63,6 +63,15 @@ public interface LlmClientService {
     List<String> chatBatch(List<String> prompts);
 
     /**
+     * 带信号量控制的并发批量对话请求
+     *
+     * @param prompts 提示词列表
+     * @param maxConcurrency 最大并发数
+     * @return 回复文本列表
+     */
+    List<String> chatBatchAsync(List<String> prompts, int maxConcurrency);
+
+    /**
      * 获取当前使用的 Provider 名称
      *
      * @return Provider 名称

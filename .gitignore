@@ -1,10 +1,10 @@
-/graphiti-web/node_modules/
-/graphiti-web/dist/
 target
 /.idea/
 .worktrees/
 /.qoder/
 /data/
-/graphiti-server/src/main/resources/static/
 /.env
 .qoder
+/ontograph-web/dist/
+/ontograph-web/node_modules/
+/ontograph-server/src/main/resources/static/

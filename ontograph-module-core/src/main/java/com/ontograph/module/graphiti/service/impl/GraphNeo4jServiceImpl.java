@@ -1,6 +1,9 @@
 package com.ontograph.module.graphiti.service.impl;
 
 import com.ontograph.module.graphiti.config.GraphNeo4jConfig;
+import com.ontograph.module.graphiti.dto.batch.EntityBatchDTO;
+import com.ontograph.module.graphiti.dto.batch.EpisodeBatchDTO;
+import com.ontograph.module.graphiti.dto.batch.RelationBatchDTO;
 import com.ontograph.module.graphiti.service.GraphNeo4jService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -1367,5 +1370,143 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
             "agreementNumber", "evidenceNumber", "reasoning", "factDescription",
             "name"
         );
+    }
+
+    @Override
+    public void batchCreateEpisodes(String graphId, List<EpisodeBatchDTO> episodes) {
+        if (episodes == null || episodes.isEmpty()) return;
+
+        String cypher =
+            "UNWIND $episodes AS ep " +
+            "CREATE (e:Episode {graph_id: $graphId, uuid: ep.uuid, " +
+            "name: ep.name, source: ep.source, source_description: ep.sourceDescription, " +
+            "content: ep.content, created_at: timestamp(), valid_at: timestamp()}) " +
+            "SET e += ep.properties " +
+            "RETURN count(e) as created";
+
+        Map<String, Object> params = Map.of(
+            "graphId", graphId,
+            "episodes", episodes.stream().map(EpisodeBatchDTO::toMap).toList()
+        );
+
+        try (Session session = neo4jDriver.session()) {
+            session.executeWrite(tx -> {
+                Result r = tx.run(cypher, params);
+                r.consume();
+                log.info("批量创建 Episodes: graphId={}", graphId);
+                return null;
+            });
+        }
+    }
+
+    @Override
+    public void batchCreateEntities(String graphId, List<EntityBatchDTO> entities) {
+        if (entities == null || entities.isEmpty()) return;
+
+        StringBuilder cypherBuilder = new StringBuilder(
+            "UNWIND $entities AS e " +
+            "CREATE (n:Entity {graph_id: $graphId, uuid: e.uuid, " +
+            "name: e.name, type: e.type, summary: e.summary, " +
+            "embedding: e.embedding, valid_at: timestamp(), invalid_at: null}) " +
+            "SET n += e.properties " +
+            "SET n.name = e.name "
+        );
+        cypherBuilder.append("RETURN count(n) as created");
+
+        Map<String, Object> params = Map.of(
+            "graphId", graphId,
+            "entities", entities.stream().map(EntityBatchDTO::toMap).toList()
+        );
+
+        try (Session session = neo4jDriver.session()) {
+            session.executeWrite(tx -> {
+                Result r = tx.run(cypherBuilder.toString(), params);
+                r.consume();
+                log.info("批量创建实体节点: graphId={}", graphId);
+                return null;
+            });
+        }
+    }
+
+    @Override
+    public void batchCreateRelationships(String graphId, List<RelationBatchDTO> relations) {
+        if (relations == null || relations.isEmpty()) return;
+
+        String cypher =
+            "UNWIND $relations AS r " +
+            "MATCH (a:Entity {graph_id: $graphId, uuid: r.sourceUuid}) " +
+            "MATCH (b:Entity {graph_id: $graphId, uuid: r.targetUuid}) " +
+            "CREATE (a)-[rel:RELATES_TO {graph_id: $graphId, uuid: r.edgeUuid, " +
+            "type: r.type, fact: r.fact, embedding: r.embedding, " +
+            "valid_at: timestamp(), invalid_at: null}]->(b) " +
+            "SET rel += r.properties " +
+            "RETURN count(rel) as created";
+
+        Map<String, Object> params = Map.of(
+            "graphId", graphId,
+            "relations", relations.stream().map(RelationBatchDTO::toMap).toList()
+        );
+
+        try (Session session = neo4jDriver.session()) {
+            session.executeWrite(tx -> {
+                Result r = tx.run(cypher, params);
+                r.consume();
+                log.info("批量创建关系: graphId={}", graphId);
+                return null;
+            });
+        }
+    }
+
+    @Override
+    public void batchAddNodesAndEdges(String graphId,
+            List<EpisodeBatchDTO> episodes,
+            List<EntityBatchDTO> entities,
+            List<RelationBatchDTO> relations) {
+
+        String cypher =
+            "UNWIND $episodes AS ep " +
+            "CREATE (e:Episode {graph_id: $graphId, uuid: ep.uuid, " +
+            "name: ep.name, source: ep.source, source_description: ep.sourceDescription, " +
+            "content: ep.content, created_at: timestamp(), valid_at: timestamp()}) " +
+            "SET e += ep.properties " +
+            "WITH count(e) as epCount " +
+
+            "UNWIND $entities AS n " +
+            "CREATE (entity:Entity {graph_id: $graphId, uuid: n.uuid, " +
+            "name: n.name, type: n.type, summary: n.summary, " +
+            "embedding: n.embedding, valid_at: timestamp(), invalid_at: null}) " +
+            "SET entity += n.properties " +
+            "SET entity.name = n.name " +
+            "WITH epCount, count(entity) as entCount " +
+
+            "UNWIND $relations AS r " +
+            "MATCH (a:Entity {graph_id: $graphId, uuid: r.sourceUuid}) " +
+            "MATCH (b:Entity {graph_id: $graphId, uuid: r.targetUuid}) " +
+            "CREATE (a)-[rel:RELATES_TO {graph_id: $graphId, uuid: r.edgeUuid, " +
+            "type: r.type, fact: r.fact, embedding: r.embedding, " +
+            "valid_at: timestamp(), invalid_at: null}]->(b) " +
+            "SET rel += r.properties " +
+            "WITH epCount, entCount, count(rel) as relCount " +
+
+            "RETURN epCount, entCount, relCount";
+
+        Map<String, Object> params = Map.of(
+            "graphId", graphId,
+            "episodes", episodes != null ? episodes.stream().map(EpisodeBatchDTO::toMap).toList() : java.util.List.of(),
+            "entities", entities != null ? entities.stream().map(EntityBatchDTO::toMap).toList() : java.util.List.of(),
+            "relations", relations != null ? relations.stream().map(RelationBatchDTO::toMap).toList() : java.util.List.of()
+        );
+
+        try (Session session = neo4jDriver.session()) {
+            session.executeWrite(tx -> {
+                Result result = tx.run(cypher, params);
+                Record record = result.next();
+                log.info("原子性批量写入完成: graphId={}, episodes={}, entities={}, relations={}",
+                    graphId,
+                    record.get("epCount").asLong(),
+                    record.get("entCount").asLong(),
+                    record.get("relCount").asLong());
+            });
+        }
     }
 }

@@ -30,10 +30,10 @@ public class EpisodeBatchDTO {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("uuid", uuid);
-        map.put("name", name);
-        map.put("source", source);
-        map.put("sourceDescription", sourceDescription);
-        map.put("content", content);
+        map.put("name", name != null ? name : "");
+        map.put("source", source != null ? source : "text");
+        map.put("sourceDescription", sourceDescription != null ? sourceDescription : "");
+        map.put("content", content != null ? content : "");
         map.put("properties", properties != null ? properties : new HashMap<>());
         return map;
     }

@@ -28,15 +28,15 @@ public class RelationBatchDTO {
 
     /**
      * Convert to Map for Neo4j parameter binding.
-     * float[] is converted to List<Float> because Neo4j doesn't support float[] directly.
+     * float[] is converted to List&lt;Float&gt; because Neo4j doesn't support float[] directly.
      */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("edgeUuid", edgeUuid);
         map.put("sourceUuid", sourceUuid);
         map.put("targetUuid", targetUuid);
-        map.put("type", type);
-        map.put("fact", fact);
+        map.put("type", type != null ? type : "RELATES_TO");
+        map.put("fact", fact != null ? fact : "");
         if (embedding != null) {
             map.put("embedding", toFloatList(embedding));
         } else {
@@ -46,7 +46,10 @@ public class RelationBatchDTO {
         return map;
     }
 
-    private static List<Float> toFloatList(float[] array) {
-        return java.util.Arrays.stream(array).boxed().toList();
+    private static List<Float> toFloatList(float[] arr) {
+        if (arr == null) return null;
+        List<Float> list = new java.util.ArrayList<>(arr.length);
+        for (float v : arr) list.add(v);
+        return list;
     }
 }

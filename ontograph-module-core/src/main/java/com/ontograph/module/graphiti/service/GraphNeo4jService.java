@@ -1,5 +1,8 @@
 package com.ontograph.module.graphiti.service;
 
+import com.ontograph.module.graphiti.dto.batch.EntityBatchDTO;
+import com.ontograph.module.graphiti.dto.batch.EpisodeBatchDTO;
+import com.ontograph.module.graphiti.dto.batch.RelationBatchDTO;
 import org.neo4j.driver.Driver;
 
 import java.util.List;
@@ -268,4 +271,25 @@ public interface GraphNeo4jService {
      * 删除图谱所有社区节点
      */
     void deleteAllCommunities(String graphId);
+
+    /**
+     * 批量写入 Episodes（单事务 UNWIND）
+     */
+    void batchCreateEpisodes(String graphId, List<EpisodeBatchDTO> episodes);
+
+    /**
+     * 批量创建实体节点（单事务 UNWIND）
+     */
+    void batchCreateEntities(String graphId, List<EntityBatchDTO> entities);
+
+    /**
+     * 批量创建关系（单事务 UNWIND）
+     */
+    void batchCreateRelationships(String graphId, List<RelationBatchDTO> relations);
+
+    /**
+     * 原子性批量写入：Episodes + 实体 + 关系在同一个事务中
+     */
+    void batchAddNodesAndEdges(String graphId, List<EpisodeBatchDTO> episodes,
+                               List<EntityBatchDTO> entities, List<RelationBatchDTO> relations);
 }

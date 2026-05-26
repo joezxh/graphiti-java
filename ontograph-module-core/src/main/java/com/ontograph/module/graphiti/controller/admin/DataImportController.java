@@ -3,6 +3,7 @@ package com.ontograph.module.graphiti.controller.admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontograph.common.response.CommonResult;
 import com.ontograph.framework.security.util.UserContext;
+import com.ontograph.module.graphiti.service.BulkImportTaskService;
 import com.ontograph.module.graphiti.service.DataImportService;
 import com.ontograph.module.graphiti.vo.imports.AddDataBatchReqVO;
 import com.ontograph.module.graphiti.vo.imports.AddDataReqVO;
@@ -36,6 +37,9 @@ public class DataImportController {
 
     @Resource
     private DataImportService dataImportService;
+
+    @Resource
+    private BulkImportTaskService bulkImportTaskService;
 
     @Resource
     private OperationLogService operationLogService;
@@ -92,18 +96,29 @@ public class DataImportController {
     }
 
     @PostMapping("/batch")
-    @Operation(summary = "批量添加数据", description = "批量导入数据到图谱",
+    @Operation(summary = "批量添加数据（异步）", description = "批量导入数据到图谱，立即返回 taskId",
                security = {@SecurityRequirement(name = "Bearer Authentication")})
-    public CommonResult<Boolean> addDataBatch(@Valid @RequestBody AddDataBatchReqVO reqVO) {
+    public CommonResult<String> addDataBatch(@Valid @RequestBody AddDataBatchReqVO reqVO) {
         long start = System.currentTimeMillis();
         try {
-            dataImportService.addDataBatch(reqVO);
-            saveDataOpLog("批量添加数据", "POST /graph/data/batch", reqVO.getGraphId(),
-                          Map.of("itemCount", reqVO.getItems() != null ? reqVO.getItems().size() : 0), 1, null, start);
-            return CommonResult.success(true);
+            if (reqVO.getContentChunkSize() == null) {
+                reqVO.setContentChunkSize(50);
+            }
+            if (reqVO.getNeo4jChunkSize() == null) {
+                reqVO.setNeo4jChunkSize(200);
+            }
+
+            String taskId = bulkImportTaskService.executeAsync(reqVO);
+            saveDataOpLog("批量添加数据(异步)", "POST /graph/data/batch",
+                          reqVO.getGraphId(),
+                          Map.of("taskId", taskId, "itemCount", reqVO.getItems() != null ? reqVO.getItems().size() : 0),
+                          1, null, start);
+            return CommonResult.success(taskId);
         } catch (Exception e) {
-            saveDataOpLog("批量添加数据", "POST /graph/data/batch", reqVO.getGraphId(),
-                          Map.of("itemCount", reqVO.getItems() != null ? reqVO.getItems().size() : 0), 0, e.getMessage(), start);
+            saveDataOpLog("批量添加数据(异步)", "POST /graph/data/batch",
+                          reqVO.getGraphId(),
+                          Map.of("itemCount", reqVO.getItems() != null ? reqVO.getItems().size() : 0),
+                          0, e.getMessage(), start);
             throw e;
         }
     }
