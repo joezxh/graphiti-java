@@ -1409,9 +1409,7 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
             "name: e.name, type: e.type, summary: e.summary, " +
             "embedding: e.embedding, valid_at: timestamp(), invalid_at: null}) " +
             "SET n += e.properties " +
-            "SET n.name = e.name "
-        );
-        cypherBuilder.append("RETURN count(n) as created");
+            "RETURN count(n) as created");
 
         Map<String, Object> params = Map.of(
             "graphId", graphId,
@@ -1506,7 +1504,282 @@ public class GraphNeo4jServiceImpl implements GraphNeo4jService {
                     record.get("epCount").asLong(),
                     record.get("entCount").asLong(),
                     record.get("relCount").asLong());
+                return null;
             });
         }
+    }
+
+    // ==================== BFS 单 Cypher 搜索 ====================
+
+    @Override
+    public List<Map<String, Object>> searchEdgesByBfsCypher(
+            String graphId, List<String> seedUuids, int depth, int limit) {
+        if (seedUuids == null || seedUuids.isEmpty()) {
+            return List.of();
+        }
+
+        String cypher =
+            "UNWIND $seedUuids AS origin_uuid " +
+            "MATCH path = (origin:Entity {uuid: origin_uuid, graph_id: $graphId})" +
+            "  -[:RELATES_TO|MENTIONS*1.." + depth + "]-" +
+            "  (n:Entity {graph_id: $graphId}) " +
+            "WITH n, min(length(path)) AS depth " +
+            "MATCH (a:Entity {graph_id: $graphId})-[r:RELATES_TO]-(b:Entity {graph_id: $graphId}) " +
+            "WHERE a.uuid = n.uuid OR b.uuid = n.uuid " +
+            "WITH r, depth " +
+            "RETURN DISTINCT r.uuid AS uuid, r.fact AS fact, r.type AS type, " +
+            "  r.graph_id AS graph_id, depth " +
+            "ORDER BY depth ASC " +
+            "LIMIT " + limit;
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("graphId", graphId, "seedUuids", seedUuids));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> edge = new HashMap<>();
+                edge.put("uuid", record.get("uuid").asString());
+                edge.put("fact", record.get("fact").asString());
+                edge.put("type", record.get("type").asString());
+                edge.put("graph_id", record.get("graph_id").asString());
+                edge.put("depth", record.get("depth").asInt());
+                results.add(edge);
+            }
+        } catch (Exception e) {
+            log.warn("BFS 单 Cypher 边搜索失败: {}", e.getMessage());
+        }
+        return results;
+    }
+
+    @Override
+    public List<Map<String, Object>> searchNodesByBfsCypher(
+            String graphId, List<String> seedUuids, int depth, int limit) {
+        if (seedUuids == null || seedUuids.isEmpty()) {
+            return List.of();
+        }
+
+        String cypher =
+            "UNWIND $seedUuids AS origin_uuid " +
+            "MATCH path = (origin:Entity {uuid: origin_uuid, graph_id: $graphId})" +
+            "  -[:RELATES_TO|MENTIONS*1.." + depth + "]->" +
+            "  (n:Entity {graph_id: $graphId}) " +
+            "WITH n, min(length(path)) AS depth " +
+            "RETURN DISTINCT n.uuid AS uuid, n.name AS name, n.type AS type, " +
+            "  n.summary AS summary, n.graph_id AS graph_id, depth " +
+            "ORDER BY depth ASC " +
+            "LIMIT " + limit;
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("graphId", graphId, "seedUuids", seedUuids));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> node = new HashMap<>();
+                node.put("uuid", record.get("uuid").asString());
+                node.put("name", record.get("name").isNull() ? null : record.get("name").asString());
+                node.put("type", record.get("type").asString());
+                node.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                node.put("graph_id", record.get("graph_id").asString());
+                node.put("depth", record.get("depth").asInt());
+                results.add(node);
+            }
+        } catch (Exception e) {
+            log.warn("BFS 单 Cypher 节点搜索失败: {}", e.getMessage());
+        }
+        return results;
+    }
+
+    // ==================== Episode / Community 搜索 ====================
+
+    @Override
+    public List<Map<String, Object>> searchEpisodesByFulltext(String query, String graphId, int limit) {
+        String cypher =
+            "CALL db.index.fulltext.queryNodes('episodeContentIndex', $query) " +
+            "YIELD node, score " +
+            "WHERE node:Episode AND node.graph_id = $graphId " +
+            "RETURN node.uuid AS uuid, node.name AS name, " +
+            "  node.content AS content, node.source AS source, " +
+            "  node.source_description AS sourceDescription, score " +
+            "LIMIT $limit";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("query", query + "*", "graphId", graphId, "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> episode = new HashMap<>();
+                episode.put("uuid", record.get("uuid").asString());
+                episode.put("name", record.get("name").isNull() ? null : record.get("name").asString());
+                episode.put("content", record.get("content").isNull() ? null : record.get("content").asString());
+                episode.put("source", record.get("source").isNull() ? null : record.get("source").asString());
+                episode.put("sourceDescription", record.get("sourceDescription").isNull() ? null : record.get("sourceDescription").asString());
+                episode.put("score", record.get("score").asDouble());
+                results.add(episode);
+            }
+        } catch (Exception e) {
+            log.warn("Episode 全文搜索失败（可能索引未创建）: {}", e.getMessage());
+        }
+        return results;
+    }
+
+    @Override
+    public List<Map<String, Object>> searchEpisodesByVector(String graphId, float[] embedding, int limit) {
+        String cypher =
+            "CALL db.index.vector.queryNodes('episode_embedding_index', $k, $embedding) " +
+            "YIELD node, score " +
+            "WHERE node:Episode AND node.graph_id = $graphId " +
+            "RETURN node.uuid AS uuid, node.name AS name, " +
+            "  node.content AS content, node.source AS source, " +
+            "  node.source_description AS sourceDescription, score " +
+            "LIMIT $limit";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("graphId", graphId, "k", limit,
+                    "embedding", toFloatList(embedding), "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> episode = new HashMap<>();
+                episode.put("uuid", record.get("uuid").asString());
+                episode.put("name", record.get("name").isNull() ? null : record.get("name").asString());
+                episode.put("content", record.get("content").isNull() ? null : record.get("content").asString());
+                episode.put("source", record.get("source").isNull() ? null : record.get("source").asString());
+                episode.put("sourceDescription", record.get("sourceDescription").isNull() ? null : record.get("sourceDescription").asString());
+                episode.put("score", record.get("score").asDouble());
+                results.add(episode);
+            }
+        } catch (Exception e) {
+            log.warn("Episode 向量搜索失败（可能索引未创建）: {}", e.getMessage());
+        }
+        return results;
+    }
+
+    @Override
+    public List<Map<String, Object>> searchCommunitiesByFulltext(String query, String graphId, int limit) {
+        String cypher =
+            "CALL db.index.fulltext.queryNodes('communityNameIndex', $query) " +
+            "YIELD node, score " +
+            "WHERE node:Community AND node.graph_id = $graphId " +
+            "RETURN node.uuid AS uuid, node.name AS name, " +
+            "  node.summary AS summary, score " +
+            "LIMIT $limit";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("query", query + "*", "graphId", graphId, "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> community = new HashMap<>();
+                community.put("uuid", record.get("uuid").asString());
+                community.put("name", record.get("name").isNull() ? null : record.get("name").asString());
+                community.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                community.put("score", record.get("score").asDouble());
+                results.add(community);
+            }
+        } catch (Exception e) {
+            log.warn("Community 全文搜索失败（可能索引未创建）: {}", e.getMessage());
+        }
+        return results;
+    }
+
+    @Override
+    public List<Map<String, Object>> searchCommunitiesByVector(String graphId, float[] embedding, int limit) {
+        String cypher =
+            "CALL db.index.vector.queryNodes('community_embedding_index', $k, $embedding) " +
+            "YIELD node, score " +
+            "WHERE node:Community AND node.graph_id = $graphId " +
+            "RETURN node.uuid AS uuid, node.name AS name, " +
+            "  node.summary AS summary, score " +
+            "LIMIT $limit";
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher,
+                Values.parameters("graphId", graphId, "k", limit,
+                    "embedding", toFloatList(embedding), "limit", limit));
+            while (result.hasNext()) {
+                Record record = result.next();
+                Map<String, Object> community = new HashMap<>();
+                community.put("uuid", record.get("uuid").asString());
+                community.put("name", record.get("name").isNull() ? null : record.get("name").asString());
+                community.put("summary", record.get("summary").isNull() ? null : record.get("summary").asString());
+                community.put("score", record.get("score").asDouble());
+                results.add(community);
+            }
+        } catch (Exception e) {
+            log.warn("Community 向量搜索失败（可能索引未创建）: {}", e.getMessage());
+        }
+        return results;
+    }
+
+    // ==================== 向量批量获取 ====================
+
+    @Override
+    public Map<String, float[]> getEdgeEmbeddings(List<String> edgeUuids) {
+        if (edgeUuids == null || edgeUuids.isEmpty()) {
+            return Map.of();
+        }
+
+        String cypher =
+            "MATCH ()-[r]->() " +
+            "WHERE r.uuid IN $uuids " +
+            "RETURN r.uuid AS uuid, r.embedding AS embedding";
+
+        Map<String, float[]> results = new java.util.HashMap<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, Values.parameters("uuids", edgeUuids));
+            while (result.hasNext()) {
+                Record record = result.next();
+                String uuid = record.get("uuid").asString();
+                Object emb = record.get("embedding");
+                if (emb != null) {
+                    if (emb instanceof List<?> list) {
+                        float[] vec = new float[list.size()];
+                        for (int i = 0; i < list.size(); i++) {
+                            vec[i] = ((Number) list.get(i)).floatValue();
+                        }
+                        results.put(uuid, vec);
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    @Override
+    public Map<String, float[]> getNodeEmbeddings(List<String> nodeUuids) {
+        if (nodeUuids == null || nodeUuids.isEmpty()) {
+            return Map.of();
+        }
+
+        String cypher =
+            "MATCH (n:Entity) " +
+            "WHERE n.uuid IN $uuids " +
+            "RETURN n.uuid AS uuid, n.embedding AS embedding";
+
+        Map<String, float[]> results = new java.util.HashMap<>();
+        try (Session session = neo4jDriver.session()) {
+            Result result = session.run(cypher, Values.parameters("uuids", nodeUuids));
+            while (result.hasNext()) {
+                Record record = result.next();
+                String uuid = record.get("uuid").asString();
+                Object emb = record.get("embedding");
+                if (emb != null) {
+                    if (emb instanceof List<?> list) {
+                        float[] vec = new float[list.size()];
+                        for (int i = 0; i < list.size(); i++) {
+                            vec[i] = ((Number) list.get(i)).floatValue();
+                        }
+                        results.put(uuid, vec);
+                    }
+                }
+            }
+        }
+        return results;
     }
 }

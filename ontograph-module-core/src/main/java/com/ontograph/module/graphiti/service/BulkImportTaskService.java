@@ -103,7 +103,13 @@ public class BulkImportTaskService {
                 });
             }
 
-            boolean finished = latch.await(10, TimeUnit.MINUTES);
+            boolean finished = false;
+            try {
+                finished = latch.await(10, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("LLM extraction interrupted: taskId={}", taskId);
+            }
             if (!finished) {
                 log.warn("LLM extraction timed out: taskId={}", taskId);
             }

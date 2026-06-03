@@ -1,4 +1,6 @@
 # OntoGraph 知识图谱后端服务配置文件
+server:
+  port: 9090
 # 应用配置
 spring:
   application:

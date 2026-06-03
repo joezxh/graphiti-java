@@ -69,7 +69,9 @@ public interface LlmClientService {
      * @param maxConcurrency 最大并发数
      * @return 回复文本列表
      */
-    List<String> chatBatchAsync(List<String> prompts, int maxConcurrency);
+    default List<String> chatBatchAsync(List<String> prompts, int maxConcurrency) {
+        return chatBatch(prompts);
+    }
 
     /**
      * 获取当前使用的 Provider 名称

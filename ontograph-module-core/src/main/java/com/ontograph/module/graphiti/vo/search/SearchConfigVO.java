@@ -36,4 +36,7 @@ public class SearchConfigVO implements Serializable {
 
     @Schema(description = "BFS 每节点最大邻居数", example = "5")
     private Integer bfsMaxNeighbors = 5;
+
+    @Schema(description = "最大事实数量", example = "10")
+    private Integer maxFacts = 10;
 }

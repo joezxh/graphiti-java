@@ -42,7 +42,7 @@ public class EmbeddingCacheService {
             }
             String cacheKey = CACHE_PREFIX + md5(text);
             try {
-                String cached = redissonClient.getBucket(cacheKey).get();
+                String cached = (String) redissonClient.getBucket(cacheKey).get();
                 if (cached != null) {
                     results.set(i, deserialize(cached));
                 } else {

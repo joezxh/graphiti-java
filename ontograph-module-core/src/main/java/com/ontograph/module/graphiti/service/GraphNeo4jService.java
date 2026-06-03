@@ -7,6 +7,7 @@ import org.neo4j.driver.Driver;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map;
 
 /**
  * Neo4j 数据访问服务接口
@@ -291,5 +292,100 @@ public interface GraphNeo4jService {
      * 原子性批量写入：Episodes + 实体 + 关系在同一个事务中
      */
     void batchAddNodesAndEdges(String graphId, List<EpisodeBatchDTO> episodes,
-                               List<EntityBatchDTO> entities, List<RelationBatchDTO> relations);
+                              List<EntityBatchDTO> entities, List<RelationBatchDTO> relations);
+
+    // ==================== BFS 单 Cypher 搜索（Phase 3 优化）====================
+
+    /**
+     * BFS 单 Cypher 搜索边
+     *
+     * <p>参考 Python 实现：driver/neo4j/operations/search_ops.py:edge_bfs_search()
+     * <p>优化：单条 Cypher 替换 N+1 查询，减少约 60% 数据库往返
+     *
+     * @param graphId 图谱 ID
+     * @param seedUuids 种子节点 UUID 列表
+     * @param depth 最大深度
+     * @param limit 返回数量
+     * @return 边列表（含 depth 字段）
+     */
+    List<Map<String, Object>> searchEdgesByBfsCypher(String graphId, List<String> seedUuids, int depth, int limit);
+
+    /**
+     * BFS 单 Cypher 搜索节点
+     *
+     * <p>参考 Python 实现：driver/neo4j/operations/search_ops.py:node_bfs_search()
+     *
+     * @param graphId 图谱 ID
+     * @param seedUuids 种子节点 UUID 列表
+     * @param depth 最大深度
+     * @param limit 返回数量
+     * @return 节点列表（含 depth 字段）
+     */
+    List<Map<String, Object>> searchNodesByBfsCypher(String graphId, List<String> seedUuids, int depth, int limit);
+
+    // ==================== Episode / Community 搜索（对齐 Python 4 Scope）====================
+
+    /**
+     * Episode 全文搜索（BM25）
+     *
+     * <p>参考 Python：episode_search() - 仅支持 BM25
+     *
+     * @param query 查询文本
+     * @param graphId 图谱 ID
+     * @param limit 返回数量
+     * @return Episode 列表
+     */
+    List<Map<String, Object>> searchEpisodesByFulltext(String query, String graphId, int limit);
+
+    /**
+     * Episode 向量搜索
+     *
+     * @param graphId 图谱 ID
+     * @param embedding 查询向量
+     * @param limit 返回数量
+     * @return Episode 列表
+     */
+    List<Map<String, Object>> searchEpisodesByVector(String graphId, float[] embedding, int limit);
+
+    /**
+     * Community 全文搜索（BM25）
+     *
+     * <p>参考 Python：community_search() - 支持 BM25 + Cosine
+     *
+     * @param query 查询文本
+     * @param graphId 图谱 ID
+     * @param limit 返回数量
+     * @return Community 节点列表
+     */
+    List<Map<String, Object>> searchCommunitiesByFulltext(String query, String graphId, int limit);
+
+    /**
+     * Community 向量搜索
+     *
+     * @param graphId 图谱 ID
+     * @param embedding 查询向量
+     * @param limit 返回数量
+     * @return Community 节点列表
+     */
+    List<Map<String, Object>> searchCommunitiesByVector(String graphId, float[] embedding, int limit);
+
+    // ==================== 向量批量获取（支持 MMR 重排）====================
+
+    /**
+     * 批量获取边的嵌入向量
+     *
+     * <p>参考 Python：get_embeddings_for_nodes/edges()
+     *
+     * @param edgeUuids 边 UUID 列表
+     * @return Map：uuid -> embedding 向量
+     */
+    Map<String, float[]> getEdgeEmbeddings(List<String> edgeUuids);
+
+    /**
+     * 批量获取节点的嵌入向量
+     *
+     * @param nodeUuids 节点 UUID 列表
+     * @return Map：uuid -> embedding 向量
+     */
+    Map<String, float[]> getNodeEmbeddings(List<String> nodeUuids);
 }

@@ -17,6 +17,7 @@
         <module>ontograph-module-system</module>
         <module>ontograph-module-core</module>
         <module>ontograph-server</module>
+        <module>ontograph-api-tester</module>
     </modules>
     
     <properties>
@@ -158,6 +159,13 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+
+            <!-- Caffeine (L1 local cache for search results) -->
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>3.1.8</version>
             </dependency>
 
             <!-- OntoGraph Framework Module (统一模块) -->

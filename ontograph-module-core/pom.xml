@@ -104,6 +104,12 @@
             <type>pom</type>
         </dependency>
 
+        <!-- Caffeine Cache -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
         <!-- RDF4J (RDF Import/Export) -->
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>

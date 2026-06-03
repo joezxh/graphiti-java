@@ -1510,16 +1510,40 @@ git commit -m "feat(batch): complete batch import optimization implementation"
 
 ## 实施顺序
 
-| Task | 名称 | 预计时间 |
-|------|------|---------|
-| **Task 1** | Phase 1 DTOs | 15 min |
-| **Task 2** | GraphNeo4jService UNWIND | 20 min |
-| **Task 3** | DataImportServiceImpl 重写 | 15 min |
-| **Task 4** | 并发 chatBatch | 15 min |
-| **Task 5** | BulkImportTaskService | 25 min |
-| **Task 6** | EmbeddingCacheService | 20 min |
-| **Task 7** | ImportTaskRepository + Controller | 20 min |
-| **Task 8** | DataImportController 改造 | 10 min |
-| **Task 9** | 编译验证 | 10 min |
+| Task | 名称 | 预计时间 | 状态 |
+|------|------|---------|------|
+| **Task 1** | Phase 1 DTOs | 15 min | ✅ 完成 |
+| **Task 2** | GraphNeo4jService UNWIND | 20 min | ✅ 完成 |
+| **Task 3** | DataImportServiceImpl 重写 | 15 min | ⏭ 跳过（由 Task 5 统一编排） |
+| **Task 4** | 并发 chatBatch | 15 min | ✅ 完成 |
+| **Task 5** | BulkImportTaskService | 25 min | ✅ 完成 |
+| **Task 6** | EmbeddingCacheService | 20 min | ✅ 完成 |
+| **Task 7** | ImportTaskRepository + Controller | 20 min | ✅ 完成 |
+| **Task 8** | DataImportController 改造 | 10 min | ✅ 完成 |
+| **Task 9** | 编译验证 | 10 min | ✅ 完成 |
 
 **预计总工时**: ~2.5 小时
+
+---
+
+## 实施记录 (2026-05-26)
+
+### 完成清单
+
+1. **GraphNeo4jService 接口** — 新增 4 个批量方法
+2. **GraphNeo4jServiceImpl** — 实现 `batchCreateEpisodes`、`batchCreateEntities`、`batchCreateRelationships`、`batchAddNodesAndEdges`（UNWIND 单事务）
+3. **OpenAiLlmClientServiceImpl** — 新增 `chatBatchAsync` 带 Semaphore 并发控制
+4. **BulkImportTaskService** — 四阶段编排服务（LLM抽取 → 三层去重 → 向量生成 → Neo4j写入），支持异步执行
+5. **EmbeddingCacheService** — Redis 向量缓存，支持批量读写和失效，ConditionalOnBean Redisson
+6. **ImportTaskRepository** — 内存存储 + 未来可迁移到数据库
+7. **ImportTaskDO** — 任务状态数据对象
+8. **ImportTaskController** — `GET /api/v1/graph/data/task/{taskId}` 任务状态查询
+9. **DataImportController** — `POST /graph/data/batch` 改为立即返回 taskId
+10. **V20260525__add_graph_import_task.sql** — 数据库迁移脚本（参考用）
+
+### 编译结果
+
+```
+BUILD SUCCESS — ontograph-module-core 编译通过
+仅有 1 个无害 deprecation 警告（Redisson 内部 API）
+```
