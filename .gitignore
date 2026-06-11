@@ -8,3 +8,5 @@ target
 /ontograph-web/dist/
 /ontograph-web/node_modules/
 /ontograph-server/src/main/resources/static/
+/node_modules/
+/package-lock.json
