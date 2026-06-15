@@ -1,24 +1,24 @@
-﻿# 框架模块 (graphiti-framework)
+﻿# 框架模块 (ontograph-framework)
 
 <!--<cite>
 **本文引用的文件**
-- [graphiti-framework/pom.xml](file://graphiti-framework/pom.xml)
+- [ontograph-framework/pom.xml](file://ontograph-framework/pom.xml)
 - [graphiti-common/pom.xml](file://graphiti-common/pom.xml)
-- [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java)
-- [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java)
-- [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java)
-- [ResultCode.java](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java)
-- [SecurityConfig.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java)
-- [JwtAuthenticationFilter.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java)
-- [JwtTokenProvider.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java)
-- [UserContext.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/util/UserContext.java)
-- [graphiti-spring-boot-starter-mybatis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml)
-- [graphiti-spring-boot-starter-redis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
-- [AuthController.java](file://graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java)
-- [AuthServiceImpl.java](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java)
-- [UserMapper.java](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java)
+- [CommonResult.java](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java)
+- [GlobalExceptionHandler.java](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java)
+- [BusinessException.java](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java)
+- [ResultCode.java](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java)
+- [SecurityConfig.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java)
+- [JwtAuthenticationFilter.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java)
+- [JwtTokenProvider.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java)
+- [UserContext.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/util/UserContext.java)
+- [graphiti-spring-boot-starter-mybatis/pom.xml](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml)
+- [graphiti-spring-boot-starter-redis/pom.xml](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
+- [AuthController.java](file://ontograph-module-system/src/main/java/com/raphiti/system/controller/AuthController.java)
+- [AuthServiceImpl.java](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java)
+- [UserMapper.java](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java)
 </cite>-->
 
 ## 目录
@@ -34,7 +34,7 @@
 10. [附录](#附录)
 
 ## 引言
-本文件面向Graphiti-Java框架模块，聚焦以下子系统的深入解析与使用指南：
+本文件面向OntoGraph框架模块，聚焦以下子系统的深入解析与使用指南：
 - graphiti-common通用组件：统一响应封装、全局异常处理、业务异常定义与返回码体系
 - graphiti-spring-boot-starter-security安全框架：JWT认证机制、用户上下文管理、安全配置
 - graphiti-spring-boot-starter-mybatis数据访问层：MyBatis-Plus集成、动态数据源配置、通用Mapper设计
@@ -42,21 +42,21 @@
 同时提供接口设计、配置选项、扩展点与最佳实践，并以图示与路径指引帮助快速上手。
 
 ## 项目结构
-graphiti-framework作为聚合模块，按“技术组件”拆分为多个starter子模块，采用“命名规范：graphiti-spring-boot-starter-*”的组织方式，便于按需引入与扩展。
+ontograph-framework作为聚合模块，按“技术组件”拆分为多个starter子模块，采用“命名规范：graphiti-spring-boot-starter-*”的组织方式，便于按需引入与扩展。
 
 ```mermaid
 graph TB
-A["graphiti-framework<br/>聚合模块"] --> B["graphiti-common<br/>公共模块"]
+A["ontograph-framework<br/>聚合模块"] --> B["graphiti-common<br/>公共模块"]
 A --> C["graphiti-spring-boot-starter-security<br/>安全模块"]
 A --> D["graphiti-spring-boot-starter-mybatis<br/>MyBatis模块"]
 A --> E["graphiti-spring-boot-starter-redis<br/>Redis模块"]
 ```
 
 图表来源
-- [graphiti-framework/pom.xml:22-27](file://graphiti-framework/pom.xml#L22-L27)
+- [ontograph-framework/pom.xml:22-27](file://ontograph-framework/pom.xml#L22-L27)
 
 章节来源
-- [graphiti-framework/pom.xml:1-29](file://graphiti-framework/pom.xml#L1-L29)
+- [ontograph-framework/pom.xml:1-29](file://ontograph-framework/pom.xml#L1-L29)
 
 ## 核心组件
 本节概述graphiti-common公共模块的核心能力，包括统一响应、全局异常处理与业务异常体系，为上层模块提供一致的输出与错误语义。
@@ -73,10 +73,10 @@ A --> E["graphiti-spring-boot-starter-redis<br/>Redis模块"]
   - ResultCode定义标准HTTP语义码与Graphiti业务码区间，便于扩展与维护
 
 章节来源
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
-- [BusinessException.java:10-32](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java#L10-L32)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java#L7-L22)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [BusinessException.java:10-32](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java#L10-L32)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java#L7-L22)
 
 ## 架构总览
 下图展示从客户端到控制器、再到安全过滤链与数据访问的整体调用路径，突出JWT认证、统一响应与异常处理的关键节点。
@@ -96,14 +96,14 @@ API --> Ex
 ```
 
 图表来源
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java#L16-L54)
-- [SecurityConfig.java:32-137](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java#L32-L137)
-- [JwtAuthenticationFilter.java:23-60](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java#L23-L60)
-- [UserContext.java:12-49](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/util/UserContext.java#L12-L49)
-- [AuthServiceImpl.java:18-66](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java#L18-L66)
-- [JwtTokenProvider.java:17-86](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java#L17-L86)
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/raphiti/system/controller/AuthController.java#L16-L54)
+- [SecurityConfig.java:32-137](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java#L32-L137)
+- [JwtAuthenticationFilter.java:23-60](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java#L23-L60)
+- [UserContext.java:12-49](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/util/UserContext.java#L12-L49)
+- [AuthServiceImpl.java:18-66](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java#L18-L66)
+- [JwtTokenProvider.java:17-86](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java#L17-L86)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
 
 ## 详细组件分析
 
@@ -163,16 +163,16 @@ BusinessException --> ResultCode : "默认错误码"
 ```
 
 图表来源
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
-- [BusinessException.java:10-32](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java#L10-L32)
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java#L7-L22)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
+- [BusinessException.java:10-32](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java#L10-L32)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java#L7-L22)
 
 章节来源
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
-- [BusinessException.java:10-32](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java#L10-L32)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java#L7-L22)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/response/CommonResult.java#L13-L67)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [BusinessException.java:10-32](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/BusinessException.java#L10-L32)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/constants/ResultCode.java#L7-L22)
 
 ### graphiti-spring-boot-starter-security安全框架
 - JWT认证机制
@@ -204,9 +204,9 @@ Ctrl-->>Client : CommonResult.success(response)
 ```
 
 图表来源
-- [AuthController.java:26-32](file://graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java#L26-L32)
-- [AuthServiceImpl.java:26-44](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java#L26-L44)
-- [JwtTokenProvider.java:40-53](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java#L40-L53)
+- [AuthController.java:26-32](file://ontograph-module-system/src/main/java/com/raphiti/system/controller/AuthController.java#L26-L32)
+- [AuthServiceImpl.java:26-44](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/AuthServiceImpl.java#L26-L44)
+- [JwtTokenProvider.java:40-53](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java#L40-L53)
 
 ```mermaid
 flowchart TD
@@ -223,13 +223,13 @@ Continue --> End(["完成过滤"])
 ```
 
 图表来源
-- [JwtAuthenticationFilter.java:36-59](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java#L36-L59)
+- [JwtAuthenticationFilter.java:36-59](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java#L36-L59)
 
 章节来源
-- [SecurityConfig.java:32-137](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java#L32-L137)
-- [JwtAuthenticationFilter.java:23-60](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java#L23-L60)
-- [JwtTokenProvider.java:17-86](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java#L17-L86)
-- [UserContext.java:12-49](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/util/UserContext.java#L12-L49)
+- [SecurityConfig.java:32-137](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java#L32-L137)
+- [JwtAuthenticationFilter.java:23-60](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtAuthenticationFilter.java#L23-L60)
+- [JwtTokenProvider.java:17-86](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/jwt/JwtTokenProvider.java#L17-L86)
+- [UserContext.java:12-49](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/util/UserContext.java#L12-L49)
 
 ### graphiti-spring-boot-starter-mybatis数据访问层
 - MyBatis-Plus集成
@@ -256,12 +256,12 @@ UserMapper --> UserDO : "操作实体"
 ```
 
 图表来源
-- [UserMapper.java:10-12](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java#L10-L12)
+- [UserMapper.java:10-12](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java#L10-L12)
 
 章节来源
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
-- [UserMapper.java:10-12](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java#L10-L12)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
+- [UserMapper.java:10-12](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/UserMapper.java#L10-L12)
 
 ### graphiti-spring-boot-starter-redis缓存框架
 - Redisson集成
@@ -273,8 +273,8 @@ UserMapper --> UserDO : "操作实体"
   - 使用Redisson提供的RLock实现可重入分布式锁，保障并发安全
 
 章节来源
-- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
-- [application-dev.yml:672-676](file://graphiti-server/src/main/resources/application-dev.yml#L672-L676)
+- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
+- [application-dev.yml:672-676](file://ontograph-server/src/main/resources/application-dev.yml#L672-L676)
 
 ## 依赖分析
 - 模块内聚与耦合
@@ -304,13 +304,13 @@ Redis --> JSR310["Jackson JSR310"]
 
 图表来源
 - [graphiti-common/pom.xml:16-38](file://graphiti-common/pom.xml#L16-L38)
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
 
 章节来源
 - [graphiti-common/pom.xml:16-38](file://graphiti-common/pom.xml#L16-L38)
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
 
 ## 性能考虑
 - 安全过滤链
@@ -338,12 +338,12 @@ Redis --> JSR310["Jackson JSR310"]
   - 校验Token签名算法与密钥长度
 
 章节来源
-- [SecurityConfig.java:84-113](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java#L84-L113)
-- [GlobalExceptionHandler.java:37-72](file://graphiti-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L37-L72)
-- [application.yml:25-34](file://graphiti-server/src/main/resources/application.yml#L25-L34)
+- [SecurityConfig.java:84-113](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/raphiti/framework/security/config/SecurityConfig.java#L84-L113)
+- [GlobalExceptionHandler.java:37-72](file://ontograph-framework/graphiti-common/src/main/java/com/raphiti/common/exception/GlobalExceptionHandler.java#L37-L72)
+- [application.yml:25-34](file://ontograph-server/src/main/resources/application.yml#L25-L34)
 
 ## 结论
-graphiti-framework通过模块化设计实现了“约定优先”的开发体验：统一响应与异常处理降低了沟通成本；JWT安全链路提供了无状态认证能力；MyBatis-Plus与动态数据源满足多数据源场景；Redisson与Spring Cache为高并发与分布式场景提供可靠支撑。建议在实际项目中遵循本文档的接口设计、配置选项与最佳实践，确保系统的一致性与可维护性。
+ontograph-framework通过模块化设计实现了“约定优先”的开发体验：统一响应与异常处理降低了沟通成本；JWT安全链路提供了无状态认证能力；MyBatis-Plus与动态数据源满足多数据源场景；Redisson与Spring Cache为高并发与分布式场景提供可靠支撑。建议在实际项目中遵循本文档的接口设计、配置选项与最佳实践，确保系统的一致性与可维护性。
 
 ## 附录
 - 配置参考
@@ -355,5 +355,5 @@ graphiti-framework通过模块化设计实现了“约定优先”的开发体�
   - 在DAO层继承BaseMapper即可获得通用CRUD能力
 
 章节来源
-- [application.yml:25-67](file://graphiti-server/src/main/resources/application.yml#L25-L67)
-- [application-dev.yml:487-676](file://graphiti-server/src/main/resources/application-dev.yml#L487-L676)
+- [application.yml:25-67](file://ontograph-server/src/main/resources/application.yml#L25-L67)
+- [application-dev.yml:487-676](file://ontograph-server/src/main/resources/application-dev.yml#L487-L676)

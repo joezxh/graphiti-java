@@ -74,9 +74,9 @@
 
 | 文件 | 改动内容 |
 |------|---------|
-| `graphiti-web/package.json` | name: `graphiti-web` → `ontograph-web` |
-| `graphiti-web/vite.config.ts` | 如有品牌引用则更新 |
-| `graphiti-web/.env.*` | 环境变量前缀 |
+| `ontograph-web/package.json` | name: `ontograph-web` → `ontograph-web` |
+| `ontograph-web/vite.config.ts` | 如有品牌引用则更新 |
+| `ontograph-web/.env.*` | 环境变量前缀 |
 
 ### 3.5 前端代码层
 

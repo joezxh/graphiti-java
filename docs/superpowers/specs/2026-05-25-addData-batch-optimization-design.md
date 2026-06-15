@@ -5,7 +5,7 @@
 | 版本 | v1.0 |
 | 日期 | 2026-05-25 |
 | 状态 | 待用户评审 |
-| 适用范围 | graphiti-java `DataImportServiceImpl` / `GraphNeo4jService` |
+| 适用范围 | ontograph-java `DataImportServiceImpl` / `GraphNeo4jService` |
 
 ---
 
@@ -515,4 +515,4 @@ public BulkImportResult aggregateResults(List<ChunkResult> chunkResults) {
 
 ---
 
-*本文档由 Claude Code 生成，基于 addData_pipeline_analysis_v2.md 技术分析，适用于 graphiti-java 批量导入优化实现。*
+*本文档由 Claude Code 生成，基于 addData_pipeline_analysis_v2.md 技术分析，适用于 ontograph-java 批量导入优化实现。*

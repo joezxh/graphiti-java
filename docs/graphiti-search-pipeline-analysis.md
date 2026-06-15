@@ -1,6 +1,6 @@
 # 图谱检索 Pipeline 对比分析报告
 
-**项目**: Python `graphiti` vs Java `graphiti-java`
+**项目**: Python `graphiti` vs Java `ontograph-java`
 **日期**: 2026-05-26
 **范围**: Search Pipeline 全链路（查询入口 → 结果返回）
 **用途**: 核心技术文档归档、研发团队代码评审
@@ -24,7 +24,7 @@
 
 ## 1. 整体架构对比
 
-| 维度 | Python (graphiti) | Java (graphiti-java) |
+| 维度 | Python (graphiti) | Java (ontograph-java) |
 |------|-------------------|---------------------|
 | **框架** | FastAPI + ZepGraphitiDep | Spring Boot + Controller-Service-DAO |
 | **数据库** | Neo4j 5.26+ (向量索引 + 全文索引) | Neo4j (向量索引 + 全文索引) |
@@ -680,7 +680,7 @@ sequenceDiagram
 
 ## 5. 功能特性逐项对比
 
-| # | 特性 | Python graphiti | Java graphiti-java | 差异分析 |
+| # | 特性 | Python graphiti | Java ontograph-java | 差异分析 |
 |---|------|-----------------|---------------------|---------|
 | 1 | BM25 全文搜索 | ✅ Edge + Node + Episode + Community | ✅ Edge + Node | Java 缺少 Episode/Community 搜索 |
 | 2 | 向量相似度搜索 | ✅ Edge + Node + Community | ✅ Edge + Node | 对齐 |

@@ -2,15 +2,15 @@
 
 <!--<cite>
 **本文引用的文件**
-- [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
-- [ResultCode.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
-- [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
-- [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
-- [pom.xml（graphiti-common）](file://graphiti-framework/graphiti-common/pom.xml)
-- [pom.xml（graphiti-framework）](file://graphiti-framework/pom.xml)
-- [CustomInstructionController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java)
-- [DataImportServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java)
-- [UserContext.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java)
+- [CommonResult.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
+- [ResultCode.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
+- [BusinessException.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
+- [GlobalExceptionHandler.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
+- [pom.xml（graphiti-common）](file://ontograph-framework/graphiti-common/pom.xml)
+- [pom.xml（ontograph-framework）](file://ontograph-framework/pom.xml)
+- [CustomInstructionController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java)
+- [DataImportServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java)
+- [UserContext.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java)
 </cite>-->
 
 ## 目录
@@ -33,13 +33,13 @@ graphiti-common 是框架层的一个子模块，提供统一响应、错误码�
 
 ```mermaid
 graph TB
-subgraph "graphiti-framework"
+subgraph "ontograph-framework"
 A["graphiti-common<br/>统一响应/异常/常量"]
 B["graphiti-spring-boot-starter-security<br/>安全工具"]
 C["graphiti-spring-boot-starter-mybatis<br/>MyBatis 启动器"]
 D["graphiti-spring-boot-starter-redis<br/>Redis 启动器"]
 end
-subgraph "graphiti-module-core"
+subgraph "ontograph-module-core"
 E["控制器与服务层<br/>使用统一响应/异常"]
 end
 A --> E
@@ -47,10 +47,10 @@ B --> E
 ```
 
 图表来源
-- [pom.xml（graphiti-framework）:22-27](file://graphiti-framework/pom.xml#L22-L27)
+- [pom.xml（ontograph-framework）:22-27](file://ontograph-framework/pom.xml#L22-L27)
 
 章节来源
-- [pom.xml（graphiti-framework）:1-29](file://graphiti-framework/pom.xml#L1-L29)
+- [pom.xml（ontograph-framework）:1-29](file://ontograph-framework/pom.xml#L1-L29)
 
 ## 核心组件
 - 统一响应封装：CommonResult<T> 提供统一的成功/错误响应结构，内置时间戳与静态工厂方法，便于在控制器中快速返回标准格式。
@@ -59,10 +59,10 @@ B --> E
 - 全局异常处理：GlobalExceptionHandler 使用 Spring MVC 的@RestControllerAdvice 统一捕获各类异常，输出统一响应格式，保证对外接口的一致性。
 
 章节来源
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L13-L67)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
-- [BusinessException.java:10-32](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L32)
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L13-L67)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [BusinessException.java:10-32](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L32)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
 
 ## 架构总览
 统一响应与异常处理在调用链中的位置如下：
@@ -94,9 +94,9 @@ end
 ```
 
 图表来源
-- [GlobalExceptionHandler.java:26-72](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L72)
-- [CommonResult.java:39-66](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L39-L66)
-- [BusinessException.java:20-31](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L20-L31)
+- [GlobalExceptionHandler.java:26-72](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L72)
+- [CommonResult.java:39-66](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L39-L66)
+- [BusinessException.java:20-31](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L20-L31)
 
 ## 组件详解
 
@@ -115,7 +115,7 @@ end
   - 当需要返回空数据但成功时，使用无参 success()。
 
 章节来源
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L13-L67)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L13-L67)
 
 ### 错误码常量：ResultCode
 - 设计模式
@@ -131,7 +131,7 @@ end
   - 自定义业务错误码建议从 1001 起步，避免与标准码冲突。
 
 章节来源
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
 
 ### 业务异常：BusinessException
 - 设计要点
@@ -143,7 +143,7 @@ end
   - 与 ResultCode 中的业务错误码配合使用。
 
 章节来源
-- [BusinessException.java:10-32](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L32)
+- [BusinessException.java:10-32](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L32)
 
 ### 全局异常处理器：GlobalExceptionHandler
 - 处理范围
@@ -157,7 +157,7 @@ end
   - 通过 CommonResult.error(...) 输出标准错误响应。
 
 章节来源
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
 
 ### 类关系图
 ```mermaid
@@ -202,10 +202,10 @@ GlobalExceptionHandler --> BusinessException : "捕获"
 ```
 
 图表来源
-- [CommonResult.java:13-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L13-L67)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
-- [BusinessException.java:10-32](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L32)
-- [GlobalExceptionHandler.java:17-73](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
+- [CommonResult.java:13-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L13-L67)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [BusinessException.java:10-32](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L32)
+- [GlobalExceptionHandler.java:17-73](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L73)
 
 ## 依赖关系分析
 - graphiti-common 依赖
@@ -215,7 +215,7 @@ GlobalExceptionHandler --> BusinessException : "捕获"
   - hutool：常用工具库。
   - lombok：简化 POJO 与异常类的样板代码。
 - 模块聚合
-  - graphiti-framework 作为聚合模块，管理 graphiti-common 与其他启动器模块。
+  - ontograph-framework 作为聚合模块，管理 graphiti-common 与其他启动器模块。
 
 ```mermaid
 graph LR
@@ -235,11 +235,11 @@ F --> E
 ```
 
 图表来源
-- [pom.xml（graphiti-common）:16-38](file://graphiti-framework/graphiti-common/pom.xml#L16-L38)
+- [pom.xml（graphiti-common）:16-38](file://ontograph-framework/graphiti-common/pom.xml#L16-L38)
 
 章节来源
-- [pom.xml（graphiti-common）:1-40](file://graphiti-framework/graphiti-common/pom.xml#L1-L40)
-- [pom.xml（graphiti-framework）:22-27](file://graphiti-framework/pom.xml#L22-L27)
+- [pom.xml（graphiti-common）:1-40](file://ontograph-framework/graphiti-common/pom.xml#L1-L40)
+- [pom.xml（ontograph-framework）:22-27](file://ontograph-framework/pom.xml#L22-L27)
 
 ## 性能与可维护性
 - 性能考量
@@ -262,7 +262,7 @@ F --> E
   - 查看日志中错误码与消息是否符合预期。
 
 章节来源
-- [GlobalExceptionHandler.java:26-72](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L72)
+- [GlobalExceptionHandler.java:26-72](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L72)
 
 ## 结论
 graphiti-common 通过统一响应、标准错误码与全局异常处理，实现了对外接口的一致性与可维护性。配合 ResultCode 与 BusinessException，开发者可以在服务层专注业务逻辑，在控制器层专注数据封装，最终形成稳定、易扩展的后端架构。
@@ -271,44 +271,44 @@ graphiti-common 通过统一响应、标准错误码与全局异常处理，实�
 
 ### 在控制器中返回标准响应
 - 成功响应（有数据）
-  - 示例路径：[CustomInstructionController.java:30-35](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java#L30-L35)
+  - 示例路径：[CustomInstructionController.java:30-35](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java#L30-L35)
 - 成功响应（无数据）
-  - 示例路径：[CustomInstructionController.java:48-52](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java#L48-L52)
+  - 示例路径：[CustomInstructionController.java:48-52](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java#L48-L52)
 - 显式错误响应
-  - 示例路径：[DataImportServiceImpl.java:267-269](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L267-L269)
+  - 示例路径：[DataImportServiceImpl.java:267-269](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L267-L269)
 
 章节来源
-- [CustomInstructionController.java:30-52](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java#L30-L52)
-- [DataImportServiceImpl.java:267-269](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L267-L269)
+- [CustomInstructionController.java:30-52](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/CustomInstructionController.java#L30-L52)
+- [DataImportServiceImpl.java:267-269](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L267-L269)
 
 ### 抛出与捕获业务异常
 - 抛出业务异常（服务层）
-  - 示例路径：[DataImportServiceImpl.java:286-288](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L286-L288)
-  - 示例路径：[DataImportServiceImpl.java:309-311](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L309-L311)
+  - 示例路径：[DataImportServiceImpl.java:286-288](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L286-L288)
+  - 示例路径：[DataImportServiceImpl.java:309-311](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L309-L311)
 - 全局捕获与统一响应
-  - 示例路径：[GlobalExceptionHandler.java:26-30](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L30)
+  - 示例路径：[GlobalExceptionHandler.java:26-30](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L30)
 
 章节来源
-- [DataImportServiceImpl.java:286-288](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L286-L288)
-- [DataImportServiceImpl.java:309-311](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L309-L311)
-- [GlobalExceptionHandler.java:26-30](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L30)
+- [DataImportServiceImpl.java:286-288](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L286-L288)
+- [DataImportServiceImpl.java:309-311](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java#L309-L311)
+- [GlobalExceptionHandler.java:26-30](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L30)
 
 ### 错误码使用规范
 - 优先从 ResultCode 引用标准码，避免硬编码。
 - 业务错误码建议从 1001 起步，预留标准码空间。
-- 示例路径：[ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- 示例路径：[ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
 
 章节来源
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
 
 ### 安全上下文中的业务异常
-- 示例路径：[UserContext.java:21-21](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L21-L21)，[UserContext.java:30-30](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L30-L30)，[UserContext.java:40-40](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L40-L40)，[UserContext.java:46-46](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L46-L46)
+- 示例路径：[UserContext.java:21-21](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L21-L21)，[UserContext.java:30-30](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L30-L30)，[UserContext.java:40-40](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L40-L40)，[UserContext.java:46-46](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L46-L46)
 
 章节来源
-- [UserContext.java:21-21](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L21-L21)
-- [UserContext.java:30-30](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L30-L30)
-- [UserContext.java:40-40](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L40-L40)
-- [UserContext.java:46-46](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L46-L46)
+- [UserContext.java:21-21](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L21-L21)
+- [UserContext.java:30-30](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L30-L30)
+- [UserContext.java:40-40](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L40-L40)
+- [UserContext.java:46-46](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/util/UserContext.java#L46-L46)
 
 ### 最佳实践清单
 - 控制器层一律使用 CommonResult.success()/error() 返回结果。

@@ -165,7 +165,7 @@ MATCH (e:Episode) RETURN count(e) as total, count(e.process_type) as with_proces
 
 ### T3. 异常类
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/exception/CommunityMetadataCompensationException.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/exception/CommunityMetadataCompensationException.java`
 
 ```java
 public class CommunityMetadataCompensationException extends RuntimeException {
@@ -183,7 +183,7 @@ public class CommunityMetadataCompensationException extends RuntimeException {
 
 #### T4a. OntCommunityTypeDO — 新增字段 + 通用化注释
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntCommunityTypeDO.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntCommunityTypeDO.java`
 
 ```java
 // 表注释改为：定义知识图谱中社区的分类体系，支持多领域通用分类
@@ -203,7 +203,7 @@ private String scenarioType;    // 场景类型（原 practice_type）
 
 #### T4b. OntCommunityTypeReqVO — 新增字段
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntCommunityTypeReqVO.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntCommunityTypeReqVO.java`
 
 新增：`communityUuid`、`graphId`、`region`、`scenarioType`、`domainType`（对应 `category=domain` 时的 typeCode）
 
@@ -221,7 +221,7 @@ private String scenarioType;    // 场景类型（原 practice_type）
 
 #### T5a. CommunityMetadataMapper（新接口）
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/CommunityMetadataMapper.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/CommunityMetadataMapper.java`
 
 ```java
 @Mapper
@@ -254,7 +254,7 @@ public interface CommunityMetadataMapper {
 
 #### T5b. OntCommunityTypeMapper 补充方法
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntCommunityTypeMapper.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntCommunityTypeMapper.java`
 
 补充 `selectActiveByDefinitionId`，用于 `getCommunityTypeTree`（前端下拉数据源）。
 
@@ -262,7 +262,7 @@ public interface CommunityMetadataMapper {
 
 ### T6. DomainInferenceService（新增）
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/DomainInferenceService.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/DomainInferenceService.java`
 
 ```java
 public interface DomainInferenceService {
@@ -295,7 +295,7 @@ public class DomainInferenceResult {
 
 ### T7. CommunityServiceImpl 核心改造
 
-**文件**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
+**文件**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
 
 注入新依赖：
 - `OntDefinitionMapper`（graphId → definitionId）
@@ -435,7 +435,7 @@ public void removeCommunities(String graphId) {
 
 ### T8. 前端改造
 
-**文件**：`graphiti-web/src/views/data/community-episode.vue`
+**文件**：`ontograph-web/src/views/data/community-episode.vue`
 
 1. 下拉选项从 `ont_community_type` API 实时拉取（按 `category` 过滤 domain / region / scenario）
 2. TypeScript 类型：`legalDomain` → `domainType`，`jurisdiction` → `region`，`practiceType` → `scenarioType`
@@ -521,6 +521,6 @@ Phase 5: 收尾
 | `service/DomainInferenceService.java` | 新增 |
 | `service/impl/DomainInferenceServiceImpl.java` | 新增 |
 | `service/impl/CommunityServiceImpl.java` | 修改 |
-| `graphiti-web/src/views/data/community-episode.vue` | 修改 |
+| `ontograph-web/src/views/data/community-episode.vue` | 修改 |
 | `docs/legal_graph.md` | 修改 |
 | `docs/ontology.md` | 修改 |

@@ -510,7 +510,7 @@ const handleEpisodeTypeSelect = async (payload: { typeId: number; typeCode: stri
 ## 十、前端 API 封装
 
 ```typescript
-// graphiti-web/src/api/metadata.ts
+// ontograph-web/src/api/metadata.ts
 export const episodeTypeApi = {
   list: (graphId: string, definitionId: number, processType?: string) =>
     request.get<OntEpisodeTypeVO[]>(`/ontology/${graphId}/episode-types`, { params: { definitionId, ...(processType ? { processType } : {}) } }),
@@ -552,24 +552,24 @@ export const episodeTypeApi = {
 
 ### 需新建的文件
 
-1. `graphiti-web/src/components/Ontology/EpisodeTypeExplorer.vue`
-2. `graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue`
-3. `graphiti-web/src/components/Ontology/EpisodeTypeEditModal.vue`
+1. `ontograph-web/src/components/Ontology/EpisodeTypeExplorer.vue`
+2. `ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue`
+3. `ontograph-web/src/components/Ontology/EpisodeTypeEditModal.vue`
 4. `sql/migrations/v005_episode_type_hierarchy.sql`
 
 ### 需修改的文件
 
-1. `graphiti-web/src/views/graph/ide.vue` — 集成新组件
-2. `graphiti-web/src/api/metadata.ts` — 扩展 episodeTypeApi
-3. `graphiti-module-core/.../OntEpisodeTypeDO.java` — 重构字段
-4. `graphiti-module-core/.../OntEpisodeTypeMapper.java` — 扩展方法
-5. `graphiti-module-core/.../OntEpisodeTypeReqVO.java` — 删除旧字段，新增层级字段
-6. `graphiti-module-core/.../OntEpisodeTypeRespVO.java` — 同上
-7. `graphiti-module-core/.../OntMetadataController.java` — 扩展接口
-8. `graphiti-module-core/.../OntMetadataService.java` — 扩展方法
-9. `graphiti-module-core/.../OntMetadataServiceImpl.java` — 实现新业务逻辑
-10. `graphiti-module-core/.../GraphIDEController.java` — 新增可视化接口
+1. `ontograph-web/src/views/graph/ide.vue` — 集成新组件
+2. `ontograph-web/src/api/metadata.ts` — 扩展 episodeTypeApi
+3. `ontograph-module-core/.../OntEpisodeTypeDO.java` — 重构字段
+4. `ontograph-module-core/.../OntEpisodeTypeMapper.java` — 扩展方法
+5. `ontograph-module-core/.../OntEpisodeTypeReqVO.java` — 删除旧字段，新增层级字段
+6. `ontograph-module-core/.../OntEpisodeTypeRespVO.java` — 同上
+7. `ontograph-module-core/.../OntMetadataController.java` — 扩展接口
+8. `ontograph-module-core/.../OntMetadataService.java` — 扩展方法
+9. `ontograph-module-core/.../OntMetadataServiceImpl.java` — 实现新业务逻辑
+10. `ontograph-module-core/.../GraphIDEController.java` — 新增可视化接口
 
 ### 可删除的文件
 
-1. `graphiti-web/src/components/Ontology/EpisodeExplorer.vue` — 被 EpisodeTypeExplorer 替代
+1. `ontograph-web/src/components/Ontology/EpisodeExplorer.vue` — 被 EpisodeTypeExplorer 替代

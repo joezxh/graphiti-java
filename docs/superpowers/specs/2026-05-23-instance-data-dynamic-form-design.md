@@ -230,18 +230,18 @@ graphApi.updateNode（保存到后端）
 
 ### 新建文件
 
-1. `graphiti-web/src/composables/usePropertyType.ts`
-2. `graphiti-web/src/utils/getPropertyRules.ts`
-3. `graphiti-web/src/components/Ontology/PropertyValueCell.vue`
+1. `ontograph-web/src/composables/usePropertyType.ts`
+2. `ontograph-web/src/utils/getPropertyRules.ts`
+3. `ontograph-web/src/components/Ontology/PropertyValueCell.vue`
 
 ### 修改文件
 
-1. `graphiti-web/src/components/Ontology/InstanceDataTable.vue`
+1. `ontograph-web/src/components/Ontology/InstanceDataTable.vue`
    - 动态列生成逻辑
    - bodyCell 插槽（属性列使用 PropertyValueCell）
    - 查看详情 Drawer 格式化显示
 
-2. `graphiti-web/src/components/Ontology/InstanceForm.vue`
+2. `ontograph-web/src/components/Ontology/InstanceForm.vue`
    - 导入共享的类型判断函数
    - 复用共享的校验规则生成函数
    - 数据类型解析和序列化逻辑

@@ -400,7 +400,7 @@
 
 ### 5.2 DomainInferenceService
 
-**位置**：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/DomainInferenceService.java`
+**位置**：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/DomainInferenceService.java`
 
 **接口设计**：
 
@@ -580,7 +580,7 @@ Boolean isReviewStage = (Boolean) episodeData.getOrDefault("is_review_stage", fa
 
 ### 8.1 TypeScript 类型更新
 
-**文件**：`graphiti-web/src/types/legal-graph-v3.ts`
+**文件**：`ontograph-web/src/types/legal-graph-v3.ts`
 
 ```typescript
 // CommunityV3
@@ -601,7 +601,7 @@ interface EpisodeV3 {
 
 ### 8.2 下拉选项数据来源
 
-**文件**：`graphiti-web/src/views/data/community-episode.vue`
+**文件**：`ontograph-web/src/views/data/community-episode.vue`
 
 ```typescript
 // 从 ont_community_type 表实时拉取

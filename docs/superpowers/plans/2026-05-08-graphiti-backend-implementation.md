@@ -4,7 +4,7 @@
 
 **Goal:** 完成 ontograph-java 后端服务开发，包括 Maven 多模块项目、数据库设计与初始化、用户认证、图谱管理、本体管理、数据导入、检索服务等核心功能，与前端控制台集成。
 
-**Architecture:** Maven 多模块架构 - graphiti-dependencies (依赖管理) → graphiti-framework (common/security/mybatis/redis/web) → graphiti-module-system (用户权限) → graphiti-module-core (核心业务) → graphiti-server (启动模块)
+**Architecture:** Maven 多模块架构 - graphiti-dependencies (依赖管理) → ontograph-framework (common/security/mybatis/redis/web) → ontograph-module-system (用户权限) → ontograph-module-core (核心业务) → ontograph-server (启动模块)
 
 **Tech Stack:** Java 21, Spring Boot 3.5.5, MyBatis-Plus 3.5.x, Neo4j Driver 5.x, Spring Data Redis, Spring Security 6.x, JWT, Spring AI 1.1.2
 
@@ -16,15 +16,15 @@
 ontograph-java/
 ├── pom.xml                           # 父 POM
 ├── graphiti-dependencies/pom.xml      # 依赖管理
-├── graphiti-framework/
+├── ontograph-framework/
 │   ├── graphiti-common/             # 公共模块
 │   ├── graphiti-spring-boot-starter-security/   # 安全
 │   ├── graphiti-spring-boot-starter-mybatis/    # MyBatis
 │   ├── graphiti-spring-boot-starter-redis/     # Redis
 │   └── graphiti-spring-boot-starter-web/       # Web
-├── graphiti-module-system/           # 系统模块
-├── graphiti-module-core/             # 核心业务模块
-├── graphiti-server/                  # 启动模块
+├── ontograph-module-system/           # 系统模块
+├── ontograph-module-core/             # 核心业务模块
+├── ontograph-server/                  # 启动模块
 └── sql/                             # 数据库脚本
     ├── mysql/schema.sql
     ├── mysql/init-data.sql
@@ -57,10 +57,10 @@ ontograph-java/
     
     <modules>
         <module>graphiti-dependencies</module>
-        <module>graphiti-framework</module>
-        <module>graphiti-module-system</module>
-        <module>graphiti-module-core</module>
-        <module>graphiti-server</module>
+        <module>ontograph-framework</module>
+        <module>ontograph-module-system</module>
+        <module>ontograph-module-core</module>
+        <module>ontograph-server</module>
     </modules>
     
     <properties>
@@ -185,10 +185,10 @@ git commit -m "feat: add parent POM and dependencies management"
 ### Task 2: 创建 graphiti-common 公共模块
 
 **Files:**
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-common\pom.xml`
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-common\src\main\java\com\graphiti\common\constants\ResultCode.java`
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-common\src\main\java\com\graphiti\common\response\CommonResult.java`
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-common\src\main\java\com\graphiti\common\exception\GlobalExceptionHandler.java`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-common\pom.xml`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-common\src\main\java\com\graphiti\common\constants\ResultCode.java`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-common\src\main\java\com\graphiti\common\response\CommonResult.java`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-common\src\main\java\com\graphiti\common\exception\GlobalExceptionHandler.java`
 
 - [ ] **Step 1: 创建 common 模块 POM**
 
@@ -333,7 +333,7 @@ public class GlobalExceptionHandler {
 - [ ] **Step 5: 提交**
 
 ```bash
-git add graphiti-framework/graphiti-common/
+git add ontograph-framework/graphiti-common/
 git commit -m "feat: add graphiti-common module"
 ```
 
@@ -342,9 +342,9 @@ git commit -m "feat: add graphiti-common module"
 ### Task 3: 创建安全模块 (JWT + Spring Security)
 
 **Files:**
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-spring-boot-starter-security\pom.xml`
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-spring-boot-starter-security\src\main\java\com\graphiti\framework\security\jwt\JwtTokenProvider.java`
-- Create: `d:\projects\ontograph-java\graphiti-framework\graphiti-spring-boot-starter-security\src\main\java\com\graphiti\framework\security\config\SecurityConfig.java`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-spring-boot-starter-security\pom.xml`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-spring-boot-starter-security\src\main\java\com\graphiti\framework\security\jwt\JwtTokenProvider.java`
+- Create: `d:\projects\ontograph-java\ontograph-framework\graphiti-spring-boot-starter-security\src\main\java\com\graphiti\framework\security\config\SecurityConfig.java`
 
 - [ ] **Step 1: 创建安全模块 POM** (参考 Task 2 格式，添加 spring-boot-starter-security 和 jjwt 依赖)
 
@@ -478,7 +478,7 @@ public class SecurityConfig {
 - [ ] **Step 4: 提交**
 
 ```bash
-git add graphiti-framework/graphiti-spring-boot-starter-security/
+git add ontograph-framework/graphiti-spring-boot-starter-security/
 git commit -m "feat: add security module with JWT support"
 ```
 
@@ -599,13 +599,13 @@ git commit -m "feat: add database schema and initialization scripts"
 
 ---
 
-### Task 5: 创建 graphiti-module-system 系统模块
+### Task 5: 创建 ontograph-module-system 系统模块
 
 **Files:**
-- Create: `d:\projects\ontograph-java\graphiti-module-system\pom.xml`
-- Create: `d:\projects\ontograph-java\graphiti-module-system\src\main\java\com\graphiti\system\controller\AuthController.java`
-- Create: `d:\projects\ontograph-java\graphiti-module-system\src\main\java\com\graphiti\system\service\AuthService.java`
-- Create: `d:\projects\ontograph-java\graphiti-module-system\src\main\java\com\graphiti\system\service\impl\AuthServiceImpl.java`
+- Create: `d:\projects\ontograph-java\ontograph-module-system\pom.xml`
+- Create: `d:\projects\ontograph-java\ontograph-module-system\src\main\java\com\graphiti\system\controller\AuthController.java`
+- Create: `d:\projects\ontograph-java\ontograph-module-system\src\main\java\com\graphiti\system\service\AuthService.java`
+- Create: `d:\projects\ontograph-java\ontograph-module-system\src\main\java\com\graphiti\system\service\impl\AuthServiceImpl.java`
 
 - [ ] **Step 1: 创建系统模块 POM** (添加 graphiti-common, starter-mybatis, starter-security, starter-redis 依赖)
 
@@ -698,20 +698,20 @@ public class AuthServiceImpl implements AuthService {
 - [ ] **Step 4: 提交**
 
 ```bash
-git add graphiti-module-system/
+git add ontograph-module-system/
 git commit -m "feat: add system module with auth controller and service"
 ```
 
 ---
 
-### Task 6: 创建 graphiti-server 启动模块
+### Task 6: 创建 ontograph-server 启动模块
 
 **Files:**
-- Create: `d:\projects\ontograph-java\graphiti-server\pom.xml`
-- Create: `d:\projects\ontograph-java\graphiti-server\src\main\java\com\graphiti\GraphitiApplication.java`
-- Create: `d:\projects\ontograph-java\graphiti-server\src\main\resources\application.yml`
+- Create: `d:\projects\ontograph-java\ontograph-server\pom.xml`
+- Create: `d:\projects\ontograph-java\ontograph-server\src\main\java\com\graphiti\GraphitiApplication.java`
+- Create: `d:\projects\ontograph-java\ontograph-server\src\main\resources\application.yml`
 
-- [ ] **Step 1: 创建启动模块 POM** (添加 graphiti-module-system, graphiti-module-core, spring-boot-starter-web 依赖)
+- [ ] **Step 1: 创建启动模块 POM** (添加 ontograph-module-system, ontograph-module-core, spring-boot-starter-web 依赖)
 
 - [ ] **Step 2: 创建启动类**
 
@@ -773,8 +773,8 @@ mvn clean install -DskipTests
 - [ ] **Step 5: 提交**
 
 ```bash
-git add graphiti-server/
-git commit -m "feat: add graphiti-server startup module"
+git add ontograph-server/
+git commit -m "feat: add ontograph-server startup module"
 ```
 
 ---

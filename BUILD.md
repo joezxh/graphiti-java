@@ -1,4 +1,4 @@
-# Graphiti-Java 本地构建说明
+# OntoGraph 本地构建说明
 
 ## 快速开始
 
@@ -17,13 +17,13 @@ chmod +x scripts/build.sh
 
 ```bash
 # 1. 构建前端
-cd graphiti-web
+cd ontograph-web
 pnpm install
 pnpm build
 
 # 2. 拷贝前端产物到后端
-mkdir -p ../graphiti-server/src/main/resources/static
-cp -r dist/* ../graphiti-server/src/main/resources/static/
+mkdir -p ../ontograph-server/src/main/resources/static
+cp -r dist/* ../ontograph-server/src/main/resources/static/
 
 # 3. 构建后端
 cd ..
@@ -40,7 +40,7 @@ docker-compose up -d
 docker-compose up -d
 
 # 查看日志
-docker-compose logs -f graphiti-java
+docker-compose logs -f ontograph-java
 
 # 停止服务
 docker-compose down
@@ -76,7 +76,7 @@ cp .env.example .env
 
 ```bash
 # 清理缓存并重新安装
-cd graphiti-web
+cd ontograph-web
 rm -rf node_modules .pnpm-store
 pnpm install
 pnpm build
@@ -97,7 +97,7 @@ mvn clean package -DskipTests
 
 ```bash
 # 查看日志
-docker-compose logs graphiti-java
+docker-compose logs ontograph-java
 
 # 检查端口占用
 netstat -tuln | grep 8080

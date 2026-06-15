@@ -253,7 +253,7 @@ function navigateToEntities(uuids: string[]) {
 ## 文件结构
 
 ```
-graphiti-web/src/
+ontograph-web/src/
 ├── views/data/                    # 独立管理页面
 │   ├── classes.vue                # 类定义管理（Phase 1）
 │   ├── properties.vue             # 属性管理（Phase 1）

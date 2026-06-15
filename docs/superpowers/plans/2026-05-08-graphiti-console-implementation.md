@@ -15,7 +15,7 @@
 ## 文件结构
 
 ```
-graphiti-web/
+ontograph-web/
 ├── package.json                      # 项目依赖配置
 ├── vite.config.ts                   # Vite 构建配置
 ├── tsconfig.json                    # TypeScript 配置
@@ -106,20 +106,20 @@ graphiti-web/
 ### Task 1: 项目初始化
 
 **Files:**
-- Create: `graphiti-web/package.json`
-- Create: `graphiti-web/vite.config.ts`
-- Create: `graphiti-web/tsconfig.json`
-- Create: `graphiti-web/.env.development`
-- Create: `graphiti-web/.env.production`
-- Create: `graphiti-web/index.html`
-- Create: `graphiti-web/src/main.ts`
-- Create: `graphiti-web/src/App.vue`
+- Create: `ontograph-web/package.json`
+- Create: `ontograph-web/vite.config.ts`
+- Create: `ontograph-web/tsconfig.json`
+- Create: `ontograph-web/.env.development`
+- Create: `ontograph-web/.env.production`
+- Create: `ontograph-web/index.html`
+- Create: `ontograph-web/src/main.ts`
+- Create: `ontograph-web/src/App.vue`
 
 - [ ] **Step 1: 创建 package.json**
 
 ```json
 {
-  "name": "graphiti-web",
+  "name": "ontograph-web",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -296,7 +296,7 @@ app.mount('#app')
 
 - [ ] **Step 8: 安装依赖并验证**
 
-Run: `cd graphiti-web && npm install`
+Run: `cd ontograph-web && npm install`
 Expected: 依赖安装成功，无错误
 
 - [ ] **Step 9: 启动开发服务器验证**
@@ -307,7 +307,7 @@ Expected: 开发服务器启动在 http://localhost:3000
 - [ ] **Step 10: Commit**
 
 ```bash
-git add graphiti-web/
+git add ontograph-web/
 git commit -m "feat: initialize Vue 3 + TypeScript + Ant Design Vue project"
 ```
 
@@ -316,8 +316,8 @@ git commit -m "feat: initialize Vue 3 + TypeScript + Ant Design Vue project"
 ### Task 2: Axios 封装 + 认证工具
 
 **Files:**
-- Create: `graphiti-web/src/api/request.ts`
-- Create: `graphiti-web/src/utils/auth.ts`
+- Create: `ontograph-web/src/api/request.ts`
+- Create: `ontograph-web/src/utils/auth.ts`
 
 - [ ] **Step 1: 创建 Axios 封装**
 
@@ -426,10 +426,10 @@ git commit -m "feat: add Axios request wrapper and auth utilities"
 ### Task 3: 登录页面
 
 **Files:**
-- Create: `graphiti-web/src/api/auth.ts`
-- Create: `graphiti-web/src/views/login/index.vue`
-- Create: `graphiti-web/src/store/modules/user.ts`
-- Modify: `graphiti-web/src/router/index.ts`
+- Create: `ontograph-web/src/api/auth.ts`
+- Create: `ontograph-web/src/views/login/index.vue`
+- Create: `ontograph-web/src/store/modules/user.ts`
+- Modify: `ontograph-web/src/router/index.ts`
 
 - [ ] **Step 1: 创建认证 API**
 
@@ -658,11 +658,11 @@ git commit -m "feat: implement login page with JWT authentication"
 ### Task 4: 基础布局组件
 
 **Files:**
-- Create: `graphiti-web/src/components/Layout/BasicLayout.vue`
-- Create: `graphiti-web/src/components/Layout/Sidebar.vue`
-- Create: `graphiti-web/src/components/Layout/Header.vue`
-- Modify: `graphiti-web/src/router/index.ts`
-- Create: `graphiti-web/src/assets/styles/dark.less`
+- Create: `ontograph-web/src/components/Layout/BasicLayout.vue`
+- Create: `ontograph-web/src/components/Layout/Sidebar.vue`
+- Create: `ontograph-web/src/components/Layout/Header.vue`
+- Modify: `ontograph-web/src/router/index.ts`
+- Create: `ontograph-web/src/assets/styles/dark.less`
 
 - [ ] **Step 1: 创建深色主题样式**
 
@@ -1005,9 +1005,9 @@ git commit -m "feat: implement basic layout with header, sidebar, and dark theme
 ### Task 5: 仪表盘页面
 
 **Files:**
-- Create: `graphiti-web/src/views/dashboard/index.vue`
-- Create: `graphiti-web/src/api/graph.ts`
-- Create: `graphiti-web/src/store/modules/graph.ts`
+- Create: `ontograph-web/src/views/dashboard/index.vue`
+- Create: `ontograph-web/src/api/graph.ts`
+- Create: `ontograph-web/src/store/modules/graph.ts`
 
 - [ ] **Step 1: 创建图谱管理 API**
 
@@ -1222,10 +1222,10 @@ git commit -m "feat: implement dashboard with stats cards"
 ### Task 6: 图谱可视化组件
 
 **Files:**
-- Create: `graphiti-web/src/components/GraphViewer/ForceGraph.vue`
-- Create: `graphiti-web/src/components/GraphViewer/GraphToolbar.vue`
-- Create: `graphiti-web/src/components/GraphViewer/NodeDetail.vue`
-- Create: `graphiti-web/src/utils/graph.ts`
+- Create: `ontograph-web/src/components/GraphViewer/ForceGraph.vue`
+- Create: `ontograph-web/src/components/GraphViewer/GraphToolbar.vue`
+- Create: `ontograph-web/src/components/GraphViewer/NodeDetail.vue`
+- Create: `ontograph-web/src/utils/graph.ts`
 
 - [ ] **Step 1: 创建图谱工具函数**
 
@@ -1366,9 +1366,9 @@ git commit -m "feat: implement force-directed graph visualization with ECharts"
 ### Task 7: 图谱列表 + 详情页
 
 **Files:**
-- Create: `graphiti-web/src/views/graph/list.vue`
-- Create: `graphiti-web/src/views/graph/detail.vue`
-- Create: `graphiti-web/src/views/graph/workspace.vue`
+- Create: `ontograph-web/src/views/graph/list.vue`
+- Create: `ontograph-web/src/views/graph/detail.vue`
+- Create: `ontograph-web/src/views/graph/workspace.vue`
 
 - [ ] **Step 1: 创建图谱列表页面**
 

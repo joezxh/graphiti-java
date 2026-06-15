@@ -258,7 +258,7 @@ spring:
       password: your-password
 ```
 
-确保项目中已引入依赖（在 `graphiti-module-core/pom.xml` 中已包含）：
+确保项目中已引入依赖（在 `ontograph-module-core/pom.xml` 中已包含）：
 
 ```xml
 <dependency>
@@ -800,7 +800,7 @@ public class ConversationManager {
 <!-- Graphiti 核心模块 -->
 <dependency>
     <groupId>com.graphiti</groupId>
-    <artifactId>graphiti-module-core</artifactId>
+    <artifactId>ontograph-module-core</artifactId>
     <version>${project.version}</version>
 </dependency>
 

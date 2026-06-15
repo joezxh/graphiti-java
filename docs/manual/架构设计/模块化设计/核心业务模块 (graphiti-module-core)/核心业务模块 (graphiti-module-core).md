@@ -1,21 +1,21 @@
-# 核心业务模块 (graphiti-module-core)
+# 核心业务模块 (ontograph-module-core)
 
 <!--<cite>
 **本文档引用的文件**
-- [GraphitiController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
-- [GraphitiServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java)
-- [GraphNeo4jConfig.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java)
-- [Neo4jDriverAdapter.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java)
-- [CommunityServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java)
-- [OpenAiLlmClientServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java)
-- [QwenLlmClientServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java)
-- [PromptTemplateLoader.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java)
-- [DataQualityServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java)
-- [SearchServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java)
-- [EmbedderService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java)
-- [OntologyClassServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java)
-- [OntologyPropertyServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java)
-- [TemporalServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java)
+- [GraphitiController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
+- [GraphitiServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java)
+- [GraphNeo4jConfig.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java)
+- [Neo4jDriverAdapter.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java)
+- [CommunityServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java)
+- [OpenAiLlmClientServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java)
+- [QwenLlmClientServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java)
+- [PromptTemplateLoader.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java)
+- [DataQualityServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java)
+- [SearchServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java)
+- [EmbedderService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java)
+- [OntologyClassServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java)
+- [OntologyPropertyServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java)
+- [TemporalServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java)
 </cite>-->
 
 ## 目录
@@ -85,23 +85,23 @@ Z2 --> S8
 ```
 
 图表来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
-- [DataQualityServiceImpl.java:1-219](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L1-L219)
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
-- [OntologyClassServiceImpl.java:1-368](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L1-L368)
-- [OntologyPropertyServiceImpl.java:1-374](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L1-L374)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [GraphNeo4jConfig.java:1-47](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L1-L47)
-- [Neo4jDriverAdapter.java:1-84](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
-- [PromptTemplateLoader.java:1-87](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L1-L87)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [DataQualityServiceImpl.java:1-219](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L1-L219)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [OntologyClassServiceImpl.java:1-368](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L1-L368)
+- [OntologyPropertyServiceImpl.java:1-374](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L1-L374)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [GraphNeo4jConfig.java:1-47](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L1-L47)
+- [Neo4jDriverAdapter.java:1-84](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
+- [PromptTemplateLoader.java:1-87](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L1-L87)
 
 章节来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
 
 ## 核心组件
 - 知识图谱管理：提供图谱的创建、查询、更新、删除、清空、克隆、导出与统计，结合 MySQL 元数据与 Neo4j 图数据双轨存储
@@ -114,13 +114,13 @@ Z2 --> S8
 - 多数据库支持：MySQL 存储元数据与本体定义，Neo4j 存储图数据与向量索引
 
 章节来源
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
-- [DataQualityServiceImpl.java:1-219](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L1-L219)
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
-- [OntologyClassServiceImpl.java:1-368](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L1-L368)
-- [OntologyPropertyServiceImpl.java:1-374](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L1-L374)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [DataQualityServiceImpl.java:1-219](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L1-L219)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [OntologyClassServiceImpl.java:1-368](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L1-L368)
+- [OntologyPropertyServiceImpl.java:1-374](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L1-L374)
 
 ## 架构总览
 下图展示核心模块的系统架构与组件交互关系，突出控制器、服务、数据访问与外部系统（Neo4j、AI Provider）之间的协作。
@@ -145,17 +145,17 @@ M["Neo4jDriverAdapter"] --> G
 ```
 
 图表来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
-- [GraphNeo4jConfig.java:1-47](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L1-L47)
-- [Neo4jDriverAdapter.java:1-84](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [PromptTemplateLoader.java:1-87](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L1-L87)
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [GraphNeo4jConfig.java:1-47](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L1-L47)
+- [Neo4jDriverAdapter.java:1-84](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [PromptTemplateLoader.java:1-87](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L1-L87)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
 
 ## 详细组件分析
 
@@ -183,12 +183,12 @@ Ctrl-->>Client : "CommonResult.success(stats)"
 ```
 
 图表来源
-- [GraphitiController.java:50-139](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L139)
-- [GraphitiServiceImpl.java:30-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L30-L158)
+- [GraphitiController.java:50-139](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L139)
+- [GraphitiServiceImpl.java:30-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L30-L158)
 
 章节来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
 
 ### 社区发现（CommunityServiceImpl）
 - 算法流程：加权标签传播检测社区，二叉树合并策略生成摘要并创建社区节点，支持并行构建与错误处理
@@ -207,10 +207,10 @@ Join --> Done
 ```
 
 图表来源
-- [CommunityServiceImpl.java:41-132](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L41-L132)
+- [CommunityServiceImpl.java:41-132](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L41-L132)
 
 章节来源
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
 
 ### 搜索引擎（SearchServiceImpl）
 - 混合检索模式：BM25 全文检索、向量相似度检索、RRF 融合、MMR 重排序、BFS 图遍历
@@ -244,11 +244,11 @@ Ctrl-->>Client : "CommonResult.success(resp)"
 ```
 
 图表来源
-- [GraphitiController.java:212-219](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L212-L219)
-- [SearchServiceImpl.java:94-148](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L94-L148)
+- [GraphitiController.java:212-219](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L212-L219)
+- [SearchServiceImpl.java:94-148](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L94-L148)
 
 章节来源
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
 
 ### 数据质量保证（DataQualityServiceImpl）
 - 节点去重：同名同类型节点合并，关系迁移与重复节点删除
@@ -270,10 +270,10 @@ G --> H
 ```
 
 图表来源
-- [DataQualityServiceImpl.java:26-176](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L26-L176)
+- [DataQualityServiceImpl.java:26-176](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L26-L176)
 
 章节来源
-- [DataQualityServiceImpl.java:1-219](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L1-L219)
+- [DataQualityServiceImpl.java:1-219](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L1-L219)
 
 ### 时间序列管理（TemporalServiceImpl）
 - 有效区间管理：维护实体/关系的有效时间窗口，支持失效标记与历史查询
@@ -291,10 +291,10 @@ I --> R
 ```
 
 图表来源
-- [TemporalServiceImpl.java:44-85](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L44-L85)
+- [TemporalServiceImpl.java:44-85](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L44-L85)
 
 章节来源
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
 
 ### 本体系统（OntologyClassServiceImpl / OntologyPropertyServiceImpl）
 - 本体定义：命名空间、版本、状态与描述管理
@@ -334,12 +334,12 @@ OntologyClassServiceImpl --> OntologyPropertyServiceImpl : "共享定义ID"
 ```
 
 图表来源
-- [OntologyClassServiceImpl.java:45-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L45-L98)
-- [OntologyPropertyServiceImpl.java:37-182](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L37-L182)
+- [OntologyClassServiceImpl.java:45-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L45-L98)
+- [OntologyPropertyServiceImpl.java:37-182](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L37-L182)
 
 章节来源
-- [OntologyClassServiceImpl.java:1-368](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L1-L368)
-- [OntologyPropertyServiceImpl.java:1-374](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L1-L374)
+- [OntologyClassServiceImpl.java:1-368](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java#L1-L368)
+- [OntologyPropertyServiceImpl.java:1-374](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java#L1-L374)
 
 ### AI 服务与提示词模板（OpenAiLlmClientServiceImpl / QwenLlmClientServiceImpl / PromptTemplateLoader）
 - AI 客户端：统一 ChatClient 调用，支持系统提示与结构化输出，支持批处理
@@ -361,17 +361,17 @@ Embed-->>Svc : "向量"
 ```
 
 图表来源
-- [SearchServiceImpl.java:44-76](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L44-L76)
-- [PromptTemplateLoader.java:28-73](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L28-L73)
-- [OpenAiLlmClientServiceImpl.java:41-97](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L41-L97)
-- [QwenLlmClientServiceImpl.java:28-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L28-L91)
+- [SearchServiceImpl.java:44-76](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L44-L76)
+- [PromptTemplateLoader.java:28-73](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L28-L73)
+- [OpenAiLlmClientServiceImpl.java:41-97](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L41-L97)
+- [QwenLlmClientServiceImpl.java:28-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L28-L91)
 
 章节来源
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [PromptTemplateLoader.java:1-87](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L1-L87)
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
-- [Neo4jDriverAdapter.java:1-84](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [PromptTemplateLoader.java:1-87](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/PromptTemplateLoader.java#L1-L87)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [Neo4jDriverAdapter.java:1-84](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
 
 ## 依赖分析
 - 控制器与服务：控制器依赖多个服务接口，服务间通过接口解耦，降低耦合度
@@ -397,16 +397,16 @@ Adp["Neo4jDriverAdapter"] --> Neo4j
 ```
 
 图表来源
-- [GraphitiController.java:41-48](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L41-L48)
-- [GraphitiServiceImpl.java:28-29](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L28-L29)
-- [GraphNeo4jConfig.java:41-45](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L41-L45)
-- [Neo4jDriverAdapter.java:21-22](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L21-L22)
+- [GraphitiController.java:41-48](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L41-L48)
+- [GraphitiServiceImpl.java:28-29](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L28-L29)
+- [GraphNeo4jConfig.java:41-45](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L41-L45)
+- [Neo4jDriverAdapter.java:21-22](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L21-L22)
 
 章节来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [GraphNeo4jConfig.java:1-47](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L1-L47)
-- [Neo4jDriverAdapter.java:1-84](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [GraphNeo4jConfig.java:1-47](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L1-L47)
+- [Neo4jDriverAdapter.java:1-84](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L84)
 
 ## 性能考虑
 - 搜索性能
@@ -450,12 +450,12 @@ Adp["Neo4jDriverAdapter"] --> Neo4j
   - 检查失效标记与历史查询逻辑
 
 章节来源
-- [GraphNeo4jConfig.java:21-45](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L21-L45)
-- [Neo4jDriverAdapter.java:38-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L38-L41)
-- [SearchServiceImpl.java:94-148](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L94-L148)
-- [CommunityServiceImpl.java:116-132](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L116-L132)
-- [DataQualityServiceImpl.java:178-218](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L178-L218)
-- [TemporalServiceImpl.java:134-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L134-L158)
+- [GraphNeo4jConfig.java:21-45](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphNeo4jConfig.java#L21-L45)
+- [Neo4jDriverAdapter.java:38-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L38-L41)
+- [SearchServiceImpl.java:94-148](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L94-L148)
+- [CommunityServiceImpl.java:116-132](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L116-L132)
+- [DataQualityServiceImpl.java:178-218](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java#L178-L218)
+- [TemporalServiceImpl.java:134-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L134-L158)
 
 ## 结论
 本模块通过清晰的分层设计与强大的外部系统集成，实现了从知识图谱管理到社区发现、从本体治理到时间序列与搜索的完整闭环。Neo4j 的图模型与向量索引、AI 客户端与提示词模板、以及完善的质量与版本管理机制共同构成了可扩展、高性能、易维护的核心能力。建议在生产环境中重点关注索引与向量索引的维护、并发与批处理策略、以及异常与降级机制的完善。

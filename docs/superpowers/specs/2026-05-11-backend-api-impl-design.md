@@ -163,7 +163,7 @@ management:
 
 ### 后端新增 (16 个文件)
 
-- `graphiti-module-core/pom.xml` — Actuator 依赖
+- `ontograph-module-core/pom.xml` — Actuator 依赖
 - `sql/mysql/schema.sql` — 3 张表 DDL
 - `sql/postgresql/schema.sql` — 3 张表 DDL (PostgreSQL 版)
 - `OperationLogDO.java`, `OperationLogMapper.java`, `OperationLogService.java`, `OperationLogServiceImpl.java`, `OperationLogController.java`
@@ -172,10 +172,10 @@ management:
 
 ### 前端修改 (4 个文件)
 
-- `graphiti-web/src/api/monitor.ts`
-- `graphiti-web/src/api/log.ts`
-- `graphiti-web/src/api/system.ts`
-- `graphiti-web/src/api/search.ts`
+- `ontograph-web/src/api/monitor.ts`
+- `ontograph-web/src/api/log.ts`
+- `ontograph-web/src/api/system.ts`
+- `ontograph-web/src/api/search.ts`
 
 ---
 

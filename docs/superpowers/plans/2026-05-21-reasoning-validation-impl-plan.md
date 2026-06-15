@@ -4,7 +4,7 @@
 
 **Goal:** 基于设计文档补全推理验证模块，实现真正的 OWL 2 RL 推理、6 层验证体系（含 L5 领域规则和 L6 图谱完整性），并配套前端 OntologyWorkbench 推理验证控制台面板。
 
-**Architecture:** 增量增强现有 `graphiti-module-core` 模块，在 `OntologyValidationServiceImpl` 中扩展 L5/L6 验证层，完善 `OntologyReasonerImpl` 本体数据加载，前端通过 `OntologyWorkbench` 新增标签页集成。
+**Architecture:** 增量增强现有 `ontograph-module-core` 模块，在 `OntologyValidationServiceImpl` 中扩展 L5/L6 验证层，完善 `OntologyReasonerImpl` 本体数据加载，前端通过 `OntologyWorkbench` 新增标签页集成。
 
 **Tech Stack:** Java 21 + Spring Boot + Apache Jena 4.9.0 + MyBatis-Plus + SpEL + Neo4j Cypher + Vue 3 + Ant Design Vue
 
@@ -16,17 +16,17 @@
 
 | 文件 | 职责 |
 |------|------|
-| `graphiti-module-core/.../dal/dataobject/ont/OntDomainRuleDO.java` | L5 领域规则数据对象 |
-| `graphiti-module-core/.../dal/mysql/ont/OntDomainRuleMapper.java` | 领域规则 Mapper 接口 |
-| `graphiti-module-core/.../service/DomainRuleService.java` | 领域规则 Service 接口 |
-| `graphiti-module-core/.../service/impl/DomainRuleServiceImpl.java` | 领域规则 Service 实现 |
-| `graphiti-module-core/.../service/validator/DomainRuleValidator.java` | L5 验证器 |
-| `graphiti-module-core/.../service/validator/GraphIntegrityValidator.java` | L6 验证器 |
-| `graphiti-module-core/.../vo/ontology/DomainRuleVO.java` | 领域规则 VO |
-| `graphiti-module-core/.../vo/ontology/InferredTypeVO.java` | 推断类型 VO |
-| `graphiti-module-core/.../vo/ontology/GraphIntegrityResultVO.java` | 图谱完整性结果 VO |
-| `graphiti-module-core/.../vo/ontology/ReasoningReportVO.java` | 推理验证综合报告 VO |
-| `graphiti-module-core/.../vo/ontology/ValidationSummaryVO.java` | 验证汇总 VO |
+| `ontograph-module-core/.../dal/dataobject/ont/OntDomainRuleDO.java` | L5 领域规则数据对象 |
+| `ontograph-module-core/.../dal/mysql/ont/OntDomainRuleMapper.java` | 领域规则 Mapper 接口 |
+| `ontograph-module-core/.../service/DomainRuleService.java` | 领域规则 Service 接口 |
+| `ontograph-module-core/.../service/impl/DomainRuleServiceImpl.java` | 领域规则 Service 实现 |
+| `ontograph-module-core/.../service/validator/DomainRuleValidator.java` | L5 验证器 |
+| `ontograph-module-core/.../service/validator/GraphIntegrityValidator.java` | L6 验证器 |
+| `ontograph-module-core/.../vo/ontology/DomainRuleVO.java` | 领域规则 VO |
+| `ontograph-module-core/.../vo/ontology/InferredTypeVO.java` | 推断类型 VO |
+| `ontograph-module-core/.../vo/ontology/GraphIntegrityResultVO.java` | 图谱完整性结果 VO |
+| `ontograph-module-core/.../vo/ontology/ReasoningReportVO.java` | 推理验证综合报告 VO |
+| `ontograph-module-core/.../vo/ontology/ValidationSummaryVO.java` | 验证汇总 VO |
 
 ### 后端修改文件
 
@@ -43,12 +43,12 @@
 
 | 文件 | 职责 |
 |------|------|
-| `graphiti-web/src/components/Ontology/ReasoningPanel.vue` | 推理验证主容器 |
-| `graphiti-web/src/components/Ontology/ReasoningControlPanel.vue` | 推理机控制台 |
-| `graphiti-web/src/components/Ontology/ConsistencyCheckPanel.vue` | 一致性检查 |
-| `graphiti-web/src/components/Ontology/ValidationReportPanel.vue` | 验证报告 |
-| `graphiti-web/src/components/Ontology/DomainRuleConfigPanel.vue` | 领域规则配置 |
-| `graphiti-web/src/components/Ontology/IntegrityCheckPanel.vue` | 图谱完整性检查 |
+| `ontograph-web/src/components/Ontology/ReasoningPanel.vue` | 推理验证主容器 |
+| `ontograph-web/src/components/Ontology/ReasoningControlPanel.vue` | 推理机控制台 |
+| `ontograph-web/src/components/Ontology/ConsistencyCheckPanel.vue` | 一致性检查 |
+| `ontograph-web/src/components/Ontology/ValidationReportPanel.vue` | 验证报告 |
+| `ontograph-web/src/components/Ontology/DomainRuleConfigPanel.vue` | 领域规则配置 |
+| `ontograph-web/src/components/Ontology/IntegrityCheckPanel.vue` | 图谱完整性检查 |
 
 ### 前端修改文件
 
@@ -65,10 +65,10 @@
 ### Task 1: 新增数据模型与 Mapper
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntDomainRuleDO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntDomainRuleMapper.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/DomainRuleVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntDomainRuleDO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntDomainRuleMapper.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/DomainRuleVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java`
 
 - [ ] **Step 1: 创建 OntDomainRuleDO**
 
@@ -159,7 +159,7 @@ public class InferredTypeVO {
 
 - [ ] **Step 5: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -167,8 +167,8 @@ Expected: SUCCESS
 ### Task 2: 增强 OntologyReasoner 接口与实现 — 真正加载本体数据
 
 **Files:**
-- Modify: `graphiti-module-core/.../service/OntologyReasoner.java`
-- Modify: `graphiti-module-core/.../service/impl/OntologyReasonerImpl.java`
+- Modify: `ontograph-module-core/.../service/OntologyReasoner.java`
+- Modify: `ontograph-module-core/.../service/impl/OntologyReasonerImpl.java`
 
 - [ ] **Step 1: 扩展 OntologyReasoner 接口**
 
@@ -361,7 +361,7 @@ public List<String> getPropertyRanges(String graphId, String propertyUri) {
 
 - [ ] **Step 4: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -369,8 +369,8 @@ Expected: SUCCESS
 ### Task 3: 扩展 L4 约束 + 实现 L5 DomainRuleValidator
 
 **Files:**
-- Create: `graphiti-module-core/.../service/validator/DomainRuleValidator.java`
-- Modify: `graphiti-module-core/.../service/impl/OntologyValidationServiceImpl.java`
+- Create: `ontograph-module-core/.../service/validator/DomainRuleValidator.java`
+- Modify: `ontograph-module-core/.../service/impl/OntologyValidationServiceImpl.java`
 
 - [ ] **Step 1: 创建 DomainRuleValidator**
 
@@ -486,7 +486,7 @@ case "NOT_NULL" -> {
 
 - [ ] **Step 3: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -494,9 +494,9 @@ Expected: SUCCESS
 ### Task 4: 新建 DomainRuleService + Controller 端点
 
 **Files:**
-- Create: `graphiti-module-core/.../service/DomainRuleService.java`
-- Create: `graphiti-module-core/.../service/impl/DomainRuleServiceImpl.java`
-- Modify: `graphiti-module-core/.../controller/admin/OntologyController.java`
+- Create: `ontograph-module-core/.../service/DomainRuleService.java`
+- Create: `ontograph-module-core/.../service/impl/DomainRuleServiceImpl.java`
+- Modify: `ontograph-module-core/.../controller/admin/OntologyController.java`
 
 - [ ] **Step 1: 创建 DomainRuleService 接口**
 
@@ -550,7 +550,7 @@ public CommonResult<Boolean> testDomainRule(...) { ... }
 
 - [ ] **Step 4: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -560,10 +560,10 @@ Expected: SUCCESS
 ### Task 5: 实现 GraphIntegrityValidator + 异步任务框架
 
 **Files:**
-- Create: `graphiti-module-core/.../service/validator/GraphIntegrityValidator.java`
-- Create: `graphiti-module-core/.../vo/ontology/GraphIntegrityResultVO.java`
-- Create: `graphiti-module-core/.../vo/ontology/ReasoningReportVO.java`
-- Modify: `graphiti-module-core/.../controller/admin/OntologyController.java`
+- Create: `ontograph-module-core/.../service/validator/GraphIntegrityValidator.java`
+- Create: `ontograph-module-core/.../vo/ontology/GraphIntegrityResultVO.java`
+- Create: `ontograph-module-core/.../vo/ontology/ReasoningReportVO.java`
+- Modify: `ontograph-module-core/.../controller/admin/OntologyController.java`
 
 - [ ] **Step 1: 创建 GraphIntegrityResultVO**
 
@@ -642,7 +642,7 @@ public CommonResult<ReasoningReportVO> getReasoningReport(@PathVariable String g
 
 - [ ] **Step 4: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -650,8 +650,8 @@ Expected: SUCCESS
 ### Task 6: 推理缓存失效集成
 
 **Files:**
-- Modify: `graphiti-module-core/.../service/impl/OntologyClassServiceImpl.java`
-- Modify: `graphiti-module-core/.../service/impl/OntologyPropertyServiceImpl.java`
+- Modify: `ontograph-module-core/.../service/impl/OntologyClassServiceImpl.java`
+- Modify: `ontograph-module-core/.../service/impl/OntologyPropertyServiceImpl.java`
 
 - [ ] **Step 1: 在 Class/Property 写操作后触发缓存失效**
 
@@ -665,7 +665,7 @@ reasoner.shutdown(graphId);
 
 - [ ] **Step 2: 编译验证**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: SUCCESS
 
 ---
@@ -675,8 +675,8 @@ Expected: SUCCESS
 ### Task 7: 前端 API 层与状态管理
 
 **Files:**
-- Modify: `graphiti-web/src/api/ontology.ts`
-- Modify: `graphiti-web/src/store/modules/ontology.ts`
+- Modify: `ontograph-web/src/api/ontology.ts`
+- Modify: `ontograph-web/src/store/modules/ontology.ts`
 
 - [ ] **Step 1: 在 ontology.ts (api) 新增方法**
 
@@ -733,7 +733,7 @@ export const useOntologyStore = defineStore('ontology', () => {
 
 - [ ] **Step 3: TypeScript 检查**
 
-Run: `cd "d:\projects\ontograph-java\graphiti-web" && npx vue-tsc --noEmit --skipLibCheck 2>&1 | findstr /i "ontology"`
+Run: `cd "d:\projects\ontograph-java\ontograph-web" && npx vue-tsc --noEmit --skipLibCheck 2>&1 | findstr /i "ontology"`
 Expected: 无 Ontology 相关错误（除已有的 CommunityExplorer/EpisodeExplorer 未使用变量警告外）
 
 ---
@@ -741,8 +741,8 @@ Expected: 无 Ontology 相关错误（除已有的 CommunityExplorer/EpisodeExpl
 ### Task 8: OntologyWorkbench 注册标签页 + ReasoningPanel 主容器
 
 **Files:**
-- Modify: `graphiti-web/src/components/Ontology/OntologyWorkbench.vue`
-- Create: `graphiti-web/src/components/Ontology/ReasoningPanel.vue`
+- Modify: `ontograph-web/src/components/Ontology/OntologyWorkbench.vue`
+- Create: `ontograph-web/src/components/Ontology/ReasoningPanel.vue`
 
 - [ ] **Step 1: 修改 OntologyWorkbench.vue**
 
@@ -814,11 +814,11 @@ const IntegrityCheckPanel = defineAsyncComponent(() => import('./IntegrityCheckP
 ### Task 9: 实现各子面板
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/ReasoningControlPanel.vue`
-- Create: `graphiti-web/src/components/Ontology/ConsistencyCheckPanel.vue`
-- Create: `graphiti-web/src/components/Ontology/ValidationReportPanel.vue`
-- Create: `graphiti-web/src/components/Ontology/DomainRuleConfigPanel.vue`
-- Create: `graphiti-web/src/components/Ontology/IntegrityCheckPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/ReasoningControlPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/ConsistencyCheckPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/ValidationReportPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/DomainRuleConfigPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/IntegrityCheckPanel.vue`
 
 - [ ] **Step 1: ReasoningControlPanel.vue**
 
@@ -847,8 +847,8 @@ const IntegrityCheckPanel = defineAsyncComponent(() => import('./IntegrityCheckP
 ### Task 10: 后端单元测试
 
 **Files:**
-- Modify: `graphiti-module-core/.../service/OntologyReasonerImplTest.java`
-- Create: `graphiti-module-core/.../service/validator/DomainRuleValidatorTest.java`
+- Modify: `ontograph-module-core/.../service/OntologyReasonerImplTest.java`
+- Create: `ontograph-module-core/.../service/validator/DomainRuleValidatorTest.java`
 
 - [ ] **Step 1: 扩展 OntologyReasonerImplTest**
 
@@ -874,7 +874,7 @@ void testValidateDomainRule_fail() {
 
 - [ ] **Step 3: 运行测试**
 
-Run: `mvn test -pl graphiti-module-core -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn test -pl ontograph-module-core -f "d:\projects\ontograph-java\pom.xml"`
 Expected: 所有测试通过
 
 ---
@@ -883,12 +883,12 @@ Expected: 所有测试通过
 
 - [ ] **Step 1: 后端全量编译**
 
-Run: `mvn compile -pl graphiti-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
+Run: `mvn compile -pl ontograph-module-core -am -f "d:\projects\ontograph-java\pom.xml"`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 前端编译**
 
-Run: `cd "d:\projects\ontograph-java\graphiti-web" && npx vue-tsc --noEmit --skipLibCheck`
+Run: `cd "d:\projects\ontograph-java\ontograph-web" && npx vue-tsc --noEmit --skipLibCheck`
 Expected: 无新增 TypeScript 错误（原有错误可忽略）
 
 - [ ] **Step 3: 端到端验证**

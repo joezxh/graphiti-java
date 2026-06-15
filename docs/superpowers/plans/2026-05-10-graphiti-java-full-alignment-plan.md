@@ -13,7 +13,7 @@
 ## 文件结构映射
 
 ```
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/
 ├── config/
 │   ├── GraphNeo4jConfig.java              # 已有 - 扩展向量索引
 │   ├── LlmClientConfig.java               # 新增
@@ -58,12 +58,12 @@ graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
 ### Task 1: 项目依赖配置
 
 **Files:**
-- Modify: `graphiti-module-core/pom.xml`
-- Modify: `graphiti-server/pom.xml`
+- Modify: `ontograph-module-core/pom.xml`
+- Modify: `ontograph-server/pom.xml`
 
 **说明**: 添加Spring AI、Neo4j向量索引等依赖
 
-**Step 1: 在 graphiti-module-core/pom.xml 中添加Spring AI依赖**
+**Step 1: 在 ontograph-module-core/pom.xml 中添加Spring AI依赖**
 
 在 `<dependencies>` 节中添加：
 
@@ -82,7 +82,7 @@ graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
 </dependency>
 ```
 
-**Step 2: 在 graphiti-server/pom.xml 中添加Spring AI BOM**
+**Step 2: 在 ontograph-server/pom.xml 中添加Spring AI BOM**
 
 在 `<dependencies>` 节中添加：
 
@@ -109,9 +109,9 @@ Expected: BUILD SUCCESS
 ### Task 2: 嵌入向量服务 (EmbedderService)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/EmbedderConfig.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/EmbedderConfig.java`
 
 **Step 1: 创建 EmbedderService 接口**
 
@@ -256,10 +256,10 @@ spring:
 **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/EmbedderConfig.java
-git add graphiti-server/src/main/resources/application.yml
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/EmbedderConfig.java
+git add ontograph-server/src/main/resources/application.yml
 git commit -m "feat: add embedder service with Spring AI integration"
 ```
 
@@ -268,10 +268,10 @@ git commit -m "feat: add embedder service with Spring AI integration"
 ### Task 3: LLM客户端服务 (LlmClientService)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/ExtractedEntityVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/ExtractedRelationVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/ExtractedEntityVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/ExtractedRelationVO.java`
 
 **Step 1: 创建 ExtractedEntityVO**
 
@@ -351,7 +351,7 @@ public interface LlmClientService {
 
 **Step 4: 创建 Prompt 模板文件**
 
-`graphiti-module-core/src/main/resources/prompts/extract_entities.txt`:
+`ontograph-module-core/src/main/resources/prompts/extract_entities.txt`:
 
 ```
 从以下文本中提取实体。每个实体应包含名称、类型和摘要。
@@ -372,7 +372,7 @@ public interface LlmClientService {
 ]
 ```
 
-`graphiti-module-core/src/main/resources/prompts/extract_relations.txt`:
+`ontograph-module-core/src/main/resources/prompts/extract_relations.txt`:
 
 ```
 从以下文本中提取实体之间的关系。
@@ -510,10 +510,10 @@ spring:
 **Step 7: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/
-git add graphiti-module-core/src/main/resources/prompts/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/llm/
+git add ontograph-module-core/src/main/resources/prompts/
 git commit -m "feat: add LLM client service with entity/relation extraction"
 ```
 
@@ -522,11 +522,11 @@ git commit -m "feat: add LLM client service with entity/relation extraction"
 ### Task 4: 时序事实管理 (TemporalService)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/temporal/TemporalNodeVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/temporal/TemporalEdgeVO.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/temporal/TemporalNodeVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/temporal/TemporalEdgeVO.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 **Step 1: 创建 TemporalNodeVO 和 TemporalEdgeVO**
 
@@ -814,9 +814,9 @@ public Map<String, Object> createEntityNode(String graphId, String uuid, String 
 **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/temporal/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/temporal/
 git commit -m "feat: add temporal fact management service"
 ```
 
@@ -825,11 +825,11 @@ git commit -m "feat: add temporal fact management service"
 ### Task 5: 混合检索系统 (SearchService增强)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/RerankerService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/RerankerService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java`
 
 **Step 1: 创建 RerankerService 接口和实现**
 
@@ -989,8 +989,8 @@ public interface SearchService {
 **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/RerankerService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/RerankerService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java
 git commit -m "feat: add reranker service with RRF and MMR"
 ```
 
@@ -999,8 +999,8 @@ git commit -m "feat: add reranker service with RRF and MMR"
 ### Task 6: 社区发现服务 (CommunityService)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
 
 **Step 1: 创建 CommunityService 接口和实现**
 
@@ -1201,8 +1201,8 @@ public class CommunityServiceImpl implements CommunityService {
 **Step 2: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
 git commit -m "feat: add community detection service"
 ```
 
@@ -1211,9 +1211,9 @@ git commit -m "feat: add community detection service"
 ### Task 7: 增强现有Controller接口
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EpisodeController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EpisodeController.java`
 
 **Step 1: 在 GraphitiController 中添加社区构建和数据导出接口**
 
@@ -1300,8 +1300,8 @@ public CommonResult<List<Map<String, Object>>> bfsSearch(
 **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java
 git commit -m "feat: add community, clone, export, history and hybrid search APIs"
 ```
 
@@ -1310,8 +1310,8 @@ git commit -m "feat: add community, clone, export, history and hybrid search API
 ### Task 8: 前端API更新
 
 **Files:**
-- Modify: `graphiti-web/src/api/graph.ts`
-- Modify: `graphiti-web/src/api/search.ts`
+- Modify: `ontograph-web/src/api/graph.ts`
+- Modify: `ontograph-web/src/api/search.ts`
 
 **Step 1: 在 graph.ts 中添加新接口**
 
@@ -1349,7 +1349,7 @@ export const graphApi = {
 **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/api/graph.ts
+git add ontograph-web/src/api/graph.ts
 git commit -m "feat: update frontend APIs for new backend features"
 ```
 
@@ -1360,24 +1360,24 @@ git commit -m "feat: update frontend APIs for new backend features"
 ### Task 9: 数据质量保障
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/DataQualityService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/DataQualityService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java`
 
 **说明**: 实现节点去重、边去重、实体解析
 
 ### Task 10: Saga管理
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SagaService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SagaService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java`
 
 **说明**: 实现SagaNode、NEXT_EPISODE边、Episode时序链
 
 ### Task 11: 多数据库驱动抽象
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java`
 
 **说明**: 设计GraphDriver接口，抽象Neo4j操作
 
@@ -1388,22 +1388,22 @@ git commit -m "feat: update frontend APIs for new backend features"
 ### Task 12: 本体系统增强
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyService.java`
 
 **说明**: 增强本体定义，支持字段定义和验证
 
 ### Task 13: 边类型多样化
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 **说明**: 添加EpisodicEdge、CommunityEdge等边类型
 
 ### Task 14: 图谱克隆/导出
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphitiService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphitiService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java`
 
 **说明**: 实现cloneGraph()和exportGraph()
 
@@ -1414,7 +1414,7 @@ git commit -m "feat: update frontend APIs for new backend features"
 ### Task 15: 可观测性
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/TelemetryConfig.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/TelemetryConfig.java`
 
 **说明**: OpenTelemetry集成
 

@@ -45,7 +45,7 @@ isProject: false
 ### 1.1 后端模块结构
 
 ```
-graphiti-module-core/
+ontograph-module-core/
 ├── controller/admin/
 │   └── BusinessInfoController.java        # REST 端点
 ├── service/
@@ -73,7 +73,7 @@ graphiti-module-core/
     └── mysql/
         └── ont/OntDraftMapper.java
 
-graphiti-module-core/src/main/resources/prompts/
+ontograph-module-core/src/main/resources/prompts/
 ├── business_info/generate_ontology.txt
 ├── business_info/optimize_desc.txt
 └── business_info/generate_data.txt
@@ -82,7 +82,7 @@ graphiti-module-core/src/main/resources/prompts/
 ### 1.2 前端模块结构
 
 ```
-graphiti-web/src/
+ontograph-web/src/
 ├── api/
 │   └── business-info.ts                   # API Client
 ├── components/
@@ -1108,7 +1108,7 @@ function updateEdgePaths() {
 ## 六、菜单与路由注册
 
 ```typescript
-// graphiti-web/src/router/index.ts 中新增
+// ontograph-web/src/router/index.ts 中新增
 {
   path: '/business-info',
   component: Layout,

@@ -2,20 +2,20 @@
 
 <!--<cite>
 **本文引用的文件**
-- [package.json](file://graphiti-web/package.json)
-- [vite.config.ts](file://graphiti-web/vite.config.ts)
-- [tsconfig.json](file://graphiti-web/tsconfig.json)
-- [main.ts](file://graphiti-web/src/main.ts)
-- [App.vue](file://graphiti-web/src/App.vue)
-- [index.html](file://graphiti-web/index.html)
-- [vite-env.d.ts](file://graphiti-web/src/vite-env.d.ts)
-- [router/index.ts](file://graphiti-web/src/router/index.ts)
-- [store/modules/user.ts](file://graphiti-web/src/store/modules/user.ts)
-- [utils/auth.ts](file://graphiti-web/src/utils/auth.ts)
-- [api/auth.ts](file://graphiti-web/src/api/auth.ts)
-- [api/request.ts](file://graphiti-web/src/api/request.ts)
-- [components/Layout/BasicLayout.vue](file://graphiti-web/src/components/Layout/BasicLayout.vue)
-- [views/dashboard/index.vue](file://graphiti-web/src/views/dashboard/index.vue)
+- [package.json](file://ontograph-web/package.json)
+- [vite.config.ts](file://ontograph-web/vite.config.ts)
+- [tsconfig.json](file://ontograph-web/tsconfig.json)
+- [main.ts](file://ontograph-web/src/main.ts)
+- [App.vue](file://ontograph-web/src/App.vue)
+- [index.html](file://ontograph-web/index.html)
+- [vite-env.d.ts](file://ontograph-web/src/vite-env.d.ts)
+- [router/index.ts](file://ontograph-web/src/router/index.ts)
+- [store/modules/user.ts](file://ontograph-web/src/store/modules/user.ts)
+- [utils/auth.ts](file://ontograph-web/src/utils/auth.ts)
+- [api/auth.ts](file://ontograph-web/src/api/auth.ts)
+- [api/request.ts](file://ontograph-web/src/api/request.ts)
+- [components/Layout/BasicLayout.vue](file://ontograph-web/src/components/Layout/BasicLayout.vue)
+- [views/dashboard/index.vue](file://ontograph-web/src/views/dashboard/index.vue)
 </cite>-->
 
 ## 目录
@@ -34,7 +34,7 @@
 本文件面向前端架构师与高级开发者，系统性梳理基于 Vue.js 3 + Vite 的现代前端工程架构。内容涵盖构建工具配置（TypeScript 支持、模块解析、开发服务器与代理）、应用入口初始化流程（Vue 实例创建、插件注册、全局配置）、路由与状态管理设计、API 层鉴权与拦截机制、以及开发与生产环境的优化策略。文中所有技术细节均以仓库实际源码为依据，并通过图表直观展示关键流程。
 
 ## 项目结构
-该前端工程位于 graphiti-web 目录，采用“按功能域分层 + 组件化”的组织方式：
+该前端工程位于 ontograph-web 目录，采用“按功能域分层 + 组件化”的组织方式：
 - 构建与配置：package.json、vite.config.ts、tsconfig.json、vite-env.d.ts
 - 入口与根组件：index.html、src/main.ts、src/App.vue
 - 路由与状态：src/router、src/store
@@ -56,19 +56,19 @@ J --> K["本地存储<br/>utils/auth.ts"]
 ```
 
 **图表来源**
-- [index.html:1-14](file://graphiti-web/index.html#L1-L14)
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [router/index.ts:1-233](file://graphiti-web/src/router/index.ts#L1-L233)
-- [store/modules/user.ts:1-67](file://graphiti-web/src/store/modules/user.ts#L1-L67)
-- [api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
-- [api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
+- [index.html:1-14](file://ontograph-web/index.html#L1-L14)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [router/index.ts:1-233](file://ontograph-web/src/router/index.ts#L1-L233)
+- [store/modules/user.ts:1-67](file://ontograph-web/src/store/modules/user.ts#L1-L67)
+- [api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
+- [api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
 
 **章节来源**
-- [package.json:1-32](file://graphiti-web/package.json#L1-L32)
-- [vite.config.ts:1-41](file://graphiti-web/vite.config.ts#L1-L41)
-- [tsconfig.json:1-25](file://graphiti-web/tsconfig.json#L1-L25)
-- [index.html:1-14](file://graphiti-web/index.html#L1-L14)
+- [package.json:1-32](file://ontograph-web/package.json#L1-L32)
+- [vite.config.ts:1-41](file://ontograph-web/vite.config.ts#L1-L41)
+- [tsconfig.json:1-25](file://ontograph-web/tsconfig.json#L1-L25)
+- [index.html:1-14](file://ontograph-web/index.html#L1-L14)
 
 ## 核心组件
 - 构建与脚本：使用 Vite 5 与 Vue 插件，配合 TypeScript 类型检查与打包；提供 dev/build/preview/type-check 四类脚本。
@@ -81,14 +81,14 @@ J --> K["本地存储<br/>utils/auth.ts"]
 - API 层：Axios 实例封装，统一请求头、响应处理、Token 刷新与队列重试。
 
 **章节来源**
-- [package.json:5-10](file://graphiti-web/package.json#L5-L10)
-- [vite.config.ts:5-41](file://graphiti-web/vite.config.ts#L5-L41)
-- [tsconfig.json:8-22](file://graphiti-web/tsconfig.json#L8-L22)
-- [main.ts:11-25](file://graphiti-web/src/main.ts#L11-L25)
-- [App.vue:1-16](file://graphiti-web/src/App.vue#L1-L16)
-- [router/index.ts:181-230](file://graphiti-web/src/router/index.ts#L181-L230)
-- [store/modules/user.ts:12-64](file://graphiti-web/src/store/modules/user.ts#L12-L64)
-- [api/request.ts:5-61](file://graphiti-web/src/api/request.ts#L5-L61)
+- [package.json:5-10](file://ontograph-web/package.json#L5-L10)
+- [vite.config.ts:5-41](file://ontograph-web/vite.config.ts#L5-L41)
+- [tsconfig.json:8-22](file://ontograph-web/tsconfig.json#L8-L22)
+- [main.ts:11-25](file://ontograph-web/src/main.ts#L11-L25)
+- [App.vue:1-16](file://ontograph-web/src/App.vue#L1-L16)
+- [router/index.ts:181-230](file://ontograph-web/src/router/index.ts#L181-L230)
+- [store/modules/user.ts:12-64](file://ontograph-web/src/store/modules/user.ts#L12-L64)
+- [api/request.ts:5-61](file://ontograph-web/src/api/request.ts#L5-L61)
 
 ## 架构总览
 下图展示了从前端入口到后端 API 的端到端交互路径，以及鉴权与状态管理的关键节点。
@@ -118,13 +118,13 @@ AX-->>APP : 成功返回或触发Token刷新
 ```
 
 **图表来源**
-- [index.html:10-11](file://graphiti-web/index.html#L10-L11)
-- [main.ts:11-20](file://graphiti-web/src/main.ts#L11-L20)
-- [router/index.ts:185-230](file://graphiti-web/src/router/index.ts#L185-L230)
-- [store/modules/user.ts:14-54](file://graphiti-web/src/store/modules/user.ts#L14-L54)
-- [api/request.ts:21-61](file://graphiti-web/src/api/request.ts#L21-L61)
-- [api/auth.ts:26-50](file://graphiti-web/src/api/auth.ts#L26-L50)
-- [utils/auth.ts:14-30](file://graphiti-web/src/utils/auth.ts#L14-L30)
+- [index.html:10-11](file://ontograph-web/index.html#L10-L11)
+- [main.ts:11-20](file://ontograph-web/src/main.ts#L11-L20)
+- [router/index.ts:185-230](file://ontograph-web/src/router/index.ts#L185-L230)
+- [store/modules/user.ts:14-54](file://ontograph-web/src/store/modules/user.ts#L14-L54)
+- [api/request.ts:21-61](file://ontograph-web/src/api/request.ts#L21-L61)
+- [api/auth.ts:26-50](file://ontograph-web/src/api/auth.ts#L26-L50)
+- [utils/auth.ts:14-30](file://ontograph-web/src/utils/auth.ts#L14-L30)
 
 ## 详细组件分析
 
@@ -148,14 +148,14 @@ Env --> End(["应用运行"])
 ```
 
 **图表来源**
-- [vite.config.ts:6-41](file://graphiti-web/vite.config.ts#L6-L41)
-- [tsconfig.json:19-21](file://graphiti-web/tsconfig.json#L19-L21)
-- [vite-env.d.ts:3-11](file://graphiti-web/src/vite-env.d.ts#L3-L11)
+- [vite.config.ts:6-41](file://ontograph-web/vite.config.ts#L6-L41)
+- [tsconfig.json:19-21](file://ontograph-web/tsconfig.json#L19-L21)
+- [vite-env.d.ts:3-11](file://ontograph-web/src/vite-env.d.ts#L3-L11)
 
 **章节来源**
-- [vite.config.ts:5-41](file://graphiti-web/vite.config.ts#L5-L41)
-- [tsconfig.json:8-22](file://graphiti-web/tsconfig.json#L8-L22)
-- [vite-env.d.ts:1-11](file://graphiti-web/src/vite-env.d.ts#L1-L11)
+- [vite.config.ts:5-41](file://ontograph-web/vite.config.ts#L5-L41)
+- [tsconfig.json:8-22](file://ontograph-web/tsconfig.json#L8-L22)
+- [vite-env.d.ts:1-11](file://ontograph-web/src/vite-env.d.ts#L1-L11)
 
 ### 应用入口初始化流程（main.ts）
 - 创建 Vue 应用实例并传入根组件 App.vue。
@@ -180,11 +180,11 @@ Entry->>DOM : app.mount("#app")
 ```
 
 **图表来源**
-- [main.ts:11-20](file://graphiti-web/src/main.ts#L11-L20)
+- [main.ts:11-20](file://ontograph-web/src/main.ts#L11-L20)
 
 **章节来源**
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [index.html:10-11](file://graphiti-web/index.html#L10-L11)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [index.html:10-11](file://ontograph-web/index.html#L10-L11)
 
 ### 根组件 App.vue 设计模式
 - 采用 Composition API 语法糖（<script setup>），简洁声明式风格。
@@ -192,7 +192,7 @@ Entry->>DOM : app.mount("#app")
 - 全局样式限定 #app 宽高与背景色，保证整体视觉一致性。
 
 **章节来源**
-- [App.vue:1-16](file://graphiti-web/src/App.vue#L1-L16)
+- [App.vue:1-16](file://ontograph-web/src/App.vue#L1-L16)
 
 ### 路由系统与守卫（router/index.ts）
 - 路由表：采用动态导入（懒加载）拆分视图，减少首屏体积。
@@ -218,11 +218,11 @@ T --> Z["完成"]
 ```
 
 **图表来源**
-- [router/index.ts:185-230](file://graphiti-web/src/router/index.ts#L185-L230)
+- [router/index.ts:185-230](file://ontograph-web/src/router/index.ts#L185-L230)
 
 **章节来源**
-- [router/index.ts:1-174](file://graphiti-web/src/router/index.ts#L1-L174)
-- [router/index.ts:176-179](file://graphiti-web/src/router/index.ts#L176-L179)
+- [router/index.ts:1-174](file://ontograph-web/src/router/index.ts#L1-L174)
+- [router/index.ts:176-179](file://ontograph-web/src/router/index.ts#L176-L179)
 
 ### 状态管理（Pinia Store：user.ts）
 - 状态：token 与 userInfo，来源于 localStorage。
@@ -258,14 +258,14 @@ UserStore --> LocalStorage : "持久化"
 ```
 
 **图表来源**
-- [store/modules/user.ts:12-64](file://graphiti-web/src/store/modules/user.ts#L12-L64)
-- [api/auth.ts:26-50](file://graphiti-web/src/api/auth.ts#L26-L50)
-- [utils/auth.ts:14-40](file://graphiti-web/src/utils/auth.ts#L14-L40)
+- [store/modules/user.ts:12-64](file://ontograph-web/src/store/modules/user.ts#L12-L64)
+- [api/auth.ts:26-50](file://ontograph-web/src/api/auth.ts#L26-L50)
+- [utils/auth.ts:14-40](file://ontograph-web/src/utils/auth.ts#L14-L40)
 
 **章节来源**
-- [store/modules/user.ts:1-67](file://graphiti-web/src/store/modules/user.ts#L1-L67)
-- [api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
+- [store/modules/user.ts:1-67](file://ontograph-web/src/store/modules/user.ts#L1-L67)
+- [api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
 
 ### API 层与鉴权拦截（request.ts 与 auth.ts）
 - Axios 实例：baseURL 来自 VITE_API_BASE_URL，统一超时与拦截器。
@@ -299,23 +299,23 @@ end
 ```
 
 **图表来源**
-- [api/request.ts:5-61](file://graphiti-web/src/api/request.ts#L5-L61)
-- [api/request.ts:64-135](file://graphiti-web/src/api/request.ts#L64-L135)
-- [api/auth.ts:26-50](file://graphiti-web/src/api/auth.ts#L26-L50)
-- [utils/auth.ts:18-25](file://graphiti-web/src/utils/auth.ts#L18-L25)
+- [api/request.ts:5-61](file://ontograph-web/src/api/request.ts#L5-L61)
+- [api/request.ts:64-135](file://ontograph-web/src/api/request.ts#L64-L135)
+- [api/auth.ts:26-50](file://ontograph-web/src/api/auth.ts#L26-L50)
+- [utils/auth.ts:18-25](file://ontograph-web/src/utils/auth.ts#L18-L25)
 
 **章节来源**
-- [api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
-- [api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
+- [api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
+- [api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
 
 ### 布局与视图组件（BasicLayout 与 Dashboard）
 - BasicLayout：采用 Ant Design Vue 布局组件，包含 Header、Sidebar 与 Content 区域，统一暗色主题样式变量。
 - Dashboard：作为首页视图，使用统计卡片、快捷操作与最近图谱列表，采用并行请求与响应式布局。
 
 **章节来源**
-- [components/Layout/BasicLayout.vue:1-51](file://graphiti-web/src/components/Layout/BasicLayout.vue#L1-L51)
-- [views/dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
+- [components/Layout/BasicLayout.vue:1-51](file://ontograph-web/src/components/Layout/BasicLayout.vue#L1-L51)
+- [views/dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
 
 ## 依赖分析
 - 运行时依赖：Vue 3、Vue Router 4、Pinia 2、Ant Design Vue 4、axios、echarts、vue-echarts、@ant-design/icons-vue、less。
@@ -340,15 +340,15 @@ REQ --> LS["utils/auth.ts"]
 ```
 
 **图表来源**
-- [package.json:11-30](file://graphiti-web/package.json#L11-L30)
-- [main.ts:11-16](file://graphiti-web/src/main.ts#L11-L16)
-- [router/index.ts:1-6](file://graphiti-web/src/router/index.ts#L1-L6)
-- [api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
-- [utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
+- [package.json:11-30](file://ontograph-web/package.json#L11-L30)
+- [main.ts:11-16](file://ontograph-web/src/main.ts#L11-L16)
+- [router/index.ts:1-6](file://ontograph-web/src/router/index.ts#L1-L6)
+- [api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
+- [utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
 
 **章节来源**
-- [package.json:1-32](file://graphiti-web/package.json#L1-L32)
+- [package.json:1-32](file://ontograph-web/package.json#L1-L32)
 
 ## 性能考虑
 - 代码分割与懒加载：路由视图采用动态导入，降低首屏包体。
@@ -375,10 +375,10 @@ REQ --> LS["utils/auth.ts"]
   - 如遇跨域问题，优先检查后端 CORS 配置。
 
 **章节来源**
-- [vite.config.ts:20-26](file://graphiti-web/vite.config.ts#L20-L26)
-- [router/index.ts:194-217](file://graphiti-web/src/router/index.ts#L194-L217)
-- [api/request.ts:64-135](file://graphiti-web/src/api/request.ts#L64-L135)
-- [api/request.ts:5-8](file://graphiti-web/src/api/request.ts#L5-L8)
+- [vite.config.ts:20-26](file://ontograph-web/vite.config.ts#L20-L26)
+- [router/index.ts:194-217](file://ontograph-web/src/router/index.ts#L194-L217)
+- [api/request.ts:64-135](file://ontograph-web/src/api/request.ts#L64-L135)
+- [api/request.ts:5-8](file://ontograph-web/src/api/request.ts#L5-L8)
 
 ## 结论
 该 Vue 3 + Vite 工程在模块解析、开发体验、鉴权与状态管理方面形成了清晰的分层与职责边界。通过路由守卫与 API 拦截器实现统一的登录态治理，配合 Pinia Store 与本地存储，保障了用户体验与安全性。建议在生产构建中进一步结合 CDN、缓存策略与资源压缩，持续优化加载性能与稳定性。
@@ -393,6 +393,6 @@ REQ --> LS["utils/auth.ts"]
   - 构建产物默认输出至 dist，可通过 Vite 输出目录配置调整。
 
 **章节来源**
-- [vite-env.d.ts:3-11](file://graphiti-web/src/vite-env.d.ts#L3-L11)
-- [vite.config.ts:18-26](file://graphiti-web/vite.config.ts#L18-L26)
-- [package.json:7](file://graphiti-web/package.json#L7)
+- [vite-env.d.ts:3-11](file://ontograph-web/src/vite-env.d.ts#L3-L11)
+- [vite.config.ts:18-26](file://ontograph-web/vite.config.ts#L18-L26)
+- [package.json:7](file://ontograph-web/package.json#L7)

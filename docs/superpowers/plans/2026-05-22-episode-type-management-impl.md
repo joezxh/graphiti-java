@@ -17,34 +17,34 @@
 | 文件 | 职责 |
 |------|------|
 | `sql/migrations/v005_episode_type_hierarchy.sql` | 数据库迁移：新增层级/审计字段，增加约束和索引 |
-| `graphiti-web/src/components/Ontology/EpisodeTypeExplorer.vue` | 侧边栏：类型树/列表、搜索、工具栏、拖拽排序 |
-| `graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue` | 右侧面板：类型详情 Tab + 实例列表 Tab |
-| `graphiti-web/src/components/Ontology/EpisodeTypeEditModal.vue` | 弹窗：类型新增/编辑表单 |
+| `ontograph-web/src/components/Ontology/EpisodeTypeExplorer.vue` | 侧边栏：类型树/列表、搜索、工具栏、拖拽排序 |
+| `ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue` | 右侧面板：类型详情 Tab + 实例列表 Tab |
+| `ontograph-web/src/components/Ontology/EpisodeTypeEditModal.vue` | 弹窗：类型新增/编辑表单 |
 
 ### 修改文件
 
 | 文件 | 职责 |
 |------|------|
-| `graphiti-module-core/src/main/java/.../dal/dataobject/metadata/OntEpisodeTypeDO.java` | 重构字段：新增层级/审计，删除向后兼容字段 |
-| `graphiti-module-core/src/main/java/.../dal/mysql/metadata/OntEpisodeTypeMapper.java` | 扩展：树查询、子类型查询、实例统计、批量排序 |
-| `graphiti-module-core/src/main/java/.../vo/metadata/OntEpisodeTypeReqVO.java` | 重构：删除旧字段，新增层级字段 |
-| `graphiti-module-core/src/main/java/.../vo/metadata/OntEpisodeTypeRespVO.java` | 重构：删除旧字段，新增层级/统计/子类型字段 |
-| `graphiti-module-core/src/main/java/.../vo/metadata/EpisodeTypeDeleteCheckVO.java` | 新增：删除检查响应 VO |
-| `graphiti-module-core/src/main/java/.../vo/metadata/EpisodeTypeReorderItemVO.java` | 新增：排序项 VO |
-| `graphiti-module-core/src/main/java/.../vo/metadata/EpisodeTypeImportResultVO.java` | 新增：导入结果 VO |
-| `graphiti-module-core/src/main/java/.../service/metadata/OntMetadataService.java` | 扩展：新增树查询/删除检查/排序/导入方法 |
-| `graphiti-module-core/src/main/java/.../service/metadata/OntMetadataServiceImpl.java` | 扩展：实现新业务逻辑 |
-| `graphiti-module-core/src/main/java/.../controller/admin/OntMetadataController.java` | 扩展：新增 6 个 REST 接口 |
-| `graphiti-module-core/src/main/java/.../controller/admin/GraphIDEController.java` | 扩展：新增按类型可视化接口 |
-| `graphiti-web/src/api/metadata.ts` | 扩展：episodeTypeApi 新增 6 个方法 |
-| `graphiti-web/src/api/graph.ts` | 扩展：新增 getEpisodesVisualizationByType |
-| `graphiti-web/src/views/graph/ide.vue` | 修改：集成新组件，替换 EpisodeExplorer |
+| `ontograph-module-core/src/main/java/.../dal/dataobject/metadata/OntEpisodeTypeDO.java` | 重构字段：新增层级/审计，删除向后兼容字段 |
+| `ontograph-module-core/src/main/java/.../dal/mysql/metadata/OntEpisodeTypeMapper.java` | 扩展：树查询、子类型查询、实例统计、批量排序 |
+| `ontograph-module-core/src/main/java/.../vo/metadata/OntEpisodeTypeReqVO.java` | 重构：删除旧字段，新增层级字段 |
+| `ontograph-module-core/src/main/java/.../vo/metadata/OntEpisodeTypeRespVO.java` | 重构：删除旧字段，新增层级/统计/子类型字段 |
+| `ontograph-module-core/src/main/java/.../vo/metadata/EpisodeTypeDeleteCheckVO.java` | 新增：删除检查响应 VO |
+| `ontograph-module-core/src/main/java/.../vo/metadata/EpisodeTypeReorderItemVO.java` | 新增：排序项 VO |
+| `ontograph-module-core/src/main/java/.../vo/metadata/EpisodeTypeImportResultVO.java` | 新增：导入结果 VO |
+| `ontograph-module-core/src/main/java/.../service/metadata/OntMetadataService.java` | 扩展：新增树查询/删除检查/排序/导入方法 |
+| `ontograph-module-core/src/main/java/.../service/metadata/OntMetadataServiceImpl.java` | 扩展：实现新业务逻辑 |
+| `ontograph-module-core/src/main/java/.../controller/admin/OntMetadataController.java` | 扩展：新增 6 个 REST 接口 |
+| `ontograph-module-core/src/main/java/.../controller/admin/GraphIDEController.java` | 扩展：新增按类型可视化接口 |
+| `ontograph-web/src/api/metadata.ts` | 扩展：episodeTypeApi 新增 6 个方法 |
+| `ontograph-web/src/api/graph.ts` | 扩展：新增 getEpisodesVisualizationByType |
+| `ontograph-web/src/views/graph/ide.vue` | 修改：集成新组件，替换 EpisodeExplorer |
 
 ### 可删除文件
 
 | 文件 | 说明 |
 |------|------|
-| `graphiti-web/src/components/Ontology/EpisodeExplorer.vue` | 被 EpisodeTypeExplorer 替代 |
+| `ontograph-web/src/components/Ontology/EpisodeExplorer.vue` | 被 EpisodeTypeExplorer 替代 |
 
 ---
 
@@ -143,7 +143,7 @@ git commit -m "feat(db): add episode type hierarchy fields (parent_type_code, le
 ## Task 2: OntEpisodeTypeDO 重构
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntEpisodeTypeDO.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntEpisodeTypeDO.java`
 
 - [ ] **Step 1: 重构 OntEpisodeTypeDO 字段**
 
@@ -233,14 +233,14 @@ public class OntEpisodeTypeDO implements Serializable {
 
 - [ ] **Step 2: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntEpisodeTypeDO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntEpisodeTypeDO.java
 git commit -m "feat(core): refactor OntEpisodeTypeDO with hierarchy and audit fields"
 ```
 
@@ -249,7 +249,7 @@ git commit -m "feat(core): refactor OntEpisodeTypeDO with hierarchy and audit fi
 ## Task 3: OntEpisodeTypeMapper 扩展
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntEpisodeTypeMapper.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntEpisodeTypeMapper.java`
 
 - [ ] **Step 1: 扩展 Mapper 接口**
 
@@ -295,14 +295,14 @@ public interface OntEpisodeTypeMapper extends BaseMapper<OntEpisodeTypeDO> {
 
 - [ ] **Step 2: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntEpisodeTypeMapper.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntEpisodeTypeMapper.java
 git commit -m "feat(core): extend OntEpisodeTypeMapper with tree queries and instance count"
 ```
 
@@ -311,7 +311,7 @@ git commit -m "feat(core): extend OntEpisodeTypeMapper with tree queries and ins
 ## Task 4: OntEpisodeTypeReqVO 重构
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeReqVO.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeReqVO.java`
 
 - [ ] **Step 1: 重构 ReqVO**
 
@@ -387,14 +387,14 @@ public class OntEpisodeTypeReqVO {
 
 - [ ] **Step 2: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeReqVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeReqVO.java
 git commit -m "feat(core): refactor OntEpisodeTypeReqVO, remove legacy fields, add hierarchy"
 ```
 
@@ -403,7 +403,7 @@ git commit -m "feat(core): refactor OntEpisodeTypeReqVO, remove legacy fields, a
 ## Task 5: OntEpisodeTypeRespVO 重构
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeRespVO.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeRespVO.java`
 
 - [ ] **Step 1: 重构 RespVO**
 
@@ -458,14 +458,14 @@ public class OntEpisodeTypeRespVO {
 
 - [ ] **Step 2: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeRespVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeRespVO.java
 git commit -m "feat(core): refactor OntEpisodeTypeRespVO with hierarchy, stats, children"
 ```
 
@@ -474,9 +474,9 @@ git commit -m "feat(core): refactor OntEpisodeTypeRespVO with hierarchy, stats, 
 ## Task 6: 新增 VO 类
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeDeleteCheckVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeReorderItemVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeImportResultVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeDeleteCheckVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeReorderItemVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeImportResultVO.java`
 
 - [ ] **Step 1: 创建 EpisodeTypeDeleteCheckVO**
 
@@ -545,16 +545,16 @@ public class EpisodeTypeImportResultVO {
 
 - [ ] **Step 4: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeDeleteCheckVO.java
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeReorderItemVO.java
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeImportResultVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeDeleteCheckVO.java
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeReorderItemVO.java
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/EpisodeTypeImportResultVO.java
 git commit -m "feat(core): add EpisodeType VOs for delete-check, reorder, import"
 ```
 
@@ -563,7 +563,7 @@ git commit -m "feat(core): add EpisodeType VOs for delete-check, reorder, import
 ## Task 7: OntMetadataService 扩展
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataService.java`
 
 - [ ] **Step 1: 扩展 Service 接口**
 
@@ -594,7 +594,7 @@ List<OntEpisodeTypeRespVO> listEpisodeTypesByProcessType(Long definitionId, Stri
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataService.java
 git commit -m "feat(core): extend OntMetadataService with episode type tree/reorder/import"
 ```
 
@@ -603,7 +603,7 @@ git commit -m "feat(core): extend OntMetadataService with episode type tree/reor
 ## Task 8: OntMetadataServiceImpl 实现
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataServiceImpl.java`
 
 - [ ] **Step 1: 在 ServiceImpl 中追加 Episode Type 相关实现**
 
@@ -773,14 +773,14 @@ git commit -m "feat(core): extend OntMetadataService with episode type tree/reor
 
 - [ ] **Step 2: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataServiceImpl.java
 git commit -m "feat(core): implement episode type tree, delete-check, reorder, import"
 ```
 
@@ -789,7 +789,7 @@ git commit -m "feat(core): implement episode type tree, delete-check, reorder, i
 ## Task 9: OntMetadataController 扩展
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntMetadataController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntMetadataController.java`
 
 - [ ] **Step 1: 在 Controller 中追加 Episode Type 接口**
 
@@ -914,14 +914,14 @@ git commit -m "feat(core): implement episode type tree, delete-check, reorder, i
 
 - [ ] **Step 2: 编译验证**
 
-Run: `cd graphiti-module-core && mvn compile -q`
+Run: `cd ontograph-module-core && mvn compile -q`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntMetadataController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntMetadataController.java
 git commit -m "feat(api): extend OntMetadataController with episode type tree/reorder/import/delete-check"
 ```
 
@@ -930,7 +930,7 @@ git commit -m "feat(api): extend OntMetadataController with episode type tree/re
 ## Task 10: GraphIDEController 新增可视化接口
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
 
 - [ ] **Step 1: 在 GraphIDEController 中追加方法**
 
@@ -958,7 +958,7 @@ git commit -m "feat(api): extend OntMetadataController with episode type tree/re
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java
 git commit -m "feat(api): add getEpisodesVisualizationByType endpoint"
 ```
 
@@ -967,12 +967,12 @@ git commit -m "feat(api): add getEpisodesVisualizationByType endpoint"
 ## Task 11: 前端 API 扩展
 
 **Files:**
-- Modify: `graphiti-web/src/api/metadata.ts`
-- Modify: `graphiti-web/src/api/graph.ts`
+- Modify: `ontograph-web/src/api/metadata.ts`
+- Modify: `ontograph-web/src/api/graph.ts`
 
 - [ ] **Step 1: 扩展 metadata.ts 中的 episodeTypeApi**
 
-在 `graphiti-web/src/api/metadata.ts` 中，将 `episodeTypeApi` 替换为：
+在 `ontograph-web/src/api/metadata.ts` 中，将 `episodeTypeApi` 替换为：
 
 ```typescript
 // ==================== Episode Type API ====================
@@ -1049,7 +1049,7 @@ export interface EpisodeTypeImportResultVO {
 
 - [ ] **Step 2: 扩展 graph.ts**
 
-在 `graphiti-web/src/api/graph.ts` 中追加：
+在 `ontograph-web/src/api/graph.ts` 中追加：
 
 ```typescript
   getEpisodesVisualizationByType: (graphId: string, typeCode: string, includeChildren?: boolean, limit?: number) =>
@@ -1060,14 +1060,14 @@ export interface EpisodeTypeImportResultVO {
 
 - [ ] **Step 3: TypeScript 编译检查**
 
-Run: `cd graphiti-web && npx vue-tsc --noEmit`
+Run: `cd ontograph-web && npx vue-tsc --noEmit`
 
 Expected: 无类型错误（可能与现有错误共存，但无新增错误）
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-web/src/api/metadata.ts graphiti-web/src/api/graph.ts
+git add ontograph-web/src/api/metadata.ts ontograph-web/src/api/graph.ts
 git commit -m "feat(web): extend episodeTypeApi and graphApi for hierarchy management"
 ```
 
@@ -1076,7 +1076,7 @@ git commit -m "feat(web): extend episodeTypeApi and graphApi for hierarchy manag
 ## Task 12: EpisodeTypeExplorer 组件
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/EpisodeTypeExplorer.vue`
+- Create: `ontograph-web/src/components/Ontology/EpisodeTypeExplorer.vue`
 
 - [ ] **Step 1: 创建组件**
 
@@ -1108,7 +1108,7 @@ git commit -m "feat(web): extend episodeTypeApi and graphApi for hierarchy manag
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/EpisodeTypeExplorer.vue
+git add ontograph-web/src/components/Ontology/EpisodeTypeExplorer.vue
 git commit -m "feat(web): add EpisodeTypeExplorer component with tree/list views and drag-sort"
 ```
 
@@ -1117,7 +1117,7 @@ git commit -m "feat(web): add EpisodeTypeExplorer component with tree/list views
 ## Task 13: EpisodeTypeDetailPanel 组件
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue`
 
 - [ ] **Step 1: 创建组件**
 
@@ -1152,7 +1152,7 @@ git commit -m "feat(web): add EpisodeTypeExplorer component with tree/list views
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue
+git add ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue
 git commit -m "feat(web): add EpisodeTypeDetailPanel with info and instance list tabs"
 ```
 
@@ -1161,7 +1161,7 @@ git commit -m "feat(web): add EpisodeTypeDetailPanel with info and instance list
 ## Task 14: EpisodeTypeEditModal 组件
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/EpisodeTypeEditModal.vue`
+- Create: `ontograph-web/src/components/Ontology/EpisodeTypeEditModal.vue`
 
 - [ ] **Step 1: 创建组件**
 
@@ -1189,7 +1189,7 @@ git commit -m "feat(web): add EpisodeTypeDetailPanel with info and instance list
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/EpisodeTypeEditModal.vue
+git add ontograph-web/src/components/Ontology/EpisodeTypeEditModal.vue
 git commit -m "feat(web): add EpisodeTypeEditModal with parent type selection and auto level"
 ```
 
@@ -1198,7 +1198,7 @@ git commit -m "feat(web): add EpisodeTypeEditModal with parent type selection an
 ## Task 15: ide.vue 集成
 
 **Files:**
-- Modify: `graphiti-web/src/views/graph/ide.vue`
+- Modify: `ontograph-web/src/views/graph/ide.vue`
 
 - [ ] **Step 1: 导入新组件**
 
@@ -1341,14 +1341,14 @@ const handleEpisodeTypeEditSuccess = async () => {
 
 - [ ] **Step 6: TypeScript 编译检查**
 
-Run: `cd graphiti-web && npx vue-tsc --noEmit`
+Run: `cd ontograph-web && npx vue-tsc --noEmit`
 
 Expected: 无新增类型错误
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add graphiti-web/src/views/graph/ide.vue
+git add ontograph-web/src/views/graph/ide.vue
 git commit -m "feat(web): integrate EpisodeTypeExplorer/DetailPanel/EditModal into ide.vue"
 ```
 
@@ -1357,18 +1357,18 @@ git commit -m "feat(web): integrate EpisodeTypeExplorer/DetailPanel/EditModal in
 ## Task 16: 删除旧 EpisodeExplorer.vue
 
 **Files:**
-- Delete: `graphiti-web/src/components/Ontology/EpisodeExplorer.vue`
+- Delete: `ontograph-web/src/components/Ontology/EpisodeExplorer.vue`
 
 - [ ] **Step 1: 确认无其他引用**
 
-Run: `cd graphiti-web && grep -r "EpisodeExplorer" src/ --include="*.vue" --include="*.ts"`
+Run: `cd ontograph-web && grep -r "EpisodeExplorer" src/ --include="*.vue" --include="*.ts"`
 
 Expected: 仅 ide.vue 中的引用已被替换，无其他引用
 
 - [ ] **Step 2: 删除文件**
 
 ```bash
-git rm graphiti-web/src/components/Ontology/EpisodeExplorer.vue
+git rm ontograph-web/src/components/Ontology/EpisodeExplorer.vue
 git commit -m "refactor(web): remove old EpisodeExplorer.vue, replaced by EpisodeTypeExplorer"
 ```
 
@@ -1378,7 +1378,7 @@ git commit -m "refactor(web): remove old EpisodeExplorer.vue, replaced by Episod
 
 - [ ] **Step 1: 启动后端服务**
 
-Run: `cd graphiti-server && mvn spring-boot:run`
+Run: `cd ontograph-server && mvn spring-boot:run`
 
 Expected: 服务启动成功，无 Bean 创建失败
 
@@ -1390,7 +1390,7 @@ Expected: 返回 JSON 数组（即使为空）
 
 - [ ] **Step 3: 启动前端开发服务器**
 
-Run: `cd graphiti-web && pnpm dev`
+Run: `cd ontograph-web && pnpm dev`
 
 Expected: 编译成功，无新增错误
 

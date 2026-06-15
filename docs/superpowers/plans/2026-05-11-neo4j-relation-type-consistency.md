@@ -27,14 +27,14 @@
 
 | 文件 | 变更 |
 |------|------|
-| `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java` | 修复 `createRelationship` 重载1，将硬编码 `RELATES_TO` 改为使用 `type` 参数 |
-| `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java` | 确认调用点；添加防御性空值检查 |
+| `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java` | 修复 `createRelationship` 重载1，将硬编码 `RELATES_TO` 改为使用 `type` 参数 |
+| `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java` | 确认调用点；添加防御性空值检查 |
 
 ---
 
 ### Task 1: Fix the hardcoded `RELATES_TO` in the first `createRelationship()` overload
 
-**File:** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java:90-123`
+**File:** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java:90-123`
 
 **Current code** (lines 93-98) hardcodes `RELATES_TO`:
 
@@ -76,7 +76,7 @@ The second `createRelationship(graphId, edgeUuid, sourceUuid, targetUuid, **rela
 
 ### Task 2: Verify the `addFactTriple()` call-site
 
-**File:** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java:139-148`
+**File:** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java:139-148`
 
 **Current code:**
 
@@ -115,7 +115,7 @@ graphNeo4jService.createRelationship(
 
 - [ ] **Step 2: Build to verify**
 
-Run: `cd D:/projects/ontograph-java && mvn compile -pl graphiti-module-core -am -q`
+Run: `cd D:/projects/ontograph-java && mvn compile -pl ontograph-module-core -am -q`
 Expected: BUILD SUCCESS
 
 ---

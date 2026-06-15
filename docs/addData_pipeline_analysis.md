@@ -6,7 +6,7 @@
 |------|------|
 | **文档版本** | v1.0 |
 | **创建日期** | 2026-05-25 |
-| **适用范围** | Graphiti-Java / Graphiti-Python 研发团队 |
+| **适用范围** | OntoGraph / Graphiti-Python 研发团队 |
 | **文档用途** | 核心技术文档归档、代码评审参考、架构优化依据 |
 
 ---
@@ -24,7 +24,7 @@
 - Union-Find 去重算法
 - 事务性批量写入 (UNWIND)
 
-### 1.2 Java 项目 (graphiti-java)
+### 1.2 Java 项目 (ontograph-java)
 
 **技术栈**: Spring Boot 3.5.5 + MyBatis-Plus + Neo4j Driver + Spring AI
 
@@ -743,4 +743,4 @@ public class OperationLogServiceImpl {
 
 **文档结束**
 
-*本文档由 Graphiti-Java 研发团队生成，适用于技术评审和架构优化参考。*
+*本文档由 OntoGraph 研发团队生成，适用于技术评审和架构优化参考。*

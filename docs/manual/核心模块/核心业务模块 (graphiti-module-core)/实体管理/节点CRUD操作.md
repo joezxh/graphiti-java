@@ -2,17 +2,17 @@
 
 <!--<cite>
 **本文档引用的文件**
-- [NodeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java)
-- [NodeService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java)
-- [NodeServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java)
-- [NodeFilterReqVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeFilterReqVO.java)
-- [NodeInfoRespVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeInfoRespVO.java)
-- [NodeListRespVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeListRespVO.java)
-- [EdgeListRespVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java)
-- [GraphNeo4jService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java)
-- [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
-- [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
-- [ResultCode.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
+- [NodeController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java)
+- [NodeService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java)
+- [NodeServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java)
+- [NodeFilterReqVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeFilterReqVO.java)
+- [NodeInfoRespVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeInfoRespVO.java)
+- [NodeListRespVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeListRespVO.java)
+- [EdgeListRespVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java)
+- [GraphNeo4jService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java)
+- [GlobalExceptionHandler.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
+- [BusinessException.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
+- [ResultCode.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
 </cite>-->
 
 ## 目录
@@ -27,7 +27,7 @@
 9. [结论](#结论)
 
 ## 简介
-本文件聚焦于Graphiti项目中“节点”的CRUD操作实现，围绕NodeController控制器提供的REST API，系统梳理节点创建、查询、更新、删除以及批量相关能力，并深入解析过滤条件设计、数据传输对象定义、节点关联边与Episode查询、错误处理机制、权限验证与性能优化策略。
+本文件聚焦于OntoGraph项目中“节点”的CRUD操作实现，围绕NodeController控制器提供的REST API，系统梳理节点创建、查询、更新、删除以及批量相关能力，并深入解析过滤条件设计、数据传输对象定义、节点关联边与Episode查询、错误处理机制、权限验证与性能优化策略。
 
 ## 项目结构
 - 控制层：NodeController提供REST接口，负责参数接收、鉴权声明与结果封装。
@@ -49,18 +49,18 @@ Common["全局异常处理<br/>GlobalExceptionHandler"] -.-> Controller
 ```
 
 图表来源
-- [NodeController.java:1-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
-- [NodeService.java:1-79](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L1-L79)
-- [NodeServiceImpl.java:1-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
-- [GraphNeo4jService.java:1-1347](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L1347)
-- [GlobalExceptionHandler.java:1-74](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L1-L74)
+- [NodeController.java:1-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
+- [NodeService.java:1-79](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L1-L79)
+- [NodeServiceImpl.java:1-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
+- [GraphNeo4jService.java:1-1347](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L1347)
+- [GlobalExceptionHandler.java:1-74](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L1-L74)
 
 章节来源
-- [NodeController.java:1-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
-- [NodeService.java:1-79](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L1-L79)
-- [NodeServiceImpl.java:1-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
-- [GraphNeo4jService.java:1-1347](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L1347)
-- [GlobalExceptionHandler.java:1-74](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L1-L74)
+- [NodeController.java:1-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
+- [NodeService.java:1-79](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L1-L79)
+- [NodeServiceImpl.java:1-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
+- [GraphNeo4jService.java:1-1347](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L1347)
+- [GlobalExceptionHandler.java:1-74](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L1-L74)
 
 ## 核心组件
 - NodeController：暴露节点管理REST接口，声明Bearer认证需求，使用CommonResult统一封装响应。
@@ -70,17 +70,17 @@ Common["全局异常处理<br/>GlobalExceptionHandler"] -.-> Controller
 - 异常与常量：BusinessException、GlobalExceptionHandler、ResultCode统一错误码与异常处理。
 
 章节来源
-- [NodeController.java:23-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L23-L143)
-- [NodeService.java:13-79](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
-- [NodeServiceImpl.java:26-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L26-L214)
-- [GraphNeo4jService.java:21-1347](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L21-L1347)
-- [NodeFilterReqVO.java:10-33](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeFilterReqVO.java#L10-L33)
-- [NodeInfoRespVO.java:12-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeInfoRespVO.java#L12-L70)
-- [NodeListRespVO.java:12-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeListRespVO.java#L12-L60)
-- [EdgeListRespVO.java:12-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L12-L70)
-- [BusinessException.java:10-33](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L33)
-- [GlobalExceptionHandler.java:17-74](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L74)
-- [ResultCode.java:7-23](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L23)
+- [NodeController.java:23-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L23-L143)
+- [NodeService.java:13-79](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
+- [NodeServiceImpl.java:26-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L26-L214)
+- [GraphNeo4jService.java:21-1347](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L21-L1347)
+- [NodeFilterReqVO.java:10-33](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeFilterReqVO.java#L10-L33)
+- [NodeInfoRespVO.java:12-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeInfoRespVO.java#L12-L70)
+- [NodeListRespVO.java:12-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeListRespVO.java#L12-L60)
+- [EdgeListRespVO.java:12-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L12-L70)
+- [BusinessException.java:10-33](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L33)
+- [GlobalExceptionHandler.java:17-74](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L74)
+- [ResultCode.java:7-23](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L23)
 
 ## 架构总览
 节点CRUD涉及三层协作：控制层负责参数与鉴权，服务层执行业务规则（本体校验、嵌入生成），数据访问层对接Neo4j数据库。节点详情查询与列表查询分别映射到GraphNeo4jService的实体节点查询与分页查询。
@@ -100,9 +100,9 @@ Ctrl-->>C : CommonResult<NodeInfoRespVO>
 ```
 
 图表来源
-- [NodeController.java:48-56](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L48-L56)
-- [NodeServiceImpl.java:49-56](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L49-L56)
-- [GraphNeo4jService.java:197-209](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L197-L209)
+- [NodeController.java:48-56](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L48-L56)
+- [NodeServiceImpl.java:49-56](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L49-L56)
+- [GraphNeo4jService.java:197-209](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L197-L209)
 
 ## 详细组件分析
 
@@ -144,10 +144,10 @@ Ctrl-->>C : CommonResult<NodeInfoRespVO>
   - 行为：GraphNeo4jService.getNodeEpisodes查询提及Episode
 
 章节来源
-- [NodeController.java:35-141](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
-- [NodeService.java:13-79](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
-- [NodeServiceImpl.java:32-125](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L32-L125)
-- [GraphNeo4jService.java:1191-1252](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1191-L1252)
+- [NodeController.java:35-141](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
+- [NodeService.java:13-79](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
+- [NodeServiceImpl.java:32-125](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L32-L125)
+- [GraphNeo4jService.java:1191-1252](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1191-L1252)
 
 ### 过滤条件设计：NodeFilterReqVO
 - 字段说明
@@ -159,10 +159,10 @@ Ctrl-->>C : CommonResult<NodeInfoRespVO>
   - 若需启用name/type过滤，应在GraphNeo4jService.findNodes或listNodes中增加对应WHERE条件。
 
 章节来源
-- [NodeFilterReqVO.java:10-33](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeFilterReqVO.java#L10-L33)
-- [NodeServiceImpl.java:32-47](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L32-L47)
-- [GraphNeo4jService.java:218-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L218-L235)
-- [GraphNeo4jService.java:1055-1096](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1055-L1096)
+- [NodeFilterReqVO.java:10-33](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeFilterReqVO.java#L10-L33)
+- [NodeServiceImpl.java:32-47](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L32-L47)
+- [GraphNeo4jService.java:218-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L218-L235)
+- [GraphNeo4jService.java:1055-1096](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1055-L1096)
 
 ### 数据传输对象：NodeInfoRespVO 与 NodeListRespVO
 - NodeInfoRespVO（节点详情）
@@ -176,11 +176,11 @@ Ctrl-->>C : CommonResult<NodeInfoRespVO>
   - 用途：返回节点关联边的简要信息
 
 章节来源
-- [NodeInfoRespVO.java:12-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeInfoRespVO.java#L12-L70)
-- [NodeListRespVO.java:12-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeListRespVO.java#L12-L60)
-- [EdgeListRespVO.java:12-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L12-L70)
-- [NodeServiceImpl.java:132-171](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L132-L171)
-- [NodeServiceImpl.java:198-212](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L198-L212)
+- [NodeInfoRespVO.java:12-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeInfoRespVO.java#L12-L70)
+- [NodeListRespVO.java:12-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/node/NodeListRespVO.java#L12-L60)
+- [EdgeListRespVO.java:12-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L12-L70)
+- [NodeServiceImpl.java:132-171](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L132-L171)
+- [NodeServiceImpl.java:198-212](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L198-L212)
 
 ### 节点创建流程（含本体校验与嵌入向量）
 ```mermaid
@@ -207,38 +207,38 @@ ThrowCreate --> End
 ```
 
 图表来源
-- [NodeServiceImpl.java:64-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L64-L111)
-- [GraphNeo4jService.java:41-64](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L41-L64)
+- [NodeServiceImpl.java:64-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L64-L111)
+- [GraphNeo4jService.java:41-64](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L41-L64)
 
 章节来源
-- [NodeServiceImpl.java:64-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L64-L111)
-- [GraphNeo4jService.java:41-64](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L41-L64)
+- [NodeServiceImpl.java:64-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L64-L111)
+- [GraphNeo4jService.java:41-64](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L41-L64)
 
 ### 节点详情查询与删除
 - 详情查询：GraphNeo4jService.getEntityNode返回节点后，NodeServiceImpl.convertToNodeInfoRespVO剔除系统字段，返回NodeInfoRespVO；若节点不存在，抛出业务异常。
 - 删除：GraphNeo4jService.deleteEntityNode执行删除，NodeServiceImpl.updateGraphNodeCount记录元数据变更（当前日志提示，后续可接入具体服务）。
 
 章节来源
-- [NodeServiceImpl.java:49-56](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L49-L56)
-- [NodeServiceImpl.java:119-125](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L119-L125)
-- [GraphNeo4jService.java:197-209](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L197-L209)
-- [GraphNeo4jService.java:553-562](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L553-L562)
+- [NodeServiceImpl.java:49-56](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L49-L56)
+- [NodeServiceImpl.java:119-125](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L119-L125)
+- [GraphNeo4jService.java:197-209](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L197-L209)
+- [GraphNeo4jService.java:553-562](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L553-L562)
 
 ### 节点关联边与Episode查询
 - 关联边：GraphNeo4jService.getNodeEdges双向查询（作为source或target），返回EdgeListRespVO列表。
 - 关联Episode：GraphNeo4jService.getNodeEpisodes通过MENTIONS关系查询提及Episode，返回简要信息列表。
 
 章节来源
-- [NodeServiceImpl.java:183-196](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L183-L196)
-- [GraphNeo4jService.java:1191-1217](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1191-L1217)
-- [GraphNeo4jService.java:1226-1252](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1226-L1252)
+- [NodeServiceImpl.java:183-196](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L183-L196)
+- [GraphNeo4jService.java:1191-1217](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1191-L1217)
+- [GraphNeo4jService.java:1226-1252](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1226-L1252)
 
 ### 权限验证与安全
 - NodeController在各操作上声明了Bearer认证需求，确保接口访问受JWT保护。
 - 具体鉴权实现由框架安全模块负责，控制器仅做注解声明。
 
 章节来源
-- [NodeController.java:35-141](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
+- [NodeController.java:35-141](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
 
 ### 错误处理机制
 - 全局异常：GlobalExceptionHandler统一捕获BusinessException、参数校验异常、缺少参数异常与其他未知异常，返回CommonResult错误响应。
@@ -246,11 +246,11 @@ ThrowCreate --> End
 - NodeServiceImpl在节点不存在、创建失败、参数非法等场景抛出BusinessException，交由全局异常处理器处理。
 
 章节来源
-- [GlobalExceptionHandler.java:17-74](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L74)
-- [BusinessException.java:10-33](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L33)
-- [ResultCode.java:7-23](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L23)
-- [NodeServiceImpl.java:52-54](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L52-L54)
-- [NodeServiceImpl.java:103-105](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L103-L105)
+- [GlobalExceptionHandler.java:17-74](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L17-L74)
+- [BusinessException.java:10-33](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java#L10-L33)
+- [ResultCode.java:7-23](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L23)
+- [NodeServiceImpl.java:52-54](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L52-L54)
+- [NodeServiceImpl.java:103-105](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L103-L105)
 
 ## 依赖分析
 - 控制器依赖服务接口与VO类，服务实现依赖Neo4j访问层与嵌入向量服务。
@@ -303,16 +303,16 @@ NodeServiceImpl --> GraphNeo4jService : "使用"
 ```
 
 图表来源
-- [NodeController.java:27-141](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L27-L141)
-- [NodeService.java:13-79](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
-- [NodeServiceImpl.java:26-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L26-L214)
-- [GraphNeo4jService.java:21-1347](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L21-L1347)
+- [NodeController.java:27-141](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L27-L141)
+- [NodeService.java:13-79](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
+- [NodeServiceImpl.java:26-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L26-L214)
+- [GraphNeo4jService.java:21-1347](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L21-L1347)
 
 章节来源
-- [NodeController.java:27-141](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L27-L141)
-- [NodeService.java:13-79](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
-- [NodeServiceImpl.java:26-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L26-L214)
-- [GraphNeo4jService.java:21-1347](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L21-L1347)
+- [NodeController.java:27-141](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L27-L141)
+- [NodeService.java:13-79](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/NodeService.java#L13-L79)
+- [NodeServiceImpl.java:26-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L26-L214)
+- [GraphNeo4jService.java:21-1347](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L21-L1347)
 
 ## 性能考虑
 - 分页与限制：列表查询与边查询均支持skip/limit，避免一次性返回大量数据。
@@ -322,10 +322,10 @@ NodeServiceImpl --> GraphNeo4jService : "使用"
 - 时序查询：支持按参考时间戳查询有效节点/边，适合历史回放场景。
 
 章节来源
-- [GraphNeo4jService.java:768-791](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L768-L791)
-- [GraphNeo4jService.java:658-688](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L658-L688)
-- [GraphNeo4jService.java:699-762](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L699-L762)
-- [NodeServiceImpl.java:60-87](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L60-L87)
+- [GraphNeo4jService.java:768-791](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L768-L791)
+- [GraphNeo4jService.java:658-688](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L658-L688)
+- [GraphNeo4jService.java:699-762](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L699-L762)
+- [NodeServiceImpl.java:60-87](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L60-L87)
 
 ## 故障排查指南
 - 参数缺失：缺少必需参数将被GlobalExceptionHandler捕获并返回400错误。
@@ -334,10 +334,10 @@ NodeServiceImpl --> GraphNeo4jService : "使用"
 - Neo4j连接问题：检查驱动配置与索引状态；向量/全文索引未创建会导致相应查询失败并记录警告。
 
 章节来源
-- [GlobalExceptionHandler.java:26-72](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L72)
-- [ResultCode.java:15-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L15-L22)
-- [NodeServiceImpl.java:52-54](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L52-L54)
-- [GraphNeo4jService.java:645-648](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L645-L648)
+- [GlobalExceptionHandler.java:26-72](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java#L26-L72)
+- [ResultCode.java:15-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L15-L22)
+- [NodeServiceImpl.java:52-54](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L52-L54)
+- [GraphNeo4jService.java:645-648](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L645-L648)
 
 ## 结论
 本实现以清晰的分层架构支撑节点CRUD与关联查询：控制层统一鉴权与响应，服务层承载业务规则（本体校验、嵌入生成、分页与过滤），数据访问层专注Neo4j交互。当前更新接口预留待实现，建议尽快补齐以完善生命周期管理。通过向量与全文索引、分页与限制、时序查询等能力，系统具备良好的可扩展性与性能基础。

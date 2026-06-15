@@ -1,31 +1,31 @@
-# 系统管理模块 (graphiti-module-system)
+# 系统管理模块 (ontograph-module-system)
 
 <!--<cite>
 **本文引用的文件**
-- [AuthController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
-- [UserController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java)
-- [RoleController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java)
-- [MenuController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/MenuController.java)
-- [OperationLogController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java)
-- [AuthService.java](file://graphiti-module-system/src/main/java/com/graphiti/system/service/AuthService.java)
-- [UserService.java](file://graphiti-module-system/src/main/java/com/graphiti/system/service/UserService.java)
-- [RoleService.java](file://graphiti-module-system/src/main/java/com/graphiti/system/service/RoleService.java)
-- [MenuService.java](file://graphiti-module-system/src/main/java/com/graphiti/system/service/MenuService.java)
-- [OperationLogService.java](file://graphiti-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java)
-- [UserDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java)
-- [RoleDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java)
-- [MenuDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java)
-- [OperationLogDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java)
-- [UserMapper.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java)
-- [LoginRequest.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java)
-- [LoginResponse.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java)
-- [SecurityConfig.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
-- [JwtAuthenticationFilter.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
-- [JwtTokenProvider.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
-- [UserDetailsServiceImpl.java](file://graphiti-module-system/src/main/java/com/graphiti/system/service/UserDetailsServiceImpl.java)
-- [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
-- [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
-- [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
+- [AuthController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
+- [UserController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java)
+- [RoleController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java)
+- [MenuController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/MenuController.java)
+- [OperationLogController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java)
+- [AuthService.java](file://ontograph-module-system/src/main/java/com/graphiti/system/service/AuthService.java)
+- [UserService.java](file://ontograph-module-system/src/main/java/com/graphiti/system/service/UserService.java)
+- [RoleService.java](file://ontograph-module-system/src/main/java/com/graphiti/system/service/RoleService.java)
+- [MenuService.java](file://ontograph-module-system/src/main/java/com/graphiti/system/service/MenuService.java)
+- [OperationLogService.java](file://ontograph-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java)
+- [UserDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java)
+- [RoleDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java)
+- [MenuDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java)
+- [OperationLogDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java)
+- [UserMapper.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java)
+- [LoginRequest.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java)
+- [LoginResponse.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java)
+- [SecurityConfig.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
+- [JwtAuthenticationFilter.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
+- [JwtTokenProvider.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
+- [UserDetailsServiceImpl.java](file://ontograph-module-system/src/main/java/com/graphiti/system/service/UserDetailsServiceImpl.java)
+- [CommonResult.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
+- [BusinessException.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
+- [GlobalExceptionHandler.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
 - [schema.sql](file://sql/mysql/schema.sql)
 - [init-data.sql](file://sql/mysql/init-data.sql)
 - [V2__create_notification_tables.sql](file://sql/postgresql/V2__create_notification_tables.sql)
@@ -51,10 +51,10 @@
 10. [附录](#附录)
 
 ## 简介
-本文件为 ontograph-java 系统管理模块（graphiti-module-system）的权威技术文档，覆盖用户管理、角色权限、菜单管理、日志管理等核心功能。文档从控制器层的 RESTful API 设计、服务层的业务逻辑处理、数据访问层的 MyBatis 映射实现三个维度进行深入解析，并结合安全框架的认证与授权机制，阐述用户认证流程、权限控制机制以及操作日志记录。同时，提供数据模型设计、表结构关系、索引优化策略，以及完整的 API 接口文档、参数说明、返回值格式与实际操作示例，帮助开发者快速理解、扩展与定制系统。
+本文件为 ontograph-java 系统管理模块（ontograph-module-system）的权威技术文档，覆盖用户管理、角色权限、菜单管理、日志管理等核心功能。文档从控制器层的 RESTful API 设计、服务层的业务逻辑处理、数据访问层的 MyBatis 映射实现三个维度进行深入解析，并结合安全框架的认证与授权机制，阐述用户认证流程、权限控制机制以及操作日志记录。同时，提供数据模型设计、表结构关系、索引优化策略，以及完整的 API 接口文档、参数说明、返回值格式与实际操作示例，帮助开发者快速理解、扩展与定制系统。
 
 ## 项目结构
-系统管理模块位于 graphiti-module-system 目录下，采用典型的分层架构：controller（控制器）、service（服务）、dal（数据访问层）、dto（数据传输对象）、resources（SQL 初始化脚本）。模块通过 Spring Boot 自动装配与 MyBatis-Plus 进行数据库交互，配合自研安全框架实现 JWT 认证与权限过滤。
+系统管理模块位于 ontograph-module-system 目录下，采用典型的分层架构：controller（控制器）、service（服务）、dal（数据访问层）、dto（数据传输对象）、resources（SQL 初始化脚本）。模块通过 Spring Boot 自动装配与 MyBatis-Plus 进行数据库交互，配合自研安全框架实现 JWT 认证与权限过滤。
 
 ```mermaid
 graph TB
@@ -101,28 +101,28 @@ D4 --> O4
 ```
 
 **图表来源**
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
-- [UserController.java:19-74](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
-- [RoleController.java:17-70](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L17-L70)
-- [MenuController.java:17-78](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L17-L78)
-- [OperationLogController.java:15-72](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L15-L72)
-- [AuthService.java:9-25](file://graphiti-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L9-L25)
-- [UserService.java:8-60](file://graphiti-module-system/src/main/java/com/graphiti/system/service/UserService.java#L8-L60)
-- [RoleService.java:7-48](file://graphiti-module-system/src/main/java/com/graphiti/system/service/RoleService.java#L7-L48)
-- [MenuService.java:6-47](file://graphiti-module-system/src/main/java/com/graphiti/system/service/MenuService.java#L6-L47)
-- [OperationLogService.java:7-44](file://graphiti-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java#L7-L44)
-- [UserMapper.java:7-12](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L7-L12)
-- [UserDO.java:9-37](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L9-L37)
-- [RoleDO.java:9-31](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L9-L31)
-- [MenuDO.java:12-44](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L12-L44)
-- [OperationLogDO.java:9-41](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java#L9-L41)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
+- [UserController.java:19-74](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
+- [RoleController.java:17-70](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L17-L70)
+- [MenuController.java:17-78](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L17-L78)
+- [OperationLogController.java:15-72](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L15-L72)
+- [AuthService.java:9-25](file://ontograph-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L9-L25)
+- [UserService.java:8-60](file://ontograph-module-system/src/main/java/com/graphiti/system/service/UserService.java#L8-L60)
+- [RoleService.java:7-48](file://ontograph-module-system/src/main/java/com/graphiti/system/service/RoleService.java#L7-L48)
+- [MenuService.java:6-47](file://ontograph-module-system/src/main/java/com/graphiti/system/service/MenuService.java#L6-L47)
+- [OperationLogService.java:7-44](file://ontograph-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java#L7-L44)
+- [UserMapper.java:7-12](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L7-L12)
+- [UserDO.java:9-37](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L9-L37)
+- [RoleDO.java:9-31](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L9-L31)
+- [MenuDO.java:12-44](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L12-L44)
+- [OperationLogDO.java:9-41](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java#L9-L41)
 
 **章节来源**
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
-- [UserController.java:19-74](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
-- [RoleController.java:17-70](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L17-L70)
-- [MenuController.java:17-78](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L17-L78)
-- [OperationLogController.java:15-72](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L15-L72)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
+- [UserController.java:19-74](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
+- [RoleController.java:17-70](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L17-L70)
+- [MenuController.java:17-78](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L17-L78)
+- [OperationLogController.java:15-72](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L15-L72)
 
 ## 核心组件
 - 控制器层：提供 RESTful API，统一返回包装类，标注 Swagger 注解，声明安全需求。
@@ -132,9 +132,9 @@ D4 --> O4
 - 安全框架：集成 JWT 认证与权限过滤，提供全局异常处理与通用响应封装。
 
 **章节来源**
-- [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
-- [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
-- [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
+- [CommonResult.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
+- [BusinessException.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
+- [GlobalExceptionHandler.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
 
 ## 架构总览
 系统管理模块遵循“控制器-服务-数据访问-数据对象”的分层设计，配合安全框架在请求进入控制器前完成认证与鉴权。认证流程通过 JWT 实现，权限控制基于菜单权限标识与用户角色关联。
@@ -157,10 +157,10 @@ JwtFilter-->>Client : 放行或拒绝
 ```
 
 **图表来源**
-- [AuthController.java:27-32](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L32)
-- [AuthService.java:14-24](file://graphiti-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L14-L24)
-- [JwtAuthenticationFilter.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
-- [SecurityConfig.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
+- [AuthController.java:27-32](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L32)
+- [AuthService.java:14-24](file://ontograph-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L14-L24)
+- [JwtAuthenticationFilter.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
+- [SecurityConfig.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
 
 ## 详细组件分析
 
@@ -191,15 +191,15 @@ Ctrl-->>Client : CommonResult<UserInfo>
 ```
 
 **图表来源**
-- [AuthController.java:27-42](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L42)
-- [AuthService.java:14-24](file://graphiti-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L14-L24)
-- [UserMapper.java:10-12](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L10-L12)
-- [LoginRequest.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java)
-- [LoginResponse.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java)
+- [AuthController.java:27-42](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L42)
+- [AuthService.java:14-24](file://ontograph-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L14-L24)
+- [UserMapper.java:10-12](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L10-L12)
+- [LoginRequest.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java)
+- [LoginResponse.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java)
 
 **章节来源**
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
-- [AuthService.java:9-25](file://graphiti-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L9-L25)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
+- [AuthService.java:9-25](file://ontograph-module-system/src/main/java/com/graphiti/system/service/AuthService.java#L9-L25)
 
 ### 用户管理
 - 功能概述：提供用户创建、更新、删除、详情查询、列表查询（分页+多条件过滤）。
@@ -223,13 +223,13 @@ Ctrl-->>Client : CommonResult<{list,total}>
 ```
 
 **图表来源**
-- [UserController.java:63-73](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L63-L73)
-- [UserService.java:50-59](file://graphiti-module-system/src/main/java/com/graphiti/system/service/UserService.java#L50-L59)
-- [UserMapper.java:10-12](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L10-L12)
+- [UserController.java:63-73](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L63-L73)
+- [UserService.java:50-59](file://ontograph-module-system/src/main/java/com/graphiti/system/service/UserService.java#L50-L59)
+- [UserMapper.java:10-12](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L10-L12)
 
 **章节来源**
-- [UserController.java:19-74](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
-- [UserService.java:8-60](file://graphiti-module-system/src/main/java/com/graphiti/system/service/UserService.java#L8-L60)
+- [UserController.java:19-74](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
+- [UserService.java:8-60](file://ontograph-module-system/src/main/java/com/graphiti/system/service/UserService.java#L8-L60)
 
 ### 角色管理
 - 功能概述：提供角色创建、更新、删除、详情查询、列表查询。
@@ -253,13 +253,13 @@ Ctrl-->>Client : CommonResult<List<RoleDO>>
 ```
 
 **图表来源**
-- [RoleController.java:64-69](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L64-L69)
-- [RoleService.java:43-47](file://graphiti-module-system/src/main/java/com/graphiti/system/service/RoleService.java#L43-L47)
-- [RoleDO.java:12-31](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L12-L31)
+- [RoleController.java:64-69](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L64-L69)
+- [RoleService.java:43-47](file://ontograph-module-system/src/main/java/com/graphiti/system/service/RoleService.java#L43-L47)
+- [RoleDO.java:12-31](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L12-L31)
 
 **章节来源**
-- [RoleController.java:17-70](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L17-L70)
-- [RoleService.java:7-48](file://graphiti-module-system/src/main/java/com/graphiti/system/service/RoleService.java#L7-L48)
+- [RoleController.java:17-70](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L17-L70)
+- [RoleService.java:7-48](file://ontograph-module-system/src/main/java/com/graphiti/system/service/RoleService.java#L7-L48)
 
 ### 菜单管理
 - 功能概述：提供菜单创建、更新、删除、详情查询、树形列表查询。
@@ -276,13 +276,13 @@ Build --> Return["返回树形菜单列表"]
 ```
 
 **图表来源**
-- [MenuController.java:64-77](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L64-L77)
-- [MenuService.java:43-47](file://graphiti-module-system/src/main/java/com/graphiti/system/service/MenuService.java#L43-L47)
-- [MenuDO.java:12-44](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L12-L44)
+- [MenuController.java:64-77](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L64-L77)
+- [MenuService.java:43-47](file://ontograph-module-system/src/main/java/com/graphiti/system/service/MenuService.java#L43-L47)
+- [MenuDO.java:12-44](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L12-L44)
 
 **章节来源**
-- [MenuController.java:17-78](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L17-L78)
-- [MenuService.java:6-47](file://graphiti-module-system/src/main/java/com/graphiti/system/service/MenuService.java#L6-L47)
+- [MenuController.java:17-78](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/MenuController.java#L17-L78)
+- [MenuService.java:6-47](file://ontograph-module-system/src/main/java/com/graphiti/system/service/MenuService.java#L6-L47)
 
 ### 日志管理
 - 功能概述：提供操作日志分页查询、详情查询、删除单条、清空、导出。
@@ -306,13 +306,13 @@ Ctrl-->>Client : CommonResult<Map>
 ```
 
 **图表来源**
-- [OperationLogController.java:27-39](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L27-L39)
-- [OperationLogService.java:15-17](file://graphiti-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java#L15-L17)
-- [OperationLogDO.java:9-41](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java#L9-L41)
+- [OperationLogController.java:27-39](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L27-L39)
+- [OperationLogService.java:15-17](file://ontograph-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java#L15-L17)
+- [OperationLogDO.java:9-41](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java#L9-L41)
 
 **章节来源**
-- [OperationLogController.java:15-72](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L15-L72)
-- [OperationLogService.java:7-44](file://graphiti-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java#L7-L44)
+- [OperationLogController.java:15-72](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/OperationLogController.java#L15-L72)
+- [OperationLogService.java:7-44](file://ontograph-module-system/src/main/java/com/graphiti/system/service/OperationLogService.java#L7-L44)
 
 ## 依赖分析
 - 组件耦合：控制器仅依赖服务接口，服务层依赖数据访问接口，降低耦合度。
@@ -329,14 +329,14 @@ Svc --> DTO
 ```
 
 **图表来源**
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
-- [UserService.java:8-60](file://graphiti-module-system/src/main/java/com/graphiti/system/service/UserService.java#L8-L60)
-- [UserMapper.java:10-12](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L10-L12)
-- [UserDO.java:12-37](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L12-L37)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
+- [UserService.java:8-60](file://ontograph-module-system/src/main/java/com/graphiti/system/service/UserService.java#L8-L60)
+- [UserMapper.java:10-12](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L10-L12)
+- [UserDO.java:12-37](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L12-L37)
 
 **章节来源**
-- [UserMapper.java:7-12](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L7-L12)
-- [UserDO.java:9-37](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L9-L37)
+- [UserMapper.java:7-12](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L7-L12)
+- [UserDO.java:9-37](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L9-L37)
 
 ## 性能考虑
 - 分页查询：用户与日志列表查询均采用分页，避免一次性加载大量数据。
@@ -352,11 +352,11 @@ Svc --> DTO
 - 权限不足：确认用户角色与菜单权限标识的关联关系是否正确。
 
 **章节来源**
-- [GlobalExceptionHandler.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
-- [BusinessException.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
+- [GlobalExceptionHandler.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/GlobalExceptionHandler.java)
+- [BusinessException.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/exception/BusinessException.java)
 
 ## 结论
-graphiti-module-system 模块通过清晰的分层架构与标准的 RESTful API 设计，实现了用户、角色、菜单与日志的全生命周期管理。结合 JWT 认证与权限过滤，系统具备良好的安全性与可维护性。建议在生产环境中进一步完善索引策略、引入缓存与异步日志写入，以提升整体性能与稳定性。
+ontograph-module-system 模块通过清晰的分层架构与标准的 RESTful API 设计，实现了用户、角色、菜单与日志的全生命周期管理。结合 JWT 认证与权限过滤，系统具备良好的安全性与可维护性。建议在生产环境中进一步完善索引策略、引入缓存与异步日志写入，以提升整体性能与稳定性。
 
 ## 附录
 
@@ -418,10 +418,10 @@ datetime create_time
 ```
 
 **图表来源**
-- [UserDO.java:12-37](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L12-L37)
-- [RoleDO.java:12-31](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L12-L31)
-- [MenuDO.java:12-44](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L12-L44)
-- [OperationLogDO.java:12-41](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java#L12-L41)
+- [UserDO.java:12-37](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L12-L37)
+- [RoleDO.java:12-31](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L12-L31)
+- [MenuDO.java:12-44](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L12-L44)
+- [OperationLogDO.java:12-41](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/OperationLogDO.java#L12-L41)
 - [schema.sql](file://sql/mysql/schema.sql)
 
 ### 索引优化策略

@@ -18,7 +18,7 @@
 ### File Structure
 
 ```
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/
 ├── service/
 │   ├── OntologyClassService.java              ← NEW
 │   ├── OntologyPropertyService.java           ← NEW
@@ -46,7 +46,7 @@ graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
 sql/
 └── (no new tables — reuse Phase 1 tables)
 
-graphiti-module-core/
+ontograph-module-core/
 ├── pom.xml                                 MODIFY (add Jena dependencies)
 └── src/test/java/.../service/
     ├── OntologyClassServiceImplTest.java    ← NEW
@@ -59,7 +59,7 @@ graphiti-module-core/
 ### Task P2-1: Add Jena Dependencies to pom.xml
 
 **Files:**
-- Modify: `graphiti-module-core/pom.xml`
+- Modify: `ontograph-module-core/pom.xml`
 
 - [ ] **Step 1: Add Jena and RDF4J dependencies**
 
@@ -104,13 +104,13 @@ graphiti-module-core/
 
 - [ ] **Step 2: Verify Maven resolves dependencies**
 
-Run: `cd D:/projects/ontograph-java && mvn dependency:resolve -pl graphiti-module-core -q 2>&1 | grep -i "jena\|rdf4j" | head -20`
+Run: `cd D:/projects/ontograph-java && mvn dependency:resolve -pl ontograph-module-core -q 2>&1 | grep -i "jena\|rdf4j" | head -20`
 Expected: Lists Jena and RDF4J artifacts resolved
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/pom.xml
+git add ontograph-module-core/pom.xml
 git commit -m "phase2: add Apache Jena 4.9.0 and RDF4J 3.7.7 dependencies"
 ```
 
@@ -119,16 +119,16 @@ git commit -m "phase2: add Apache Jena 4.9.0 and RDF4J 3.7.7 dependencies"
 ### Task P2-2: OntologyClassService (Class CRUD + Hierarchy)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyClassService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntClassVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ClassHierarchyVO.java`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyClassServiceImplTest.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyClassService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntClassVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ClassHierarchyVO.java`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyClassServiceImplTest.java`
 
 - [ ] **Step 1: Write OntClassVO and ClassHierarchyVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntClassVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntClassVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Data;
@@ -154,7 +154,7 @@ public class OntClassVO {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ClassHierarchyVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ClassHierarchyVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Data;
@@ -176,7 +176,7 @@ public class ClassHierarchyVO {
 - [ ] **Step 2: Write OntologyClassService interface**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyClassService.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyClassService.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.ontology.ClassHierarchyVO;
@@ -211,7 +211,7 @@ public interface OntologyClassService {
 - [ ] **Step 3: Write OntologyClassServiceImpl**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -444,7 +444,7 @@ public class OntologyClassServiceImpl implements OntologyClassService {
 - [ ] **Step 4: Write unit test**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyClassServiceImplTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyClassServiceImplTest.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.service.impl.OntologyClassServiceImpl;
@@ -486,11 +486,11 @@ class OntologyClassServiceImplTest {
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyClassService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntClassVO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ClassHierarchyVO.java
-git add graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyClassServiceImplTest.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyClassService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyClassServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntClassVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ClassHierarchyVO.java
+git add ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyClassServiceImplTest.java
 git commit -m "phase2: add OntologyClassService with CRUD and hierarchy tree support"
 ```
 
@@ -499,15 +499,15 @@ git commit -m "phase2: add OntologyClassService with CRUD and hierarchy tree sup
 ### Task P2-3: OntologyPropertyService (Property CRUD + Domain/Range)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyPropertyService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntPropertyVO.java`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyPropertyServiceImplTest.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyPropertyService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntPropertyVO.java`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyPropertyServiceImplTest.java`
 
 - [ ] **Step 1: Write OntPropertyVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntPropertyVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntPropertyVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Data;
@@ -552,7 +552,7 @@ public class OntPropertyVO {
 - [ ] **Step 2: Write OntologyPropertyService interface**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyPropertyService.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyPropertyService.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.ontology.OntPropertyVO;
@@ -591,7 +591,7 @@ public interface OntologyPropertyService {
 3. 删除时检查是否有约束引用该属性
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -860,9 +860,9 @@ public class OntologyPropertyServiceImpl implements OntologyPropertyService {
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyPropertyService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntPropertyVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyPropertyService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyPropertyServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/OntPropertyVO.java
 git commit -m "phase2: add OntologyPropertyService with CRUD, domain/range, and property hierarchy"
 ```
 
@@ -871,9 +871,9 @@ git commit -m "phase2: add OntologyPropertyService with CRUD, domain/range, and 
 ### Task P2-4: Schema.org Import Service
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaOrgImportService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SchemaOrgImportServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/SchemaOrgImportReqVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaOrgImportService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SchemaOrgImportServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/SchemaOrgImportReqVO.java`
 
 **核心实现逻辑：**
 1. 根据 `domains` 参数（FinancialProduct / MedicalEntity / Product / Article 等）从 Schema.org 获取对应类的 JSON-LD
@@ -885,7 +885,7 @@ git commit -m "phase2: add OntologyPropertyService with CRUD, domain/range, and 
 - [ ] **Step 1: Write SchemaOrgImportReqVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/SchemaOrgImportReqVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/SchemaOrgImportReqVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Data;
@@ -913,7 +913,7 @@ public class SchemaOrgImportReqVO {
 - [ ] **Step 2: Write SchemaOrgImportService**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaOrgImportService.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaOrgImportService.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.ontology.SchemaOrgImportReqVO;
@@ -947,7 +947,7 @@ public interface SchemaOrgImportService {
 核心实现（RDF4J 解析 Schema.org JSON-LD）：
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SchemaOrgImportServiceImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SchemaOrgImportServiceImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.module.graphiti.service.SchemaOrgImportService;
@@ -1130,9 +1130,9 @@ public class SchemaOrgImportServiceImpl implements SchemaOrgImportService {
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaOrgImportService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SchemaOrgImportServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/SchemaOrgImportReqVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaOrgImportService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SchemaOrgImportServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/SchemaOrgImportReqVO.java
 git commit -m "phase2: add SchemaOrgImportService with RDF4J JSON-LD parser for Schema.org import"
 ```
 
@@ -1143,7 +1143,7 @@ git commit -m "phase2: add SchemaOrgImportService with RDF4J JSON-LD parser for 
 ### File Structure
 
 ```
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/
 ├── service/
 │   ├── OntologyReasoner.java                 ← NEW (interface)
 │   └── impl/
@@ -1156,15 +1156,15 @@ graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
 ### Task P3-1: OntologyReasoner Interface + Implementation
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyReasoner.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyReasonerImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ConsistencyResultVO.java`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyReasonerImplTest.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyReasoner.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyReasonerImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ConsistencyResultVO.java`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyReasonerImplTest.java`
 
 - [ ] **Step 1: Write ConsistencyResultVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ConsistencyResultVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ConsistencyResultVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Builder;
@@ -1184,7 +1184,7 @@ public class ConsistencyResultVO {
 - [ ] **Step 2: Write OntologyReasoner interface**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyReasoner.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyReasoner.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.ontology.ConsistencyResultVO;
@@ -1248,7 +1248,7 @@ public interface OntologyReasoner {
 4. `shutdown()` 清理该图谱的 InfGraph 缓存
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyReasonerImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyReasonerImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.module.graphiti.dal.dataobject.ont.*;
@@ -1430,9 +1430,9 @@ public class OntologyReasonerImpl implements OntologyReasoner {
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyReasoner.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyReasonerImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ConsistencyResultVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyReasoner.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyReasonerImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ConsistencyResultVO.java
 git commit -m "phase3: add OntologyReasoner with Apache Jena OWL 2 RL implementation"
 ```
 
@@ -1443,13 +1443,13 @@ git commit -m "phase3: add OntologyReasoner with Apache Jena OWL 2 RL implementa
 ### Task P4-1: OntologySyncService (PostgreSQL → Neo4j)
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologySyncService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologySyncServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologySyncService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologySyncServiceImpl.java`
 
 - [ ] **Step 1: Write OntologySyncService**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologySyncService.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologySyncService.java
 package com.graphiti.module.graphiti.service;
 
 import java.util.Map;
@@ -1481,7 +1481,7 @@ public interface OntologySyncService {
 - [ ] **Step 2: Write OntologySyncServiceImpl**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologySyncServiceImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologySyncServiceImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.graphiti.module.graphiti.service.GraphNeo4jService;
@@ -1532,8 +1532,8 @@ public class OntologySyncServiceImpl implements OntologySyncService {
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologySyncService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologySyncServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologySyncService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologySyncServiceImpl.java
 git commit -m "phase4: add OntologySyncService for PostgreSQL to Neo4j ontology sync"
 ```
 
@@ -1542,7 +1542,7 @@ git commit -m "phase4: add OntologySyncService for PostgreSQL to Neo4j ontology 
 ## Task P4-2: OntologyController - All New Endpoints
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java`
 
 - [ ] **Step 1: Add all new endpoints to OntologyController**
 
@@ -1646,7 +1646,7 @@ public class OntologyController {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java
 git commit -m "phase4: expand OntologyController with class/property/schema-org/reasoning endpoints"
 ```
 
@@ -1655,9 +1655,9 @@ git commit -m "phase4: expand OntologyController with class/property/schema-org/
 ## Task P4-3: Episode Type Inference Engine
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EpisodeTypeInferenceService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeTypeInferenceServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EpisodeTypeInferenceService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeTypeInferenceServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java`
 
 **核心实现逻辑：**
 1. LLM 从 Episode.content 提取关键词（Prompt: "从以下文本中提取关键实体类型……"）
@@ -1669,7 +1669,7 @@ git commit -m "phase4: expand OntologyController with class/property/schema-org/
 - [ ] **Step 1: Write InferredTypeVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.AllArgsConstructor;
@@ -1688,7 +1688,7 @@ public class InferredTypeVO {
 - [ ] **Step 2: Write EpisodeTypeInferenceService**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EpisodeTypeInferenceService.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EpisodeTypeInferenceService.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.ontology.InferredTypeVO;
@@ -1716,7 +1716,7 @@ public interface EpisodeTypeInferenceService {
 - [ ] **Step 3: Write EpisodeTypeInferenceServiceImpl**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeTypeInferenceServiceImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeTypeInferenceServiceImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -1838,9 +1838,9 @@ public class EpisodeTypeInferenceServiceImpl implements EpisodeTypeInferenceServ
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EpisodeTypeInferenceService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeTypeInferenceServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EpisodeTypeInferenceService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeTypeInferenceServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/InferredTypeVO.java
 git commit -m "phase4: add EpisodeTypeInferenceService for entity type auto-detection"
 ```
 

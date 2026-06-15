@@ -1053,7 +1053,7 @@ ont_relationship_meta (关系元数据)      →    Neo4j 中每种关系类型�
 
 ## 11. 前端代码变更
 
-> 关联文件：`graphiti-web/src/`
+> 关联文件：`ontograph-web/src/`
 
 ### 11.1 变更概览
 
@@ -1512,7 +1512,7 @@ const processLabelMap: Record<string, string> = {
 
 ## 12. 后端代码变更
 
-> 关联文件：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/`
+> 关联文件：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/`
 
 ### 12.1 变更概览
 
@@ -1920,26 +1920,26 @@ public List<Map<String, Object>> getRelationshipMetadata(@PathVariable String gr
 | **SQL** | `sql/mysql/init-data.sql` | 修改 - V3.0.0 元数据初始化（MySQL 语法） |
 | **Cypher** | `sql/neo4j/init.cypher` | 修改 - 增强索引 + `PARENT_OF` 关系 + Episode 节点迁移 |
 | **Schema** | `docs/superpowers/specs/2026-05-20-legal-graph-v3-design.md` | 新增 - 本设计文档 |
-| **Java VO** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityInfoRespVO.java` | 新增 |
-| **Java VO** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityFilterReqVO.java` | 新增 |
-| **Java VO** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityListRespVO.java` | 新增 |
-| **Java VO** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/episode/EpisodeInfoRespVO.java` | 扩展 - 新增 V3 字段 |
-| **Java Svc** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java` | 修改 - `buildSingleCommunity`/`listCommunities`/`searchCommunities` |
-| **Java Svc** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java` | 修改 - `createEpisode` |
-| **Java Svc** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java` | 修改 - Episode 查询、`getTypeNameField`、`getGraphStats` |
-| **Java Svc** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java` | 修改 - Community/Episode 可视化字段 |
-| **Java Svc** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaManagementService.java` | 修改 - 关键词搜索扩展 |
-| **Java Ctrl** | `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java` | 扩展 - 新增 4 个 V3 端点 |
-| **TS Type** | `graphiti-web/src/types/graph-ide.ts` | 扩展 - 新增 V3 类型定义 |
-| **TS API** | `graphiti-web/src/api/graph.ts` | 扩展 - 新增 V3 API 调用 |
-| **TS API** | `graphiti-web/src/api/episode.ts` | 扩展 - Episode 类型新增字段 |
-| **TS API** | `graphiti-web/src/api/edge.ts` | 扩展 - Relationship 类型新增字段 |
-| **Vue** | `graphiti-web/src/views/graph/ide.vue` | 重构 - 社区树形视图 + Episode 分组展示 |
-| **Vue** | `graphiti-web/src/views/communities/index.vue` | 重构 - 多维度过滤器 + 详情面板扩展 |
-| **Vue** | `graphiti-web/src/views/episodes/index.vue` | 扩展 - 新增 V3 列 |
-| **Vue** | `graphiti-web/src/views/edges/index.vue` | 扩展 - 关系类型选择器 + 元数据显示 |
-| **Vue** | `graphiti-web/src/views/data/entities.vue` | 扩展 - 分类列和过滤器 |
-| **Vue** | `graphiti-web/src/components/Graph/NodeEditModal.vue` | 扩展 - 分类下拉树 |
+| **Java VO** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityInfoRespVO.java` | 新增 |
+| **Java VO** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityFilterReqVO.java` | 新增 |
+| **Java VO** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityListRespVO.java` | 新增 |
+| **Java VO** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/episode/EpisodeInfoRespVO.java` | 扩展 - 新增 V3 字段 |
+| **Java Svc** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java` | 修改 - `buildSingleCommunity`/`listCommunities`/`searchCommunities` |
+| **Java Svc** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java` | 修改 - `createEpisode` |
+| **Java Svc** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java` | 修改 - Episode 查询、`getTypeNameField`、`getGraphStats` |
+| **Java Svc** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java` | 修改 - Community/Episode 可视化字段 |
+| **Java Svc** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaManagementService.java` | 修改 - 关键词搜索扩展 |
+| **Java Ctrl** | `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java` | 扩展 - 新增 4 个 V3 端点 |
+| **TS Type** | `ontograph-web/src/types/graph-ide.ts` | 扩展 - 新增 V3 类型定义 |
+| **TS API** | `ontograph-web/src/api/graph.ts` | 扩展 - 新增 V3 API 调用 |
+| **TS API** | `ontograph-web/src/api/episode.ts` | 扩展 - Episode 类型新增字段 |
+| **TS API** | `ontograph-web/src/api/edge.ts` | 扩展 - Relationship 类型新增字段 |
+| **Vue** | `ontograph-web/src/views/graph/ide.vue` | 重构 - 社区树形视图 + Episode 分组展示 |
+| **Vue** | `ontograph-web/src/views/communities/index.vue` | 重构 - 多维度过滤器 + 详情面板扩展 |
+| **Vue** | `ontograph-web/src/views/episodes/index.vue` | 扩展 - 新增 V3 列 |
+| **Vue** | `ontograph-web/src/views/edges/index.vue` | 扩展 - 关系类型选择器 + 元数据显示 |
+| **Vue** | `ontograph-web/src/views/data/entities.vue` | 扩展 - 分类列和过滤器 |
+| **Vue** | `ontograph-web/src/components/Graph/NodeEditModal.vue` | 扩展 - 分类下拉树 |
 
 ---
 

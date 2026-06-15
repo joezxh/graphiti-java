@@ -14,23 +14,23 @@
 
 | 文件 | 操作 | 说明 |
 |------|------|------|
-| `graphiti-web/src/composables/usePropertyType.ts` | 新建 | 数据类型判断 + 格式化函数 |
-| `graphiti-web/src/utils/getPropertyRules.ts` | 新建 | 表单校验规则生成 |
-| `graphiti-web/src/components/Ontology/PropertyValueCell.vue` | 新建 | 表格单元格显示/编辑组件 |
-| `graphiti-web/src/components/Ontology/InstanceDataTable.vue` | 修改 | 动态列 + 内联编辑 + 查看详情 |
-| `graphiti-web/src/components/Ontology/InstanceForm.vue` | 修改 | 复用共享逻辑 + 校验规则 + 数据类型处理 |
+| `ontograph-web/src/composables/usePropertyType.ts` | 新建 | 数据类型判断 + 格式化函数 |
+| `ontograph-web/src/utils/getPropertyRules.ts` | 新建 | 表单校验规则生成 |
+| `ontograph-web/src/components/Ontology/PropertyValueCell.vue` | 新建 | 表格单元格显示/编辑组件 |
+| `ontograph-web/src/components/Ontology/InstanceDataTable.vue` | 修改 | 动态列 + 内联编辑 + 查看详情 |
+| `ontograph-web/src/components/Ontology/InstanceForm.vue` | 修改 | 复用共享逻辑 + 校验规则 + 数据类型处理 |
 
 ---
 
 ## Task 1: 创建 `usePropertyType.ts`（数据类型判断工具）
 
 **Files:**
-- Create: `graphiti-web/src/composables/usePropertyType.ts`
+- Create: `ontograph-web/src/composables/usePropertyType.ts`
 
 - [ ] **Step 1: 创建文件**
 
 ```typescript
-// graphiti-web/src/composables/usePropertyType.ts
+// ontograph-web/src/composables/usePropertyType.ts
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 
@@ -99,12 +99,12 @@ export function serializePropertyValue(value: any, rangeDataType?: string): any 
 
 - [ ] **Step 2: 验证文件创建成功**
 
-确认文件路径：`graphiti-web/src/composables/usePropertyType.ts`
+确认文件路径：`ontograph-web/src/composables/usePropertyType.ts`
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/composables/usePropertyType.ts
+git add ontograph-web/src/composables/usePropertyType.ts
 git commit -m "feat: add usePropertyType composable for data type handling"
 ```
 
@@ -113,12 +113,12 @@ git commit -m "feat: add usePropertyType composable for data type handling"
 ## Task 2: 创建 `getPropertyRules.ts`（校验规则生成）
 
 **Files:**
-- Create: `graphiti-web/src/utils/getPropertyRules.ts`
+- Create: `ontograph-web/src/utils/getPropertyRules.ts`
 
 - [ ] **Step 1: 创建文件**
 
 ```typescript
-// graphiti-web/src/utils/getPropertyRules.ts
+// ontograph-web/src/utils/getPropertyRules.ts
 import type { Rule } from 'ant-design-vue/es/form'
 import { isNumericType } from '@/composables/usePropertyType'
 import type { OntPropertyVO } from '@/api/ontology'
@@ -167,12 +167,12 @@ export function getPropertyRules(prop: OntPropertyVO): Rule[] {
 
 - [ ] **Step 2: 验证文件创建成功**
 
-确认文件路径：`graphiti-web/src/utils/getPropertyRules.ts`
+确认文件路径：`ontograph-web/src/utils/getPropertyRules.ts`
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/utils/getPropertyRules.ts
+git add ontograph-web/src/utils/getPropertyRules.ts
 git commit -m "feat: add getPropertyRules utility for form validation"
 ```
 
@@ -181,12 +181,12 @@ git commit -m "feat: add getPropertyRules utility for form validation"
 ## Task 3: 创建 `PropertyValueCell.vue`（单元格显示/编辑组件）
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/PropertyValueCell.vue`
+- Create: `ontograph-web/src/components/Ontology/PropertyValueCell.vue`
 
 - [ ] **Step 1: 创建文件**
 
 ```vue
-<!-- graphiti-web/src/components/Ontology/PropertyValueCell.vue -->
+<!-- ontograph-web/src/components/Ontology/PropertyValueCell.vue -->
 <template>
   <div v-if="!editing" class="cell-display" @dblclick="startEdit">
     {{ displayValue }}
@@ -307,12 +307,12 @@ function save() {
 
 - [ ] **Step 2: 验证文件创建成功**
 
-确认文件路径：`graphiti-web/src/components/Ontology/PropertyValueCell.vue`
+确认文件路径：`ontograph-web/src/components/Ontology/PropertyValueCell.vue`
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/PropertyValueCell.vue
+git add ontograph-web/src/components/Ontology/PropertyValueCell.vue
 git commit -m "feat: add PropertyValueCell component for typed display/editing"
 ```
 
@@ -321,7 +321,7 @@ git commit -m "feat: add PropertyValueCell component for typed display/editing"
 ## Task 4: 修改 `InstanceDataTable.vue`
 
 **Files:**
-- Modify: `graphiti-web/src/components/Ontology/InstanceDataTable.vue`
+- Modify: `ontograph-web/src/components/Ontology/InstanceDataTable.vue`
 
 - [ ] **Step 1: 添加导入和修改动态列生成**
 
@@ -486,7 +486,7 @@ const selectedClassProperties = computed(() => {
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/InstanceDataTable.vue
+git add ontograph-web/src/components/Ontology/InstanceDataTable.vue
 git commit -m "feat: InstanceDataTable dynamic columns, inline editing, detail drawer"
 ```
 
@@ -495,7 +495,7 @@ git commit -m "feat: InstanceDataTable dynamic columns, inline editing, detail d
 ## Task 5: 修改 `InstanceForm.vue`
 
 **Files:**
-- Modify: `graphiti-web/src/components/Ontology/InstanceForm.vue`
+- Modify: `ontograph-web/src/components/Ontology/InstanceForm.vue`
 
 - [ ] **Step 1: 添加导入**
 
@@ -636,7 +636,7 @@ async function handleSave() {
 - [ ] **Step 6: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/InstanceForm.vue
+git add ontograph-web/src/components/Ontology/InstanceForm.vue
 git commit -m "feat: InstanceForm reuse shared property type logic and validation"
 ```
 

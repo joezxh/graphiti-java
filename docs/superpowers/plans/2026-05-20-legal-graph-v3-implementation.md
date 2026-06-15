@@ -16,8 +16,8 @@
 
 - 设计文档：`docs/superpowers/specs/2026-05-20-legal-graph-v3-design.md`（特别是第 11-14 章）
 - 现有 Neo4j Schema：`sql/neo4j/init.cypher`（已有 V3 属性字段定义）
-- 现有 Java 服务：`graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java`
-- 现有前端 API：`graphiti-web/src/api/graph.ts`
+- 现有 Java 服务：`ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java`
+- 现有前端 API：`ontograph-web/src/api/graph.ts`
 
 ---
 
@@ -449,7 +449,7 @@ git commit -m "feat(schema): add V3.0.0 metadata tables (ont_community_type, ont
 ### Task 2.1: 扩展 `EpisodeServiceImpl.java` — `createEpisode` 方法支持 V3 字段
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java`
 
 **前置阅读:**
 - 文件中的 `createEpisode` 方法（当前签名：`public EpisodeInfoRespVO createEpisode(String graphId, Map<String, Object> episodeData)`）
@@ -536,7 +536,7 @@ if (row.get("end_time") != null) {
 - [ ] **Step 4: 更新 `EpisodeInfoRespVO.java` — 新增 V3 字段**
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/episode/EpisodeInfoRespVO.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/episode/EpisodeInfoRespVO.java`
 
 在现有字段（uuid, name, groupId, source, sourceDescription, content 等）后追加：
 
@@ -575,7 +575,7 @@ import lombok.experimental.Accessors;
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/episode/EpisodeInfoRespVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/episode/EpisodeInfoRespVO.java
 git commit -m "feat(episode): add V3 fields to createEpisode and EpisodeInfoRespVO"
 ```
 
@@ -584,7 +584,7 @@ git commit -m "feat(episode): add V3 fields to createEpisode and EpisodeInfoResp
 ### Task 2.2: 扩展 `GraphNeo4jService.java` — Episode 查询 Cypher 增加 V3 字段
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 **前置阅读:**
 - `getEpisodesByGraphId` 方法（当前 RETURN 子句）
@@ -743,7 +743,7 @@ private Object parseDateTimeParam(Object value) {
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git commit -m "feat(neo4j): add V3 Episode fields to createEpisodeV3 and query methods"
 ```
 
@@ -754,8 +754,8 @@ git commit -m "feat(neo4j): add V3 Episode fields to createEpisodeV3 and query m
 ### Task 3.1: 创建 V3 Community VO 类
 
 **文件:**
-- 创建: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityInfoRespVO.java`
-- 创建: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityFilterReqVO.java`
+- 创建: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityInfoRespVO.java`
+- 创建: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityFilterReqVO.java`
 
 **步骤:**
 
@@ -851,7 +851,7 @@ public class CommunityFilterReqVO {
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityInfoRespVO.java graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityFilterReqVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityInfoRespVO.java ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/community/CommunityFilterReqVO.java
 git commit -m "feat(community): add V3.0.0 CommunityInfoRespVO and CommunityFilterReqVO"
 ```
 
@@ -860,7 +860,7 @@ git commit -m "feat(community): add V3.0.0 CommunityInfoRespVO and CommunityFilt
 ### Task 3.2: 扩展 `CommunityServiceImpl.java` — Community 查询 RETURN V3 字段
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
 
 **前置阅读:**
 - `listCommunities` 方法中的 Cypher RETURN 子句
@@ -957,7 +957,7 @@ params.put("keyProvisions", new ArrayList<String>());
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
 git commit -m "feat(community): add V3 fields to listCommunities and buildCommunities"
 ```
 
@@ -966,7 +966,7 @@ git commit -m "feat(community): add V3 fields to listCommunities and buildCommun
 ### Task 3.3: 扩展 `GraphVisualizationService.java` — Episode/Community 可视化 V3 字段
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java`
 
 **前置阅读:**
 - `getEpisodesVisualization` 方法的 Cypher 查询
@@ -1001,7 +1001,7 @@ git commit -m "feat(community): add V3 fields to listCommunities and buildCommun
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java
 git commit -m "feat(visualization): add V3 fields to Episode and Community visualization queries"
 ```
 
@@ -1010,7 +1010,7 @@ git commit -m "feat(visualization): add V3 fields to Episode and Community visua
 ### Task 3.4: 扩展 `GraphNeo4jService.getTypeNameField` — 支持 V3 实体类型
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 **前置阅读:**
 - `getTypeNameField` 方法的 switch 语句
@@ -1035,7 +1035,7 @@ case "CivilCase", "CriminalCase", "CommercialCase",
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git commit -m "feat(neo4j): add V3 entity types to getTypeNameField"
 ```
 
@@ -1044,7 +1044,7 @@ git commit -m "feat(neo4j): add V3 entity types to getTypeNameField"
 ### Task 3.5: 在 `GraphIDEController.java` 中新增 V3 API 端点
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
 
 **前置阅读:**
 - 现有 `@GetMapping` 端点模式
@@ -1118,7 +1118,7 @@ public CommonResult<List<Map<String, Object>>> getRelationshipMetadata(
 - [ ] **Step 3: 在 `CommunityService` 接口中添加新方法声明**
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java`
 
 在接口中添加：
 ```java
@@ -1175,7 +1175,7 @@ private LocalDateTime parseTimestamp(Object val) {
 - [ ] **Step 5: 在 `SchemaManagementService` 中实现元数据查询方法**
 
 **文件:**
-- 修改: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaManagementService.java`
+- 修改: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaManagementService.java`
 
 在类中添加两个方法：
 
@@ -1222,7 +1222,7 @@ public List<Map<String, Object>> getRelationshipMetadata(String graphId) {
 - [ ] **Step 6: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaManagementService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SchemaManagementService.java
 git commit -m "feat(api): add V3 REST endpoints for community hierarchy, episode types, and relationship metadata"
 ```
 
@@ -1233,11 +1233,11 @@ git commit -m "feat(api): add V3 REST endpoints for community hierarchy, episode
 ### Task 4.1: 创建 V3 TypeScript 类型定义文件
 
 **文件:**
-- 创建: `graphiti-web/src/types/legal-graph-v3.ts`
+- 创建: `ontograph-web/src/types/legal-graph-v3.ts`
 
 **步骤:**
 
-- [ ] **Step 1: 创建 `graphiti-web/src/types/legal-graph-v3.ts`**
+- [ ] **Step 1: 创建 `ontograph-web/src/types/legal-graph-v3.ts`**
 
 ```typescript
 /**
@@ -1466,7 +1466,7 @@ export const RELATIONSHIP_COLORS: Record<string, string> = {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/types/legal-graph-v3.ts
+git add ontograph-web/src/types/legal-graph-v3.ts
 git commit -m "feat(types): add V3.0.0 TypeScript type definitions for legal graph"
 ```
 
@@ -1475,14 +1475,14 @@ git commit -m "feat(types): add V3.0.0 TypeScript type definitions for legal gra
 ### Task 4.2: 扩展前端 API 层 — 新增 V3 API 接口
 
 **文件:**
-- 修改: `graphiti-web/src/api/graph.ts`
+- 修改: `ontograph-web/src/api/graph.ts`
 
 **前置阅读:**
 - 现有 `getCommunitiesVisualization`, `getEpisodesVisualization` 等方法
 
 **步骤:**
 
-- [ ] **Step 1: 在 `graphiti-web/src/api/graph.ts` 末尾追加 V3 API 函数**
+- [ ] **Step 1: 在 `ontograph-web/src/api/graph.ts` 末尾追加 V3 API 函数**
 
 在文件末尾找到最后一个 export 函数后添加：
 
@@ -1543,7 +1543,7 @@ export const getEntityCategories = (graphId: string) =>
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/api/graph.ts
+git add ontograph-web/src/api/graph.ts
 git commit -m "feat(api): add V3.0.0 API endpoints for community hierarchy and metadata"
 ```
 
@@ -1552,7 +1552,7 @@ git commit -m "feat(api): add V3.0.0 API endpoints for community hierarchy and m
 ### Task 4.3: 扩展 `ide.vue` — 社区树形视图 + Episode 按程序分组
 
 **文件:**
-- 修改: `graphiti-web/src/views/graph/ide.vue`
+- 修改: `ontograph-web/src/views/graph/ide.vue`
 
 **前置阅读:**
 - 现有 `handleEpisodesClick` 和 `handleCommunitiesClick` 方法
@@ -1778,7 +1778,7 @@ const handleEpisodesClick = async () => {
 - [ ] **Step 7: Commit**
 
 ```bash
-git add graphiti-web/src/views/graph/ide.vue
+git add ontograph-web/src/views/graph/ide.vue
 git commit -m "feat(ide): add V3 Episode detail panel and community tree support"
 ```
 
@@ -1787,7 +1787,7 @@ git commit -m "feat(ide): add V3 Episode detail panel and community tree support
 ### Task 4.4: 扩展前端 Vue 组件 — Episodes 列表页 V3 字段
 
 **文件:**
-- 修改: `graphiti-web/src/views/episodes/index.vue`
+- 修改: `ontograph-web/src/views/episodes/index.vue`
 
 **前置阅读:**
 - 现有 `a-table` columns 定义
@@ -1901,7 +1901,7 @@ const getLegalProcessColor = (process?: string): string => {
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/views/episodes/index.vue
+git add ontograph-web/src/views/episodes/index.vue
 git commit -m "feat(episodes-page): add V3 columns (episodeType, legalProcess, courtLevel, isTrialStage) to episodes table"
 ```
 
@@ -1910,7 +1910,7 @@ git commit -m "feat(episodes-page): add V3 columns (episodeType, legalProcess, c
 ### Task 4.5: 扩展前端 Vue 组件 — Edges 关系类型选择器 V3
 
 **文件:**
-- 修改: `graphiti-web/src/views/edges/index.vue`
+- 修改: `ontograph-web/src/views/edges/index.vue`
 
 **前置阅读:**
 - 现有的关系创建/编辑 `a-modal` 中的 `a-select` 组件
@@ -2057,7 +2057,7 @@ const onRelationshipTypeChange = (type: string) => {
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-web/src/views/edges/index.vue
+git add ontograph-web/src/views/edges/index.vue
 git commit -m "feat(edges): add V3 relationship metadata selector with color indicators and weight control"
 ```
 
@@ -2071,7 +2071,7 @@ git commit -m "feat(edges): add V3 relationship metadata selector with color ind
 
 ```bash
 cd d:\projects\ontograph-java
-mvn compile -pl graphiti-module-core -am -q
+mvn compile -pl ontograph-module-core -am -q
 ```
 
 期望：无编译错误（新增字段、VO 类、新方法均正确编译）
@@ -2079,7 +2079,7 @@ mvn compile -pl graphiti-module-core -am -q
 - [ ] **Step 2: 验证前端 TypeScript 类型**
 
 ```bash
-cd d:\projects\ontograph-java\graphiti-web
+cd d:\projects\ontograph-java\ontograph-web
 npx vue-tsc --noEmit --skipLibCheck
 ```
 

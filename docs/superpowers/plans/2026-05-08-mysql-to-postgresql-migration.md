@@ -14,10 +14,10 @@
 
 ### 需要修改的文件
 1. `pom.xml` (根) - 依赖管理：移除 MySQL，添加 PostgreSQL
-2. `graphiti-module-system/pom.xml` - 模块依赖：移除 MySQL
-3. `graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml` - Starter 依赖：移除 MySQL
-4. `graphiti-server/src/main/resources/application.yml` - 主配置：数据库连接
-5. `graphiti-server/src/main/resources/application-dev.yml` - 开发配置：数据库连接
+2. `ontograph-module-system/pom.xml` - 模块依赖：移除 MySQL
+3. `ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml` - Starter 依赖：移除 MySQL
+4. `ontograph-server/src/main/resources/application.yml` - 主配置：数据库连接
+5. `ontograph-server/src/main/resources/application-dev.yml` - 开发配置：数据库连接
 6. `sql/mysql/schema.sql` - 原 MySQL 脚本（保留备份）
 7. `sql/mysql/init-data.sql` - 原初始化数据（保留备份）
 
@@ -26,8 +26,8 @@
 2. `sql/postgresql/init-data.sql` - PostgreSQL 初始化数据脚本
 
 ### 可能需要修改的文件
-1. `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java` - 实体类（如需要）
-2. `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/OntologyDO.java` - 实体类（如需要）
+1. `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java` - 实体类（如需要）
+2. `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/OntologyDO.java` - 实体类（如需要）
 
 ---
 
@@ -35,8 +35,8 @@
 
 **Files:**
 - Modify: `d:/projects/ontograph-java/pom.xml:39,142-147`
-- Modify: `d:/projects/ontograph-java/graphiti-module-system/pom.xml:42-44`
-- Modify: `d:/projects/ontograph-java/graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml:27-29`
+- Modify: `d:/projects/ontograph-java/ontograph-module-system/pom.xml:42-44`
+- Modify: `d:/projects/ontograph-java/ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml:27-29`
 
 - [ ] **Step 1: 修改根 pom.xml 的依赖管理**
 
@@ -68,7 +68,7 @@
 </dependency>
 ```
 
-- [ ] **Step 2: 修改 graphiti-module-system/pom.xml**
+- [ ] **Step 2: 修改 ontograph-module-system/pom.xml**
 
 ```xml
 <!-- 第 42-44 行：修改依赖 -->
@@ -113,7 +113,7 @@ Expected: BUILD SUCCESS（此时可能仍有配置错误，但编译应通过）
 - [ ] **Step 5: Commit**
 
 ```bash
-git add pom.xml graphiti-module-system/pom.xml graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml
+git add pom.xml ontograph-module-system/pom.xml ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml
 git commit -m "chore: 替换 MySQL 驱动为 PostgreSQL 驱动"
 ```
 
@@ -122,8 +122,8 @@ git commit -m "chore: 替换 MySQL 驱动为 PostgreSQL 驱动"
 ## Task 2: 更新应用配置文件（数据库连接）
 
 **Files:**
-- Modify: `d:/projects/ontograph-java/graphiti-server/src/main/resources/application.yml:9-22,36`
-- Modify: `d:/projects/ontograph-java/graphiti-server/src/main/resources/application-dev.yml:3-12`
+- Modify: `d:/projects/ontograph-java/ontograph-server/src/main/resources/application.yml:9-22,36`
+- Modify: `d:/projects/ontograph-java/ontograph-server/src/main/resources/application-dev.yml:3-12`
 
 - [ ] **Step 1: 修改 application.yml 数据库连接配置**
 
@@ -219,7 +219,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-server/src/main/resources/application.yml graphiti-server/src/main/resources/application-dev.yml
+git add ontograph-server/src/main/resources/application.yml ontograph-server/src/main/resources/application-dev.yml
 git commit -m "chore: 更新数据库连接配置为 PostgreSQL"
 ```
 
@@ -594,11 +594,11 @@ git commit -m "feat: 添加 PostgreSQL 初始化数据脚本"
 ## Task 5: 检查并适配 Java 实体类
 
 **Files:**
-- Modify: `d:/projects/ontograph-java/graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java:18`
-- Modify: `d:/projects/ontograph-java/graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/OntologyDO.java:18`
-- Reference: `d:/projects/ontograph-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java`
-- Reference: `d:/projects/ontograph-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java`
-- Reference: `d:/projects/ontograph-java/graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java`
+- Modify: `d:/projects/ontograph-java/ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java:18`
+- Modify: `d:/projects/ontograph-java/ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/OntologyDO.java:18`
+- Reference: `d:/projects/ontograph-java/ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java`
+- Reference: `d:/projects/ontograph-java/ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java`
+- Reference: `d:/projects/ontograph-java/ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java`
 
 - [ ] **Step 1: 检查 MyBatis-Plus 实体类的 @TableId 注解**
 
@@ -634,7 +634,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 4: Commit（如果有修改）**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/*.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/*.java
 git commit -m "chore: 适配 PostgreSQL 实体类（如需要）"
 ```
 
@@ -731,7 +731,7 @@ psql -U postgres -d graphiti -f sql/postgresql/init-data.sql
 
 #### 3.1 修改 application.yml
 
-确保 `graphiti-server/src/main/resources/application.yml` 中的数据库连接配置正确：
+确保 `ontograph-server/src/main/resources/application.yml` 中的数据库连接配置正确：
 
 ```yaml
 spring:
@@ -759,7 +759,7 @@ SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_PASSWORD=your_password
 
 ```bash
 cd ontograph-java
-mvn clean spring-boot:run -pl graphiti-server
+mvn clean spring-boot:run -pl ontograph-server
 ```
 
 ### 5. 数据迁移（从 MySQL 到 PostgreSQL）
@@ -899,7 +899,7 @@ psql -U postgres -d graphiti -f sql/postgresql/init-data.sql
 
 - [ ] **Step 3: 启动应用并测试**
 
-Run: `cd d:/projects/ontograph-java && mvn spring-boot:run -pl graphiti-server`
+Run: `cd d:/projects/ontograph-java && mvn spring-boot:run -pl ontograph-server`
 
 Expected: 应用启动成功，能够连接到 PostgreSQL 数据库
 

@@ -1482,7 +1482,7 @@ git commit -m "feat(batch): DataImportController returns taskId immediately
 ### Step 1: 编译检查
 
 ```bash
-cd d:\projects\graphiti-java
+cd d:\projects\ontograph-java
 mvn compile -pl ontograph-module-core -q
 ```
 

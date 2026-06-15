@@ -13,20 +13,20 @@
 ## 文件结构
 
 ### 新增文件
-- `graphiti-web/src/components/Ontology/DomainRuleListPanel.vue` - 列表主面板
-- `graphiti-web/src/components/Ontology/DomainRuleEditModal.vue` - 编辑模态框
-- `graphiti-web/src/components/Ontology/DomainRuleTestModal.vue` - 测试模态框
+- `ontograph-web/src/components/Ontology/DomainRuleListPanel.vue` - 列表主面板
+- `ontograph-web/src/components/Ontology/DomainRuleEditModal.vue` - 编辑模态框
+- `ontograph-web/src/components/Ontology/DomainRuleTestModal.vue` - 测试模态框
 
 ### 修改文件
-- `graphiti-web/src/store/modules/ontology.ts` - 添加 'domain-rule-list' 类型
-- `graphiti-web/src/components/Ontology/OntologyWorkbench.vue` - 集成新组件
+- `ontograph-web/src/store/modules/ontology.ts` - 添加 'domain-rule-list' 类型
+- `ontograph-web/src/components/Ontology/OntologyWorkbench.vue` - 集成新组件
 
 ---
 
 ### Task 1: 扩展 OntologyStore 类型定义
 
 **Files:**
-- Modify: `graphiti-web/src/store/modules/ontology.ts:17-30`
+- Modify: `ontograph-web/src/store/modules/ontology.ts:17-30`
 
 - [ ] **Step 1: 添加 domain-rule-list 到 OntologyTabType**
 
@@ -52,7 +52,7 @@ export type OntologyTabType =
 
 检查 TypeScript 编译:
 ```bash
-cd graphiti-web
+cd ontograph-web
 npx tsc --noEmit
 ```
 Expected: No errors related to ontology.ts
@@ -60,7 +60,7 @@ Expected: No errors related to ontology.ts
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/store/modules/ontology.ts
+git add ontograph-web/src/store/modules/ontology.ts
 git commit -m "feat: add domain-rule-list tab type to ontology store"
 ```
 
@@ -69,7 +69,7 @@ git commit -m "feat: add domain-rule-list tab type to ontology store"
 ### Task 2: 创建 DomainRuleListPanel 主面板
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/DomainRuleListPanel.vue`
+- Create: `ontograph-web/src/components/Ontology/DomainRuleListPanel.vue`
 - Test: 手动测试 (浏览器访问 Graph IDE)
 
 - [ ] **Step 1: 创建组件骨架**
@@ -325,7 +325,7 @@ onMounted(() => {
 
 - [ ] **Step 2: 添加 LastTestResult 类型到 DomainRuleVO**
 
-在 `graphiti-web/src/api/ontology.ts` 的 DomainRuleVO 接口中添加:
+在 `ontograph-web/src/api/ontology.ts` 的 DomainRuleVO 接口中添加:
 
 ```typescript
 export interface DomainRuleVO {
@@ -354,7 +354,7 @@ export interface DomainRuleVO {
 - [ ] **Step 3: 验证组件创建**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 npx tsc --noEmit
 ```
 Expected: No errors
@@ -362,8 +362,8 @@ Expected: No errors
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/DomainRuleListPanel.vue
-git add graphiti-web/src/api/ontology.ts
+git add ontograph-web/src/components/Ontology/DomainRuleListPanel.vue
+git add ontograph-web/src/api/ontology.ts
 git commit -m "feat: create DomainRuleListPanel component with CRUD operations"
 ```
 
@@ -372,7 +372,7 @@ git commit -m "feat: create DomainRuleListPanel component with CRUD operations"
 ### Task 3: 创建 DomainRuleEditModal 编辑模态框
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/DomainRuleEditModal.vue`
+- Create: `ontograph-web/src/components/Ontology/DomainRuleEditModal.vue`
 
 - [ ] **Step 1: 创建编辑模态框组件**
 
@@ -682,14 +682,14 @@ function handleCancel() {
 - [ ] **Step 2: 验证组件**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 npx tsc --noEmit
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/DomainRuleEditModal.vue
+git add ontograph-web/src/components/Ontology/DomainRuleEditModal.vue
 git commit -m "feat: create DomainRuleEditModal with SpEL editor and templates"
 ```
 
@@ -698,7 +698,7 @@ git commit -m "feat: create DomainRuleEditModal with SpEL editor and templates"
 ### Task 4: 创建 DomainRuleTestModal 测试模态框
 
 **Files:**
-- Create: `graphiti-web/src/components/Ontology/DomainRuleTestModal.vue`
+- Create: `ontograph-web/src/components/Ontology/DomainRuleTestModal.vue`
 
 - [ ] **Step 1: 创建测试模态框组件**
 
@@ -905,14 +905,14 @@ function handleCancel() {
 - [ ] **Step 2: 验证组件**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 npx tsc --noEmit
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/DomainRuleTestModal.vue
+git add ontograph-web/src/components/Ontology/DomainRuleTestModal.vue
 git commit -m "feat: create DomainRuleTestModal for SpEL expression testing"
 ```
 
@@ -921,7 +921,7 @@ git commit -m "feat: create DomainRuleTestModal for SpEL expression testing"
 ### Task 5: 集成到 OntologyWorkbench
 
 **Files:**
-- Modify: `graphiti-web/src/components/Ontology/OntologyWorkbench.vue`
+- Modify: `ontograph-web/src/components/Ontology/OntologyWorkbench.vue`
 
 - [ ] **Step 1: 添加异步组件导入**
 
@@ -1007,7 +1007,7 @@ const menuMap: Record<string, { type: OntologyTabType; title: string }> = {
 - [ ] **Step 5: 验证集成**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 npm run build
 ```
 Expected: BUILD SUCCESS (可能有一些已有的 TypeScript 警告)
@@ -1015,7 +1015,7 @@ Expected: BUILD SUCCESS (可能有一些已有的 TypeScript 警告)
 - [ ] **Step 6: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/OntologyWorkbench.vue
+git add ontograph-web/src/components/Ontology/OntologyWorkbench.vue
 git commit -m "feat: integrate DomainRuleListPanel into OntologyWorkbench"
 ```
 
@@ -1029,7 +1029,7 @@ git commit -m "feat: integrate DomainRuleListPanel into OntologyWorkbench"
 - [ ] **Step 1: 启动开发服务器**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 npm run dev
 ```
 

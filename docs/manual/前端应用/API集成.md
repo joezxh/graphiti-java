@@ -2,20 +2,20 @@
 
 <!--<cite>
 **本文引用的文件**
-- [graphiti-web/src/api/request.ts](file://graphiti-web/src/api/request.ts)
-- [graphiti-web/src/utils/auth.ts](file://graphiti-web/src/utils/auth.ts)
-- [graphiti-web/src/store/modules/user.ts](file://graphiti-web/src/store/modules/user.ts)
-- [graphiti-web/src/api/auth.ts](file://graphiti-web/src/api/auth.ts)
-- [graphiti-web/src/api/graph.ts](file://graphiti-web/src/api/graph.ts)
-- [graphiti-web/src/api/node.ts](file://graphiti-web/src/api/node.ts)
-- [graphiti-web/src/api/edge.ts](file://graphiti-web/src/api/edge.ts)
-- [graphiti-web/package.json](file://graphiti-web/package.json)
-- [graphiti-web/vite.config.ts](file://graphiti-web/vite.config.ts)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
-- [graphiti-module-system/src/main/java/com/raphiti/system/controller/AuthController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
-- [graphiti-server/src/main/resources/application.yml](file://graphiti-server/src/main/resources/application.yml)
+- [ontograph-web/src/api/request.ts](file://ontograph-web/src/api/request.ts)
+- [ontograph-web/src/utils/auth.ts](file://ontograph-web/src/utils/auth.ts)
+- [ontograph-web/src/store/modules/user.ts](file://ontograph-web/src/store/modules/user.ts)
+- [ontograph-web/src/api/auth.ts](file://ontograph-web/src/api/auth.ts)
+- [ontograph-web/src/api/graph.ts](file://ontograph-web/src/api/graph.ts)
+- [ontograph-web/src/api/node.ts](file://ontograph-web/src/api/node.ts)
+- [ontograph-web/src/api/edge.ts](file://ontograph-web/src/api/edge.ts)
+- [ontograph-web/package.json](file://ontograph-web/package.json)
+- [ontograph-web/vite.config.ts](file://ontograph-web/vite.config.ts)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
+- [ontograph-module-system/src/main/java/com/raphiti/system/controller/AuthController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
+- [ontograph-server/src/main/resources/application.yml](file://ontograph-server/src/main/resources/application.yml)
 </cite>-->
 
 ## 目录
@@ -60,32 +60,32 @@ BE --> CTRL_AUTH["认证控制器<br/>AuthController.java"]
 ```
 
 图表来源
-- [graphiti-web/src/api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
-- [graphiti-web/src/api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [graphiti-web/src/api/graph.ts:1-207](file://graphiti-web/src/api/graph.ts#L1-L207)
-- [graphiti-web/src/api/node.ts:1-127](file://graphiti-web/src/api/node.ts#L1-L127)
-- [graphiti-web/src/api/edge.ts:1-108](file://graphiti-web/src/api/edge.ts#L1-L108)
-- [graphiti-web/src/store/modules/user.ts:1-67](file://graphiti-web/src/store/modules/user.ts#L1-L67)
-- [graphiti-web/src/utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:1-138](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L1-L138)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:1-61](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L1-L61)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java:1-87](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L1-L87)
-- [graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
+- [ontograph-web/src/api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
+- [ontograph-web/src/api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [ontograph-web/src/api/graph.ts:1-207](file://ontograph-web/src/api/graph.ts#L1-L207)
+- [ontograph-web/src/api/node.ts:1-127](file://ontograph-web/src/api/node.ts#L1-L127)
+- [ontograph-web/src/api/edge.ts:1-108](file://ontograph-web/src/api/edge.ts#L1-L108)
+- [ontograph-web/src/store/modules/user.ts:1-67](file://ontograph-web/src/store/modules/user.ts#L1-L67)
+- [ontograph-web/src/utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:1-138](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L1-L138)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:1-61](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L1-L61)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java:1-87](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L1-L87)
+- [ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
 
 章节来源
-- [graphiti-web/src/api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
-- [graphiti-web/src/api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [graphiti-web/src/api/graph.ts:1-207](file://graphiti-web/src/api/graph.ts#L1-L207)
-- [graphiti-web/src/api/node.ts:1-127](file://graphiti-web/src/api/node.ts#L1-L127)
-- [graphiti-web/src/api/edge.ts:1-108](file://graphiti-web/src/api/edge.ts#L1-L108)
-- [graphiti-web/src/store/modules/user.ts:1-67](file://graphiti-web/src/store/modules/user.ts#L1-L67)
-- [graphiti-web/src/utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
-- [graphiti-web/vite.config.ts:1-41](file://graphiti-web/vite.config.ts#L1-L41)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:1-138](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L1-L138)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:1-61](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L1-L61)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java:1-87](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L1-L87)
-- [graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
-- [graphiti-server/src/main/resources/application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
+- [ontograph-web/src/api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
+- [ontograph-web/src/api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [ontograph-web/src/api/graph.ts:1-207](file://ontograph-web/src/api/graph.ts#L1-L207)
+- [ontograph-web/src/api/node.ts:1-127](file://ontograph-web/src/api/node.ts#L1-L127)
+- [ontograph-web/src/api/edge.ts:1-108](file://ontograph-web/src/api/edge.ts#L1-L108)
+- [ontograph-web/src/store/modules/user.ts:1-67](file://ontograph-web/src/store/modules/user.ts#L1-L67)
+- [ontograph-web/src/utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
+- [ontograph-web/vite.config.ts:1-41](file://ontograph-web/vite.config.ts#L1-L41)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:1-138](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L1-L138)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:1-61](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L1-L61)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java:1-87](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L1-L87)
+- [ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
+- [ontograph-server/src/main/resources/application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
 
 ## 核心组件
 - Axios实例与拦截器：统一请求头注入、响应数据转换、401自动刷新、错误提示与透传
@@ -95,17 +95,17 @@ BE --> CTRL_AUTH["认证控制器<br/>AuthController.java"]
 - 后端安全：Spring Security + JWT + CORS配置，提供认证入口与未认证/权限不足响应
 
 章节来源
-- [graphiti-web/src/api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
-- [graphiti-web/src/utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
-- [graphiti-web/src/store/modules/user.ts:1-67](file://graphiti-web/src/store/modules/user.ts#L1-L67)
-- [graphiti-web/src/api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [graphiti-web/src/api/graph.ts:1-207](file://graphiti-web/src/api/graph.ts#L1-L207)
-- [graphiti-web/src/api/node.ts:1-127](file://graphiti-web/src/api/node.ts#L1-L127)
-- [graphiti-web/src/api/edge.ts:1-108](file://graphiti-web/src/api/edge.ts#L1-L108)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:1-138](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L1-L138)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:1-61](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L1-L61)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java:1-87](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L1-L87)
-- [graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
+- [ontograph-web/src/api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
+- [ontograph-web/src/utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
+- [ontograph-web/src/store/modules/user.ts:1-67](file://ontograph-web/src/store/modules/user.ts#L1-L67)
+- [ontograph-web/src/api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [ontograph-web/src/api/graph.ts:1-207](file://ontograph-web/src/api/graph.ts#L1-L207)
+- [ontograph-web/src/api/node.ts:1-127](file://ontograph-web/src/api/node.ts#L1-L127)
+- [ontograph-web/src/api/edge.ts:1-108](file://ontograph-web/src/api/edge.ts#L1-L108)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:1-138](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L1-L138)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:1-61](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L1-L61)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java:1-87](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L1-L87)
+- [ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
 
 ## 架构总览
 前端通过Axios实例统一发起HTTP请求，拦截器负责：
@@ -139,10 +139,10 @@ INT-->>C : 返回数据或抛错
 ```
 
 图表来源
-- [graphiti-web/src/api/request.ts:20-61](file://graphiti-web/src/api/request.ts#L20-L61)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:115-136](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:44-59](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L44-L59)
-- [graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:28-53](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L28-L53)
+- [ontograph-web/src/api/request.ts:20-61](file://ontograph-web/src/api/request.ts#L20-L61)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:115-136](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java:44-59](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L44-L59)
+- [ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:28-53](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L28-L53)
 
 ## 详细组件分析
 
@@ -173,10 +173,10 @@ Logout --> End
 ```
 
 图表来源
-- [graphiti-web/src/api/request.ts:20-135](file://graphiti-web/src/api/request.ts#L20-L135)
+- [ontograph-web/src/api/request.ts:20-135](file://ontograph-web/src/api/request.ts#L20-L135)
 
 章节来源
-- [graphiti-web/src/api/request.ts:1-138](file://graphiti-web/src/api/request.ts#L1-L138)
+- [ontograph-web/src/api/request.ts:1-138](file://ontograph-web/src/api/request.ts#L1-L138)
 
 ### 认证流程与令牌管理
 - 令牌存储：localStorage保存token与用户信息，支持读取、设置、清理
@@ -210,16 +210,16 @@ S->>S : clearToken + 清理状态
 ```
 
 图表来源
-- [graphiti-web/src/store/modules/user.ts:21-44](file://graphiti-web/src/store/modules/user.ts#L21-L44)
-- [graphiti-web/src/api/auth.ts:31-41](file://graphiti-web/src/api/auth.ts#L31-L41)
-- [graphiti-web/src/utils/auth.ts:18-30](file://graphiti-web/src/utils/auth.ts#L18-L30)
-- [graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:28-53](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L28-L53)
+- [ontograph-web/src/store/modules/user.ts:21-44](file://ontograph-web/src/store/modules/user.ts#L21-L44)
+- [ontograph-web/src/api/auth.ts:31-41](file://ontograph-web/src/api/auth.ts#L31-L41)
+- [ontograph-web/src/utils/auth.ts:18-30](file://ontograph-web/src/utils/auth.ts#L18-L30)
+- [ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:28-53](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L28-L53)
 
 章节来源
-- [graphiti-web/src/utils/auth.ts:1-41](file://graphiti-web/src/utils/auth.ts#L1-L41)
-- [graphiti-web/src/store/modules/user.ts:1-67](file://graphiti-web/src/store/modules/user.ts#L1-L67)
-- [graphiti-web/src/api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
+- [ontograph-web/src/utils/auth.ts:1-41](file://ontograph-web/src/utils/auth.ts#L1-L41)
+- [ontograph-web/src/store/modules/user.ts:1-67](file://ontograph-web/src/store/modules/user.ts#L1-L67)
+- [ontograph-web/src/api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java:1-55](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L1-L55)
 
 ### API模块化组织
 - 认证模块：登录、登出、获取用户信息
@@ -280,16 +280,16 @@ class EdgeApi {
 ```
 
 图表来源
-- [graphiti-web/src/api/auth.ts:26-49](file://graphiti-web/src/api/auth.ts#L26-L49)
-- [graphiti-web/src/api/graph.ts:53-192](file://graphiti-web/src/api/graph.ts#L53-L192)
-- [graphiti-web/src/api/node.ts:48-123](file://graphiti-web/src/api/node.ts#L48-L123)
-- [graphiti-web/src/api/edge.ts:57-104](file://graphiti-web/src/api/edge.ts#L57-L104)
+- [ontograph-web/src/api/auth.ts:26-49](file://ontograph-web/src/api/auth.ts#L26-L49)
+- [ontograph-web/src/api/graph.ts:53-192](file://ontograph-web/src/api/graph.ts#L53-L192)
+- [ontograph-web/src/api/node.ts:48-123](file://ontograph-web/src/api/node.ts#L48-L123)
+- [ontograph-web/src/api/edge.ts:57-104](file://ontograph-web/src/api/edge.ts#L57-L104)
 
 章节来源
-- [graphiti-web/src/api/auth.ts:1-53](file://graphiti-web/src/api/auth.ts#L1-L53)
-- [graphiti-web/src/api/graph.ts:1-207](file://graphiti-web/src/api/graph.ts#L1-L207)
-- [graphiti-web/src/api/node.ts:1-127](file://graphiti-web/src/api/node.ts#L1-L127)
-- [graphiti-web/src/api/edge.ts:1-108](file://graphiti-web/src/api/edge.ts#L1-L108)
+- [ontograph-web/src/api/auth.ts:1-53](file://ontograph-web/src/api/auth.ts#L1-L53)
+- [ontograph-web/src/api/graph.ts:1-207](file://ontograph-web/src/api/graph.ts#L1-L207)
+- [ontograph-web/src/api/node.ts:1-127](file://ontograph-web/src/api/node.ts#L1-L127)
+- [ontograph-web/src/api/edge.ts:1-108](file://ontograph-web/src/api/edge.ts#L1-L108)
 
 ### 请求配置与并发控制
 - 超时设置：默认10秒，针对数据导入等场景可在调用侧覆盖更长超时
@@ -297,8 +297,8 @@ class EdgeApi {
 - 重试机制：响应拦截器内对401触发刷新流程，刷新失败最多重试3次；网络错误不自动重试，交由上层处理
 
 章节来源
-- [graphiti-web/src/api/request.ts:5-8](file://graphiti-web/src/api/request.ts#L5-L8)
-- [graphiti-web/src/api/request.ts:64-135](file://graphiti-web/src/api/request.ts#L64-L135)
+- [ontograph-web/src/api/request.ts:5-8](file://ontograph-web/src/api/request.ts#L5-L8)
+- [ontograph-web/src/api/request.ts:64-135](file://ontograph-web/src/api/request.ts#L64-L135)
 
 ### 响应数据处理与缓存策略
 - 数据解包：统一从后端响应结构中提取data字段，仅当code为200时返回
@@ -306,18 +306,18 @@ class EdgeApi {
 - 缓存策略：当前未见前端侧通用缓存实现；建议对只读列表/详情等接口引入轻量缓存，结合key失效策略
 
 章节来源
-- [graphiti-web/src/api/request.ts:35-53](file://graphiti-web/src/api/request.ts#L35-L53)
-- [graphiti-web/src/api/graph.ts:55-58](file://graphiti-web/src/api/graph.ts#L55-L58)
-- [graphiti-web/src/api/node.ts:53-63](file://graphiti-web/src/api/node.ts#L53-L63)
-- [graphiti-web/src/api/edge.ts:62-64](file://graphiti-web/src/api/edge.ts#L62-L64)
+- [ontograph-web/src/api/request.ts:35-53](file://ontograph-web/src/api/request.ts#L35-L53)
+- [ontograph-web/src/api/graph.ts:55-58](file://ontograph-web/src/api/graph.ts#L55-L58)
+- [ontograph-web/src/api/node.ts:53-63](file://ontograph-web/src/api/node.ts#L53-L63)
+- [ontograph-web/src/api/edge.ts:62-64](file://ontograph-web/src/api/edge.ts#L62-L64)
 
 ### CORS配置与跨域处理
 - 后端CORS：允许任意来源、方法与头部，允许凭据，预检缓存1小时
 - 前端代理：开发环境下通过Vite代理将/api前缀转发至后端8080端口
 
 章节来源
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:68-79](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L68-L79)
-- [graphiti-web/vite.config.ts:20-26](file://graphiti-web/vite.config.ts#L20-L26)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:68-79](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L68-L79)
+- [ontograph-web/vite.config.ts:20-26](file://ontograph-web/vite.config.ts#L20-L26)
 
 ### 错误处理最佳实践
 - 网络错误：统一提示“网络错误”，便于用户感知
@@ -326,9 +326,9 @@ class EdgeApi {
 - 未认证/权限不足：后端返回JSON结构，前端拦截器统一处理
 
 章节来源
-- [graphiti-web/src/api/request.ts:54-61](file://graphiti-web/src/api/request.ts#L54-L61)
-- [graphiti-web/src/api/request.ts:44-52](file://graphiti-web/src/api/request.ts#L44-L52)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:84-113](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L84-L113)
+- [ontograph-web/src/api/request.ts:54-61](file://ontograph-web/src/api/request.ts#L54-L61)
+- [ontograph-web/src/api/request.ts:44-52](file://ontograph-web/src/api/request.ts#L44-L52)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:84-113](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L84-L113)
 
 ### API测试策略与Mock数据
 - 单元测试：建议为每个API模块编写单元测试，模拟Axios响应与错误场景
@@ -336,8 +336,8 @@ class EdgeApi {
 - 集成测试：通过代理将前端请求转发至后端，验证拦截器、认证与CORS链路
 
 章节来源
-- [graphiti-web/package.json:1-32](file://graphiti-web/package.json#L1-L32)
-- [graphiti-web/vite.config.ts:1-41](file://graphiti-web/vite.config.ts#L1-L41)
+- [ontograph-web/package.json:1-32](file://ontograph-web/package.json#L1-L32)
+- [ontograph-web/vite.config.ts:1-41](file://ontograph-web/vite.config.ts#L1-L41)
 
 ## 依赖分析
 - 前端依赖：Vue3、Vue Router、Pinia、Axios、Ant Design Vue等
@@ -356,10 +356,10 @@ P --> L["less"]
 ```
 
 图表来源
-- [graphiti-web/package.json:11-21](file://graphiti-web/package.json#L11-L21)
+- [ontograph-web/package.json:11-21](file://ontograph-web/package.json#L11-L21)
 
 章节来源
-- [graphiti-web/package.json:1-32](file://graphiti-web/package.json#L1-L32)
+- [ontograph-web/package.json:1-32](file://ontograph-web/package.json#L1-L32)
 
 ## 性能考虑
 - 超时与重试：合理设置超时，避免长时间阻塞；对401刷新采用指数退避与最大重试次数
@@ -374,9 +374,9 @@ P --> L["less"]
 - 网络错误：检查代理配置、防火墙与DNS解析
 
 章节来源
-- [graphiti-web/src/api/request.ts:20-61](file://graphiti-web/src/api/request.ts#L20-L61)
-- [graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:68-79](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L68-L79)
-- [graphiti-web/vite.config.ts:20-26](file://graphiti-web/vite.config.ts#L20-L26)
+- [ontograph-web/src/api/request.ts:20-61](file://ontograph-web/src/api/request.ts#L20-L61)
+- [ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java:68-79](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L68-L79)
+- [ontograph-web/vite.config.ts:20-26](file://ontograph-web/vite.config.ts#L20-L26)
 
 ## 结论
 该API集成方案以Axios为核心，配合拦截器实现了统一的认证、错误处理与刷新机制；前端通过模块化API清晰地组织了认证、图谱、节点与边等业务能力；后端通过Spring Security与JWT提供了完善的认证与CORS支持。建议在现有基础上进一步完善并发控制、缓存策略与测试体系，以提升整体稳定性与可维护性。
@@ -386,5 +386,5 @@ P --> L["less"]
 - JWT配置：后端提供密钥与过期时间配置，建议在生产环境使用强密钥与合理过期时间
 
 章节来源
-- [graphiti-web/src/api/request.ts:5-8](file://graphiti-web/src/api/request.ts#L5-L8)
-- [graphiti-server/src/main/resources/application.yml:25-34](file://graphiti-server/src/main/resources/application.yml#L25-L34)
+- [ontograph-web/src/api/request.ts:5-8](file://ontograph-web/src/api/request.ts#L5-L8)
+- [ontograph-server/src/main/resources/application.yml:25-34](file://ontograph-server/src/main/resources/application.yml#L25-L34)

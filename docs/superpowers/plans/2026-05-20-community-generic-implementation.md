@@ -182,7 +182,7 @@ COMMIT;
 
 ### Task 2.1: 更新 OntEpisodeTypeDO 字段
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntEpisodeTypeDO.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntEpisodeTypeDO.java`
 
 - [ ] **Step 1: 读取当前 OntEpisodeTypeDO 全部内容**
 
@@ -256,7 +256,7 @@ public void setIsReviewStage(Boolean isReviewStage) {
 
 ### Task 2.2: 更新 OntCommunityTypeDO 的 category 值说明
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntCommunityTypeDO.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/metadata/OntCommunityTypeDO.java`
 
 - [ ] **Step 1: 读取 OntCommunityTypeDO，检查是否有 category 相关注释**
 
@@ -273,7 +273,7 @@ private String category;
 
 ### Task 2.3: 更新 OntEpisodeTypeMapper 查询方法
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntEpisodeTypeMapper.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntEpisodeTypeMapper.java`
 
 - [ ] **Step 1: 读取当前 OntEpisodeTypeMapper.java**
 
@@ -315,7 +315,7 @@ description, sort_order, metadata, status, created_at, updated_at
 
 ### Task 2.4: 更新 OntCommunityTypeMapper（category 值映射）
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntCommunityTypeMapper.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/metadata/OntCommunityTypeMapper.java`
 
 - [ ] **Step 1: 读取当前 OntCommunityTypeMapper.java**
 
@@ -327,7 +327,7 @@ description, sort_order, metadata, status, created_at, updated_at
 
 ### Task 2.5: 更新 OntMetadataServiceImpl — Episode 类型 CRUD
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataServiceImpl.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataServiceImpl.java`
 
 - [ ] **Step 1: 读取 OntMetadataServiceImpl 中 `listByProcess` 方法（约 line 240）**
 
@@ -353,7 +353,7 @@ public List<OntEpisodeTypeDO> listByProcess(Long definitionId, String processTyp
 
 - [ ] **Step 2: 在 `OntMetadataService` 接口中也更新方法签名**
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataService.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/metadata/OntMetadataService.java`
 
 旧：
 ```java
@@ -384,7 +384,7 @@ episodeType.setIsTrialStage(reqVO.getIsTrialStage());
 
 ### Task 2.6: 更新 EpisodeTypeReqVO / RespVO
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeReqVO.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeReqVO.java`
 
 - [ ] **Step 1: 读取 OntEpisodeTypeReqVO.java**
 
@@ -402,7 +402,7 @@ private String courtLevel;
 private Boolean isTrialStage;
 ```
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeRespVO.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/metadata/OntEpisodeTypeRespVO.java`
 
 - [ ] **Step 3: 同样添加新字段并保留旧字段**
 
@@ -412,7 +412,7 @@ private Boolean isTrialStage;
 
 ### Task 3.1: 创建 DomainInferenceResult DTO
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dto/DomainInferenceResult.java`（新建）
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dto/DomainInferenceResult.java`（新建）
 
 - [ ] **Step 1: 创建 DTO 类**
 
@@ -448,7 +448,7 @@ public class DomainInferenceResult {
 
 ### Task 3.2: 创建 SubTypeInferenceResult DTO
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dto/SubTypeInferenceResult.java`（新建）
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dto/SubTypeInferenceResult.java`（新建）
 
 - [ ] **Step 1: 创建 DTO 类**
 
@@ -475,7 +475,7 @@ public class SubTypeInferenceResult {
 
 ### Task 3.3: 创建 DomainInferenceService 接口
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/DomainInferenceService.java`（新建）
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/DomainInferenceService.java`（新建）
 
 - [ ] **Step 1: 创建接口**
 
@@ -526,7 +526,7 @@ public interface DomainInferenceService {
 
 ### Task 3.4: 创建 DomainInferenceServiceImpl
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DomainInferenceServiceImpl.java`（新建）
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DomainInferenceServiceImpl.java`（新建）
 
 - [ ] **Step 1: 创建实现类框架**
 
@@ -716,7 +716,7 @@ private SubTypeInferenceResult parseSubTypeResult(String llmResponse, String top
 
 ### Task 4.1: 创建 CommunityCreateContext 类
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dto/CommunityCreateContext.java`（新建）
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dto/CommunityCreateContext.java`（新建）
 
 - [ ] **Step 1: 创建 DTO 类**
 
@@ -757,7 +757,7 @@ public class CommunityCreateContext {
 
 ### Task 4.2: 更新 CommunityService 接口
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java`
 
 - [ ] **Step 1: 读取 CommunityService.java**
 
@@ -777,7 +777,7 @@ Map<String, Object> createCommunity(String graphId, CommunityCreateContext conte
 
 ### Task 4.3: 更新 CommunityServiceImpl — 移除硬编码，引入 DomainInferenceService
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
 
 - [ ] **Step 1: 读取 CommunityServiceImpl.java 全文**
 
@@ -954,7 +954,7 @@ private final OntDefinitionMapper definitionMapper;  // 新增
 
 ### Task 5.1: 更新 GraphNeo4jService — Episode 节点属性重命名
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 - [ ] **Step 1: 读取 GraphNeo4jService 中的 `createEpisode` 方法（约 line 602-658）**
 
@@ -996,7 +996,7 @@ props.put("is_review_stage", v3Props.getOrDefault("is_review_stage", v3Props.get
 
 ### Task 5.2: 更新 EpisodeServiceImpl 中的字段引用
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java`
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EpisodeServiceImpl.java`
 
 - [ ] **Step 1: 读取 EpisodeServiceImpl 全文**
 
@@ -1031,7 +1031,7 @@ resp.setIsTrialStage(row.get("is_trial_stage") != null ? (Boolean) row.get("is_t
 
 ### Task 5.3: 更新 EpisodeInfoRespVO
 
-**文件：** `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/EpisodeInfoRespVO.java`（或对应 RespVO 文件）
+**文件：** `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/EpisodeInfoRespVO.java`（或对应 RespVO 文件）
 
 - [ ] **Step 1: 读取 RespVO 文件**
 
@@ -1263,7 +1263,7 @@ ON CONFLICT (definition_id, type_code) DO NOTHING;
 
 ### Task 8.1: 更新 TypeScript 类型定义
 
-**文件：** `graphiti-web/src/types/legal-graph-v3.ts`
+**文件：** `ontograph-web/src/types/legal-graph-v3.ts`
 
 - [ ] **Step 1: 读取 legal-graph-v3.ts**
 
@@ -1286,7 +1286,7 @@ interface CommunityV3 {
 
 ### Task 8.2: 更新 metadata.ts API
 
-**文件：** `graphiti-web/src/api/metadata.ts`
+**文件：** `ontograph-web/src/api/metadata.ts`
 
 - [ ] **Step 1: 读取 metadata.ts**
 
@@ -1311,7 +1311,7 @@ export interface OntEpisodeTypeVO {
 
 ### Task 8.3: 更新 community-episode.vue 下拉选项数据来源
 
-**文件：** `graphiti-web/src/views/data/community-episode.vue`
+**文件：** `ontograph-web/src/views/data/community-episode.vue`
 
 - [ ] **Step 1: 读取 community-episode.vue，定位下拉选项的定义位置**
 
@@ -1414,7 +1414,7 @@ onMounted(async () => {
 
 ### Task 8.4: 更新 IDE 图谱页面 — 社区色彩映射
 
-**文件：** `graphiti-web/src/views/graph/ide.vue`
+**文件：** `ontograph-web/src/views/graph/ide.vue`
 
 - [ ] **Step 1: 读取 ide.vue，搜索 `getCommunityColor` 或硬编码色彩常量**
 

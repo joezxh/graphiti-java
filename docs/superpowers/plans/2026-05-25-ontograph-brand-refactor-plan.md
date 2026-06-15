@@ -21,11 +21,11 @@
 
 **后端配置层：**
 - `pom.xml` - 根 Maven 配置
-- `graphiti-framework/pom.xml` - 框架模块配置
-- `graphiti-module-core/pom.xml` - 核心模块配置
-- `graphiti-module-system/pom.xml` - 系统模块配置
-- `graphiti-server/pom.xml` - 服务器模块配置
-- `graphiti-server/src/main/resources/application.yml` - 应用配置
+- `ontograph-framework/pom.xml` - 框架模块配置
+- `ontograph-module-core/pom.xml` - 核心模块配置
+- `ontograph-module-system/pom.xml` - 系统模块配置
+- `ontograph-server/pom.xml` - 服务器模块配置
+- `ontograph-server/src/main/resources/application.yml` - 应用配置
 - `.env.example` - 环境变量模板
 - `docker-compose.yml` - Docker 编排配置
 
@@ -35,22 +35,22 @@
 - 目录结构：`com/graphiti/` → `com/ontograph/`
 
 **前端配置层：**
-- `graphiti-web/package.json` - 前端项目配置
+- `ontograph-web/package.json` - 前端项目配置
 
 **前端代码层：**
-- `graphiti-web/src/i18n/locales/zh-CN.ts` - 中文国际化
-- `graphiti-web/src/i18n/locales/en-US.ts` - 英文国际化
-- `graphiti-web/src/i18n/locales/zh-TW.ts` - 繁体中文国际化
-- `graphiti-web/src/i18n/locales/ja-JP.ts` - 日文国际化
-- `graphiti-web/src/i18n/index.ts` - i18n 初始化
-- `graphiti-web/src/views/graph/ide.vue` - 主界面 Logo
-- `graphiti-web/src/views/login/index.vue` - 登录页版权
-- `graphiti-web/src/router/index.ts` - 路由标题
-- `graphiti-web/src/utils/auth.ts` - 认证存储 key
-- `graphiti-web/src/components/Ontology/ClassEditor.vue` - URI 示例
-- `graphiti-web/src/components/Ontology/PropertyEditor.vue` - URI 示例
-- `graphiti-web/src/types/graphiti.ts` - 类型文件（需重命名）
-- `graphiti-web/src/api/search.ts` - API 路径
+- `ontograph-web/src/i18n/locales/zh-CN.ts` - 中文国际化
+- `ontograph-web/src/i18n/locales/en-US.ts` - 英文国际化
+- `ontograph-web/src/i18n/locales/zh-TW.ts` - 繁体中文国际化
+- `ontograph-web/src/i18n/locales/ja-JP.ts` - 日文国际化
+- `ontograph-web/src/i18n/index.ts` - i18n 初始化
+- `ontograph-web/src/views/graph/ide.vue` - 主界面 Logo
+- `ontograph-web/src/views/login/index.vue` - 登录页版权
+- `ontograph-web/src/router/index.ts` - 路由标题
+- `ontograph-web/src/utils/auth.ts` - 认证存储 key
+- `ontograph-web/src/components/Ontology/ClassEditor.vue` - URI 示例
+- `ontograph-web/src/components/Ontology/PropertyEditor.vue` - URI 示例
+- `ontograph-web/src/types/graphiti.ts` - 类型文件（需重命名）
+- `ontograph-web/src/api/search.ts` - API 路径
 
 ---
 
@@ -276,42 +276,42 @@ git commit -m "build: update root pom.xml with com.ontograph groupId"
 ### Task 5: 更新子模块 pom.xml
 
 **Files:**
-- Modify: `graphiti-framework/pom.xml`
-- Modify: `graphiti-module-core/pom.xml`
-- Modify: `graphiti-module-system/pom.xml`
-- Modify: `graphiti-server/pom.xml`
+- Modify: `ontograph-framework/pom.xml`
+- Modify: `ontograph-module-core/pom.xml`
+- Modify: `ontograph-module-system/pom.xml`
+- Modify: `ontograph-server/pom.xml`
 
-- [ ] **Step 1: 更新 graphiti-framework/pom.xml**
-
-将文件中的：
-- `<groupId>com.graphiti</groupId>` → `<groupId>com.ontograph</groupId>`
-- `<artifactId>graphiti-framework</artifactId>` → `<artifactId>ontograph-framework</artifactId>`
-
-- [ ] **Step 2: 更新 graphiti-module-core/pom.xml**
+- [ ] **Step 1: 更新 ontograph-framework/pom.xml**
 
 将文件中的：
 - `<groupId>com.graphiti</groupId>` → `<groupId>com.ontograph</groupId>`
-- `<artifactId>graphiti-module-core</artifactId>` → `<artifactId>ontograph-module-core</artifactId>`
-- `<artifactId>graphiti-framework</artifactId>` → `<artifactId>ontograph-framework</artifactId>`（依赖引用）
+- `<artifactId>ontograph-framework</artifactId>` → `<artifactId>ontograph-framework</artifactId>`
 
-- [ ] **Step 3: 更新 graphiti-module-system/pom.xml**
-
-将文件中的：
-- `<groupId>com.graphiti</groupId>` → `<groupId>com.ontograph</groupId>`
-- `<artifactId>graphiti-module-system</artifactId>` → `<artifactId>ontograph-module-system</artifactId>`
-- `<artifactId>graphiti-framework</artifactId>` → `<artifactId>ontograph-framework</artifactId>`（依赖引用）
-
-- [ ] **Step 4: 更新 graphiti-server/pom.xml**
+- [ ] **Step 2: 更新 ontograph-module-core/pom.xml**
 
 将文件中的：
 - `<groupId>com.graphiti</groupId>` → `<groupId>com.ontograph</groupId>`
-- `<artifactId>graphiti-server</artifactId>` → `<artifactId>ontograph-server</artifactId>`
+- `<artifactId>ontograph-module-core</artifactId>` → `<artifactId>ontograph-module-core</artifactId>`
+- `<artifactId>ontograph-framework</artifactId>` → `<artifactId>ontograph-framework</artifactId>`（依赖引用）
+
+- [ ] **Step 3: 更新 ontograph-module-system/pom.xml**
+
+将文件中的：
+- `<groupId>com.graphiti</groupId>` → `<groupId>com.ontograph</groupId>`
+- `<artifactId>ontograph-module-system</artifactId>` → `<artifactId>ontograph-module-system</artifactId>`
+- `<artifactId>ontograph-framework</artifactId>` → `<artifactId>ontograph-framework</artifactId>`（依赖引用）
+
+- [ ] **Step 4: 更新 ontograph-server/pom.xml**
+
+将文件中的：
+- `<groupId>com.graphiti</groupId>` → `<groupId>com.ontograph</groupId>`
+- `<artifactId>ontograph-server</artifactId>` → `<artifactId>ontograph-server</artifactId>`
 - 所有依赖模块的 artifactId 从 `graphiti-*` → `ontograph-*`
 
 - [ ] **Step 5: 提交更改**
 
 ```bash
-git add graphiti-framework/pom.xml graphiti-module-core/pom.xml graphiti-module-system/pom.xml graphiti-server/pom.xml
+git add ontograph-framework/pom.xml ontograph-module-core/pom.xml ontograph-module-system/pom.xml ontograph-server/pom.xml
 git commit -m "build: update all module pom.xml files with com.ontograph groupId"
 ```
 
@@ -320,7 +320,7 @@ git commit -m "build: update all module pom.xml files with com.ontograph groupId
 ### Task 6: 更新 application.yml
 
 **Files:**
-- Modify: `graphiti-server/src/main/resources/application.yml`
+- Modify: `ontograph-server/src/main/resources/application.yml`
 
 - [ ] **Step 1: 替换应用名称和配置前缀**
 
@@ -373,7 +373,7 @@ logging:
 - [ ] **Step 2: 提交更改**
 
 ```bash
-git add graphiti-server/src/main/resources/application.yml
+git add ontograph-server/src/main/resources/application.yml
 git commit -m "config: update application.yml with ontograph prefix"
 ```
 
@@ -465,64 +465,64 @@ git commit -m "chore: verify backend configuration compiles successfully"
 ### Task 10: 重命名 Java 包目录
 
 **Files:**
-- Rename directory: `graphiti-framework/src/main/java/com/graphiti` → `graphiti-framework/src/main/java/com/ontograph`
-- Rename directory: `graphiti-module-core/src/main/java/com/graphiti` → `graphiti-module-core/src/main/java/com/ontograph`
-- Rename directory: `graphiti-module-system/src/main/java/com/graphiti` → `graphiti-module-system/src/main/java/com/ontograph`
-- Rename directory: `graphiti-server/src/main/java/com/graphiti` → `graphiti-server/src/main/java/com/ontograph`
+- Rename directory: `ontograph-framework/src/main/java/com/graphiti` → `ontograph-framework/src/main/java/com/ontograph`
+- Rename directory: `ontograph-module-core/src/main/java/com/graphiti` → `ontograph-module-core/src/main/java/com/ontograph`
+- Rename directory: `ontograph-module-system/src/main/java/com/graphiti` → `ontograph-module-system/src/main/java/com/ontograph`
+- Rename directory: `ontograph-server/src/main/java/com/graphiti` → `ontograph-server/src/main/java/com/ontograph`
 - Rename directory: 所有测试目录中的 `com/graphiti` → `com/ontograph`
 
-- [ ] **Step 1: 重命名 graphiti-framework 包目录**
+- [ ] **Step 1: 重命名 ontograph-framework 包目录**
 
 ```bash
 # Linux/Mac
-mkdir -p graphiti-framework/src/main/java/com/ontograph
-mv graphiti-framework/src/main/java/com/graphiti/* graphiti-framework/src/main/java/com/ontograph/
-rm -rf graphiti-framework/src/main/java/com/graphiti
+mkdir -p ontograph-framework/src/main/java/com/ontograph
+mv ontograph-framework/src/main/java/com/graphiti/* ontograph-framework/src/main/java/com/ontograph/
+rm -rf ontograph-framework/src/main/java/com/graphiti
 
 # Windows PowerShell
-New-Item -ItemType Directory -Force -Path "graphiti-framework/src/main/java/com/ontograph"
-Move-Item -Path "graphiti-framework/src/main/java/com/graphiti/*" -Destination "graphiti-framework/src/main/java/com/ontograph/"
-Remove-Item -Recurse -Force "graphiti-framework/src/main/java/com/graphiti"
+New-Item -ItemType Directory -Force -Path "ontograph-framework/src/main/java/com/ontograph"
+Move-Item -Path "ontograph-framework/src/main/java/com/graphiti/*" -Destination "ontograph-framework/src/main/java/com/ontograph/"
+Remove-Item -Recurse -Force "ontograph-framework/src/main/java/com/graphiti"
 ```
 
-- [ ] **Step 2: 重命名 graphiti-module-core 包目录**
+- [ ] **Step 2: 重命名 ontograph-module-core 包目录**
 
 ```bash
 # Windows PowerShell
-New-Item -ItemType Directory -Force -Path "graphiti-module-core/src/main/java/com/ontograph"
-Move-Item -Path "graphiti-module-core/src/main/java/com/graphiti/*" -Destination "graphiti-module-core/src/main/java/com/ontograph/"
-Remove-Item -Recurse -Force "graphiti-module-core/src/main/java/com/graphiti"
+New-Item -ItemType Directory -Force -Path "ontograph-module-core/src/main/java/com/ontograph"
+Move-Item -Path "ontograph-module-core/src/main/java/com/graphiti/*" -Destination "ontograph-module-core/src/main/java/com/ontograph/"
+Remove-Item -Recurse -Force "ontograph-module-core/src/main/java/com/graphiti"
 
 # 测试目录
-if (Test-Path "graphiti-module-core/src/test/java/com/graphiti") {
-    New-Item -ItemType Directory -Force -Path "graphiti-module-core/src/test/java/com/ontograph"
-    Move-Item -Path "graphiti-module-core/src/test/java/com/graphiti/*" -Destination "graphiti-module-core/src/test/java/com/ontograph/"
-    Remove-Item -Recurse -Force "graphiti-module-core/src/test/java/com/graphiti"
+if (Test-Path "ontograph-module-core/src/test/java/com/graphiti") {
+    New-Item -ItemType Directory -Force -Path "ontograph-module-core/src/test/java/com/ontograph"
+    Move-Item -Path "ontograph-module-core/src/test/java/com/graphiti/*" -Destination "ontograph-module-core/src/test/java/com/ontograph/"
+    Remove-Item -Recurse -Force "ontograph-module-core/src/test/java/com/graphiti"
 }
 ```
 
-- [ ] **Step 3: 重命名 graphiti-module-system 包目录**
+- [ ] **Step 3: 重命名 ontograph-module-system 包目录**
 
 ```bash
 # Windows PowerShell
-New-Item -ItemType Directory -Force -Path "graphiti-module-system/src/main/java/com/ontograph"
-Move-Item -Path "graphiti-module-system/src/main/java/com/graphiti/*" -Destination "graphiti-module-system/src/main/java/com/ontograph/"
-Remove-Item -Recurse -Force "graphiti-module-system/src/main/java/com/graphiti"
+New-Item -ItemType Directory -Force -Path "ontograph-module-system/src/main/java/com/ontograph"
+Move-Item -Path "ontograph-module-system/src/main/java/com/graphiti/*" -Destination "ontograph-module-system/src/main/java/com/ontograph/"
+Remove-Item -Recurse -Force "ontograph-module-system/src/main/java/com/graphiti"
 ```
 
-- [ ] **Step 4: 重命名 graphiti-server 包目录**
+- [ ] **Step 4: 重命名 ontograph-server 包目录**
 
 ```bash
 # Windows PowerShell
-New-Item -ItemType Directory -Force -Path "graphiti-server/src/main/java/com/ontograph"
-Move-Item -Path "graphiti-server/src/main/java/com/graphiti/*" -Destination "graphiti-server/src/main/java/com/ontograph/"
-Remove-Item -Recurse -Force "graphiti-server/src/main/java/com/graphiti"
+New-Item -ItemType Directory -Force -Path "ontograph-server/src/main/java/com/ontograph"
+Move-Item -Path "ontograph-server/src/main/java/com/graphiti/*" -Destination "ontograph-server/src/main/java/com/ontograph/"
+Remove-Item -Recurse -Force "ontograph-server/src/main/java/com/graphiti"
 
 # 测试目录
-if (Test-Path "graphiti-server/src/test/java/com/graphiti") {
-    New-Item -ItemType Directory -Force -Path "graphiti-server/src/test/java/com/ontograph"
-    Move-Item -Path "graphiti-server/src/test/java/com/graphiti/*" -Destination "graphiti-server/src/test/java/com/ontograph/"
-    Remove-Item -Recurse -Force "graphiti-server/src/test/java/com/graphiti"
+if (Test-Path "ontograph-server/src/test/java/com/graphiti") {
+    New-Item -ItemType Directory -Force -Path "ontograph-server/src/test/java/com/ontograph"
+    Move-Item -Path "ontograph-server/src/test/java/com/graphiti/*" -Destination "ontograph-server/src/test/java/com/ontograph/"
+    Remove-Item -Recurse -Force "ontograph-server/src/test/java/com/graphiti"
 }
 ```
 
@@ -647,8 +647,8 @@ Get-ChildItem -Recurse -Filter "*.java" | ForEach-Object {
 - [ ] **Step 2: 手动检查关键文件**
 
 重点检查以下文件的注释：
-- `graphiti-module-core/src/main/java/com/ontograph/module/core/service/*.java`
-- `graphiti-server/src/main/java/com/ontograph/server/GraphitiApplication.java` → 可能需重命名为 `OntoGraphApplication.java`
+- `ontograph-module-core/src/main/java/com/ontograph/module/core/service/*.java`
+- `ontograph-server/src/main/java/com/ontograph/server/GraphitiApplication.java` → 可能需重命名为 `OntoGraphApplication.java`
 
 - [ ] **Step 3: 提交注释更新**
 
@@ -662,16 +662,16 @@ git commit -m "docs: update Java code comments with OntoGraph branding"
 ### Task 14: 重命名主应用类
 
 **Files:**
-- Rename: `graphiti-server/src/main/java/com/ontograph/server/GraphitiApplication.java` → `OntoGraphApplication.java`
+- Rename: `ontograph-server/src/main/java/com/ontograph/server/GraphitiApplication.java` → `OntoGraphApplication.java`
 
 - [ ] **Step 1: 重命名文件并更新类名**
 
 ```powershell
 # 重命名文件
-Rename-Item -Path "graphiti-server/src/main/java/com/ontograph/server/GraphitiApplication.java" -NewName "OntoGraphApplication.java"
+Rename-Item -Path "ontograph-server/src/main/java/com/ontograph/server/GraphitiApplication.java" -NewName "OntoGraphApplication.java"
 
 # 更新文件内容
-$file = "graphiti-server/src/main/java/com/ontograph/server/OntoGraphApplication.java"
+$file = "ontograph-server/src/main/java/com/ontograph/server/OntoGraphApplication.java"
 $content = Get-Content $file -Raw -Encoding UTF8
 $content = $content -replace "class GraphitiApplication", "class OntoGraphApplication"
 Set-Content -Path $file -Value $content -Encoding UTF8 -NoNewline
@@ -721,7 +721,7 @@ git commit -m "chore: verify backend code compiles and tests pass after package 
 ### Task 16: 更新 package.json
 
 **Files:**
-- Modify: `graphiti-web/package.json`
+- Modify: `ontograph-web/package.json`
 
 - [ ] **Step 1: 替换项目名称**
 
@@ -734,7 +734,7 @@ git commit -m "chore: verify backend code compiles and tests pass after package 
 - [ ] **Step 2: 提交更改**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 git add package.json
 git commit -m "build: update package.json name to ontograph-web"
 cd ..
@@ -747,10 +747,10 @@ cd ..
 ### Task 17: 更新国际化文件
 
 **Files:**
-- Modify: `graphiti-web/src/i18n/locales/zh-CN.ts`
-- Modify: `graphiti-web/src/i18n/locales/en-US.ts`
-- Modify: `graphiti-web/src/i18n/locales/zh-TW.ts`
-- Modify: `graphiti-web/src/i18n/locales/ja-JP.ts`
+- Modify: `ontograph-web/src/i18n/locales/zh-CN.ts`
+- Modify: `ontograph-web/src/i18n/locales/en-US.ts`
+- Modify: `ontograph-web/src/i18n/locales/zh-TW.ts`
+- Modify: `ontograph-web/src/i18n/locales/ja-JP.ts`
 
 - [ ] **Step 1: 更新 zh-CN.ts**
 
@@ -779,7 +779,7 @@ cd ..
 - [ ] **Step 5: 提交国际化文件更新**
 
 ```bash
-git add graphiti-web/src/i18n/locales/*.ts
+git add ontograph-web/src/i18n/locales/*.ts
 git commit -m "i18n: update all locale files with OntoGraph branding"
 ```
 
@@ -788,8 +788,8 @@ git commit -m "i18n: update all locale files with OntoGraph branding"
 ### Task 18: 更新 i18n 初始化和认证工具
 
 **Files:**
-- Modify: `graphiti-web/src/i18n/index.ts`
-- Modify: `graphiti-web/src/utils/auth.ts`
+- Modify: `ontograph-web/src/i18n/index.ts`
+- Modify: `ontograph-web/src/utils/auth.ts`
 
 - [ ] **Step 1: 更新 i18n/index.ts**
 
@@ -811,7 +811,7 @@ const USER_KEY = 'ontograph_user'
 - [ ] **Step 3: 提交工具函数更新**
 
 ```bash
-git add graphiti-web/src/i18n/index.ts graphiti-web/src/utils/auth.ts
+git add ontograph-web/src/i18n/index.ts ontograph-web/src/utils/auth.ts
 git commit -m "refactor: update storage keys with ontograph prefix"
 ```
 
@@ -820,9 +820,9 @@ git commit -m "refactor: update storage keys with ontograph prefix"
 ### Task 19: 更新视图组件中的品牌文本
 
 **Files:**
-- Modify: `graphiti-web/src/views/graph/ide.vue`
-- Modify: `graphiti-web/src/views/login/index.vue`
-- Modify: `graphiti-web/src/router/index.ts`
+- Modify: `ontograph-web/src/views/graph/ide.vue`
+- Modify: `ontograph-web/src/views/login/index.vue`
+- Modify: `ontograph-web/src/router/index.ts`
 
 - [ ] **Step 1: 更新 ide.vue Logo**
 
@@ -851,7 +851,7 @@ document.title = `${translated} - OntoGraph Console`
 - [ ] **Step 4: 提交视图组件更新**
 
 ```bash
-git add graphiti-web/src/views/graph/ide.vue graphiti-web/src/views/login/index.vue graphiti-web/src/router/index.ts
+git add ontograph-web/src/views/graph/ide.vue ontograph-web/src/views/login/index.vue ontograph-web/src/router/index.ts
 git commit -m "ui: update view components with OntoGraph branding"
 ```
 
@@ -860,8 +860,8 @@ git commit -m "ui: update view components with OntoGraph branding"
 ### Task 20: 更新本体编辑器 URI 示例
 
 **Files:**
-- Modify: `graphiti-web/src/components/Ontology/ClassEditor.vue`
-- Modify: `graphiti-web/src/components/Ontology/PropertyEditor.vue`
+- Modify: `ontograph-web/src/components/Ontology/ClassEditor.vue`
+- Modify: `ontograph-web/src/components/Ontology/PropertyEditor.vue`
 
 - [ ] **Step 1: 更新 ClassEditor.vue**
 
@@ -886,7 +886,7 @@ return cls?.classUri || `http://ontograph.io/${cls?.localName || id}`
 - [ ] **Step 3: 提交本体编辑器更新**
 
 ```bash
-git add graphiti-web/src/components/Ontology/ClassEditor.vue graphiti-web/src/components/Ontology/PropertyEditor.vue
+git add ontograph-web/src/components/Ontology/ClassEditor.vue ontograph-web/src/components/Ontology/PropertyEditor.vue
 git commit -m "ui: update ontology editor URI examples with ontograph.io"
 ```
 
@@ -895,16 +895,16 @@ git commit -m "ui: update ontology editor URI examples with ontograph.io"
 ### Task 21: 重命名类型文件并更新 API 路径
 
 **Files:**
-- Rename: `graphiti-web/src/types/graphiti.ts` → `ontograph.ts`
-- Modify: `graphiti-web/src/api/search.ts`
+- Rename: `ontograph-web/src/types/graphiti.ts` → `ontograph.ts`
+- Modify: `ontograph-web/src/api/search.ts`
 
 - [ ] **Step 1: 重命名类型文件**
 
 ```powershell
-Rename-Item -Path "graphiti-web/src/types/graphiti.ts" -NewName "ontograph.ts"
+Rename-Item -Path "ontograph-web/src/types/graphiti.ts" -NewName "ontograph.ts"
 
 # 更新文件注释
-$file = "graphiti-web/src/types/ontograph.ts"
+$file = "ontograph-web/src/types/ontograph.ts"
 $content = Get-Content $file -Raw -Encoding UTF8
 $content = $content -replace "ontograph-java", "OntoGraph"
 Set-Content -Path $file -Value $content -Encoding UTF8 -NoNewline
@@ -937,7 +937,7 @@ await request.delete('/admin/ontograph/search-history/clear')
 - [ ] **Step 3: 提交类型文件和 API 路径更新**
 
 ```bash
-git add graphiti-web/src/types/ontograph.ts graphiti-web/src/api/search.ts
+git add ontograph-web/src/types/ontograph.ts ontograph-web/src/api/search.ts
 git commit -m "refactor: rename types file and update API paths to /admin/ontograph/"
 ```
 
@@ -948,7 +948,7 @@ git commit -m "refactor: rename types file and update API paths to /admin/ontogr
 ### Task 22: 在 ide.vue 中引入新 Logo
 
 **Files:**
-- Modify: `graphiti-web/src/views/graph/ide.vue`
+- Modify: `ontograph-web/src/views/graph/ide.vue`
 
 - [ ] **Step 1: 添加 Logo 图片引用**
 
@@ -973,7 +973,7 @@ git commit -m "refactor: rename types file and update API paths to /admin/ontogr
 - [ ] **Step 3: 提交 Logo 更新**
 
 ```bash
-git add graphiti-web/src/views/graph/ide.vue
+git add ontograph-web/src/views/graph/ide.vue
 git commit -m "ui: add OntoGraph logo to IDE header"
 ```
 
@@ -989,7 +989,7 @@ git commit -m "ui: add OntoGraph logo to IDE header"
 - [ ] **Step 1: 安装依赖**
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 pnpm install
 ```
 

@@ -1,6 +1,6 @@
-# Graphiti-Java 部署流水线设计文档
+# OntoGraph 部署流水线设计文档
 
-本文档定义了 graphiti-java 项目的容器化部署方案，涵盖开发、测试、生产全场景。
+本文档定义了 ontograph-java 项目的容器化部署方案，涵盖开发、测试、生产全场景。
 
 ---
 
@@ -8,7 +8,7 @@
 
 ```
 宿主机
-├── graphiti-java/              # 应用代码 (git clone)
+├── ontograph-java/              # 应用代码 (git clone)
 │   ├── docker/                 # Docker 相关文件
 │   │   └── Dockerfile          # 多阶段构建
 │   ├── docker-compose.yml      # 开发/测试环境
@@ -49,7 +49,7 @@
 
 | 服务 | 开发/测试 | 生产 |
 |------|---------|------|
-| graphiti-java | Docker 容器 | Docker 容器，CPU/内存限制 |
+| ontograph-java | Docker 容器 | Docker 容器，CPU/内存限制 |
 | PostgreSQL | Docker 容器，端口 5432 | Docker 容器，持久化到 `data/postgres/` |
 | Redis | Docker 容器，端口 6379 | Docker 容器，AOF 持久化 |
 | Neo4j | 外部 localhost | 外部配置（bolt://neo4j:7687 或云端） |
@@ -61,16 +61,16 @@
 ### 3.1 前端嵌入后端
 
 ```
-graphiti-web/          (pnpm build)
+ontograph-web/          (pnpm build)
     dist/
       index.html
       assets/
         └── static/   ← frontend-maven-plugin 拷贝到
-                          graphiti-server/src/main/resources/static/
+                          ontograph-server/src/main/resources/static/
 
-graphiti-server/       (mvn package)
+ontograph-server/       (mvn package)
     target/
-      graphiti-server-1.0.0-SNAPSHOT.jar   ← 包含前端资源
+      ontograph-server-1.0.0-SNAPSHOT.jar   ← 包含前端资源
 ```
 
 ### 3.2 镜像构建流程
@@ -132,14 +132,14 @@ source .env
 
 ### 5.1 开发/测试环境 (默认 profiles: default)
 
-- graphiti-java (8080)
+- ontograph-java (8080)
 - postgres (5432)
 - redis (6379)
 - Neo4j 需手动在 localhost 启动
 
 ### 5.2 生产环境 (profiles: prod)
 
-- graphiti-java with resource limits + health checks
+- ontograph-java with resource limits + health checks
 - postgres with persistent volumes
 - redis with AOF persistence
 
@@ -175,7 +175,7 @@ cp .env.example .env
 docker-compose up -d
 
 # 3. 查看日志
-docker-compose logs -f graphiti-java
+docker-compose logs -f ontograph-java
 
 # 4. 访问
 # 前端: http://localhost:8080

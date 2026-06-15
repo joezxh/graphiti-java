@@ -1,23 +1,23 @@
-﻿# 核心业务模块 (graphiti-module-core)
+﻿# 核心业务模块 (ontograph-module-core)
 
 <!--<cite>
 **本文档引用的文件**   
-- [GraphitiController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
-- [NodeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java)
-- [EdgeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
-- [GraphitiServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java)
-- [NodeServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java)
-- [EdgeServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java)
-- [CommunityService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java)
-- [CommunityServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java)
-- [TemporalService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java)
-- [TemporalServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java)
-- [SearchService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java)
-- [SearchServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java)
-- [LabelPropagation.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java)
-- [BinaryTreeSummarizer.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java)
-- [GraphNeo4jService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java)
-- [system_prompt.txt](file://graphiti-module-core/src/main/resources/prompts/system_prompt.txt)
+- [GraphitiController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
+- [NodeController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java)
+- [EdgeController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
+- [GraphitiServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java)
+- [NodeServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java)
+- [EdgeServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java)
+- [CommunityService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java)
+- [CommunityServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java)
+- [TemporalService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java)
+- [TemporalServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java)
+- [SearchService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java)
+- [SearchServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java)
+- [LabelPropagation.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java)
+- [BinaryTreeSummarizer.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java)
+- [GraphNeo4jService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java)
+- [system_prompt.txt](file://ontograph-module-core/src/main/resources/prompts/system_prompt.txt)
 </cite>-->
 
 ## 目录
@@ -33,7 +33,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件面向Graphiti-Java核心业务模块，聚焦于知识图谱管理（GraphitiController）、实体管理（NodeController）、关系管理（EdgeController）以及对应服务实现（GraphitiServiceImpl、NodeServiceImpl、EdgeServiceImpl）。文档深入阐述图谱生命周期管理、元数据管理、图谱克隆与导出、节点CRUD与去重、实体解析与类型推断、关系抽取与验证、社区发现、时间序列管理、搜索功能与数据质量保障等高级特性，并提供业务流程图与数据流向图，帮助开发者快速理解与扩展。
+本文件面向OntoGraph核心业务模块，聚焦于知识图谱管理（GraphitiController）、实体管理（NodeController）、关系管理（EdgeController）以及对应服务实现（GraphitiServiceImpl、NodeServiceImpl、EdgeServiceImpl）。文档深入阐述图谱生命周期管理、元数据管理、图谱克隆与导出、节点CRUD与去重、实体解析与类型推断、关系抽取与验证、社区发现、时间序列管理、搜索功能与数据质量保障等高级特性，并提供业务流程图与数据流向图，帮助开发者快速理解与扩展。
 
 ## 项目结构
 核心模块采用“控制器-服务-数据访问”的分层设计，控制器负责HTTP接口与参数封装，服务层编排业务流程与跨域调用，数据访问层对接Neo4j与MySQL，工具类提供算法与重排序能力。
@@ -68,21 +68,21 @@ GC --> SS
 ```
 
 图表来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [NodeController.java:1-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
-- [EdgeController.java:1-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [NodeServiceImpl.java:1-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
-- [EdgeServiceImpl.java:1-172](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
-- [GraphNeo4jService.java:1-800](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L800)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [NodeController.java:1-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
+- [EdgeController.java:1-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [NodeServiceImpl.java:1-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
+- [EdgeServiceImpl.java:1-172](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [GraphNeo4jService.java:1-800](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L800)
 
 章节来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [NodeController.java:1-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
-- [EdgeController.java:1-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [NodeController.java:1-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
+- [EdgeController.java:1-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
 
 ## 核心组件
 - 图谱管理（GraphitiController + GraphitiServiceImpl）
@@ -104,12 +104,12 @@ GC --> SS
   - 数据质量：本体校验、去重提示、错误码与异常
 
 章节来源
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [NodeServiceImpl.java:1-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
-- [EdgeServiceImpl.java:1-172](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [NodeServiceImpl.java:1-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
+- [EdgeServiceImpl.java:1-172](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
 
 ## 架构总览
 下图展示控制器到服务再到数据访问的整体交互路径，以及社区发现、时间序列与搜索的关键流程。
@@ -133,18 +133,18 @@ CS --> BTS["BinaryTreeSummarizer"]
 ```
 
 图表来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [NodeController.java:1-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
-- [EdgeController.java:1-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
-- [GraphitiServiceImpl.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
-- [NodeServiceImpl.java:1-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
-- [EdgeServiceImpl.java:1-172](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
-- [CommunityServiceImpl.java:1-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
-- [TemporalServiceImpl.java:1-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
-- [SearchServiceImpl.java:1-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
-- [GraphNeo4jService.java:1-800](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L800)
-- [LabelPropagation.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java#L1-L256)
-- [BinaryTreeSummarizer.java:1-279](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java#L1-L279)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [NodeController.java:1-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
+- [EdgeController.java:1-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
+- [GraphitiServiceImpl.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L1-L256)
+- [NodeServiceImpl.java:1-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L1-L214)
+- [EdgeServiceImpl.java:1-172](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
+- [CommunityServiceImpl.java:1-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L1-L289)
+- [TemporalServiceImpl.java:1-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L1-L160)
+- [SearchServiceImpl.java:1-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L1-L520)
+- [GraphNeo4jService.java:1-800](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L800)
+- [LabelPropagation.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java#L1-L256)
+- [BinaryTreeSummarizer.java:1-279](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java#L1-L279)
 
 ## 详细组件分析
 
@@ -183,13 +183,13 @@ Ctrl-->>C : 200 OK
 ```
 
 图表来源
-- [GraphitiController.java:50-208](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L208)
-- [GraphitiServiceImpl.java:30-205](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L30-L205)
-- [GraphNeo4jService.java:569-594](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L569-L594)
+- [GraphitiController.java:50-208](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L208)
+- [GraphitiServiceImpl.java:30-205](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L30-L205)
+- [GraphNeo4jService.java:569-594](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L569-L594)
 
 章节来源
-- [GraphitiController.java:50-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L235)
-- [GraphitiServiceImpl.java:30-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L30-L256)
+- [GraphitiController.java:50-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L235)
+- [GraphitiServiceImpl.java:30-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L30-L256)
 
 ### 实体管理（NodeController + NodeServiceImpl）
 - 控制器职责
@@ -221,13 +221,13 @@ Ctrl-->>C : 200 OK
 ```
 
 图表来源
-- [NodeController.java:66-72](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L66-L72)
-- [NodeServiceImpl.java:58-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L58-L111)
-- [GraphNeo4jService.java:41-64](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L41-L64)
+- [NodeController.java:66-72](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L66-L72)
+- [NodeServiceImpl.java:58-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L58-L111)
+- [GraphNeo4jService.java:41-64](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L41-L64)
 
 章节来源
-- [NodeController.java:35-141](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
-- [NodeServiceImpl.java:32-214](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L32-L214)
+- [NodeController.java:35-141](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
+- [NodeServiceImpl.java:32-214](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L32-L214)
 
 ### 关系管理（EdgeController + EdgeServiceImpl）
 - 控制器职责
@@ -259,13 +259,13 @@ Ctrl-->>C : 200 OK
 ```
 
 图表来源
-- [EdgeController.java:53-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L53-L60)
-- [EdgeServiceImpl.java:60-102](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L60-L102)
-- [GraphNeo4jService.java:93-174](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
+- [EdgeController.java:53-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L53-L60)
+- [EdgeServiceImpl.java:60-102](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L60-L102)
+- [GraphNeo4jService.java:93-174](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
 
 章节来源
-- [EdgeController.java:33-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
-- [EdgeServiceImpl.java:31-172](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L31-L172)
+- [EdgeController.java:33-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
+- [EdgeServiceImpl.java:31-172](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L31-L172)
 
 ### 社区发现（CommunityServiceImpl）
 - 核心算法
@@ -287,15 +287,15 @@ Skip --> End
 ```
 
 图表来源
-- [CommunityServiceImpl.java:41-132](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L41-L132)
-- [LabelPropagation.java:130-189](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java#L130-L189)
-- [BinaryTreeSummarizer.java:52-94](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java#L52-L94)
+- [CommunityServiceImpl.java:41-132](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L41-L132)
+- [LabelPropagation.java:130-189](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java#L130-L189)
+- [BinaryTreeSummarizer.java:52-94](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java#L52-L94)
 
 章节来源
-- [CommunityService.java:9-38](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java#L9-L38)
-- [CommunityServiceImpl.java:41-289](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L41-L289)
-- [LabelPropagation.java:1-256](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java#L1-L256)
-- [BinaryTreeSummarizer.java:1-279](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java#L1-L279)
+- [CommunityService.java:9-38](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/CommunityService.java#L9-L38)
+- [CommunityServiceImpl.java:41-289](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L41-L289)
+- [LabelPropagation.java:1-256](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/LabelPropagation.java#L1-L256)
+- [BinaryTreeSummarizer.java:1-279](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/util/BinaryTreeSummarizer.java#L1-L279)
 
 ### 时间序列管理（TemporalServiceImpl）
 - 功能
@@ -320,12 +320,12 @@ Loop --> Done["输出失效UUID列表"]
 ```
 
 图表来源
-- [TemporalServiceImpl.java:43-85](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L43-L85)
-- [GraphNeo4jService.java:93-174](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
+- [TemporalServiceImpl.java:43-85](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L43-L85)
+- [GraphNeo4jService.java:93-174](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
 
 章节来源
-- [TemporalService.java:19-95](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java#L19-L95)
-- [TemporalServiceImpl.java:27-160](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L27-L160)
+- [TemporalService.java:19-95](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/TemporalService.java#L19-L95)
+- [TemporalServiceImpl.java:27-160](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L27-L160)
 
 ### 搜索功能（SearchServiceImpl）
 - 检索模式
@@ -356,15 +356,15 @@ Limit --> Out["返回结果"]
 ```
 
 图表来源
-- [SearchServiceImpl.java:94-148](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L94-L148)
-- [SearchServiceImpl.java:227-284](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L227-L284)
-- [SearchServiceImpl.java:288-308](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L288-L308)
-- [SearchServiceImpl.java:320-337](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L320-L337)
-- [SearchServiceImpl.java:348-365](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L348-L365)
+- [SearchServiceImpl.java:94-148](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L94-L148)
+- [SearchServiceImpl.java:227-284](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L227-L284)
+- [SearchServiceImpl.java:288-308](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L288-L308)
+- [SearchServiceImpl.java:320-337](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L320-L337)
+- [SearchServiceImpl.java:348-365](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L348-L365)
 
 章节来源
-- [SearchService.java:15-54](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java#L15-L54)
-- [SearchServiceImpl.java:26-520](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L26-L520)
+- [SearchService.java:15-54](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java#L15-L54)
+- [SearchServiceImpl.java:26-520](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L26-L520)
 
 ## 依赖分析
 - 控制器依赖服务接口，服务实现依赖Neo4j驱动与嵌入服务
@@ -388,20 +388,20 @@ CS --> BTS["BinaryTreeSummarizer"]
 ```
 
 图表来源
-- [GraphitiController.java:41-48](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L41-L48)
-- [NodeController.java:27-28](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L27-L28)
-- [EdgeController.java:30-31](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L30-L31)
-- [GraphitiServiceImpl.java:28-29](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L28-L29)
-- [NodeServiceImpl.java:28-30](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L28-L30)
-- [EdgeServiceImpl.java:27-29](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L27-L29)
-- [CommunityServiceImpl.java:32-33](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L32-L33)
-- [TemporalServiceImpl.java:25](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L25)
-- [SearchServiceImpl.java:23-24](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L23-L24)
+- [GraphitiController.java:41-48](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L41-L48)
+- [NodeController.java:27-28](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L27-L28)
+- [EdgeController.java:30-31](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L30-L31)
+- [GraphitiServiceImpl.java:28-29](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L28-L29)
+- [NodeServiceImpl.java:28-30](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L28-L30)
+- [EdgeServiceImpl.java:27-29](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L27-L29)
+- [CommunityServiceImpl.java:32-33](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java#L32-L33)
+- [TemporalServiceImpl.java:25](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java#L25)
+- [SearchServiceImpl.java:23-24](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L23-L24)
 
 章节来源
-- [GraphitiController.java:1-235](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
-- [NodeController.java:1-143](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
-- [EdgeController.java:1-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
+- [GraphitiController.java:1-235](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L1-L235)
+- [NodeController.java:1-143](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L1-L143)
+- [EdgeController.java:1-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
 
 ## 性能考虑
 - 索引与向量
@@ -428,10 +428,10 @@ CS --> BTS["BinaryTreeSummarizer"]
   - 服务层关键路径打印info/warn日志，便于问题追踪
 
 章节来源
-- [GraphitiServiceImpl.java:214-223](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L214-L223)
-- [NodeServiceImpl.java:50-56](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L50-L56)
-- [EdgeServiceImpl.java:51-58](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L51-L58)
-- [SearchServiceImpl.java:646-648](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L646-L648)
+- [GraphitiServiceImpl.java:214-223](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java#L214-L223)
+- [NodeServiceImpl.java:50-56](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java#L50-L56)
+- [EdgeServiceImpl.java:51-58](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L51-L58)
+- [SearchServiceImpl.java:646-648](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java#L646-L648)
 
 ## 结论
 本模块围绕“控制器-服务-数据访问”三层架构，结合Neo4j图数据库与向量索引，提供了完整的知识图谱生命周期管理、实体与关系的高质量处理、社区发现与时间序列管理、以及强大的混合检索能力。通过本文件的流程图与依赖分析，开发者可快速定位实现细节并进行扩展与优化。
@@ -441,4 +441,4 @@ CS --> BTS["BinaryTreeSummarizer"]
   - system_prompt用于抽取结构化信息，指导LLM遵循JSON格式与时间一致性
 
 章节来源
-- [system_prompt.txt:1-11](file://graphiti-module-core/src/main/resources/prompts/system_prompt.txt#L1-L11)
+- [system_prompt.txt:1-11](file://ontograph-module-core/src/main/resources/prompts/system_prompt.txt#L1-L11)

@@ -47,7 +47,7 @@
 ### 1.3 新增模块规划
 
 ```
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/
 ├── controller/admin/
 │   ├── GraphitiController.java          # 已有 - 扩展新接口
 │   ├── SearchController.java            # 已有 - 扩展混合检索

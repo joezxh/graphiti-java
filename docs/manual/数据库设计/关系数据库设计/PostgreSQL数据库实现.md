@@ -12,8 +12,8 @@
 - [V3__create_legal_ontology.sql](file://sql/postgresql/V3__create_legal_ontology.sql)
 - [V4__seed_legal_ontology.sql](file://sql/postgresql/V4__seed_legal_ontology.sql)
 - [V5__create_ontology_tables.sql](file://sql/postgresql/V5__create_ontology_tables.sql)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
 </cite>-->
 
 ## 目录
@@ -32,7 +32,7 @@
 本项目为Graphiti知识图谱平台的PostgreSQL数据库实现，涵盖系统管理、图谱管理、通知模块、提示词模板、法律知识图谱本体等多个子系统。数据库采用PostgreSQL 15+作为核心存储引擎，通过版本化的迁移脚本实现从MySQL到PostgreSQL的完整迁移，并提供了丰富的索引策略、触发器机制和JSONB字段支持。
 
 ## 项目结构
-项目采用模块化设计，数据库相关文件主要位于`sql/postgresql/`目录下，文档位于`docs/`目录，应用配置位于`graphiti-server/src/main/resources/`目录。
+项目采用模块化设计，数据库相关文件主要位于`sql/postgresql/`目录下，文档位于`docs/`目录，应用配置位于`ontograph-server/src/main/resources/`目录。
 
 ```mermaid
 graph TB
@@ -482,12 +482,12 @@ F --> K
 ```
 
 **图表来源**
-- [application-dev.yml:488-502](file://graphiti-server/src/main/resources/application-dev.yml#L488-L502)
-- [application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
+- [application-dev.yml:488-502](file://ontograph-server/src/main/resources/application-dev.yml#L488-L502)
+- [application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
 
 **章节来源**
-- [application-dev.yml:488-502](file://graphiti-server/src/main/resources/application-dev.yml#L488-L502)
-- [application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
+- [application-dev.yml:488-502](file://ontograph-server/src/main/resources/application-dev.yml#L488-L502)
+- [application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
 
 ## 性能考虑
 
@@ -584,7 +584,7 @@ SkipTrigger --> Complete
 - [database-migration-guide.md:139-162](file://docs/database-migration-guide.md#L139-L162)
 
 ## 结论
-Graphiti项目的PostgreSQL数据库实现展现了现代化数据库设计的最佳实践。通过合理的表结构设计、完善的索引策略、灵活的触发器机制和丰富的JSONB字段支持，系统能够高效支撑知识图谱应用的各种业务场景。版本化的迁移脚本确保了从MySQL到PostgreSQL的平滑过渡，而详细的文档和配置指南为运维管理提供了有力保障。
+OntoGraph项目的PostgreSQL数据库实现展现了现代化数据库设计的最佳实践。通过合理的表结构设计、完善的索引策略、灵活的触发器机制和丰富的JSONB字段支持，系统能够高效支撑知识图谱应用的各种业务场景。版本化的迁移脚本确保了从MySQL到PostgreSQL的平滑过渡，而详细的文档和配置指南为运维管理提供了有力保障。
 
 ## 附录
 

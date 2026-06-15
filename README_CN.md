@@ -117,13 +117,13 @@ OntoGraph 是一个生产级的知识图谱后端系统，将时序知识图谱�
 ### 模块结构
 
 ```
-graphiti-java/
-├── graphiti-server/              # Spring Boot 启动入口
+ontograph-java/
+├── ontograph-server/              # Spring Boot 启动入口
 │   └── src/main/resources/
 │       ├── application.yml       # 基础配置
 │       └── application-dev.yml   # 开发环境配置
 │
-├── graphiti-module-core/         # 核心业务模块
+├── ontograph-module-core/         # 核心业务模块
 │   ├── controller/admin/         # REST 控制器
 │   ├── service/                  # 业务服务层
 │   │   ├── impl/ai/              # LLM 厂商实现
@@ -152,16 +152,16 @@ graphiti-java/
 │       ├── summarize_node.txt
 │       └── summarize_community.txt
 │
-├── graphiti-module-system/       # 系统管理模块
+├── ontograph-module-system/       # 系统管理模块
 │   └── 用户/角色/菜单/认证控制器与服务
 │
-├── graphiti-framework/           # 框架基础设施
+├── ontograph-framework/           # 框架基础设施
 │   ├── graphiti-common/          # 公共工具与异常
 │   ├── graphiti-spring-boot-starter-security/  # JWT 安全
 │   ├── graphiti-spring-boot-starter-mybatis/   # MyBatis 配置
 │   └── graphiti-spring-boot-starter-redis/     # Redis 配置
 │
-├── graphiti-web/                 # 前端 (Vue 3)
+├── ontograph-web/                 # 前端 (Vue 3)
 │   ├── src/api/                  # API 客户端模块
 │   ├── src/views/                # 页面组件
 │   └── src/components/           # 可复用组件
@@ -266,7 +266,7 @@ mysql -u root -p graphiti < sql/mysql/init-data.sql
 
 ### 3. 配置应用
 
-编辑 `graphiti-server/src/main/resources/application-dev.yml`：
+编辑 `ontograph-server/src/main/resources/application-dev.yml`：
 
 ```yaml
 spring:
@@ -300,7 +300,7 @@ neo4j:
 ### 4. 启动后端
 
 ```bash
-cd graphiti-server
+cd ontograph-server
 mvn spring-boot:run
 ```
 
@@ -310,7 +310,7 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
 ### 5. 启动前端
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 pnpm install
 pnpm dev
 ```
@@ -323,7 +323,7 @@ pnpm dev
 
 ### 使用 Docker Compose 快速启动
 
-使用 Docker Compose 是运行完整 Graphiti-Java 服务栈最简单的方式：
+使用 Docker Compose 是运行完整 OntoGraph 服务栈最简单的方式：
 
 ```bash
 # 1. 克隆代码库
@@ -525,7 +525,7 @@ docker run -d \
   --name ontograph-java \
   -p 8080:8080 \
   --env-file .env \
-  graphiti-java:latest
+  ontograph-java:latest
 ```
 
 ---
@@ -719,7 +719,7 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 ### 设计与架构
 
 - [项目概述 (docs/01-项目概述.md)](docs/01-项目概述.md)
-- [Java vs Python 对比 (docs/graphiti-java-vs-python-comparison.md)](docs/graphiti-java-vs-python-comparison.md)
+- [Java vs Python 对比 (docs/ontograph-java-vs-python-comparison.md)](docs/ontograph-java-vs-python-comparison.md)
 - [实现总结 (docs/implementation-summary.md)](docs/implementation-summary.md)
 - [设计文档 (DESIGN.md)](DESIGN.md)
 
@@ -742,24 +742,24 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 - [后端实现规划 (docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)
 - [控制台实现规划 (docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)
 - [MySQL 到 PostgreSQL 迁移 (docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)](docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)
-- [完整对齐规划 (docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)](docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)
-- [完整迁移规划 (docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)](docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)
+- [完整对齐规划 (docs/superpowers/plans/2026-05-10-ontograph-java-full-alignment-plan.md)](docs/superpowers/plans/2026-05-10-ontograph-java-full-alignment-plan.md)
+- [完整迁移规划 (docs/superpowers/plans/2026-05-11-ontograph-java-full-migration-plan.md)](docs/superpowers/plans/2026-05-11-ontograph-java-full-migration-plan.md)
 - [本体阶段1 (docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)](docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)
 - [本体阶段2-4 (docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)](docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)
 - [法律本体设计 (docs/superpowers/plans/2026-05-11-legal-ontology-design.md)](docs/superpowers/plans/2026-05-11-legal-ontology-design.md)
 - [Neo4j 关系类型一致性 (docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)](docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)
 - [控制台设计规格 (docs/superpowers/specs/2026-05-08-graphiti-console-design.md)](docs/superpowers/specs/2026-05-08-graphiti-console-design.md)
-- [完整对齐设计规格 (docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)](docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)
+- [完整对齐设计规格 (docs/superpowers/specs/2026-05-10-ontograph-java-full-alignment-design.md)](docs/superpowers/specs/2026-05-10-ontograph-java-full-alignment-design.md)
 - [本体增强设计规格 (docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)](docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)
 - [后端 API 实现设计规格 (docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)](docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)
-- [完整迁移设计规格 (docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)](docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)
+- [完整迁移设计规格 (docs/superpowers/specs/2026-05-11-ontograph-java-full-migration-design.md)](docs/superpowers/specs/2026-05-11-ontograph-java-full-migration-design.md)
 - [AI 会话记忆设计规格 (docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)](docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)
 
 ---
 
 ## 参与贡献
 
-欢迎为 Graphiti-Java 贡献力量！请遵循以下指南：
+欢迎为 OntoGraph 贡献力量！请遵循以下指南：
 
 ### 开发环境搭建
 
@@ -802,7 +802,7 @@ chore: 构建/配置变更
 
 ## 致谢
 
-OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
+OntoGraph (原 OntoGraph) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 
 ---
 

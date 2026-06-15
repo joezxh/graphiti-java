@@ -2,23 +2,23 @@
 
 <!--<cite>
 **本文引用的文件**
-- [SwaggerConfig.java](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java)
-- [AuthController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
-- [UserController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java)
-- [RoleController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java)
-- [SystemConfigController.java](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/SystemConfigController.java)
-- [GraphitiController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
-- [NodeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java)
-- [EdgeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
-- [SearchController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java)
-- [DataImportController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java)
-- [OntologyController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java)
-- [CreateGraphReqVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/graph/CreateGraphReqVO.java)
-- [SearchQueryReqVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchQueryReqVO.java)
-- [LoginRequest.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java)
-- [LoginResponse.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java)
-- [CommonResult.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
-- [ResultCode.java](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
+- [SwaggerConfig.java](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java)
+- [AuthController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java)
+- [UserController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java)
+- [RoleController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java)
+- [SystemConfigController.java](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/SystemConfigController.java)
+- [GraphitiController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java)
+- [NodeController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java)
+- [EdgeController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
+- [SearchController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java)
+- [DataImportController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java)
+- [OntologyController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java)
+- [CreateGraphReqVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/graph/CreateGraphReqVO.java)
+- [SearchQueryReqVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchQueryReqVO.java)
+- [LoginRequest.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java)
+- [LoginResponse.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java)
+- [CommonResult.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java)
+- [ResultCode.java](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java)
 - [README.md](file://README.md)
 </cite>-->
 
@@ -42,16 +42,16 @@
 
 ```mermaid
 graph TB
-subgraph "graphiti-server"
+subgraph "ontograph-server"
 SWG["SwaggerConfig<br/>OpenAPI 配置"]
 end
-subgraph "graphiti-module-system"
+subgraph "ontograph-module-system"
 AC["AuthController<br/>认证接口"]
 UC["UserController<br/>用户管理"]
 RC["RoleController<br/>角色管理"]
 SCC["SystemConfigController<br/>系统配置"]
 end
-subgraph "graphiti-module-core"
+subgraph "ontograph-module-core"
 GC["GraphitiController<br/>图谱管理"]
 NC["NodeController<br/>节点管理"]
 EC["EdgeController<br/>边管理"]
@@ -59,7 +59,7 @@ SC["SearchController<br/>搜索检索"]
 DIC["DataImportController<br/>数据导入"]
 OC["OntologyController<br/>本体管理"]
 end
-subgraph "graphiti-framework"
+subgraph "ontograph-framework"
 CR["CommonResult<br/>统一响应"]
 RCc["ResultCode<br/>错误码常量"]
 end
@@ -87,16 +87,16 @@ CR --> RCc
 ```
 
 图表来源
-- [SwaggerConfig.java:24-46](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L24-L46)
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
-- [GraphitiController.java:37-234](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L37-L234)
-- [NodeController.java:23-142](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L23-L142)
-- [EdgeController.java:23-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L23-L90)
-- [SearchController.java:23-137](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java#L23-L137)
-- [DataImportController.java:22-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java#L22-L111)
-- [OntologyController.java:20-231](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java#L20-L231)
-- [CommonResult.java:14-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [SwaggerConfig.java:24-46](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L24-L46)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
+- [GraphitiController.java:37-234](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L37-L234)
+- [NodeController.java:23-142](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L23-L142)
+- [EdgeController.java:23-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L23-L90)
+- [SearchController.java:23-137](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java#L23-L137)
+- [DataImportController.java:22-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java#L22-L111)
+- [OntologyController.java:20-231](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java#L20-L231)
+- [CommonResult.java:14-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
 
 章节来源
 - [README.md:406-431](file://README.md#L406-L431)
@@ -107,9 +107,9 @@ CR --> RCc
 - 认证与安全：通过 Bearer JWT 实现认证，Swagger 中声明了 Bearer Authentication 安全方案。
 
 章节来源
-- [CommonResult.java:14-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
-- [SwaggerConfig.java:37-45](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
+- [CommonResult.java:14-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [SwaggerConfig.java:37-45](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
 
 ## 架构总览
 以下序列图展示一次典型认证流程与后续受保护接口调用：
@@ -133,10 +133,10 @@ A-->>C : CommonResult<UserInfo>
 ```
 
 图表来源
-- [AuthController.java:27-52](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L52)
-- [LoginRequest.java:11-24](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java#L11-L24)
-- [LoginResponse.java:10-38](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java#L10-L38)
-- [SwaggerConfig.java:37-45](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
+- [AuthController.java:27-52](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L52)
+- [LoginRequest.java:11-24](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java#L11-L24)
+- [LoginResponse.java:10-38](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java#L10-L38)
+- [SwaggerConfig.java:37-45](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
 
 ## 详细组件分析
 
@@ -171,9 +171,9 @@ A-->>C : CommonResult<UserInfo>
   - userInfo.email：字符串
 
 章节来源
-- [AuthController.java:27-52](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L52)
-- [LoginRequest.java:11-24](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java#L11-L24)
-- [LoginResponse.java:10-38](file://graphiti-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java#L10-L38)
+- [AuthController.java:27-52](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L27-L52)
+- [LoginRequest.java:11-24](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginRequest.java#L11-L24)
+- [LoginResponse.java:10-38](file://ontograph-module-system/src/main/java/com/graphiti/system/dto/LoginResponse.java#L10-L38)
 
 ### 系统管理接口
 - 基础路径：/api/v1/admin/system/*
@@ -269,9 +269,9 @@ A-->>C : CommonResult<UserInfo>
   - 响应体：CommonResult<Void>
 
 章节来源
-- [UserController.java:29-73](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L29-L73)
-- [RoleController.java:30-69](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L30-L69)
-- [SystemConfigController.java:28-81](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/SystemConfigController.java#L28-L81)
+- [UserController.java:29-73](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L29-L73)
+- [RoleController.java:30-69](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L30-L69)
+- [SystemConfigController.java:28-81](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/SystemConfigController.java#L28-L81)
 
 ### 知识图谱接口
 - 基础路径：/api/v1/graph
@@ -390,9 +390,9 @@ A-->>C : CommonResult<UserInfo>
   - config：SearchConfigVO（具体字段由实现定义）
 
 章节来源
-- [GraphitiController.java:50-233](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L233)
-- [CreateGraphReqVO.java:11-22](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/graph/CreateGraphReqVO.java#L11-L22)
-- [SearchQueryReqVO.java:14-32](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchQueryReqVO.java#L14-L32)
+- [GraphitiController.java:50-233](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L50-L233)
+- [CreateGraphReqVO.java:11-22](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/graph/CreateGraphReqVO.java#L11-L22)
+- [SearchQueryReqVO.java:14-32](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchQueryReqVO.java#L14-L32)
 
 ### 实体关系接口
 - 基础路径：/api/v1/nodes 与 /api/v1/graph/edge
@@ -477,8 +477,8 @@ A-->>C : CommonResult<UserInfo>
   - 响应体：CommonResult<List<EdgeListRespVO>>
 
 章节来源
-- [NodeController.java:35-141](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
-- [EdgeController.java:33-89](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L89)
+- [NodeController.java:35-141](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L35-L141)
+- [EdgeController.java:33-89](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L89)
 
 ### 搜索接口
 - 基础路径：/api/v1/graph/search
@@ -542,7 +542,7 @@ A-->>C : CommonResult<UserInfo>
   - 响应体：CommonResult<SearchResultsRespVO>
 
 章节来源
-- [SearchController.java:33-136](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java#L33-L136)
+- [SearchController.java:33-136](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java#L33-L136)
 
 ### 数据导入接口
 - 基础路径：/api/v1/graph/data
@@ -598,7 +598,7 @@ A-->>C : CommonResult<UserInfo>
   - 响应体：抛出 BusinessException（501）
 
 章节来源
-- [DataImportController.java:32-110](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java#L32-L110)
+- [DataImportController.java:32-110](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java#L32-L110)
 
 ### 本体管理接口
 - 基础路径：/api/v1/ontology
@@ -731,7 +731,7 @@ Schema.org 导入导出
   - 响应体：CommonResult<ConsistencyResultVO>
 
 章节来源
-- [OntologyController.java:32-230](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java#L32-L230)
+- [OntologyController.java:32-230](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java#L32-L230)
 
 ## 依赖分析
 - 统一响应与错误码：所有控制器返回值均封装在 CommonResult 中，错误码来自 ResultCode 常量。
@@ -764,19 +764,19 @@ SWG --> SCC
 ```
 
 图表来源
-- [CommonResult.java:14-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
-- [SwaggerConfig.java:37-45](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
-- [AuthController.java:16-54](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
-- [GraphitiController.java:37-234](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L37-L234)
-- [NodeController.java:23-142](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L23-L142)
-- [EdgeController.java:23-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L23-L90)
-- [SearchController.java:23-137](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java#L23-L137)
-- [DataImportController.java:22-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java#L22-L111)
-- [OntologyController.java:20-231](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java#L20-L231)
-- [UserController.java:19-74](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
-- [RoleController.java:20-70](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L20-L70)
-- [SystemConfigController.java:19-82](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/SystemConfigController.java#L19-L82)
+- [CommonResult.java:14-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [SwaggerConfig.java:37-45](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
+- [AuthController.java:16-54](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L16-L54)
+- [GraphitiController.java:37-234](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java#L37-L234)
+- [NodeController.java:23-142](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java#L23-L142)
+- [EdgeController.java:23-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L23-L90)
+- [SearchController.java:23-137](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java#L23-L137)
+- [DataImportController.java:22-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/DataImportController.java#L22-L111)
+- [OntologyController.java:20-231](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java#L20-L231)
+- [UserController.java:19-74](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L19-L74)
+- [RoleController.java:20-70](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/RoleController.java#L20-L70)
+- [SystemConfigController.java:19-82](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/SystemConfigController.java#L19-L82)
 
 ## 性能考虑
 - 搜索性能：混合检索结合 BM25、向量与 BFS，建议合理设置 maxFacts 与 rerank 开关；对大规模图谱建议开启向量索引与合适的深度限制。
@@ -800,8 +800,8 @@ SWG --> SCC
 - 对于业务错误码，查看响应 message 获取更详细提示
 
 章节来源
-- [ResultCode.java:7-22](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
-- [CommonResult.java:14-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
+- [ResultCode.java:7-22](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/constants/ResultCode.java#L7-L22)
+- [CommonResult.java:14-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
 
 ## 结论
 本文档基于 Swagger/OpenAPI 规范，系统梳理了 ontograph-java 的全部 RESTful 接口，明确了认证与权限控制、统一响应结构、错误码体系、分页与过滤参数、以及各模块的功能边界。建议在集成过程中严格遵循统一响应与错误码约定，并结合性能建议优化调用方式。
@@ -816,7 +816,7 @@ SWG --> SCC
   - timestamp：字符串，ISO 时间格式
 
 章节来源
-- [CommonResult.java:14-67](file://graphiti-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
+- [CommonResult.java:14-67](file://ontograph-framework/graphiti-common/src/main/java/com/graphiti/common/response/CommonResult.java#L14-L67)
 
 ### 认证机制与权限控制
 - 认证方式：Bearer JWT
@@ -824,8 +824,8 @@ SWG --> SCC
 - 使用方式：在请求头 Authorization 中携带 Bearer {token}
 
 章节来源
-- [SwaggerConfig.java:37-45](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
-- [AuthController.java:37-52](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L37-L52)
+- [SwaggerConfig.java:37-45](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L37-L45)
+- [AuthController.java:37-52](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/AuthController.java#L37-L52)
 
 ### 通用参数说明
 - 分页参数
@@ -837,8 +837,8 @@ SWG --> SCC
   - 当前接口未显式提供排序参数，如需排序请在服务端实现或通过前端二次排序
 
 章节来源
-- [UserController.java:66-72](file://graphiti-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L66-L72)
-- [SearchQueryReqVO.java:14-32](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchQueryReqVO.java#L14-L32)
+- [UserController.java:66-72](file://ontograph-module-system/src/main/java/com/graphiti/system/controller/UserController.java#L66-L72)
+- [SearchQueryReqVO.java:14-32](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchQueryReqVO.java#L14-L32)
 
 ### API 版本管理与兼容性
 - 版本前缀：/api/v1
@@ -846,7 +846,7 @@ SWG --> SCC
 
 章节来源
 - [README.md:406-413](file://README.md#L406-L413)
-- [SwaggerConfig.java:26-36](file://graphiti-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L26-L36)
+- [SwaggerConfig.java:26-36](file://ontograph-server/src/main/java/com/graphiti/config/SwaggerConfig.java#L26-L36)
 
 ### 使用示例与最佳实践
 - 登录获取令牌后，在后续请求头中携带 Authorization: Bearer {token}

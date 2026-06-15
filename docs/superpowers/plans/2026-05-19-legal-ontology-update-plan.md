@@ -18,8 +18,8 @@
 - Read: `sql/postgresql/init-data.sql`
 - Read: `sql/mysql/init-data.sql`
 - Read: `sql/neo4j/init.cypher`
-- Read: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java`
-- Read: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java`
+- Read: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java`
+- Read: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java`
 
 - [ ] **Step 1: Read sql/postgresql/init-data.sql**
 
@@ -356,7 +356,7 @@ git commit -m "feat(neo4j): add real cases from court case library to init.cyphe
 ### Task 7: 更新 legal-kg-data.ts — 修正本体定义
 
 **Files:**
-- Modify: `graphiti-web/src/api/legal-kg-data.ts`
+- Modify: `ontograph-web/src/api/legal-kg-data.ts`
 
 - [ ] **Step 1: 修正 `LEGAL_ENTITIES` 中的类名**
 
@@ -516,7 +516,7 @@ git commit -m "feat(neo4j): add real cases from court case library to init.cyphe
 - [ ] **Step 7: Commit**
 
 ```bash
-git add graphiti-web/src/api/legal-kg-data.ts
+git add ontograph-web/src/api/legal-kg-data.ts
 git commit -m "feat(frontend): align legal-kg-data with backend ontology definitions"
 ```
 
@@ -525,7 +525,7 @@ git commit -m "feat(frontend): align legal-kg-data with backend ontology definit
 ### Task 8: 更新 legal-kg/index.vue — 修正字段匹配和统计逻辑
 
 **Files:**
-- Modify: `graphiti-web/src/views/legal-kg/index.vue`
+- Modify: `ontograph-web/src/views/legal-kg/index.vue`
 
 - [ ] **Step 1: 修正 `loadGraphStats` 中的 Case 节点统计（含子类）**
 
@@ -587,7 +587,7 @@ stats.judgeCount = nodes.filter(n => n.type === 'Judge').length;
 - [ ] **Step 5: Commit**
 
 ```bash
-git add graphiti-web/src/views/legal-kg/index.vue
+git add ontograph-web/src/views/legal-kg/index.vue
 git commit -m "feat(frontend): align legal-kg index.vue field matching and stats with backend ontology"
 ```
 
@@ -641,5 +641,5 @@ git commit -m "chore: finalize legal ontology update and frontend alignment"
 | `sql/postgresql/init-data.sql` | 修改 | 继承关系填充 + 新增 40+ 属性 |
 | `sql/mysql/init-data.sql` | 修改 | 同步 PostgreSQL 变更 |
 | `sql/neo4j/init.cypher` | 修改 | definition_id + 新案例节点 |
-| `graphiti-web/src/api/legal-kg-data.ts` | 修改 | 类名/关系名修正 + 补全子类/新类 |
-| `graphiti-web/src/views/legal-kg/index.vue` | 修改 | 统计逻辑 + 字段匹配 + 颜色映射 |
+| `ontograph-web/src/api/legal-kg-data.ts` | 修改 | 类名/关系名修正 + 补全子类/新类 |
+| `ontograph-web/src/views/legal-kg/index.vue` | 修改 | 统计逻辑 + 字段匹配 + 颜色映射 |

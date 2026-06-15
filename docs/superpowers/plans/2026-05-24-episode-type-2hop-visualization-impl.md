@@ -16,19 +16,19 @@
 
 | 文件 | 责任 | 变更类型 |
 |------|------|----------|
-| `graphiti-module-core/.../GraphIDEController.java` | REST API 入口，路由到 Service | 修改 |
-| `graphiti-module-core/.../GraphVisualizationService.java` | 接口定义 | 修改 |
-| `graphiti-module-core/.../GraphVisualizationServiceImpl.java` | Cypher 查询实现（分页+动态跳数） | 修改 |
-| `graphiti-web/src/api/graph.ts` | 前端 API 调用，更新签名 | 修改 |
-| `graphiti-web/src/views/graph/ide.vue` | 状态管理、事件处理、数据流 orchestration | 修改 |
-| `graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue` | 实例表格、分页控件、跳数选择器 | 修改 |
+| `ontograph-module-core/.../GraphIDEController.java` | REST API 入口，路由到 Service | 修改 |
+| `ontograph-module-core/.../GraphVisualizationService.java` | 接口定义 | 修改 |
+| `ontograph-module-core/.../GraphVisualizationServiceImpl.java` | Cypher 查询实现（分页+动态跳数） | 修改 |
+| `ontograph-web/src/api/graph.ts` | 前端 API 调用，更新签名 | 修改 |
+| `ontograph-web/src/views/graph/ide.vue` | 状态管理、事件处理、数据流 orchestration | 修改 |
+| `ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue` | 实例表格、分页控件、跳数选择器 | 修改 |
 
 ---
 
 ## Task 1: 后端 Service 接口扩展
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java`
 
 - [ ] **Step 1: 在接口中添加新方法声明**
 
@@ -47,7 +47,7 @@ GraphVisualizationRespVO getEpisodesVisualizationByType(
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java
 git commit -m "feat(api): add getEpisodesVisualizationByType interface"
 ```
 
@@ -56,7 +56,7 @@ git commit -m "feat(api): add getEpisodesVisualizationByType interface"
 ## Task 2: 后端 Service 实现（Cypher 查询）
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphVisualizationServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphVisualizationServiceImpl.java`
 
 **前置检查：** 先确认文件中现有的 `getEpisodesVisualization` 方法实现，了解节点/边转换模式。
 
@@ -234,7 +234,7 @@ private void extractEdgeFromResult(Record record,
 - [ ] **Step 2: 编译验证**
 
 ```bash
-cd graphiti-module-core && mvn compile -q
+cd ontograph-module-core && mvn compile -q
 ```
 
 Expected: `BUILD SUCCESS`
@@ -242,7 +242,7 @@ Expected: `BUILD SUCCESS`
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphVisualizationServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphVisualizationServiceImpl.java
 git commit -m "feat(api): implement getEpisodesVisualizationByType with dynamic depth Cypher"
 ```
 
@@ -251,7 +251,7 @@ git commit -m "feat(api): implement getEpisodesVisualizationByType with dynamic 
 ## Task 3: 后端 Controller 新增端点
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
 
 - [ ] **Step 1: 在 Controller 中添加新端点**
 
@@ -281,7 +281,7 @@ public CommonResult<GraphVisualizationRespVO> getEpisodesVisualizationByType(
 - [ ] **Step 2: 编译验证**
 
 ```bash
-cd graphiti-module-core && mvn compile -q
+cd ontograph-module-core && mvn compile -q
 ```
 
 Expected: `BUILD SUCCESS`
@@ -289,7 +289,7 @@ Expected: `BUILD SUCCESS`
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java
 git commit -m "feat(api): add GET /visualization/episodes/by-type endpoint"
 ```
 
@@ -298,7 +298,7 @@ git commit -m "feat(api): add GET /visualization/episodes/by-type endpoint"
 ## Task 4: 前端 API 签名更新
 
 **Files:**
-- Modify: `graphiti-web/src/api/graph.ts`
+- Modify: `ontograph-web/src/api/graph.ts`
 
 - [ ] **Step 1: 更新 `getEpisodesVisualizationByType` 方法签名**
 
@@ -327,7 +327,7 @@ async getEpisodesVisualizationByType(
 - [ ] **Step 2: TypeScript 编译检查**
 
 ```bash
-cd graphiti-web && npx vue-tsc --noEmit
+cd ontograph-web && npx vue-tsc --noEmit
 ```
 
 Expected: 无新增类型错误
@@ -335,7 +335,7 @@ Expected: 无新增类型错误
 - [ ] **Step 3: Commit**
 
 ```bash
-git add graphiti-web/src/api/graph.ts
+git add ontograph-web/src/api/graph.ts
 git commit -m "feat(web): update getEpisodesVisualizationByType API signature with pagination and depth"
 ```
 
@@ -344,7 +344,7 @@ git commit -m "feat(web): update getEpisodesVisualizationByType API signature wi
 ## Task 5: EpisodeTypeDetailPanel.vue 分页控件改造
 
 **Files:**
-- Modify: `graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue`
+- Modify: `ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue`
 
 - [ ] **Step 1: 扩展 Props**
 
@@ -496,7 +496,7 @@ watch(() => props.pagination.page, loadInstances, { immediate: true })
 - [ ] **Step 8: TypeScript 编译检查**
 
 ```bash
-cd graphiti-web && npx vue-tsc --noEmit
+cd ontograph-web && npx vue-tsc --noEmit
 ```
 
 Expected: 无新增类型错误
@@ -504,7 +504,7 @@ Expected: 无新增类型错误
 - [ ] **Step 9: Commit**
 
 ```bash
-git add graphiti-web/src/components/Ontology/EpisodeTypeDetailPanel.vue
+git add ontograph-web/src/components/Ontology/EpisodeTypeDetailPanel.vue
 git commit -m "feat(web): add pagination and depth controls to EpisodeTypeDetailPanel"
 ```
 
@@ -513,7 +513,7 @@ git commit -m "feat(web): add pagination and depth controls to EpisodeTypeDetail
 ## Task 6: ide.vue 状态管理与事件处理改造
 
 **Files:**
-- Modify: `graphiti-web/src/views/graph/ide.vue`
+- Modify: `ontograph-web/src/views/graph/ide.vue`
 
 - [ ] **Step 1: 新增分页和深度状态**
 
@@ -679,7 +679,7 @@ const handleEpisodeDepthChange = async (newDepth: number) => {
 - [ ] **Step 8: TypeScript 编译检查**
 
 ```bash
-cd graphiti-web && npx vue-tsc --noEmit
+cd ontograph-web && npx vue-tsc --noEmit
 ```
 
 Expected: 无新增类型错误
@@ -687,7 +687,7 @@ Expected: 无新增类型错误
 - [ ] **Step 9: Commit**
 
 ```bash
-git add graphiti-web/src/views/graph/ide.vue
+git add ontograph-web/src/views/graph/ide.vue
 git commit -m "feat(web): add episode type pagination, depth state and sync handlers in ide.vue"
 ```
 
@@ -718,13 +718,13 @@ void testGetEpisodesVisualizationByType_Depth2() {
 - [ ] **Step 2: 启动后端服务**
 
 ```bash
-cd graphiti-server && mvn spring-boot:run
+cd ontograph-server && mvn spring-boot:run
 ```
 
 - [ ] **Step 3: 启动前端开发服务器**
 
 ```bash
-cd graphiti-web && pnpm dev
+cd ontograph-web && pnpm dev
 ```
 
 - [ ] **Step 4: 端到端验证清单**

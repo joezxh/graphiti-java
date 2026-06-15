@@ -4,7 +4,7 @@
 |------|------|
 | **文档版本** | v2.0 |
 | **创建日期** | 2026-05-25 |
-| **适用范围** | Graphiti-Python / Graphiti-Java 研发团队 |
+| **适用范围** | Graphiti-Python / OntoGraph 研发团队 |
 | **文档用途** | 核心技术文档归档、代码评审参考、架构优化依据 |
 
 ---
@@ -28,7 +28,7 @@
 
 ### 1.1 技术栈对照
 
-| 维度 | Python 项目 (graphiti) | Java 项目 (graphiti-java) |
+| 维度 | Python 项目 (graphiti) | Java 项目 (ontograph-java) |
 |------|----------------------|--------------------------|
 | **框架层** | FastAPI (async/await) | Spring Boot 3.5.5 (同步阻塞) |
 | **图数据库** | Neo4j Driver 5.x / FalkorDB / Kuzu / Neptune | Neo4j Driver 5.26.0 |
@@ -180,7 +180,7 @@ graph TB
     style R4 fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
-### 2.2 Java graphiti-java Pipeline 完整流程图
+### 2.2 Java ontograph-java Pipeline 完整流程图
 
 ```mermaid
 graph TB
@@ -371,7 +371,7 @@ sequenceDiagram
     G-->>Queue: 任务完成
 ```
 
-### 3.2 Java graphiti-java addData 完整时序图
+### 3.2 Java ontograph-java addData 完整时序图
 
 ```mermaid
 sequenceDiagram
@@ -511,7 +511,7 @@ sequenceDiagram
 
 ### 4.1 并发策略对比
 
-| 维度 | Python graphiti | Java graphiti-java | 差距 |
+| 维度 | Python graphiti | Java ontograph-java | 差距 |
 |------|----------------|-------------------|------|
 | **IO 模型** | asyncio 异步非阻塞 | 同步阻塞 (Spring MVC) | 🔴 根本性差异 |
 | **LLM 调用** | `semaphore_gather` 并行 (默认20并发) | 串行 `for` 循环 | 🔴 10-20x |
@@ -627,7 +627,7 @@ float[] embedding = embedderService.embed(embedText);  // ❌ 未使用批量接
 
 ### 4.4 去重逻辑对比
 
-| 阶段 | Python graphiti | Java graphiti-java |
+| 阶段 | Python graphiti | Java ontograph-java |
 |------|----------------|-------------------|
 | **Tier 1 精确匹配** | `_normalize_string_exact` 规范化名称 | `StringNormalizer.normalizeExact` |
 | **Tier 2 语义匹配** | 向量余弦相似度 ≥ 0.6 (Neo4j 向量索引查询) | MinHash + LSH Jaccard ≥ 0.9 + 向量余弦 ≥ 0.6 |
@@ -1241,4 +1241,4 @@ public CommonResult<TaskStatusVO> getTaskStatus(@PathVariable String taskId) {
 
 ---
 
-*本文档由 Graphiti-Java 研发团队生成，基于 v2.0 代码版本，适用于技术评审和架构优化参考。*
+*本文档由 OntoGraph 研发团队生成，基于 v2.0 代码版本，适用于技术评审和架构优化参考。*

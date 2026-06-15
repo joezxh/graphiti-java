@@ -26,8 +26,8 @@
 | Python Quickstart | `examples/quickstart/quickstart_neo4j.py` | Episode 添加、基础搜索流程 |
 | LangGraph Agent | `examples/langgraph-agent/agent.ipynb` | AI 聊天机器人集成模式、记忆检索与 Prompt 拼接 |
 | Python Core API | `graphiti_core/graphiti.py`, `nodes.py`, `edges.py` | 核心概念定义（EpisodeType、EntityNode、EntityEdge 等） |
-| Java Service API | `graphiti-module-core/service/*.java` | Java 版现有接口对照 |
-| Java Controller | `graphiti-module-core/controller/admin/GraphitiController.java` | REST API 端点展示 |
+| Java Service API | `ontograph-module-core/service/*.java` | Java 版现有接口对照 |
+| Java Controller | `ontograph-module-core/controller/admin/GraphitiController.java` | REST API 端点展示 |
 | Java Search Impl | `service/impl/SearchServiceImpl.java` | getMemory() 实现逻辑 |
 
 ## 4. 章节详细设计
@@ -153,7 +153,7 @@
 - 产品信息已预加载到图谱中
 
 **5.2 项目依赖配置**
-- `pom.xml` 中需要的依赖：`graphiti-module-core`、`spring-ai-openai`（或其他 Provider）
+- `pom.xml` 中需要的依赖：`ontograph-module-core`、`spring-ai-openai`（或其他 Provider）
 
 **5.3 记忆服务封装类 `ChatMemoryService`**
 - 方法：

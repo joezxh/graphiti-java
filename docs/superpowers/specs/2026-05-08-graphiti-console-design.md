@@ -383,7 +383,7 @@ ontograph-java 是一个基于 Java 的独立本体论知识图谱服务。现�
 ### 5.2 项目结构
 
 ```
-graphiti-web/
+ontograph-web/
 ├── public/
 │   └── favicon.ico
 ├── src/

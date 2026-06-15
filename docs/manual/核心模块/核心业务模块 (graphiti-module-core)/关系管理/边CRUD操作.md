@@ -2,16 +2,16 @@
 
 <!--<cite>
 **本文引用的文件**
-- [EdgeController.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
-- [EdgeService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java)
-- [EdgeServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java)
-- [GraphNeo4jService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java)
-- [EdgeFilterReqVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java)
-- [EdgeInfoRespVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java)
-- [EdgeListRespVO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java)
-- [Neo4jDriverAdapter.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java)
+- [EdgeController.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java)
+- [EdgeService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java)
+- [EdgeServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java)
+- [GraphNeo4jService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java)
+- [EdgeFilterReqVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java)
+- [EdgeInfoRespVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java)
+- [EdgeListRespVO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java)
+- [Neo4jDriverAdapter.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java)
 - [OntologyValidationServiceImpl.java](file://docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)
-- [EdgeServiceImplTest.java](file://graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java)
+- [EdgeServiceImplTest.java](file://ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java)
 </cite>-->
 
 ## 目录
@@ -67,23 +67,23 @@ GNS --> N4J
 ```
 
 图表来源
-- [EdgeController.java:1-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
-- [EdgeService.java:1-61](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L1-L61)
-- [EdgeServiceImpl.java:1-172](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
-- [GraphNeo4jService.java:1-200](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L200)
-- [Neo4jDriverAdapter.java:1-69](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L69)
-- [EdgeFilterReqVO.java:1-38](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L1-L38)
-- [EdgeListRespVO.java:1-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L1-L70)
-- [EdgeInfoRespVO.java:1-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L1-L70)
+- [EdgeController.java:1-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
+- [EdgeService.java:1-61](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L1-L61)
+- [EdgeServiceImpl.java:1-172](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
+- [GraphNeo4jService.java:1-200](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L200)
+- [Neo4jDriverAdapter.java:1-69](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L1-L69)
+- [EdgeFilterReqVO.java:1-38](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L1-L38)
+- [EdgeListRespVO.java:1-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L1-L70)
+- [EdgeInfoRespVO.java:1-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L1-L70)
 
 章节来源
-- [EdgeController.java:1-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
-- [EdgeService.java:1-61](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L1-L61)
-- [EdgeServiceImpl.java:1-172](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
-- [GraphNeo4jService.java:1-200](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L200)
-- [EdgeFilterReqVO.java:1-38](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L1-L38)
-- [EdgeListRespVO.java:1-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L1-L70)
-- [EdgeInfoRespVO.java:1-70](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L1-L70)
+- [EdgeController.java:1-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L1-L91)
+- [EdgeService.java:1-61](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L1-L61)
+- [EdgeServiceImpl.java:1-172](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L1-L172)
+- [GraphNeo4jService.java:1-200](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L1-L200)
+- [EdgeFilterReqVO.java:1-38](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L1-L38)
+- [EdgeListRespVO.java:1-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L1-L70)
+- [EdgeInfoRespVO.java:1-70](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L1-L70)
 
 ## 核心组件
 - EdgeController：暴露 RESTful 接口，负责接收请求、参数校验与返回统一响应包装。
@@ -92,13 +92,13 @@ GNS --> N4J
 - VO 对象：EdgeFilterReqVO、EdgeListRespVO、EdgeInfoRespVO，用于请求过滤、列表响应与详情响应的数据结构设计。
 
 章节来源
-- [EdgeController.java:23-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L23-L90)
-- [EdgeService.java:9-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L9-L60)
-- [EdgeServiceImpl.java:19-171](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L19-L171)
-- [GraphNeo4jService.java:81-174](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L81-L174)
-- [EdgeFilterReqVO.java:6-37](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L6-L37)
-- [EdgeListRespVO.java:8-69](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L8-L69)
-- [EdgeInfoRespVO.java:8-69](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L8-L69)
+- [EdgeController.java:23-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L23-L90)
+- [EdgeService.java:9-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L9-L60)
+- [EdgeServiceImpl.java:19-171](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L19-L171)
+- [GraphNeo4jService.java:81-174](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L81-L174)
+- [EdgeFilterReqVO.java:6-37](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L6-L37)
+- [EdgeListRespVO.java:8-69](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L8-L69)
+- [EdgeInfoRespVO.java:8-69](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L8-L69)
 
 ## 架构总览
 下图展示了从控制器到服务再到数据访问层的整体调用链路，以及与 Neo4j 的交互。
@@ -121,9 +121,9 @@ Ctrl-->>C : "CommonResult 包装响应"
 ```
 
 图表来源
-- [EdgeController.java:33-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
-- [EdgeServiceImpl.java:31-124](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L31-L124)
-- [GraphNeo4jService.java:93-174](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
+- [EdgeController.java:33-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
+- [EdgeServiceImpl.java:31-124](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L31-L124)
+- [GraphNeo4jService.java:93-174](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
 
 ## 详细组件分析
 
@@ -158,7 +158,7 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 所有接口均声明需要 Bearer Token 认证。
 
 章节来源
-- [EdgeController.java:33-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
+- [EdgeController.java:33-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
 
 ### EdgeService/EdgeServiceImpl：业务逻辑与数据转换
 - 列表查询（listEdges）
@@ -192,9 +192,9 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 本体校验异常：OntologyValidationException（当本体校验未通过）
 
 章节来源
-- [EdgeService.java:12-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L12-L60)
-- [EdgeServiceImpl.java:31-124](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L31-L124)
-- [EdgeServiceImpl.java:128-170](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L128-L170)
+- [EdgeService.java:12-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L12-L60)
+- [EdgeServiceImpl.java:31-124](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L31-L124)
+- [EdgeServiceImpl.java:128-170](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L128-L170)
 
 ### GraphNeo4jService：图数据库操作
 - 创建关系（createRelationship）
@@ -209,8 +209,8 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 根据 graphId 与 uuid 删除关系
 
 章节来源
-- [GraphNeo4jService.java:93-174](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
-- [GraphNeo4jService.java:191-200](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L191-L200)
+- [GraphNeo4jService.java:93-174](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
+- [GraphNeo4jService.java:191-200](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L191-L200)
 
 ### 数据传输对象（VO）
 - EdgeFilterReqVO
@@ -224,9 +224,9 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 设计理念：详情页所需完整信息，包含时间维度与关联实体
 
 章节来源
-- [EdgeFilterReqVO.java:10-37](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L10-L37)
-- [EdgeListRespVO.java:11-69](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L11-L69)
-- [EdgeInfoRespVO.java:12-69](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L12-L69)
+- [EdgeFilterReqVO.java:10-37](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L10-L37)
+- [EdgeListRespVO.java:11-69](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeListRespVO.java#L11-L69)
+- [EdgeInfoRespVO.java:12-69](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeInfoRespVO.java#L12-L69)
 
 ### 本体校验与嵌入向量
 - 本体校验
@@ -236,8 +236,8 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 使用 EmbedderService 对 fact 或 type+relationship 文本生成向量，写入关系属性 embedding
 
 章节来源
-- [EdgeServiceImpl.java:82-87](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L82-L87)
-- [EdgeServiceImpl.java:89-91](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L89-L91)
+- [EdgeServiceImpl.java:82-87](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L82-L87)
+- [EdgeServiceImpl.java:89-91](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L89-L91)
 - [OntologyValidationServiceImpl.java:944-985](file://docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md#L944-L985)
 
 ### API 接口文档
@@ -300,11 +300,11 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 500：创建边失败（或更新功能待实现）
 
 章节来源
-- [EdgeController.java:33-90](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
-- [EdgeServiceImpl.java:54-57](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L54-L57)
-- [EdgeServiceImpl.java:72-80](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L72-L80)
-- [EdgeServiceImpl.java:97-99](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L97-L99)
-- [EdgeServiceImpl.java:107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L107)
+- [EdgeController.java:33-90](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L33-L90)
+- [EdgeServiceImpl.java:54-57](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L54-L57)
+- [EdgeServiceImpl.java:72-80](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L72-L80)
+- [EdgeServiceImpl.java:97-99](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L97-L99)
+- [EdgeServiceImpl.java:107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L107)
 
 ### 高级查询功能实现方案
 - 分页查询
@@ -318,8 +318,8 @@ Ctrl-->>C : "CommonResult 包装响应"
   - 可在 GraphNeo4jService.listEdges 中增加 ORDER BY 子句以支持 createdAt、validAt 等排序
 
 章节来源
-- [EdgeFilterReqVO.java:16-36](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L16-L36)
-- [EdgeServiceImpl.java:34-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L34-L41)
+- [EdgeFilterReqVO.java:16-36](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/edge/EdgeFilterReqVO.java#L16-L36)
+- [EdgeServiceImpl.java:34-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L34-L41)
 
 ## 依赖关系分析
 
@@ -372,16 +372,16 @@ Neo4jDriverAdapter --> GraphNeo4jService : "适配"
 ```
 
 图表来源
-- [EdgeController.java:30-31](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L30-L31)
-- [EdgeService.java:12-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L12-L60)
-- [EdgeServiceImpl.java:27-29](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L27-L29)
-- [GraphNeo4jService.java:93-174](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
-- [Neo4jDriverAdapter.java:24-47](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L24-L47)
+- [EdgeController.java:30-31](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L30-L31)
+- [EdgeService.java:12-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EdgeService.java#L12-L60)
+- [EdgeServiceImpl.java:27-29](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L27-L29)
+- [GraphNeo4jService.java:93-174](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L93-L174)
+- [Neo4jDriverAdapter.java:24-47](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L24-L47)
 
 章节来源
-- [EdgeController.java:29-31](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L29-L31)
-- [EdgeServiceImpl.java:27-29](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L27-L29)
-- [Neo4jDriverAdapter.java:24-47](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L24-L47)
+- [EdgeController.java:29-31](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java#L29-L31)
+- [EdgeServiceImpl.java:27-29](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L27-L29)
+- [Neo4jDriverAdapter.java:24-47](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L24-L47)
 
 ## 性能考虑
 - 向量索引
@@ -394,7 +394,7 @@ Neo4jDriverAdapter --> GraphNeo4jService : "适配"
   - GraphNeo4jService 使用 Session 执行 Cypher，注意控制会话生命周期与并发
 
 章节来源
-- [GraphNeo4jService.java:768-786](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L768-L786)
+- [GraphNeo4jService.java:768-786](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java#L768-L786)
 
 ## 故障排查指南
 - 常见问题
@@ -408,11 +408,11 @@ Neo4jDriverAdapter --> GraphNeo4jService : "适配"
   - EdgeServiceImplTest 提供了无本体、有本体且通过/失败的测试用例，可用于定位问题
 
 章节来源
-- [EdgeServiceImpl.java:54-57](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L54-L57)
-- [EdgeServiceImpl.java:72-80](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L72-L80)
-- [EdgeServiceImpl.java:97-99](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L97-L99)
-- [EdgeServiceImpl.java:107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L107)
-- [EdgeServiceImplTest.java:1489-1516](file://graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java#L1489-L1516)
+- [EdgeServiceImpl.java:54-57](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L54-L57)
+- [EdgeServiceImpl.java:72-80](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L72-L80)
+- [EdgeServiceImpl.java:97-99](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L97-L99)
+- [EdgeServiceImpl.java:107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java#L107)
+- [EdgeServiceImplTest.java:1489-1516](file://ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java#L1489-L1516)
 
 ## 结论
 本文件系统梳理了边的 CRUD 生命周期、控制器与服务层的职责划分、数据访问层的图数据库操作、VO 设计理念与 API 规范，并提供了性能优化与故障排查建议。当前实现支持边的创建、查询与删除，更新功能处于待实现状态；建议后续完善更新逻辑与排序、索引策略，以满足生产环境的高性能需求。
@@ -426,4 +426,4 @@ Neo4jDriverAdapter --> GraphNeo4jService : "适配"
   - Neo4jDriverAdapter 将 GraphNeo4jService 适配为 GraphDriverService 接口，便于统一驱动层抽象
 
 章节来源
-- [Neo4jDriverAdapter.java:17-69](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L17-L69)
+- [Neo4jDriverAdapter.java:17-69](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java#L17-L69)

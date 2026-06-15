@@ -55,7 +55,7 @@ graphiti_core/
 ### 2.1 迁移后 Java 架构
 
 ```
-graphiti-module-core/
+ontograph-module-core/
 ├── controller/admin/
 │   ├── GraphitiController.java      # 扩展：社区/克隆/导出/历史
 │   ├── SearchController.java        # 扩展：混合/语义/BFS 检索

@@ -2,19 +2,19 @@
 
 <!--<cite>
 **本文引用的文件**
-- [dark.less](file://graphiti-web/src/assets/styles/dark.less)
-- [global.less](file://graphiti-web/src/assets/styles/global.less)
-- [main.ts](file://graphiti-web/src/main.ts)
-- [vite.config.ts](file://graphiti-web/vite.config.ts)
+- [dark.less](file://ontograph-web/src/assets/styles/dark.less)
+- [global.less](file://ontograph-web/src/assets/styles/global.less)
+- [main.ts](file://ontograph-web/src/main.ts)
+- [vite.config.ts](file://ontograph-web/vite.config.ts)
 - [DESIGN.md](file://DESIGN.md)
-- [BasicLayout.vue](file://graphiti-web/src/components/Layout/BasicLayout.vue)
-- [StatsCard/index.vue](file://graphiti-web/src/components/StatsCard/index.vue)
-- [ForceGraph.vue](file://graphiti-web/src/components/Graph/ForceGraph.vue)
-- [graph.ts](file://graphiti-web/src/utils/graph.ts)
-- [index.ts（路由）](file://graphiti-web/src/router/index.ts)
-- [dashboard/index.vue](file://graphiti-web/src/views/dashboard/index.vue)
-- [App.vue](file://graphiti-web/src/App.vue)
-- [package.json](file://graphiti-web/package.json)
+- [BasicLayout.vue](file://ontograph-web/src/components/Layout/BasicLayout.vue)
+- [StatsCard/index.vue](file://ontograph-web/src/components/StatsCard/index.vue)
+- [ForceGraph.vue](file://ontograph-web/src/components/Graph/ForceGraph.vue)
+- [graph.ts](file://ontograph-web/src/utils/graph.ts)
+- [index.ts（路由）](file://ontograph-web/src/router/index.ts)
+- [dashboard/index.vue](file://ontograph-web/src/views/dashboard/index.vue)
+- [App.vue](file://ontograph-web/src/App.vue)
+- [package.json](file://ontograph-web/package.json)
 </cite>-->
 
 ## 目录
@@ -58,25 +58,25 @@ J --> K["graph.ts<br/>图数据转换与配置"]
 ```
 
 **图示来源**
-- [App.vue:1-16](file://graphiti-web/src/App.vue#L1-L16)
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [global.less:1-268](file://graphiti-web/src/assets/styles/global.less#L1-L268)
-- [dark.less:1-49](file://graphiti-web/src/assets/styles/dark.less#L1-L49)
-- [BasicLayout.vue:1-51](file://graphiti-web/src/components/Layout/BasicLayout.vue#L1-L51)
-- [dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
-- [ForceGraph.vue:1-133](file://graphiti-web/src/components/Graph/ForceGraph.vue#L1-L133)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
+- [App.vue:1-16](file://ontograph-web/src/App.vue#L1-L16)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [global.less:1-268](file://ontograph-web/src/assets/styles/global.less#L1-L268)
+- [dark.less:1-49](file://ontograph-web/src/assets/styles/dark.less#L1-L49)
+- [BasicLayout.vue:1-51](file://ontograph-web/src/components/Layout/BasicLayout.vue#L1-L51)
+- [dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
+- [ForceGraph.vue:1-133](file://ontograph-web/src/components/Graph/ForceGraph.vue#L1-L133)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
 
 **章节来源**
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [global.less:1-268](file://graphiti-web/src/assets/styles/global.less#L1-L268)
-- [dark.less:1-49](file://graphiti-web/src/assets/styles/dark.less#L1-L49)
-- [BasicLayout.vue:1-51](file://graphiti-web/src/components/Layout/BasicLayout.vue#L1-L51)
-- [dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
-- [ForceGraph.vue:1-133](file://graphiti-web/src/components/Graph/ForceGraph.vue#L1-L133)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [global.less:1-268](file://ontograph-web/src/assets/styles/global.less#L1-L268)
+- [dark.less:1-49](file://ontograph-web/src/assets/styles/dark.less#L1-L49)
+- [BasicLayout.vue:1-51](file://ontograph-web/src/components/Layout/BasicLayout.vue#L1-L51)
+- [dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
+- [ForceGraph.vue:1-133](file://ontograph-web/src/components/Graph/ForceGraph.vue#L1-L133)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
 
 ## 核心组件
 - 主题与全局样式
@@ -93,13 +93,13 @@ J --> K["graph.ts<br/>图数据转换与配置"]
   - graph API：提供图谱列表、详情、统计、节点/边查询等接口封装。
 
 **章节来源**
-- [dark.less:1-49](file://graphiti-web/src/assets/styles/dark.less#L1-L49)
-- [global.less:1-268](file://graphiti-web/src/assets/styles/global.less#L1-L268)
-- [BasicLayout.vue:1-51](file://graphiti-web/src/components/Layout/BasicLayout.vue#L1-L51)
-- [dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
-- [ForceGraph.vue:1-133](file://graphiti-web/src/components/Graph/ForceGraph.vue#L1-L133)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
+- [dark.less:1-49](file://ontograph-web/src/assets/styles/dark.less#L1-L49)
+- [global.less:1-268](file://ontograph-web/src/assets/styles/global.less#L1-L268)
+- [BasicLayout.vue:1-51](file://ontograph-web/src/components/Layout/BasicLayout.vue#L1-L51)
+- [dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
+- [ForceGraph.vue:1-133](file://ontograph-web/src/components/Graph/ForceGraph.vue#L1-L133)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
 
 ## 架构总览
 整体架构围绕“主题变量—全局覆盖—组件样式—视图层”的分层组织，Antd组件通过Less变量与选择器覆盖实现统一风格；路由负责鉴权与标题设置；视图层以卡片与图谱图为核心，配合统计组件与交互反馈。
@@ -123,15 +123,15 @@ Y3 --> Z1
 ```
 
 **图示来源**
-- [dark.less:1-49](file://graphiti-web/src/assets/styles/dark.less#L1-L49)
-- [global.less:1-268](file://graphiti-web/src/assets/styles/global.less#L1-L268)
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [index.ts（路由）:1-233](file://graphiti-web/src/router/index.ts#L1-L233)
-- [BasicLayout.vue:1-51](file://graphiti-web/src/components/Layout/BasicLayout.vue#L1-L51)
-- [dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
-- [ForceGraph.vue:1-133](file://graphiti-web/src/components/Graph/ForceGraph.vue#L1-L133)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
+- [dark.less:1-49](file://ontograph-web/src/assets/styles/dark.less#L1-L49)
+- [global.less:1-268](file://ontograph-web/src/assets/styles/global.less#L1-L268)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [index.ts（路由）:1-233](file://ontograph-web/src/router/index.ts#L1-L233)
+- [BasicLayout.vue:1-51](file://ontograph-web/src/components/Layout/BasicLayout.vue#L1-L51)
+- [dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
+- [ForceGraph.vue:1-133](file://ontograph-web/src/components/Graph/ForceGraph.vue#L1-L133)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
 
 ## 详细组件分析
 
@@ -155,21 +155,21 @@ Compile --> End(["样式生效"])
 ```
 
 **图示来源**
-- [dark.less:1-49](file://graphiti-web/src/assets/styles/dark.less#L1-L49)
-- [global.less:1-268](file://graphiti-web/src/assets/styles/global.less#L1-L268)
-- [vite.config.ts:27-39](file://graphiti-web/vite.config.ts#L27-L39)
+- [dark.less:1-49](file://ontograph-web/src/assets/styles/dark.less#L1-L49)
+- [global.less:1-268](file://ontograph-web/src/assets/styles/global.less#L1-L268)
+- [vite.config.ts:27-39](file://ontograph-web/vite.config.ts#L27-L39)
 
 **章节来源**
-- [dark.less:1-49](file://graphiti-web/src/assets/styles/dark.less#L1-L49)
-- [global.less:1-268](file://graphiti-web/src/assets/styles/global.less#L1-L268)
-- [vite.config.ts:27-39](file://graphiti-web/vite.config.ts#L27-L39)
+- [dark.less:1-49](file://ontograph-web/src/assets/styles/dark.less#L1-L49)
+- [global.less:1-268](file://ontograph-web/src/assets/styles/global.less#L1-L268)
+- [vite.config.ts:27-39](file://ontograph-web/vite.config.ts#L27-L39)
 
 ### 布局组件（BasicLayout）
 - 结构：头部、侧边栏、内容区三段式布局，统一背景与边框色。
 - 样式：scoped作用域内使用主题变量，保证与global.less一致。
 
 **章节来源**
-- [BasicLayout.vue:1-51](file://graphiti-web/src/components/Layout/BasicLayout.vue#L1-L51)
+- [BasicLayout.vue:1-51](file://ontograph-web/src/components/Layout/BasicLayout.vue#L1-L51)
 
 ### 仪表盘视图（dashboard/index.vue）
 - 设计要点
@@ -197,12 +197,12 @@ V-->>U : 展示更新后的统计与列表
 ```
 
 **图示来源**
-- [dashboard/index.vue:224-294](file://graphiti-web/src/views/dashboard/index.vue#L224-L294)
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
+- [dashboard/index.vue:224-294](file://ontograph-web/src/views/dashboard/index.vue#L224-L294)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
 
 **章节来源**
-- [dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
+- [dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
 
 ### 统计卡片组件（StatsCard）
 - 设计要点
@@ -212,7 +212,7 @@ V-->>U : 展示更新后的统计与列表
   - 可配置hoverable；点击事件向上抛出。
 
 **章节来源**
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
 
 ### 图谱图组件（ForceGraph + graph.ts）
 - 设计要点
@@ -237,13 +237,13 @@ FG-->>V : 触发 node-click/edge-click 事件
 ```
 
 **图示来源**
-- [ForceGraph.vue:40-96](file://graphiti-web/src/components/Graph/ForceGraph.vue#L40-L96)
-- [graph.ts:244-353](file://graphiti-web/src/utils/graph.ts#L244-L353)
-- [graph.ts:377-458](file://graphiti-web/src/utils/graph.ts#L377-L458)
+- [ForceGraph.vue:40-96](file://ontograph-web/src/components/Graph/ForceGraph.vue#L40-L96)
+- [graph.ts:244-353](file://ontograph-web/src/utils/graph.ts#L244-L353)
+- [graph.ts:377-458](file://ontograph-web/src/utils/graph.ts#L377-L458)
 
 **章节来源**
-- [ForceGraph.vue:1-133](file://graphiti-web/src/components/Graph/ForceGraph.vue#L1-L133)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
+- [ForceGraph.vue:1-133](file://ontograph-web/src/components/Graph/ForceGraph.vue#L1-L133)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
 
 ### 路由与鉴权（router/index.ts）
 - 权限控制
@@ -253,7 +253,7 @@ FG-->>V : 触发 node-click/edge-click 事件
   - 自动设置页面标题，增强上下文感知。
 
 **章节来源**
-- [index.ts（路由）:185-230](file://graphiti-web/src/router/index.ts#L185-L230)
+- [index.ts（路由）:185-230](file://ontograph-web/src/router/index.ts#L185-L230)
 
 ## 依赖分析
 - 依赖关系
@@ -284,18 +284,18 @@ VC --> ANTD
 ```
 
 **图示来源**
-- [package.json:1-32](file://graphiti-web/package.json#L1-L32)
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [dashboard/index.vue:1-578](file://graphiti-web/src/views/dashboard/index.vue#L1-L578)
-- [StatsCard/index.vue:1-162](file://graphiti-web/src/components/StatsCard/index.vue#L1-L162)
-- [ForceGraph.vue:1-133](file://graphiti-web/src/components/Graph/ForceGraph.vue#L1-L133)
-- [graph.ts:1-459](file://graphiti-web/src/utils/graph.ts#L1-L459)
-- [vite.config.ts:1-41](file://graphiti-web/vite.config.ts#L1-L41)
+- [package.json:1-32](file://ontograph-web/package.json#L1-L32)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [dashboard/index.vue:1-578](file://ontograph-web/src/views/dashboard/index.vue#L1-L578)
+- [StatsCard/index.vue:1-162](file://ontograph-web/src/components/StatsCard/index.vue#L1-L162)
+- [ForceGraph.vue:1-133](file://ontograph-web/src/components/Graph/ForceGraph.vue#L1-L133)
+- [graph.ts:1-459](file://ontograph-web/src/utils/graph.ts#L1-L459)
+- [vite.config.ts:1-41](file://ontograph-web/vite.config.ts#L1-L41)
 
 **章节来源**
-- [package.json:1-32](file://graphiti-web/package.json#L1-L32)
-- [main.ts:1-25](file://graphiti-web/src/main.ts#L1-L25)
-- [vite.config.ts:1-41](file://graphiti-web/vite.config.ts#L1-L41)
+- [package.json:1-32](file://ontograph-web/package.json#L1-L32)
+- [main.ts:1-25](file://ontograph-web/src/main.ts#L1-L25)
+- [vite.config.ts:1-41](file://ontograph-web/vite.config.ts#L1-L41)
 
 ## 性能考虑
 - 图谱渲染
@@ -317,10 +317,10 @@ VC --> ANTD
   - 检查router守卫中的token校验与错误提示；确认页面标题设置逻辑。
 
 **章节来源**
-- [vite.config.ts:27-39](file://graphiti-web/vite.config.ts#L27-L39)
-- [global.less:47-239](file://graphiti-web/src/assets/styles/global.less#L47-L239)
-- [graph.ts:148-239](file://graphiti-web/src/utils/graph.ts#L148-L239)
-- [index.ts（路由）:185-230](file://graphiti-web/src/router/index.ts#L185-L230)
+- [vite.config.ts:27-39](file://ontograph-web/vite.config.ts#L27-L39)
+- [global.less:47-239](file://ontograph-web/src/assets/styles/global.less#L47-L239)
+- [graph.ts:148-239](file://ontograph-web/src/utils/graph.ts#L148-L239)
+- [index.ts（路由）:185-230](file://ontograph-web/src/router/index.ts#L185-L230)
 
 ## 结论
 本项目以dark.less为主题基底，通过global.less对Antd组件进行系统性覆盖，形成统一的暗色视觉语言；视图层以卡片与图谱图为设计核心，结合统计组件与路由鉴权，构建了专业、高效的知识图谱控制台界面。遵循本文档的样式、交互与可访问性规范，可在保证一致性的同时提升用户体验与开发效率。
@@ -337,10 +337,10 @@ VC --> ANTD
   - 节点/边按类型与权重着色；支持标签开关与高亮联动；提供多种布局以适配不同场景。
 
 **章节来源**
-- [global.less:79-99](file://graphiti-web/src/assets/styles/global.less#L79-L99)
-- [global.less:101-146](file://graphiti-web/src/assets/styles/global.less#L101-L146)
-- [graph.ts:79-109](file://graphiti-web/src/utils/graph.ts#L79-L109)
-- [graph.ts:183-210](file://graphiti-web/src/utils/graph.ts#L183-L210)
+- [global.less:79-99](file://ontograph-web/src/assets/styles/global.less#L79-L99)
+- [global.less:101-146](file://ontograph-web/src/assets/styles/global.less#L101-L146)
+- [graph.ts:79-109](file://ontograph-web/src/utils/graph.ts#L79-L109)
+- [graph.ts:183-210](file://ontograph-web/src/utils/graph.ts#L183-L210)
 
 ### 交互设计原则（反馈/加载/确认）
 - 用户反馈
@@ -351,9 +351,9 @@ VC --> ANTD
   - 关键删除/清空操作建议增加二次确认对话框，避免误操作。
 
 **章节来源**
-- [dashboard/index.vue:13-16](file://graphiti-web/src/views/dashboard/index.vue#L13-L16)
-- [dashboard/index.vue:224-249](file://graphiti-web/src/views/dashboard/index.vue#L224-L249)
-- [global.less:233-239](file://graphiti-web/src/assets/styles/global.less#L233-L239)
+- [dashboard/index.vue:13-16](file://ontograph-web/src/views/dashboard/index.vue#L13-L16)
+- [dashboard/index.vue:224-249](file://ontograph-web/src/views/dashboard/index.vue#L224-L249)
+- [global.less:233-239](file://ontograph-web/src/assets/styles/global.less#L233-L239)
 
 ### 可访问性设计（键盘/屏幕阅读器/对比度）
 - 键盘导航
@@ -365,7 +365,7 @@ VC --> ANTD
 
 **章节来源**
 - [DESIGN.md:277-308](file://DESIGN.md#L277-L308)
-- [global.less:13-21](file://graphiti-web/src/assets/styles/global.less#L13-L21)
+- [global.less:13-21](file://ontograph-web/src/assets/styles/global.less#L13-L21)
 
 ### 移动端适配与触摸交互
 - 触摸目标
@@ -374,7 +374,7 @@ VC --> ANTD
   - 仪表盘网格随宽度自适应；移动端堆叠与紧凑间距。
 
 **章节来源**
-- [dashboard/index.vue:551-577](file://graphiti-web/src/views/dashboard/index.vue#L551-L577)
+- [dashboard/index.vue:551-577](file://ontograph-web/src/views/dashboard/index.vue#L551-L577)
 - [DESIGN.md:502-530](file://DESIGN.md#L502-L530)
 
 ### 动画与过渡效果
@@ -384,6 +384,6 @@ VC --> ANTD
   - 卡片与统计卡支持轻微位移与遮罩渐变，增强触控反馈。
 
 **章节来源**
-- [global.less:260-267](file://graphiti-web/src/assets/styles/global.less#L260-L267)
-- [dashboard/index.vue:370-405](file://graphiti-web/src/views/dashboard/index.vue#L370-L405)
-- [StatsCard/index.vue:70-102](file://graphiti-web/src/components/StatsCard/index.vue#L70-L102)
+- [global.less:260-267](file://ontograph-web/src/assets/styles/global.less#L260-L267)
+- [dashboard/index.vue:370-405](file://ontograph-web/src/views/dashboard/index.vue#L370-L405)
+- [StatsCard/index.vue:70-102](file://ontograph-web/src/components/StatsCard/index.vue#L70-L102)

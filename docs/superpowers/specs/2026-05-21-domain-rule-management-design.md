@@ -33,7 +33,7 @@
 ### 2.1 组件结构
 
 ```
-graphiti-web/src/components/Ontology/
+ontograph-web/src/components/Ontology/
 ├── DomainRuleListPanel.vue      (新增) - 域规则列表主面板 (~350 行)
 ├── DomainRuleEditModal.vue      (新增) - 新建/编辑模态框 (~280 行)
 └── DomainRuleTestModal.vue      (新增) - SpEL 表达式测试模态框 (~180 行)

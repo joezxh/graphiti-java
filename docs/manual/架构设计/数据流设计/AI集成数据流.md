@@ -2,18 +2,18 @@
 
 <!--<cite>
 **本文引用的文件**
-- [GraphitiAiProperties.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java)
-- [EmbedderService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java)
-- [LlmClientService.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java)
-- [OpenAiEmbedderServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java)
-- [QwenEmbedderServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java)
-- [OllamaEmbedderServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java)
-- [OpenAiLlmClientServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java)
-- [QwenLlmClientServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java)
-- [AnthropicLlmClientServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java)
-- [OllamaLlmClientServiceImpl.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
+- [GraphitiAiProperties.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java)
+- [EmbedderService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java)
+- [LlmClientService.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java)
+- [OpenAiEmbedderServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java)
+- [QwenEmbedderServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java)
+- [OllamaEmbedderServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java)
+- [OpenAiLlmClientServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java)
+- [QwenLlmClientServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java)
+- [AnthropicLlmClientServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java)
+- [OllamaLlmClientServiceImpl.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 - [prompt_template_init.sql](file://docs/sql/prompt_template_init.sql)
 - [prompt_template_postgresql_init.sql](file://docs/sql/prompt_template_postgresql_init.sql)
@@ -32,7 +32,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件面向开发者，系统性梳理Graphiti-Java中的AI集成数据流与最佳实践。重点覆盖：
+本文件面向开发者，系统性梳理OntoGraph中的AI集成数据流与最佳实践。重点覆盖：
 - 向量嵌入数据流：文本预处理 → 模型选择 → 嵌入生成 → 向量存储 → 索引构建
 - LLM调用流程：提示词构建 → 模型参数配置 → API调用 → 响应解析 → 错误处理
 - 多提供商适配：接口抽象 → 条件装配 → 动态切换 → 负载均衡
@@ -41,7 +41,7 @@
 - 配置与故障转移策略：统一配置 → 失败重试 → 降级回退
 
 ## 项目结构
-AI相关能力主要集中在graphiti-module-core模块的服务层与实现层，并通过Spring Boot自动装配与条件注解实现多提供商适配；配置由GraphitiAiProperties统一管理，运行时通过application.yml与application-dev.yml注入。
+AI相关能力主要集中在ontograph-module-core模块的服务层与实现层，并通过Spring Boot自动装配与条件注解实现多提供商适配；配置由GraphitiAiProperties统一管理，运行时通过application.yml与application-dev.yml注入。
 
 ```mermaid
 graph TB
@@ -79,23 +79,23 @@ E --> L
 ```
 
 **图表来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
-- [LlmClientService.java:1-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
-- [OpenAiEmbedderServiceImpl.java:1-107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
-- [QwenEmbedderServiceImpl.java:1-66](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
-- [OllamaEmbedderServiceImpl.java:1-78](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [AnthropicLlmClientServiceImpl.java:1-112](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
-- [OllamaLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [LlmClientService.java:1-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
+- [OpenAiEmbedderServiceImpl.java:1-107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
+- [QwenEmbedderServiceImpl.java:1-66](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
+- [OllamaEmbedderServiceImpl.java:1-78](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [AnthropicLlmClientServiceImpl.java:1-112](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
+- [OllamaLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
 
 **章节来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
 
 ## 核心组件
 - GraphitiAiProperties：集中管理LLM/Embedding/Rerank提供商、模型名、基础URL、温度、最大token等配置项，支持多提供商并行配置。
@@ -103,9 +103,9 @@ E --> L
 - LlmClientService：统一LLM调用接口，支持单轮/系统提示词/结构化输出/批量调用，并内置实体抽取与关系抽取默认实现。
 
 **章节来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
-- [LlmClientService.java:1-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [LlmClientService.java:1-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
 
 ## 架构总览
 AI集成采用“接口抽象 + 条件装配”的多提供商适配架构。通过GraphitiAiProperties读取配置，结合Spring条件注解按提供商动态启用对应实现；嵌入与LLM分别独立扩展，便于独立演进与替换。
@@ -162,16 +162,16 @@ LlmClientService <|.. OllamaLlmClientServiceImpl
 ```
 
 **图表来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
-- [LlmClientService.java:1-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
-- [OpenAiEmbedderServiceImpl.java:1-107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
-- [QwenEmbedderServiceImpl.java:1-66](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
-- [OllamaEmbedderServiceImpl.java:1-78](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [AnthropicLlmClientServiceImpl.java:1-112](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
-- [OllamaLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [LlmClientService.java:1-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
+- [OpenAiEmbedderServiceImpl.java:1-107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
+- [QwenEmbedderServiceImpl.java:1-66](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
+- [OllamaEmbedderServiceImpl.java:1-78](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [AnthropicLlmClientServiceImpl.java:1-112](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
+- [OllamaLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
 
 ## 详细组件分析
 
@@ -199,17 +199,17 @@ DB-->>Caller : "完成"
 ```
 
 **图表来源**
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
-- [OpenAiEmbedderServiceImpl.java:1-107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
-- [QwenEmbedderServiceImpl.java:1-66](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
-- [OllamaEmbedderServiceImpl.java:1-78](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [OpenAiEmbedderServiceImpl.java:1-107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
+- [QwenEmbedderServiceImpl.java:1-66](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
+- [OllamaEmbedderServiceImpl.java:1-78](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 
 **章节来源**
-- [EmbedderService.java:1-41](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
-- [OpenAiEmbedderServiceImpl.java:1-107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
-- [QwenEmbedderServiceImpl.java:1-66](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
-- [OllamaEmbedderServiceImpl.java:1-78](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
+- [EmbedderService.java:1-41](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/EmbedderService.java#L1-L41)
+- [OpenAiEmbedderServiceImpl.java:1-107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
+- [QwenEmbedderServiceImpl.java:1-66](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
+- [OllamaEmbedderServiceImpl.java:1-78](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 
 ### LLM调用流程
@@ -235,18 +235,18 @@ LLM-->>Caller : "String 或 T"
 ```
 
 **图表来源**
-- [LlmClientService.java:1-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [AnthropicLlmClientServiceImpl.java:1-112](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
-- [OllamaLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
+- [LlmClientService.java:1-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [AnthropicLlmClientServiceImpl.java:1-112](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
+- [OllamaLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
 
 **章节来源**
-- [LlmClientService.java:1-158](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [AnthropicLlmClientServiceImpl.java:1-112](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
-- [OllamaLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
+- [LlmClientService.java:1-158](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L1-L158)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [AnthropicLlmClientServiceImpl.java:1-112](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
+- [OllamaLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
 
 ### 多提供商适配
 - 接口抽象：EmbedderService与LlmClientService定义统一契约，屏蔽提供商差异。
@@ -275,17 +275,17 @@ LO --> Ready
 ```
 
 **图表来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [OpenAiEmbedderServiceImpl.java:1-107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
-- [QwenEmbedderServiceImpl.java:1-66](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
-- [OllamaEmbedderServiceImpl.java:1-78](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
-- [QwenLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
-- [AnthropicLlmClientServiceImpl.java:1-112](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
-- [OllamaLlmClientServiceImpl.java:1-98](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [OpenAiEmbedderServiceImpl.java:1-107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
+- [QwenEmbedderServiceImpl.java:1-66](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenEmbedderServiceImpl.java#L1-L66)
+- [OllamaEmbedderServiceImpl.java:1-78](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaEmbedderServiceImpl.java#L1-L78)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [QwenLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/QwenLlmClientServiceImpl.java#L1-L98)
+- [AnthropicLlmClientServiceImpl.java:1-112](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L1-L112)
+- [OllamaLlmClientServiceImpl.java:1-98](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OllamaLlmClientServiceImpl.java#L1-L98)
 
 **章节来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
 
 ### 异步处理机制
 - 任务队列：建议在业务层引入消息队列（如RabbitMQ/Kafka）承载高并发嵌入/LLM请求。
@@ -319,17 +319,17 @@ EImpl --> NEO["Neo4j"]
 ```
 
 **图表来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
-- [OpenAiEmbedderServiceImpl.java:1-107](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
-- [OpenAiLlmClientServiceImpl.java:1-111](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
+- [OpenAiEmbedderServiceImpl.java:1-107](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L1-L107)
+- [OpenAiLlmClientServiceImpl.java:1-111](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L1-L111)
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 
 **章节来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
 
 ## 性能考虑
 - 批量处理：优先使用批量嵌入与批量LLM调用，减少网络往返。
@@ -347,13 +347,13 @@ EImpl --> NEO["Neo4j"]
 - Neo4j向量索引未生效：确认已执行向量索引初始化脚本。
 
 **章节来源**
-- [OpenAiEmbedderServiceImpl.java:33-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L33-L60)
-- [OpenAiLlmClientServiceImpl.java:42-53](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L42-L53)
-- [LlmClientService.java:147-156](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L147-L156)
+- [OpenAiEmbedderServiceImpl.java:33-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiEmbedderServiceImpl.java#L33-L60)
+- [OpenAiLlmClientServiceImpl.java:42-53](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/OpenAiLlmClientServiceImpl.java#L42-L53)
+- [LlmClientService.java:147-156](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/LlmClientService.java#L147-L156)
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 
 ## 结论
-Graphiti-Java通过统一配置与接口抽象，实现了对多家LLM/Embedding提供商的灵活适配；结合Neo4j向量索引，形成了从文本到向量再到检索的完整闭环。建议在生产环境中配套完善的异步处理、监控与故障转移策略，以获得更稳定与高性能的AI集成体验。
+OntoGraph通过统一配置与接口抽象，实现了对多家LLM/Embedding提供商的灵活适配；结合Neo4j向量索引，形成了从文本到向量再到检索的完整闭环。建议在生产环境中配套完善的异步处理、监控与故障转移策略，以获得更稳定与高性能的AI集成体验。
 
 ## 附录
 - 配置参考
@@ -364,9 +364,9 @@ Graphiti-Java通过统一配置与接口抽象，实现了对多家LLM/Embedding
   - 提示词模板SQL：初始化prompt模板表，支撑抽取与摘要功能。
 
 **章节来源**
-- [GraphitiAiProperties.java:1-135](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
+- [GraphitiAiProperties.java:1-135](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/GraphitiAiProperties.java#L1-L135)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
 - [vector-index-init.cypher](file://sql/neo4j/vector-index-init.cypher)
 - [prompt_template_init.sql](file://docs/sql/prompt_template_init.sql)
 - [prompt_template_postgresql_init.sql](file://docs/sql/prompt_template_postgresql_init.sql)

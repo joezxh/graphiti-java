@@ -464,7 +464,7 @@ print(response)
    - 请求/响应格式
    - 错误码说明
 
-3. **示例代码**: 参考 `graphiti-module-core/src/test/`
+3. **示例代码**: 参考 `ontograph-module-core/src/test/`
    - 单元测试示例
    - 集成测试示例
 

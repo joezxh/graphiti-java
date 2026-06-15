@@ -445,8 +445,8 @@ stats.caseCount = nodes.filter(n =>
 
 | 文件 | 修改内容 |
 |------|---------|
-| `graphiti-web/src/api/legal-kg-data.ts` | 修正 `LEGAL_ENTITIES` 类名、补全子类、补全 `LEGAL_EDGES` 关系、修正节点数据属性名 |
-| `graphiti-web/src/views/legal-kg/index.vue` | 修正 `autoSuggestMappings` 字段匹配、修正 `loadGraphStats` 统计逻辑、补全 `getEdgeColor` 颜色映射 |
+| `ontograph-web/src/api/legal-kg-data.ts` | 修正 `LEGAL_ENTITIES` 类名、补全子类、补全 `LEGAL_EDGES` 关系、修正节点数据属性名 |
+| `ontograph-web/src/views/legal-kg/index.vue` | 修正 `autoSuggestMappings` 字段匹配、修正 `loadGraphStats` 统计逻辑、补全 `getEdgeColor` 颜色映射 |
 
 ### 11.4 验证方法
 

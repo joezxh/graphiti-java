@@ -15,7 +15,7 @@
 ### 任务 1：三栏折叠状态 (`ide.vue`)
 
 **文件：**
-- Modify: `graphiti-web/src/views/graph/ide.vue`（`script setup` 部分 + `<template>` 三栏容器 + `<style>` 部分）
+- Modify: `ontograph-web/src/views/graph/ide.vue`（`script setup` 部分 + `<template>` 三栏容器 + `<style>` 部分）
 
 **Step 1: 新增三个折叠状态 ref**
 
@@ -298,7 +298,7 @@ const panelCollapsed = ref(false)
 ### 任务 2：新增本体类视图组件 (`OntologyClassView.vue`)
 
 **文件：**
-- Create: `graphiti-web/src/components/Ontology/OntologyClassView.vue`
+- Create: `ontograph-web/src/components/Ontology/OntologyClassView.vue`
 
 **Step 1: 编写组件模板**
 
@@ -629,7 +629,7 @@ const handleInstanceRowClick = (record: any) => {
 **Step 4: 在 `graphApi` 中添加前端 API 方法**
 
 **文件：**
-- Modify: `graphiti-web/src/api/graph.ts`
+- Modify: `ontograph-web/src/api/graph.ts`
 
 在 `graph.ts` 的 `graphApi` 对象中，找到 `getClassInstances` 方法（约 line 290），在其后添加：
 
@@ -651,7 +651,7 @@ async getEntitiesVisualizationByClass(
 ### 任务 3：集成本体类视图到 `ide.vue`
 
 **文件：**
-- Modify: `graphiti-web/src/views/graph/ide.vue`
+- Modify: `ontograph-web/src/views/graph/ide.vue`
 
 **Step 1: 导入新组件**
 
@@ -834,9 +834,9 @@ function findNodeRec(nodes: any[], key: string): any {
 ### 任务 4：后端新增 `getEntitiesVisualizationByClass` 方法
 
 **文件：**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphVisualizationServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphVisualizationService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphVisualizationServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
 
 **Step 1: 在 `GraphVisualizationService.java` 中添加接口方法**
 
@@ -1003,7 +1003,7 @@ public GraphVisualizationRespVO getEntitiesVisualizationByClass(
 **Step 3: 在 Controller 中添加端点**
 
 **文件：**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphIDEController.java`
 
 在 `GraphIDEController.java` 中，找到 `getInstances` 方法（约 line 60），在其后添加：
 
@@ -1052,9 +1052,9 @@ public CommonResult<GraphVisualizationRespVO> getEntitiesVisualizationByClass(
 
 | 操作 | 文件路径 |
 |------|----------|
-| 修改 | `graphiti-web/src/views/graph/ide.vue` |
-| 修改 | `graphiti-web/src/api/graph.ts` |
-| 创建 | `graphiti-web/src/components/Ontology/OntologyClassView.vue` |
-| 修改 | `graphiti-module-core/src/main/java/.../GraphVisualizationService.java` |
-| 修改 | `graphiti-module-core/src/main/java/.../GraphVisualizationServiceImpl.java` |
-| 修改 | `graphiti-module-core/src/main/java/.../GraphIDEController.java` |
+| 修改 | `ontograph-web/src/views/graph/ide.vue` |
+| 修改 | `ontograph-web/src/api/graph.ts` |
+| 创建 | `ontograph-web/src/components/Ontology/OntologyClassView.vue` |
+| 修改 | `ontograph-module-core/src/main/java/.../GraphVisualizationService.java` |
+| 修改 | `ontograph-module-core/src/main/java/.../GraphVisualizationServiceImpl.java` |
+| 修改 | `ontograph-module-core/src/main/java/.../GraphIDEController.java` |

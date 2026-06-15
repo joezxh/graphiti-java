@@ -117,13 +117,13 @@ OntoGraph is a production-ready knowledge graph backend system that brings the p
 ### Module Structure
 
 ```
-graphiti-java/
-├── graphiti-server/              # Spring Boot entry point
+ontograph-java/
+├── ontograph-server/              # Spring Boot entry point
 │   └── src/main/resources/
 │       ├── application.yml       # Base configuration
 │       └── application-dev.yml   # Development profile
 │
-├── graphiti-module-core/         # Core business module
+├── ontograph-module-core/         # Core business module
 │   ├── controller/admin/         # REST controllers
 │   ├── service/                  # Business services
 │   │   ├── impl/ai/              # LLM provider implementations
@@ -152,16 +152,16 @@ graphiti-java/
 │       ├── summarize_node.txt
 │       └── summarize_community.txt
 │
-├── graphiti-module-system/       # System management module
+├── ontograph-module-system/       # System management module
 │   └── User/Role/Menu/Auth controllers & services
 │
-├── graphiti-framework/           # Framework infrastructure
+├── ontograph-framework/           # Framework infrastructure
 │   ├── graphiti-common/          # Common utilities & exceptions
 │   ├── graphiti-spring-boot-starter-security/  # JWT security
 │   ├── graphiti-spring-boot-starter-mybatis/   # MyBatis config
 │   └── graphiti-spring-boot-starter-redis/     # Redis config
 │
-├── graphiti-web/                 # Frontend (Vue 3)
+├── ontograph-web/                 # Frontend (Vue 3)
 │   ├── src/api/                  # API client modules
 │   ├── src/views/                # Page components
 │   └── src/components/           # Reusable components
@@ -266,7 +266,7 @@ mysql -u root -p graphiti < sql/mysql/init-data.sql
 
 ### 3. Configure Application
 
-Edit `graphiti-server/src/main/resources/application-dev.yml`:
+Edit `ontograph-server/src/main/resources/application-dev.yml`:
 
 ```yaml
 spring:
@@ -300,7 +300,7 @@ neo4j:
 ### 4. Run Backend
 
 ```bash
-cd graphiti-server
+cd ontograph-server
 mvn spring-boot:run
 ```
 
@@ -310,7 +310,7 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
 ### 5. Run Frontend
 
 ```bash
-cd graphiti-web
+cd ontograph-web
 pnpm install
 pnpm dev
 ```
@@ -323,7 +323,7 @@ The frontend will start at `http://localhost:5173`.
 
 ### Quick Start with Docker Compose
 
-The easiest way to run the complete Graphiti-Java service stack is using Docker Compose:
+The easiest way to run the complete OntoGraph service stack is using Docker Compose:
 
 ```bash
 # 1. Clone the repository
@@ -719,7 +719,7 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 ### Design & Architecture
 
 - [Project Overview (docs/01-项目概述.md)](docs/01-项目概述.md)
-- [Java vs Python Comparison (docs/graphiti-java-vs-python-comparison.md)](docs/graphiti-java-vs-python-comparison.md)
+- [Java vs Python Comparison (docs/ontograph-java-vs-python-comparison.md)](docs/ontograph-java-vs-python-comparison.md)
 - [Implementation Summary (docs/implementation-summary.md)](docs/implementation-summary.md)
 - [Design Document (DESIGN.md)](DESIGN.md)
 
@@ -742,24 +742,24 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 - [Backend Implementation Plan (docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-backend-implementation.md)
 - [Console Implementation Plan (docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)](docs/superpowers/plans/2026-05-08-graphiti-console-implementation.md)
 - [MySQL to PostgreSQL Migration (docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)](docs/superpowers/plans/2026-05-08-mysql-to-postgresql-migration.md)
-- [Full Alignment Plan (docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)](docs/superpowers/plans/2026-05-10-graphiti-java-full-alignment-plan.md)
-- [Full Migration Plan (docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)](docs/superpowers/plans/2026-05-11-graphiti-java-full-migration-plan.md)
+- [Full Alignment Plan (docs/superpowers/plans/2026-05-10-ontograph-java-full-alignment-plan.md)](docs/superpowers/plans/2026-05-10-ontograph-java-full-alignment-plan.md)
+- [Full Migration Plan (docs/superpowers/plans/2026-05-11-ontograph-java-full-migration-plan.md)](docs/superpowers/plans/2026-05-11-ontograph-java-full-migration-plan.md)
 - [Ontology Phase 1 (docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)](docs/superpowers/plans/2026-05-10-ontology-phase1-schema-enforcement.md)
 - [Ontology Phase 2-4 (docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)](docs/superpowers/plans/2026-05-10-ontology-phase2-4-remaining.md)
 - [Legal Ontology Design (docs/superpowers/plans/2026-05-11-legal-ontology-design.md)](docs/superpowers/plans/2026-05-11-legal-ontology-design.md)
 - [Neo4j Relation Type Consistency (docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)](docs/superpowers/plans/2026-05-11-neo4j-relation-type-consistency.md)
 - [Console Design Spec (docs/superpowers/specs/2026-05-08-graphiti-console-design.md)](docs/superpowers/specs/2026-05-08-graphiti-console-design.md)
-- [Full Alignment Design Spec (docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)](docs/superpowers/specs/2026-05-10-graphiti-java-full-alignment-design.md)
+- [Full Alignment Design Spec (docs/superpowers/specs/2026-05-10-ontograph-java-full-alignment-design.md)](docs/superpowers/specs/2026-05-10-ontograph-java-full-alignment-design.md)
 - [Ontology Enhancement Design Spec (docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)](docs/superpowers/specs/2026-05-10-ontology-enhancement-design.md)
 - [Backend API Implementation Design Spec (docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)](docs/superpowers/specs/2026-05-11-backend-api-impl-design.md)
-- [Full Migration Design Spec (docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)](docs/superpowers/specs/2026-05-11-graphiti-java-full-migration-design.md)
+- [Full Migration Design Spec (docs/superpowers/specs/2026-05-11-ontograph-java-full-migration-design.md)](docs/superpowers/specs/2026-05-11-ontograph-java-full-migration-design.md)
 - [AI Chat Memory Design Spec (docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)](docs/superpowers/specs/2026-05-13-ai-chat-memory-design.md)
 
 ---
 
 ## Contributing
 
-We welcome contributions to Graphiti-Java! Please follow these guidelines:
+We welcome contributions to OntoGraph! Please follow these guidelines:
 
 ### Development Setup
 
@@ -802,7 +802,7 @@ chore: build/config changes
 
 ## Acknowledgements
 
-OntoGraph (原 Graphiti-Java) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
+OntoGraph (原 Graphiti) 灵感来源于 Zep AI 的原始 [Graphiti](https://github.com/getzep/graphiti) Python 库。
 
 ---
 

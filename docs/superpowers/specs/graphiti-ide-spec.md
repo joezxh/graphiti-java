@@ -122,7 +122,7 @@
 ### 3.2 模块结构
 
 ```
-graphiti-web/
+ontograph-web/
 ├── src/
 │   ├── views/
 │   │   └── graph/

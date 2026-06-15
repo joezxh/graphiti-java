@@ -2,13 +2,13 @@
 
 <!--<cite>
 **本文引用的文件**
-- [graphiti-spring-boot-starter-mybatis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
+- [graphiti-spring-boot-starter-mybatis/pom.xml](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
 - [application-prod.yml](file://config/application-prod.yml)
-- [SystemConfigMapper.java](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java)
-- [SystemConfigDO.java](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java)
-- [SystemConfigServiceImpl.java](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java)
+- [SystemConfigMapper.java](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java)
+- [SystemConfigDO.java](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java)
+- [SystemConfigServiceImpl.java](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java)
 </cite>-->
 
 ## 目录
@@ -24,13 +24,13 @@
 10. [附录](#附录)
 
 ## 简介
-本文件面向Graphiti-Java的MyBatis集成模块，聚焦于graphiti-spring-boot-starter-mybatis子模块的依赖与配置、通用Mapper设计与使用规范、动态数据源配置与事务管理、以及MyBatis-Plus核心特性与最佳实践。文档以仓库中现有的配置与代码为依据，提供可落地的集成步骤、使用范式与排障建议。
+本文件面向OntoGraph的MyBatis集成模块，聚焦于graphiti-spring-boot-starter-mybatis子模块的依赖与配置、通用Mapper设计与使用规范、动态数据源配置与事务管理、以及MyBatis-Plus核心特性与最佳实践。文档以仓库中现有的配置与代码为依据，提供可落地的集成步骤、使用范式与排障建议。
 
 ## 项目结构
 MyBatis集成相关的关键位置如下：
 - starter模块：graphiti-spring-boot-starter-mybatis，负责引入MyBatis-Plus、Druid连接池与dynamic-datasource等依赖
-- 应用配置：graphiti-server的application.yml与application-dev.yml，包含MyBatis-Plus与动态数据源配置
-- 示例Mapper与DO：graphiti-module-system中的SystemConfigMapper与SystemConfigDO，演示通用Mapper与实体映射
+- 应用配置：ontograph-server的application.yml与application-dev.yml，包含MyBatis-Plus与动态数据源配置
+- 示例Mapper与DO：ontograph-module-system中的SystemConfigMapper与SystemConfigDO，演示通用Mapper与实体映射
 - 服务层示例：SystemConfigServiceImpl，展示条件构造器、分页查询与CRUD调用
 
 ```mermaid
@@ -56,18 +56,18 @@ G --> E
 ```
 
 **图表来源**
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [application.yml:11-19](file://graphiti-server/src/main/resources/application.yml#L11-L19)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [application.yml:11-19](file://ontograph-server/src/main/resources/application.yml#L11-L19)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
-- [SystemConfigMapper.java:10-11](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
-- [SystemConfigDO.java:12-41](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
-- [SystemConfigServiceImpl.java:27-42](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
+- [SystemConfigMapper.java:10-11](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
+- [SystemConfigDO.java:12-41](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
+- [SystemConfigServiceImpl.java:27-42](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
 
 **章节来源**
-- [graphiti-spring-boot-starter-mybatis/pom.xml:1-51](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L1-L51)
-- [application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:1-51](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L1-L51)
+- [application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
 
 ## 核心组件
@@ -85,13 +85,13 @@ G --> E
   - CRUD：insert/updateById/selectById/delete逻辑删除
 
 **章节来源**
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [application.yml:11-19](file://graphiti-server/src/main/resources/application.yml#L11-L19)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [application.yml:11-19](file://ontograph-server/src/main/resources/application.yml#L11-L19)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
-- [SystemConfigMapper.java:10-11](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
-- [SystemConfigDO.java:12-41](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
-- [SystemConfigServiceImpl.java:27-42](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
+- [SystemConfigMapper.java:10-11](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
+- [SystemConfigDO.java:12-41](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
+- [SystemConfigServiceImpl.java:27-42](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
 
 ## 架构总览
 MyBatis-Plus在本项目中的角色是ORM框架，dynamic-datasource提供多数据源能力，Druid作为连接池。应用通过配置文件声明数据源与MyBatis-Plus行为，业务层通过Mapper接口与服务层组合实现条件查询、分页与CRUD。
@@ -114,11 +114,11 @@ CFG3 --> DS
 ```
 
 **图表来源**
-- [application.yml:11-19](file://graphiti-server/src/main/resources/application.yml#L11-L19)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [application.yml:11-19](file://ontograph-server/src/main/resources/application.yml#L11-L19)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
-- [SystemConfigMapper.java:10-11](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
-- [SystemConfigServiceImpl.java:27-42](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
+- [SystemConfigMapper.java:10-11](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
+- [SystemConfigServiceImpl.java:27-42](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
 
 ## 详细组件分析
 
@@ -159,12 +159,12 @@ SystemConfigMapper --> SystemConfigDO : "操作实体"
 ```
 
 **图表来源**
-- [SystemConfigMapper.java:10-11](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
-- [SystemConfigDO.java:12-41](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
+- [SystemConfigMapper.java:10-11](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
+- [SystemConfigDO.java:12-41](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
 
 **章节来源**
-- [SystemConfigMapper.java:10-11](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
-- [SystemConfigDO.java:12-41](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
+- [SystemConfigMapper.java:10-11](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
+- [SystemConfigDO.java:12-41](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
 
 ### 条件构造器与分页查询流程
 - 条件构造器
@@ -188,10 +188,10 @@ S->>S : 组装返回数据
 ```
 
 **图表来源**
-- [SystemConfigServiceImpl.java:27-42](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
+- [SystemConfigServiceImpl.java:27-42](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
 
 **章节来源**
-- [SystemConfigServiceImpl.java:27-42](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
+- [SystemConfigServiceImpl.java:27-42](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L27-L42)
 
 ### 动态数据源配置与切换
 - 配置要点
@@ -215,10 +215,10 @@ StrictOff --> Ready
 ```
 
 **图表来源**
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 
 **章节来源**
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
 
 ### MyBatis-Plus核心特性与最佳实践
@@ -234,8 +234,8 @@ StrictOff --> Ready
   - 连接池：合理设置maximum-pool-size、minimum-idle、connection-timeout等参数
 
 **章节来源**
-- [application.yml:11-19](file://graphiti-server/src/main/resources/application.yml#L11-L19)
-- [SystemConfigServiceImpl.java:62-102](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L62-L102)
+- [application.yml:11-19](file://ontograph-server/src/main/resources/application.yml#L11-L19)
+- [SystemConfigServiceImpl.java:62-102](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L62-L102)
 
 ## 依赖分析
 - starter模块依赖
@@ -259,13 +259,13 @@ CFG3["application-prod.yml"] --> DS
 ```
 
 **图表来源**
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [application.yml:11-19](file://graphiti-server/src/main/resources/application.yml#L11-L19)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [application.yml:11-19](file://ontograph-server/src/main/resources/application.yml#L11-L19)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
 
 **章节来源**
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
 
 ## 性能考虑
 - 连接池参数
@@ -297,11 +297,11 @@ CFG3["application-prod.yml"] --> DS
   - 若使用@DS注解，请确认数据源名称与配置一致
 
 **章节来源**
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
-- [SystemConfigServiceImpl.java:62-102](file://graphiti-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L62-L102)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
+- [SystemConfigServiceImpl.java:62-102](file://ontograph-module-system/src/main/java/com/raphiti/system/service/impl/SystemConfigServiceImpl.java#L62-L102)
 
 ## 结论
-graphiti-spring-boot-starter-mybatis通过引入MyBatis-Plus、Druid与dynamic-datasource，为Graphiti-Java提供了开箱即用的数据库访问能力。结合application.yml与application-dev.yml/production配置，可快速完成连接池、多数据源与ORM的集成。业务层通过通用Mapper与条件构造器，能够高效实现CRUD与分页查询；同时遵循逻辑删除、分页与连接池优化等最佳实践，有助于提升系统稳定性与性能。
+graphiti-spring-boot-starter-mybatis通过引入MyBatis-Plus、Druid与dynamic-datasource，为OntoGraph提供了开箱即用的数据库访问能力。结合application.yml与application-dev.yml/production配置，可快速完成连接池、多数据源与ORM的集成。业务层通过通用Mapper与条件构造器，能够高效实现CRUD与分页查询；同时遵循逻辑删除、分页与连接池优化等最佳实践，有助于提升系统稳定性与性能。
 
 [本节为总结性内容，无需列出具体文件来源]
 
@@ -315,9 +315,9 @@ graphiti-spring-boot-starter-mybatis通过引入MyBatis-Plus、Druid与dynamic-d
   - 在服务层使用LambdaQueryWrapper与Page实现条件查询与分页
 
 **章节来源**
-- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://graphiti-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
-- [application.yml:11-19](file://graphiti-server/src/main/resources/application.yml#L11-L19)
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
+- [graphiti-spring-boot-starter-mybatis/pom.xml:19-41](file://ontograph-framework/graphiti-spring-boot-starter-mybatis/pom.xml#L19-L41)
+- [application.yml:11-19](file://ontograph-server/src/main/resources/application.yml#L11-L19)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
 - [application-prod.yml:14-32](file://config/application-prod.yml#L14-L32)
-- [SystemConfigMapper.java:10-11](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
-- [SystemConfigDO.java:12-41](file://graphiti-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)
+- [SystemConfigMapper.java:10-11](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/mysql/SystemConfigMapper.java#L10-L11)
+- [SystemConfigDO.java:12-41](file://ontograph-module-system/src/main/java/com/raphiti/system/dal/dataobject/SystemConfigDO.java#L12-L41)

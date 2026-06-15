@@ -25,9 +25,9 @@
 
 ### 前置条件
 
-1. **Graphiti-Java服务已启动**
+1. **OntoGraph服务已启动**
    ```bash
-   cd graphiti-java
+   cd ontograph-java
    mvn spring-boot:run
    ```
 
@@ -151,7 +151,7 @@ $GRAPH_ID = "legal-kg-prod"
 ## ⚠️ 注意事项
 
 1. **权限要求**: 需要有效的认证Token
-2. **服务可用性**: 确保Graphiti-Java服务已启动
+2. **服务可用性**: 确保OntoGraph服务已启动
 3. **幂等性**: 脚本可以重复执行,但会产生重复数据
 4. **错误处理**: 脚本遇到错误会立即停止并显示错误信息
 
@@ -162,7 +162,7 @@ $GRAPH_ID = "legal-kg-prod"
 ### 问题1: 服务连接失败
 
 ```
-✗ 服务连接失败,请确认Graphiti-Java已启动
+✗ 服务连接失败,请确认OntoGraph已启动
 ```
 
 **解决方案**:

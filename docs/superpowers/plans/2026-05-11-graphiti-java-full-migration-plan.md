@@ -17,7 +17,7 @@
 ## 文件结构映射
 
 ```
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/
 ├── config/
 │   ├── LlmClientConfig.java           # 新增 - 多Provider LLM配置
 │   ├── EmbedderConfig.java            # 修改 - 接入真实EmbeddingClient
@@ -139,16 +139,16 @@ if (ontologyValidationService.hasOntology(graphId)) {
 ### Task 1: Spring AI 多 Provider 集成
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/LlmClientConfig.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/EmbedderConfig.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java`
-- Modify: `graphiti-module-core/pom.xml`
-- Modify: `graphiti-server/src/main/resources/application.yml`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/LlmClientConfig.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/EmbedderConfig.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java`
+- Modify: `ontograph-module-core/pom.xml`
+- Modify: `ontograph-server/src/main/resources/application.yml`
 
 **Step 1: 修改 pom.xml 添加 Spring AI 依赖**
 
-在 `graphiti-module-core/pom.xml` 的 `<dependencies>` 中添加：
+在 `ontograph-module-core/pom.xml` 的 `<dependencies>` 中添加：
 
 ```xml
 <!-- Spring AI OpenAI -->
@@ -414,7 +414,7 @@ public class LlmClientServiceImpl implements LlmClientService {
 
 - [ ] **Step 6: 修改 application.yml**
 
-在 `graphiti-server/src/main/resources/application.yml` 中添加：
+在 `ontograph-server/src/main/resources/application.yml` 中添加：
 
 ```yaml
 spring:
@@ -450,11 +450,11 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/pom.xml
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/config/
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java
-git add graphiti-server/src/main/resources/application.yml
+git add ontograph-module-core/pom.xml
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/config/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/LlmClientServiceImpl.java
+git add ontograph-server/src/main/resources/application.yml
 git commit -m "feat: integrate Spring AI with multi-provider LLM and embedding support"
 ```
 
@@ -463,11 +463,11 @@ git commit -m "feat: integrate Spring AI with multi-provider LLM and embedding s
 ### Task 2: Prompt 工程完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/resources/prompts/extract_entities.txt`
-- Modify: `graphiti-module-core/src/main/resources/prompts/extract_relations.txt`
-- Create: `graphiti-module-core/src/main/resources/prompts/system_prompt.txt`
-- Create: `graphiti-module-core/src/main/resources/prompts/summarize_node.txt`
-- Create: `graphiti-module-core/src/main/resources/prompts/summarize_community.txt`
+- Modify: `ontograph-module-core/src/main/resources/prompts/extract_entities.txt`
+- Modify: `ontograph-module-core/src/main/resources/prompts/extract_relations.txt`
+- Create: `ontograph-module-core/src/main/resources/prompts/system_prompt.txt`
+- Create: `ontograph-module-core/src/main/resources/prompts/summarize_node.txt`
+- Create: `ontograph-module-core/src/main/resources/prompts/summarize_community.txt`
 
 **Step 1: 创建 system_prompt.txt**
 
@@ -575,7 +575,7 @@ git commit -m "feat: integrate Spring AI with multi-provider LLM and embedding s
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/resources/prompts/
+git add ontograph-module-core/src/main/resources/prompts/
 git commit -m "feat: optimize prompt engineering with few-shot examples and system prompt"
 ```
 
@@ -584,10 +584,10 @@ git commit -m "feat: optimize prompt engineering with few-shot examples and syst
 ### Task 3: Neo4j 向量索引
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/VectorIndexRepository.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/NodeRepository.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/VectorIndexRepository.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/NodeRepository.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java`
 
 **Step 1: 创建 VectorIndexRepository.java**
 
@@ -757,9 +757,9 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImpl.java
 git commit -m "feat: add Neo4j vector index support with auto-embedding"
 ```
 
@@ -772,11 +772,11 @@ git commit -m "feat: add Neo4j vector index support with auto-embedding"
 ### Task 4: SearchService 混合检索完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchConfigVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/HybridSearchReqVO.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/SearchConfigVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/HybridSearchReqVO.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java`
 
 **Step 1: 创建 SearchConfigVO.java**
 
@@ -1081,12 +1081,12 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/SearchService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SearchServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/RerankerServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/neo4j/
 git commit -m "feat: implement hybrid search with BM25, vector, BFS, RRF and MMR"
 ```
 
@@ -1095,9 +1095,9 @@ git commit -m "feat: implement hybrid search with BM25, vector, BFS, RRF and MMR
 ### Task 5: 时序管理完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java`
 
 **Step 1: 修改 GraphNeo4jService 扩展时序字段**
 
@@ -1319,9 +1319,9 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java
 git commit -m "feat: integrate temporal management and LLM extraction into data import"
 ```
 
@@ -1330,8 +1330,8 @@ git commit -m "feat: integrate temporal management and LLM extraction into data 
 ### Task 6: 社区发现完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java`
 
 **Step 1: 修改 CommunityServiceImpl 使用图聚类算法**
 
@@ -1430,8 +1430,8 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/CommunityServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/GraphitiController.java
 git commit -m "feat: enhance community detection with clustering algorithm and LLM summary"
 ```
 
@@ -1440,7 +1440,7 @@ git commit -m "feat: enhance community detection with clustering algorithm and L
 ### Task 7: SearchController 扩展
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java`
 
 **Step 1: 修改 SearchController 添加混合检索接口**
 
@@ -1555,8 +1555,8 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/SearchController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/search/
 git commit -m "feat: extend SearchController with hybrid, semantic and BFS endpoints"
 ```
 
@@ -1569,8 +1569,8 @@ git commit -m "feat: extend SearchController with hybrid, semantic and BFS endpo
 ### Task 8: 数据质量保障完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/MaintenanceController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/MaintenanceController.java`
 
 **Step 1: 修改 DataQualityServiceImpl**
 
@@ -1726,8 +1726,8 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/MaintenanceController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataQualityServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/MaintenanceController.java
 git commit -m "feat: implement data quality deduplication and maintenance APIs"
 ```
 
@@ -1736,8 +1736,8 @@ git commit -m "feat: implement data quality deduplication and maintenance APIs"
 ### Task 9: Saga 管理完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 **Step 1: 修改 GraphNeo4jService 添加 Saga 和 Episode 链支持**
 
@@ -1884,8 +1884,8 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/SagaServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git commit -m "feat: implement Saga management with episode chaining"
 ```
 
@@ -1894,8 +1894,8 @@ git commit -m "feat: implement Saga management with episode chaining"
 ### Task 10: 多数据库驱动完善
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java`
 
 **Step 1: 修改 GraphDriverService 接口**
 
@@ -2007,8 +2007,8 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphDriverService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/Neo4jDriverAdapter.java
 git commit -m "feat: implement GraphDriver abstraction with Neo4j adapter"
 ```
 
@@ -2017,9 +2017,9 @@ git commit -m "feat: implement GraphDriver abstraction with Neo4j adapter"
 ### Task 11: 测试覆盖
 
 **Files:**
-- Create: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImplTest.java`
-- Create: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/impl/SearchServiceImplTest.java`
-- Create: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImplTest.java`
+- Create: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/impl/EmbedderServiceImplTest.java`
+- Create: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/impl/SearchServiceImplTest.java`
+- Create: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/impl/TemporalServiceImplTest.java`
 
 **Step 1: 创建 EmbedderServiceImplTest**
 
@@ -2162,14 +2162,14 @@ class TemporalServiceImplTest {
 Run: `cd d:\projects\ontograph-java && mvn clean install -DskipTests -q`
 Expected: BUILD SUCCESS
 
-Run: `cd d:\projects\ontograph-java && mvn test -pl graphiti-module-core -q`
+Run: `cd d:\projects\ontograph-java && mvn test -pl ontograph-module-core -q`
 Expected: Tests run, some may fail if mocks incomplete (acceptable at this stage)
 
 - [ ] **Step 5: Commit**
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/test/
+git add ontograph-module-core/src/test/
 git commit -m "test: add unit tests for Embedder, Search and Temporal services"
 ```
 
@@ -2182,10 +2182,10 @@ git commit -m "test: add unit tests for Embedder, Search and Temporal services"
 ### Task 12: 所有 TODO 清理
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java`
 
 **Step 1: 清理 NodeServiceImpl TODO**
 
@@ -2283,10 +2283,10 @@ Expected: BUILD SUCCESS
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/GraphitiServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/GraphNeo4jService.java
 git commit -m "feat: resolve all TODOs in Node, Edge, Graphiti and Neo4j services"
 ```
 
@@ -2295,8 +2295,8 @@ git commit -m "feat: resolve all TODOs in Node, Edge, Graphiti and Neo4j service
 ### Task 13: 前端 API 同步
 
 **Files:**
-- Modify: `graphiti-web/src/api/graph.ts`
-- Modify: `graphiti-web/src/api/search.ts`
+- Modify: `ontograph-web/src/api/graph.ts`
+- Modify: `ontograph-web/src/api/search.ts`
 
 **Step 1: 修改 graph.ts**
 
@@ -2345,7 +2345,7 @@ export const searchApi = {
 
 ```bash
 cd d:\projects\ontograph-java
-git add graphiti-web/src/api/
+git add ontograph-web/src/api/
 git commit -m "feat: sync frontend APIs for hybrid search, saga and maintenance"
 ```
 
@@ -2364,7 +2364,7 @@ Expected: BUILD SUCCESS
 
 **Step 2: 运行测试**
 
-Run: `cd d:\projects\ontograph-java && mvn test -pl graphiti-module-core -q`
+Run: `cd d:\projects\ontograph-java && mvn test -pl ontograph-module-core -q`
 Expected: Tests run (允许部分 mock 测试需要调整)
 
 **Step 3: 更新对比文档状态**

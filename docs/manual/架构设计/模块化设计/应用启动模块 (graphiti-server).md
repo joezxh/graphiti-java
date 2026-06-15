@@ -1,14 +1,14 @@
-# 应用启动模块 (graphiti-server)
+# 应用启动模块 (ontograph-server)
 
 <!--<cite>
 **本文引用的文件**
-- [GraphitiApplication.java](file://graphiti-server/src/main/java/com/graphiti/GraphitiApplication.java)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
-- [pom.xml](file://graphiti-server/pom.xml)
-- [SecurityConfig.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
-- [JwtAuthenticationFilter.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
-- [JwtTokenProvider.java](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
+- [GraphitiApplication.java](file://ontograph-server/src/main/java/com/graphiti/GraphitiApplication.java)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
+- [pom.xml](file://ontograph-server/pom.xml)
+- [SecurityConfig.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java)
+- [JwtAuthenticationFilter.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java)
+- [JwtTokenProvider.java](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java)
 - [Dockerfile](file://docker/Dockerfile)
 - [docker-compose.yml](file://docker-compose.yml)
 - [docker-compose.prod.yml](file://docker-compose.prod.yml)
@@ -28,7 +28,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件为 ontograph-java 应用启动模块（graphiti-server）的权威部署与配置指南。内容覆盖：
+本文件为 ontograph-java 应用启动模块（ontograph-server）的权威部署与配置指南。内容覆盖：
 - Spring Boot 启动配置与主程序入口
 - 环境配置管理（开发/生产）
 - application.yml 与 application-dev.yml 参数详解
@@ -39,17 +39,17 @@
 - 常见问题与性能调优、安全最佳实践
 
 ## 项目结构
-graphiti-server 作为 Spring Boot 启动模块，负责：
+ontograph-server 作为 Spring Boot 启动模块，负责：
 - 应用引导与自动配置
 - 资源与静态页面嵌入（前端构建产物）
 - 与核心模块、框架模块的装配集成
 
 ```mermaid
 graph TB
-A["graphiti-server<br/>启动模块"] --> B["Spring Boot 引导"]
+A["ontograph-server<br/>启动模块"] --> B["Spring Boot 引导"]
 A --> C["静态资源嵌入<br/>前端构建产物"]
-A --> D["核心模块 graphiti-module-core"]
-A --> E["系统模块 graphiti-module-system"]
+A --> D["核心模块 ontograph-module-core"]
+A --> E["系统模块 ontograph-module-system"]
 A --> F["安全框架 graphiti-spring-boot-starter-security"]
 A --> G["MyBatis-Plus 配置"]
 A --> H["Redis 配置"]
@@ -57,11 +57,11 @@ A --> I["Actuator/监控"]
 ```
 
 图表来源
-- [pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
-- [GraphitiApplication.java:12-38](file://graphiti-server/src/main/java/com/graphiti/GraphitiApplication.java#L12-L38)
+- [pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
+- [GraphitiApplication.java:12-38](file://ontograph-server/src/main/java/com/graphiti/GraphitiApplication.java#L12-L38)
 
 章节来源
-- [pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
+- [pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
 - [README.md:114-166](file://README.md#L114-L166)
 
 ## 核心组件
@@ -71,10 +71,10 @@ A --> I["Actuator/监控"]
 - Docker 化：多阶段构建、健康检查、JVM 调优与容器资源限制。
 
 章节来源
-- [GraphitiApplication.java:18-38](file://graphiti-server/src/main/java/com/graphiti/GraphitiApplication.java#L18-L38)
-- [application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
-- [application-dev.yml:1-676](file://graphiti-server/src/main/resources/application-dev.yml#L1-L676)
-- [SecurityConfig.java:32-136](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L32-L136)
+- [GraphitiApplication.java:18-38](file://ontograph-server/src/main/java/com/graphiti/GraphitiApplication.java#L18-L38)
+- [application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
+- [application-dev.yml:1-676](file://ontograph-server/src/main/resources/application-dev.yml#L1-L676)
+- [SecurityConfig.java:32-136](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L32-L136)
 
 ## 架构总览
 应用启动流程与关键配置交互如下：
@@ -101,8 +101,8 @@ SB-->>Dev : 暴露 8080 端口/Swagger/Actuator
 图表来源
 - [Dockerfile:61-74](file://docker/Dockerfile#L61-L74)
 - [docker-compose.yml:23-51](file://docker-compose.yml#L23-L51)
-- [application-dev.yml:487-593](file://graphiti-server/src/main/resources/application-dev.yml#L487-L593)
-- [SecurityConfig.java:115-136](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
+- [application-dev.yml:487-593](file://ontograph-server/src/main/resources/application-dev.yml#L487-L593)
+- [SecurityConfig.java:115-136](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
 
 ## 详细组件分析
 
@@ -120,10 +120,10 @@ note for GraphitiApplication "排除多个 AI 自动配置类<br/>仅保留所�
 ```
 
 图表来源
-- [GraphitiApplication.java:18-38](file://graphiti-server/src/main/java/com/graphiti/GraphitiApplication.java#L18-L38)
+- [GraphitiApplication.java:18-38](file://ontograph-server/src/main/java/com/graphiti/GraphitiApplication.java#L18-L38)
 
 章节来源
-- [GraphitiApplication.java:18-38](file://graphiti-server/src/main/java/com/graphiti/GraphitiApplication.java#L18-L38)
+- [GraphitiApplication.java:18-38](file://ontograph-server/src/main/java/com/graphiti/GraphitiApplication.java#L18-L38)
 
 ### 配置文件与环境管理
 - application.yml：基础配置，包含应用名称、MyBatis-Plus、JWT、日志、Actuator、OpenAPI。
@@ -138,8 +138,8 @@ note for GraphitiApplication "排除多个 AI 自动配置类<br/>仅保留所�
 - Actuator：生产默认关闭敏感端点，开发默认全部暴露。
 
 章节来源
-- [application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
-- [application-dev.yml:1-676](file://graphiti-server/src/main/resources/application-dev.yml#L1-L676)
+- [application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
+- [application-dev.yml:1-676](file://ontograph-server/src/main/resources/application-dev.yml#L1-L676)
 - [docker-compose.yml:24-48](file://docker-compose.yml#L24-L48)
 - [docker-compose.prod.yml:26-42](file://docker-compose.prod.yml#L26-L42)
 
@@ -163,14 +163,14 @@ Next --> End(["继续处理"])
 ```
 
 图表来源
-- [JwtAuthenticationFilter.java:36-59](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L36-L59)
-- [JwtTokenProvider.java:40-85](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L40-L85)
-- [SecurityConfig.java:115-136](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
+- [JwtAuthenticationFilter.java:36-59](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L36-L59)
+- [JwtTokenProvider.java:40-85](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L40-L85)
+- [SecurityConfig.java:115-136](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
 
 章节来源
-- [SecurityConfig.java:32-136](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L32-L136)
-- [JwtAuthenticationFilter.java:26-60](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L26-L60)
-- [JwtTokenProvider.java:21-85](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L21-L85)
+- [SecurityConfig.java:32-136](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L32-L136)
+- [JwtAuthenticationFilter.java:26-60](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtAuthenticationFilter.java#L26-L60)
+- [JwtTokenProvider.java:21-85](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L21-L85)
 
 ### 数据源与连接池（HikariCP）
 - Dynamic DataSource：多数据源支持，主库 master。
@@ -178,8 +178,8 @@ Next --> End(["继续处理"])
 - 开发默认：本地 PostgreSQL；生产默认在 compose.prod 中调整。
 
 章节来源
-- [application-dev.yml:487-502](file://graphiti-server/src/main/resources/application-dev.yml#L487-L502)
-- [application-dev.yml:656-670](file://graphiti-server/src/main/resources/application-dev.yml#L656-L670)
+- [application-dev.yml:487-502](file://ontograph-server/src/main/resources/application-dev.yml#L487-L502)
+- [application-dev.yml:656-670](file://ontograph-server/src/main/resources/application-dev.yml#L656-L670)
 - [docker-compose.prod.yml:36-37](file://docker-compose.prod.yml#L36-L37)
 
 ### 日志系统
@@ -188,8 +188,8 @@ Next --> End(["继续处理"])
 - 生产默认：INFO 级别，减少噪声。
 
 章节来源
-- [application.yml:35-42](file://graphiti-server/src/main/resources/application.yml#L35-L42)
-- [application-dev.yml:636-643](file://graphiti-server/src/main/resources/application-dev.yml#L636-L643)
+- [application.yml:35-42](file://ontograph-server/src/main/resources/application.yml#L35-L42)
+- [application-dev.yml:636-643](file://ontograph-server/src/main/resources/application-dev.yml#L636-L643)
 - [docker-compose.prod.yml:29-32](file://docker-compose.prod.yml#L29-L32)
 
 ### Actuator 与监控
@@ -198,8 +198,8 @@ Next --> End(["继续处理"])
 - Prometheus：默认关闭，可按需开启。
 
 章节来源
-- [application.yml:43-67](file://graphiti-server/src/main/resources/application.yml#L43-L67)
-- [application-dev.yml:615-635](file://graphiti-server/src/main/resources/application-dev.yml#L615-L635)
+- [application.yml:43-67](file://ontograph-server/src/main/resources/application.yml#L43-L67)
+- [application-dev.yml:615-635](file://ontograph-server/src/main/resources/application-dev.yml#L615-L635)
 - [docker-compose.prod.yml:33-34](file://docker-compose.prod.yml#L33-L34)
 
 ### 前端静态资源嵌入
@@ -207,17 +207,17 @@ Next --> End(["继续处理"])
 - 运行时：Spring MVC 静态资源映射，支持本地开发与打包后访问。
 
 章节来源
-- [pom.xml:82-128](file://graphiti-server/pom.xml#L82-L128)
-- [application-dev.yml:644-655](file://graphiti-server/src/main/resources/application-dev.yml#L644-L655)
+- [pom.xml:82-128](file://ontograph-server/pom.xml#L82-L128)
+- [application-dev.yml:644-655](file://ontograph-server/src/main/resources/application-dev.yml#L644-L655)
 
 ## 依赖分析
-graphiti-server 对模块与框架的依赖关系如下：
+ontograph-server 对模块与框架的依赖关系如下：
 
 ```mermaid
 graph TB
-S["graphiti-server"] --> M1["graphiti-module-system"]
-S --> M2["graphiti-module-core"]
-S --> FW["graphiti-framework"]
+S["ontograph-server"] --> M1["ontograph-module-system"]
+S --> M2["ontograph-module-core"]
+S --> FW["ontograph-framework"]
 FW --> SEC["graphiti-spring-boot-starter-security"]
 FW --> MB["graphiti-spring-boot-starter-mybatis"]
 FW --> RD["graphiti-spring-boot-starter-redis"]
@@ -226,10 +226,10 @@ S --> DOC["springdoc-openapi-starter-webmvc-ui"]
 ```
 
 图表来源
-- [pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
+- [pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
 
 章节来源
-- [pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
+- [pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
 
 ## 性能考虑
 - JVM 调优
@@ -269,7 +269,7 @@ S --> DOC["springdoc-openapi-starter-webmvc-ui"]
 - [docker-compose.prod.yml:43-48](file://docker-compose.prod.yml#L43-L48)
 
 ## 结论
-graphiti-server 启动模块以清晰的配置分层与容器化部署为核心，结合 Spring Security + JWT 提供安全边界，并通过 Actuator 与 Docker 健康检查实现可观测性。生产环境通过资源限制与 JVM 调优保障稳定性，开发环境提供丰富的 LLM Provider 模板便于快速试用。
+ontograph-server 启动模块以清晰的配置分层与容器化部署为核心，结合 Spring Security + JWT 提供安全边界，并通过 Actuator 与 Docker 健康检查实现可观测性。生产环境通过资源限制与 JVM 调优保障稳定性，开发环境提供丰富的 LLM Provider 模板便于快速试用。
 
 ## 附录
 
@@ -331,8 +331,8 @@ graphiti-server 启动模块以清晰的配置分层与容器化部署为核心�
   - 日志级别与静态资源映射
 
 章节来源
-- [application.yml:1-67](file://graphiti-server/src/main/resources/application.yml#L1-L67)
-- [application-dev.yml:1-676](file://graphiti-server/src/main/resources/application-dev.yml#L1-L676)
+- [application.yml:1-67](file://ontograph-server/src/main/resources/application.yml#L1-L67)
+- [application-dev.yml:1-676](file://ontograph-server/src/main/resources/application-dev.yml#L1-L676)
 
 ### 安全配置最佳实践
 - JWT
@@ -344,6 +344,6 @@ graphiti-server 启动模块以清晰的配置分层与容器化部署为核心�
   - 明确 AllowedOriginPatterns 与 Credentials 策略，避免通配符滥用。
 
 章节来源
-- [SecurityConfig.java:68-79](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L68-L79)
-- [SecurityConfig.java:115-136](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
-- [JwtTokenProvider.java:21-25](file://graphiti-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L21-L25)
+- [SecurityConfig.java:68-79](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L68-L79)
+- [SecurityConfig.java:115-136](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/config/SecurityConfig.java#L115-L136)
+- [JwtTokenProvider.java:21-25](file://ontograph-framework/graphiti-spring-boot-starter-security/src/main/java/com/graphiti/framework/security/jwt/JwtTokenProvider.java#L21-L25)

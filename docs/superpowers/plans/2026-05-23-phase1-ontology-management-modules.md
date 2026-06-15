@@ -14,24 +14,24 @@
 
 | 文件 | 操作 | 说明 |
 |------|------|------|
-| `graphiti-web/src/components/Layout/DataManagerLayout.vue` | 新建 | 统一页面壳（Header + Main + 可选右侧面板） |
-| `graphiti-web/src/views/data/classes.vue` | 新建 | 类定义管理页面 |
-| `graphiti-web/src/views/data/properties.vue` | 新建 | 属性管理页面 |
-| `graphiti-web/src/views/data/constraints.vue` | 新建 | 约束管理页面 |
-| `graphiti-web/src/components/Layout/Sidebar.vue` | 修改 | 新增 3 个菜单项 |
-| `graphiti-web/src/router/index.ts` | 修改 | 新增 3 条路由 |
+| `ontograph-web/src/components/Layout/DataManagerLayout.vue` | 新建 | 统一页面壳（Header + Main + 可选右侧面板） |
+| `ontograph-web/src/views/data/classes.vue` | 新建 | 类定义管理页面 |
+| `ontograph-web/src/views/data/properties.vue` | 新建 | 属性管理页面 |
+| `ontograph-web/src/views/data/constraints.vue` | 新建 | 约束管理页面 |
+| `ontograph-web/src/components/Layout/Sidebar.vue` | 修改 | 新增 3 个菜单项 |
+| `ontograph-web/src/router/index.ts` | 修改 | 新增 3 条路由 |
 
 ---
 
 ## Task 1: 创建 DataManagerLayout.vue（统一页面壳）
 
 **Files:**
-- Create: `graphiti-web/src/components/Layout/DataManagerLayout.vue`
+- Create: `ontograph-web/src/components/Layout/DataManagerLayout.vue`
 
 - [ ] **Step 1: 创建文件**
 
 ```vue
-<!-- graphiti-web/src/components/Layout/DataManagerLayout.vue -->
+<!-- ontograph-web/src/components/Layout/DataManagerLayout.vue -->
 <template>
   <div class="data-manager-layout">
     <!-- Header -->
@@ -167,7 +167,7 @@ const rightCollapsed = ref(false)
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/components/Layout/DataManagerLayout.vue
+git add ontograph-web/src/components/Layout/DataManagerLayout.vue
 git commit -m "feat: add DataManagerLayout component for unified data management pages"
 ```
 
@@ -176,12 +176,12 @@ git commit -m "feat: add DataManagerLayout component for unified data management
 ## Task 2: 创建类定义管理页面（classes.vue）
 
 **Files:**
-- Create: `graphiti-web/src/views/data/classes.vue`
+- Create: `ontograph-web/src/views/data/classes.vue`
 
 - [ ] **Step 1: 创建文件**
 
 ```vue
-<!-- graphiti-web/src/views/data/classes.vue -->
+<!-- ontograph-web/src/views/data/classes.vue -->
 <template>
   <DataManagerLayout title="类定义管理">
     <template #main-table>
@@ -259,7 +259,7 @@ function handleSaved() {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/views/data/classes.vue
+git add ontograph-web/src/views/data/classes.vue
 git commit -m "feat: add independent class definition management page"
 ```
 
@@ -268,12 +268,12 @@ git commit -m "feat: add independent class definition management page"
 ## Task 3: 创建属性管理页面（properties.vue）
 
 **Files:**
-- Create: `graphiti-web/src/views/data/properties.vue`
+- Create: `ontograph-web/src/views/data/properties.vue`
 
 - [ ] **Step 1: 创建文件**
 
 ```vue
-<!-- graphiti-web/src/views/data/properties.vue -->
+<!-- ontograph-web/src/views/data/properties.vue -->
 <template>
   <DataManagerLayout title="属性管理">
     <template #main-table>
@@ -351,7 +351,7 @@ function handleSaved() {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/views/data/properties.vue
+git add ontograph-web/src/views/data/properties.vue
 git commit -m "feat: add independent property management page"
 ```
 
@@ -360,12 +360,12 @@ git commit -m "feat: add independent property management page"
 ## Task 4: 创建约束管理页面（constraints.vue）
 
 **Files:**
-- Create: `graphiti-web/src/views/data/constraints.vue`
+- Create: `ontograph-web/src/views/data/constraints.vue`
 
 - [ ] **Step 1: 创建文件**
 
 ```vue
-<!-- graphiti-web/src/views/data/constraints.vue -->
+<!-- ontograph-web/src/views/data/constraints.vue -->
 <template>
   <DataManagerLayout title="约束管理">
     <template #main-table>
@@ -439,7 +439,7 @@ function handleSaved() {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/views/data/constraints.vue
+git add ontograph-web/src/views/data/constraints.vue
 git commit -m "feat: add independent constraint management page"
 ```
 
@@ -448,7 +448,7 @@ git commit -m "feat: add independent constraint management page"
 ## Task 5: 修改 Sidebar.vue 菜单
 
 **Files:**
-- Modify: `graphiti-web/src/components/Layout/Sidebar.vue:53-102`
+- Modify: `ontograph-web/src/components/Layout/Sidebar.vue:53-102`
 
 - [ ] **Step 1: 在 data-management 子菜单下新增 3 个菜单项**
 
@@ -489,7 +489,7 @@ import {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/components/Layout/Sidebar.vue
+git add ontograph-web/src/components/Layout/Sidebar.vue
 git commit -m "feat: add ontology management menu items to sidebar"
 ```
 
@@ -498,7 +498,7 @@ git commit -m "feat: add ontology management menu items to sidebar"
 ## Task 6: 修改 router/index.ts 路由
 
 **Files:**
-- Modify: `graphiti-web/src/router/index.ts`
+- Modify: `ontograph-web/src/router/index.ts`
 
 - [ ] **Step 1: 在 /data/entities 路由之前添加 3 条新路由**
 
@@ -529,7 +529,7 @@ git commit -m "feat: add ontology management menu items to sidebar"
 - [ ] **Step 2: Commit**
 
 ```bash
-git add graphiti-web/src/router/index.ts
+git add ontograph-web/src/router/index.ts
 git commit -m "feat: add routes for ontology management pages"
 ```
 

@@ -7,14 +7,14 @@
 - [V2__create_notification_tables.sql](file://sql/mysql/V2__create_notification_tables.sql)
 - [V3__create_legal_ontology.sql](file://sql/mysql/V3__create_legal_ontology.sql)
 - [V4__seed_legal_ontology.sql](file://sql/mysql/V4__seed_legal_ontology.sql)
-- [UserDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java)
-- [RoleDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java)
-- [MenuDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java)
-- [NotificationDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java)
-- [NotificationSettingsDO.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java)
-- [UserMapper.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java)
-- [NotificationMapper.java](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java)
-- [GraphMetadataDO.java](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java)
+- [UserDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java)
+- [RoleDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java)
+- [MenuDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java)
+- [NotificationDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java)
+- [NotificationSettingsDO.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java)
+- [UserMapper.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java)
+- [NotificationMapper.java](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java)
+- [GraphMetadataDO.java](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java)
 </cite>-->
 
 ## 目录
@@ -30,7 +30,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件面向数据库管理员与后端开发工程师，系统化梳理Graphiti Java项目在MySQL上的数据库实现。内容涵盖：
+本文件面向数据库管理员与后端开发工程师，系统化梳理OntoGraph项目在MySQL上的数据库实现。内容涵盖：
 - 完整的表结构定义、字段类型选择、主键外键约束与索引策略
 - 系统管理模块与法律本体相关表设计说明
 - 数据库初始化脚本与数据种子的执行顺序与依赖关系
@@ -42,7 +42,7 @@
 ## 项目结构
 本项目的数据库相关实现主要分布在以下位置：
 - MySQL初始化与迁移脚本位于 sql/mysql 目录
-- MyBatis数据对象与映射器位于 graphiti-module-system 与 graphiti-module-core 的 dal 包中
+- MyBatis数据对象与映射器位于 ontograph-module-system 与 ontograph-module-core 的 dal 包中
 - 系统模块负责用户、角色、菜单、通知、操作日志、系统配置、搜索历史等表
 - 核心模块负责图谱元数据与本体定义等表
 
@@ -86,14 +86,14 @@ NDO --> NM
 - [V3__create_legal_ontology.sql:1-683](file://sql/mysql/V3__create_legal_ontology.sql#L1-L683)
 - [V4__seed_legal_ontology.sql:1-345](file://sql/mysql/V4__seed_legal_ontology.sql#L1-L345)
 - [init-data.sql:1-17](file://sql/mysql/init-data.sql#L1-L17)
-- [UserDO.java:1-38](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L1-L38)
-- [RoleDO.java:1-32](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L1-L32)
-- [MenuDO.java:1-45](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L1-L45)
-- [NotificationDO.java:1-36](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java#L1-L36)
-- [NotificationSettingsDO.java:1-36](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java#L1-L36)
-- [GraphMetadataDO.java:1-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java#L1-L60)
-- [UserMapper.java:1-13](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L1-L13)
-- [NotificationMapper.java:1-13](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java#L1-L13)
+- [UserDO.java:1-38](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L1-L38)
+- [RoleDO.java:1-32](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L1-L32)
+- [MenuDO.java:1-45](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L1-L45)
+- [NotificationDO.java:1-36](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java#L1-L36)
+- [NotificationSettingsDO.java:1-36](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java#L1-L36)
+- [GraphMetadataDO.java:1-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java#L1-L60)
+- [UserMapper.java:1-13](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L1-L13)
+- [NotificationMapper.java:1-13](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java#L1-L13)
 
 **章节来源**
 - [schema.sql:1-196](file://sql/mysql/schema.sql#L1-L196)
@@ -262,14 +262,14 @@ NotificationDO <.. NotificationMapper : "映射"
 ```
 
 **图表来源**
-- [UserDO.java:1-38](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L1-L38)
-- [RoleDO.java:1-32](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L1-L32)
-- [MenuDO.java:1-45](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L1-L45)
-- [NotificationDO.java:1-36](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java#L1-L36)
-- [NotificationSettingsDO.java:1-36](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java#L1-L36)
-- [GraphMetadataDO.java:1-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java#L1-L60)
-- [UserMapper.java:1-13](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L1-L13)
-- [NotificationMapper.java:1-13](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java#L1-L13)
+- [UserDO.java:1-38](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L1-L38)
+- [RoleDO.java:1-32](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L1-L32)
+- [MenuDO.java:1-45](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L1-L45)
+- [NotificationDO.java:1-36](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java#L1-L36)
+- [NotificationSettingsDO.java:1-36](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java#L1-L36)
+- [GraphMetadataDO.java:1-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java#L1-L60)
+- [UserMapper.java:1-13](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L1-L13)
+- [NotificationMapper.java:1-13](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java#L1-L13)
 
 ## 详细组件分析
 
@@ -595,11 +595,11 @@ C --> E["V4__seed_legal_ontology.sql"]
   - 字段命名与表结构一一对应，支持逻辑删除与自动填充
 
 **章节来源**
-- [UserMapper.java:1-13](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L1-L13)
-- [NotificationMapper.java:1-13](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java#L1-L13)
-- [UserDO.java:1-38](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L1-L38)
-- [RoleDO.java:1-32](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L1-L32)
-- [MenuDO.java:1-45](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L1-L45)
-- [NotificationDO.java:1-36](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java#L1-L36)
-- [NotificationSettingsDO.java:1-36](file://graphiti-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java#L1-L36)
-- [GraphMetadataDO.java:1-60](file://graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java#L1-L60)
+- [UserMapper.java:1-13](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/UserMapper.java#L1-L13)
+- [NotificationMapper.java:1-13](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/mysql/NotificationMapper.java#L1-L13)
+- [UserDO.java:1-38](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/UserDO.java#L1-L38)
+- [RoleDO.java:1-32](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/RoleDO.java#L1-L32)
+- [MenuDO.java:1-45](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/MenuDO.java#L1-L45)
+- [NotificationDO.java:1-36](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationDO.java#L1-L36)
+- [NotificationSettingsDO.java:1-36](file://ontograph-module-system/src/main/java/com/graphiti/system/dal/dataobject/NotificationSettingsDO.java#L1-L36)
+- [GraphMetadataDO.java:1-60](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/GraphMetadataDO.java#L1-L60)

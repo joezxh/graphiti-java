@@ -13,7 +13,7 @@
 ## File Structure
 
 ```
-graphiti-module-core/src/main/java/com/graphiti/module/graphiti/
+ontograph-module-core/src/main/java/com/graphiti/module/graphiti/
 ├── dal/
 │   ├── dataobject/ont/                          ← NEW package
 │   │   ├── OntDefinitionDO.java
@@ -191,17 +191,17 @@ git commit -m "phase1: add PostgreSQL ontology tables (ont_definition, ont_class
 ## Task 2: Create Ontology DataObject (DO) Classes
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntDefinitionDO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntConstraintDO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntVersionHistoryDO.java`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/dal/OntDOTest.java` (新建)
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntDefinitionDO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntConstraintDO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntVersionHistoryDO.java`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/dal/OntDOTest.java` (新建)
 
 - [ ] **Step 1: Write OntDefinitionDO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntDefinitionDO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntDefinitionDO.java
 package com.graphiti.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -242,7 +242,7 @@ public class OntDefinitionDO implements Serializable {
 - [ ] **Step 2: Write OntClassDO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntClassDO.java
 package com.graphiti.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -299,7 +299,7 @@ public class OntClassDO implements Serializable {
 - [ ] **Step 3: Write OntPropertyDO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntPropertyDO.java
 package com.graphiti.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -384,7 +384,7 @@ public class OntPropertyDO implements Serializable {
 - [ ] **Step 4: Write OntConstraintDO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntConstraintDO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntConstraintDO.java
 package com.graphiti.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -429,7 +429,7 @@ public class OntConstraintDO implements Serializable {
 - [ ] **Step 5: Write OntVersionHistoryDO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntVersionHistoryDO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntVersionHistoryDO.java
 package com.graphiti.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -465,7 +465,7 @@ public class OntVersionHistoryDO implements Serializable {
 - [ ] **Step 6: Write unit tests for DO classes**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/dal/OntDOTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/dal/OntDOTest.java
 package com.graphiti.module.graphiti.dal;
 
 import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
@@ -507,14 +507,14 @@ class OntDOTest {
 
 - [ ] **Step 7: Run tests to verify**
 
-Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=OntDOTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl ontograph-module-core -Dtest=OntDOTest -q`
 Expected: Both tests PASS
 
 - [ ] **Step 8: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/
-git add graphiti-module-core/src/test/java/com/graphiti/module/graphiti/dal/OntDOTest.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/
+git add ontograph-module-core/src/test/java/com/graphiti/module/graphiti/dal/OntDOTest.java
 git commit -m "phase1: add ontology DO classes (OntDefinitionDO, OntClassDO, OntPropertyDO, OntConstraintDO, OntVersionHistoryDO)"
 ```
 
@@ -523,17 +523,17 @@ git commit -m "phase1: add ontology DO classes (OntDefinitionDO, OntClassDO, Ont
 ## Task 3: Create MyBatis-Plus Mapper Interfaces
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntDefinitionMapper.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntClassMapper.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntPropertyMapper.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntConstraintMapper.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntVersionHistoryMapper.java`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMapperTest.java` (新建)
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntDefinitionMapper.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntClassMapper.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntPropertyMapper.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntConstraintMapper.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntVersionHistoryMapper.java`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMapperTest.java` (新建)
 
 - [ ] **Step 1: Write all 5 Mapper interfaces**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntDefinitionMapper.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntDefinitionMapper.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -546,7 +546,7 @@ public interface OntDefinitionMapper extends BaseMapper<OntDefinitionDO> {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntClassMapper.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntClassMapper.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -571,7 +571,7 @@ public interface OntClassMapper extends BaseMapper<OntClassDO> {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntPropertyMapper.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntPropertyMapper.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -597,7 +597,7 @@ public interface OntPropertyMapper extends BaseMapper<OntPropertyDO> {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntConstraintMapper.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntConstraintMapper.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -619,7 +619,7 @@ public interface OntConstraintMapper extends BaseMapper<OntConstraintDO> {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntVersionHistoryMapper.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntVersionHistoryMapper.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -640,7 +640,7 @@ public interface OntVersionHistoryMapper extends BaseMapper<OntVersionHistoryDO>
 - [ ] **Step 2: Write Mapper tests**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMapperTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMapperTest.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.graphiti.module.graphiti.dal.dataobject.ont.OntClassDO;
@@ -667,13 +667,13 @@ class OntMapperTest {
 
 - [ ] **Step 3: Run compile check**
 
-Run: `cd D:/projects/ontograph-java && mvn compile -pl graphiti-module-core -q`
+Run: `cd D:/projects/ontograph-java && mvn compile -pl ontograph-module-core -q`
 Expected: BUILD SUCCESS (no errors)
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/
 git commit -m "phase1: add ontology MyBatis-Plus mapper interfaces"
 ```
 
@@ -682,16 +682,16 @@ git commit -m "phase1: add ontology MyBatis-Plus mapper interfaces"
 ## Task 4: Create ValidationEngine Service
 
 **Files:**
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyValidationService.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyValidationServiceImpl.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationResultVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/exception/OntologyValidationException.java`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyValidationServiceImplTest.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyValidationService.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyValidationServiceImpl.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationResultVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/exception/OntologyValidationException.java`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyValidationServiceImplTest.java`
 
 - [ ] **Step 1: Write ValidationResultVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationResultVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationResultVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.AllArgsConstructor;
@@ -730,7 +730,7 @@ public class ValidationResultVO {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationErrorVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationErrorVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.AllArgsConstructor;
@@ -754,7 +754,7 @@ public class ValidationErrorVO {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationWarningVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationWarningVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.AllArgsConstructor;
@@ -774,7 +774,7 @@ public class ValidationWarningVO {
 - [ ] **Step 2: Write OntologyValidationException**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/exception/OntologyValidationException.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/exception/OntologyValidationException.java
 package com.graphiti.module.graphiti.exception;
 
 import com.graphiti.common.exception.BusinessException;
@@ -811,7 +811,7 @@ public class OntologyValidationException extends BusinessException {
 - [ ] **Step 3: Write OntologyValidationService interface**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyValidationService.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyValidationService.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
@@ -857,7 +857,7 @@ public interface OntologyValidationService {
 - [ ] **Step 4: Write OntologyValidationServiceImpl (核心实现)**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyValidationServiceImpl.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyValidationServiceImpl.java
 package com.graphiti.module.graphiti.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -1173,7 +1173,7 @@ public class OntologyValidationServiceImpl implements OntologyValidationService 
 - [ ] **Step 5: Write unit tests for ValidationServiceImpl**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyValidationServiceImplTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyValidationServiceImplTest.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.service.impl.OntologyValidationServiceImpl;
@@ -1219,19 +1219,19 @@ class OntologyValidationServiceImplTest {
 
 - [ ] **Step 6: Run tests**
 
-Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=OntologyValidationServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl ontograph-module-core -Dtest=OntologyValidationServiceImplTest -q`
 Expected: All tests PASS
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyValidationService.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyValidationServiceImpl.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationResultVO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationErrorVO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationWarningVO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/exception/OntologyValidationException.java
-git add graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyValidationServiceImplTest.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/OntologyValidationService.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/OntologyValidationServiceImpl.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationResultVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationErrorVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/ValidationWarningVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/exception/OntologyValidationException.java
+git add ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/OntologyValidationServiceImplTest.java
 git commit -m "phase1: add OntologyValidationService with 6-layer validation pipeline"
 ```
 
@@ -1240,8 +1240,8 @@ git commit -m "phase1: add OntologyValidationService with 6-layer validation pip
 ## Task 5: Integrate Validation into NodeServiceImpl
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java:1-157`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/NodeServiceImplTest.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java:1-157`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/NodeServiceImplTest.java`
 
 - [ ] **Step 1: Add new field declarations**
 
@@ -1308,7 +1308,7 @@ import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 - [ ] **Step 4: Write NodeServiceImpl integration test**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/NodeServiceImplTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/NodeServiceImplTest.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
@@ -1387,14 +1387,14 @@ class NodeServiceImplTest {
 
 - [ ] **Step 5: Run tests**
 
-Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=NodeServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl ontograph-module-core -Dtest=NodeServiceImplTest -q`
 Expected: All 3 tests PASS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java
-git add graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/NodeServiceImplTest.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/NodeServiceImpl.java
+git add ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/NodeServiceImplTest.java
 git commit -m "phase1: integrate OntologyValidationService into NodeServiceImpl.createNode()"
 ```
 
@@ -1403,8 +1403,8 @@ git commit -m "phase1: integrate OntologyValidationService into NodeServiceImpl.
 ## Task 6: Integrate Validation into EdgeServiceImpl
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java:1-153`
-- Test: `graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java:1-153`
+- Test: `ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java`
 
 - [ ] **Step 1: Add new field declarations**
 
@@ -1463,7 +1463,7 @@ import com.graphiti.module.graphiti.vo.ontology.ValidationResultVO;
 - [ ] **Step 4: Write EdgeServiceImpl test**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
@@ -1518,14 +1518,14 @@ class EdgeServiceImplTest {
 
 - [ ] **Step 5: Run tests**
 
-Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=EdgeServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl ontograph-module-core -Dtest=EdgeServiceImplTest -q`
 Expected: Both tests PASS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java
-git add graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/EdgeServiceImpl.java
+git add ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/EdgeServiceImplTest.java
 git commit -m "phase1: integrate OntologyValidationService into EdgeServiceImpl.createEdge()"
 ```
 
@@ -1534,15 +1534,15 @@ git commit -m "phase1: integrate OntologyValidationService into EdgeServiceImpl.
 ## Task 7: Add Batch Validation Endpoint
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java`
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationReqVO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationRespVO.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/NodeController.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/EdgeController.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationReqVO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationRespVO.java`
 
 - [ ] **Step 1: Write BatchValidationReqVO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationReqVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationReqVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Data;
@@ -1569,7 +1569,7 @@ public class BatchValidationReqVO {
 ```
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationRespVO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationRespVO.java
 package com.graphiti.module.graphiti.vo.ontology;
 
 import lombok.Builder;
@@ -1654,9 +1654,9 @@ private final OntologyValidationService ontologyValidationService;
 - [ ] **Step 4: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationReqVO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationRespVO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationReqVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/vo/ontology/BatchValidationRespVO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/controller/admin/OntologyController.java
 git commit -m "phase1: add batch validation endpoint POST /ontology/{graphId}/validate/batch"
 ```
 
@@ -1666,8 +1666,8 @@ git commit -m "phase1: add batch validation endpoint POST /ontology/{graphId}/va
 
 **Files:**
 - Modify: `sql/postgresql/V1__create_ontology_tables.sql`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntMappingDO.java`
-- Create: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMappingMapper.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntMappingDO.java`
+- Create: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMappingMapper.java`
 
 - [ ] **Step 1: Append ont_mapping table to SQL migration file**
 
@@ -1693,7 +1693,7 @@ CREATE INDEX idx_ont_mapping_source ON ont_mapping(source_ontology);
 - [ ] **Step 2: Write OntMappingDO**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntMappingDO.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntMappingDO.java
 package com.graphiti.module.graphiti.dal.dataobject.ont;
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -1737,7 +1737,7 @@ public class OntMappingDO implements Serializable {
 - [ ] **Step 3: Write OntMappingMapper**
 
 ```java
-// graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMappingMapper.java
+// ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMappingMapper.java
 package com.graphiti.module.graphiti.dal.mysql.ont;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -1763,8 +1763,8 @@ public interface OntMappingMapper extends BaseMapper<OntMappingDO> {
 
 ```bash
 git add sql/postgresql/V1__create_ontology_tables.sql
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntMappingDO.java
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMappingMapper.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/dataobject/ont/OntMappingDO.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/dal/mysql/ont/OntMappingMapper.java
 git commit -m "phase1: add ont_mapping table for external ontology alignment"
 ```
 
@@ -1773,7 +1773,7 @@ git commit -m "phase1: add ont_mapping table for external ontology alignment"
 ## Task 9: Integrate Validation into DataImportServiceImpl
 
 **Files:**
-- Modify: `graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java`
+- Modify: `ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java`
 
 - [ ] **Step 1: Read current DataImportServiceImpl**
 
@@ -1829,7 +1829,7 @@ public Map<String, Object> addEntityNode(String graphId, String name, String ent
 - [ ] **Step 4: Write test**
 
 ```java
-// graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/DataImportServiceImplTest.java
+// ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/DataImportServiceImplTest.java
 package com.graphiti.module.graphiti.service;
 
 import com.graphiti.module.graphiti.exception.OntologyValidationException;
@@ -1882,14 +1882,14 @@ class DataImportServiceImplTest {
 
 - [ ] **Step 5: Run test**
 
-Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest=DataImportServiceImplTest -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl ontograph-module-core -Dtest=DataImportServiceImplTest -q`
 Expected: Both tests PASS
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add graphiti-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java
-git add graphiti-module-core/src/test/java/com/graphiti/module/graphiti/service/DataImportServiceImplTest.java
+git add ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/DataImportServiceImpl.java
+git add ontograph-module-core/src/test/java/com/graphiti/module/graphiti/service/DataImportServiceImplTest.java
 git commit -m "phase1: integrate OntologyValidationService into DataImportServiceImpl.addEntityNode()"
 ```
 
@@ -1899,12 +1899,12 @@ git commit -m "phase1: integrate OntologyValidationService into DataImportServic
 
 - [ ] **Step 1: Run full Maven compile**
 
-Run: `cd D:/projects/ontograph-java && mvn compile -pl graphiti-module-core -am -q`
+Run: `cd D:/projects/ontograph-java && mvn compile -pl ontograph-module-core -am -q`
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: Run all new tests**
 
-Run: `cd D:/projects/ontograph-java && mvn test -pl graphiti-module-core -Dtest="OntDOTest,OntMapperTest,OntologyValidationServiceImplTest,NodeServiceImplTest,EdgeServiceImplTest,DataImportServiceImplTest" -q`
+Run: `cd D:/projects/ontograph-java && mvn test -pl ontograph-module-core -Dtest="OntDOTest,OntMapperTest,OntologyValidationServiceImplTest,NodeServiceImplTest,EdgeServiceImplTest,DataImportServiceImplTest" -q`
 Expected: All tests PASS
 
 - [ ] **Step 3: Commit**

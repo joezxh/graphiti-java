@@ -2,10 +2,10 @@
 
 <!--<cite>
 **本文引用的文件**
-- [graphiti-spring-boot-starter-redis/pom.xml](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml)
+- [graphiti-spring-boot-starter-redis/pom.xml](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml)
 - [pom.xml](file://pom.xml)
-- [application-dev.yml](file://graphiti-server/src/main/resources/application-dev.yml)
-- [application.yml](file://graphiti-server/src/main/resources/application.yml)
+- [application-dev.yml](file://ontograph-server/src/main/resources/application-dev.yml)
+- [application.yml](file://ontograph-server/src/main/resources/application.yml)
 - [docker-compose.yml](file://docker-compose.yml)
 </cite>-->
 
@@ -22,10 +22,10 @@
 10. [附录](#附录)
 
 ## 简介
-本文件面向Graphiti-Java的Redis集成模块，系统性阐述基于Redisson的集成配置与使用方法，覆盖连接配置、集群与哨兵模式、分布式锁（公平锁、读写锁、条件锁）实现原理与应用场景、缓存策略（穿透、击穿、雪崩防护）、RedisTemplate最佳实践（序列化、连接池、事务），以及在会话管理、限流控制、消息队列等场景下的使用路径与性能优化建议。文档同时提供可追溯的“章节来源”与“图表来源”，便于读者定位到具体实现文件。
+本文件面向OntoGraph的Redis集成模块，系统性阐述基于Redisson的集成配置与使用方法，覆盖连接配置、集群与哨兵模式、分布式锁（公平锁、读写锁、条件锁）实现原理与应用场景、缓存策略（穿透、击穿、雪崩防护）、RedisTemplate最佳实践（序列化、连接池、事务），以及在会话管理、限流控制、消息队列等场景下的使用路径与性能优化建议。文档同时提供可追溯的“章节来源”与“图表来源”，便于读者定位到具体实现文件。
 
 ## 项目结构
-该模块位于框架层graphiti-framework中，作为Spring Boot Starter封装Redisson能力，并引入Spring Cache以支持声明式缓存。Redis连接配置在应用配置文件中集中管理，容器编排文件提供本地Redis实例健康检查与持久化卷挂载。
+该模块位于框架层ontograph-framework中，作为Spring Boot Starter封装Redisson能力，并引入Spring Cache以支持声明式缓存。Redis连接配置在应用配置文件中集中管理，容器编排文件提供本地Redis实例健康检查与持久化卷挂载。
 
 ```mermaid
 graph TB
@@ -38,17 +38,17 @@ H["Docker Compose"] --> I["Redis 容器<br/>6379 端口<br/>健康检查"]
 ```
 
 **图表来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
+- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
 - [pom.xml:149-154](file://pom.xml#L149-L154)
-- [application-dev.yml:503-507](file://graphiti-server/src/main/resources/application-dev.yml#L503-L507)
-- [application-dev.yml:672-676](file://graphiti-server/src/main/resources/application-dev.yml#L672-L676)
+- [application-dev.yml:503-507](file://ontograph-server/src/main/resources/application-dev.yml#L503-L507)
+- [application-dev.yml:672-676](file://ontograph-server/src/main/resources/application-dev.yml#L672-L676)
 - [docker-compose.yml:93-104](file://docker-compose.yml#L93-L104)
 
 **章节来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:1-39](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L1-L39)
+- [graphiti-spring-boot-starter-redis/pom.xml:1-39](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L1-L39)
 - [pom.xml:149-154](file://pom.xml#L149-L154)
-- [application-dev.yml:503-507](file://graphiti-server/src/main/resources/application-dev.yml#L503-L507)
-- [application-dev.yml:672-676](file://graphiti-server/src/main/resources/application-dev.yml#L672-L676)
+- [application-dev.yml:503-507](file://ontograph-server/src/main/resources/application-dev.yml#L503-L507)
+- [application-dev.yml:672-676](file://ontograph-server/src/main/resources/application-dev.yml#L672-L676)
 - [docker-compose.yml:93-104](file://docker-compose.yml#L93-L104)
 
 ## 核心组件
@@ -60,8 +60,8 @@ H["Docker Compose"] --> I["Redis 容器<br/>6379 端口<br/>健康检查"]
 上述组件共同构成Redis集成的基础能力，支撑后续分布式锁、缓存策略与业务功能落地。
 
 **章节来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
-- [application-dev.yml:633-634](file://graphiti-server/src/main/resources/application-dev.yml#L633-L634)
+- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
+- [application-dev.yml:633-634](file://ontograph-server/src/main/resources/application-dev.yml#L633-L634)
 
 ## 架构总览
 下图展示了Redisson在Graphiti中的角色与配置关系，以及与应用配置、容器编排的衔接。
@@ -92,9 +92,9 @@ REDIS_ST --> REDIS
 ```
 
 **图表来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
-- [application-dev.yml:503-507](file://graphiti-server/src/main/resources/application-dev.yml#L503-L507)
-- [application-dev.yml:672-676](file://graphiti-server/src/main/resources/application-dev.yml#L672-L676)
+- [graphiti-spring-boot-starter-redis/pom.xml:19-37](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L19-L37)
+- [application-dev.yml:503-507](file://ontograph-server/src/main/resources/application-dev.yml#L503-L507)
+- [application-dev.yml:672-676](file://ontograph-server/src/main/resources/application-dev.yml#L672-L676)
 - [docker-compose.yml:93-104](file://docker-compose.yml#L93-L104)
 
 ## 详细组件分析
@@ -115,13 +115,13 @@ InitRedisson --> Ready(["就绪"])
 ```
 
 **图表来源**
-- [application-dev.yml:503-507](file://graphiti-server/src/main/resources/application-dev.yml#L503-L507)
-- [application-dev.yml:672-676](file://graphiti-server/src/main/resources/application-dev.yml#L672-L676)
+- [application-dev.yml:503-507](file://ontograph-server/src/main/resources/application-dev.yml#L503-L507)
+- [application-dev.yml:672-676](file://ontograph-server/src/main/resources/application-dev.yml#L672-L676)
 - [docker-compose.yml:93-104](file://docker-compose.yml#L93-L104)
 
 **章节来源**
-- [application-dev.yml:503-507](file://graphiti-server/src/main/resources/application-dev.yml#L503-L507)
-- [application-dev.yml:672-676](file://graphiti-server/src/main/resources/application-dev.yml#L672-L676)
+- [application-dev.yml:503-507](file://ontograph-server/src/main/resources/application-dev.yml#L503-L507)
+- [application-dev.yml:672-676](file://ontograph-server/src/main/resources/application-dev.yml#L672-L676)
 - [docker-compose.yml:93-104](file://docker-compose.yml#L93-L104)
 
 ### 分布式锁：原理与应用
@@ -151,10 +151,10 @@ end
 ```
 
 **图表来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:26-28](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L26-L28)
+- [graphiti-spring-boot-starter-redis/pom.xml:26-28](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L26-L28)
 
 **章节来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:26-28](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L26-L28)
+- [graphiti-spring-boot-starter-redis/pom.xml:26-28](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L26-L28)
 
 ### 缓存策略设计与实现
 - 缓存穿透：对空值进行短时缓存，同时结合布隆过滤器或白名单校验，避免恶意/无效查询打穿存储层。
@@ -175,10 +175,10 @@ SaveCache --> Return
 ```
 
 **图表来源**
-- [application-dev.yml:633-634](file://graphiti-server/src/main/resources/application-dev.yml#L633-L634)
+- [application-dev.yml:633-634](file://ontograph-server/src/main/resources/application-dev.yml#L633-L634)
 
 **章节来源**
-- [application-dev.yml:633-634](file://graphiti-server/src/main/resources/application-dev.yml#L633-L634)
+- [application-dev.yml:633-634](file://ontograph-server/src/main/resources/application-dev.yml#L633-L634)
 
 ### RedisTemplate使用与最佳实践
 - 序列化配置：推荐使用JSON或Kryo等高效序列化方案，确保时间类型（JSR310）正确序列化。
@@ -187,7 +187,7 @@ SaveCache --> Return
 - 命令选择：优先使用批量命令（如mget/mset）减少RTT；对热点数据采用pipeline提升吞吐。
 
 **章节来源**
-- [graphiti-spring-boot-starter-redis/pom.xml:34-36](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L34-L36)
+- [graphiti-spring-boot-starter-redis/pom.xml:34-36](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L34-L36)
 
 ### 业务场景示例（使用路径）
 - 会话管理：利用Redis存储用户会话与令牌，结合Spring Session或自定义拦截器实现跨节点会话共享。
@@ -195,7 +195,7 @@ SaveCache --> Return
 - 消息队列：使用Redis List或Stream实现异步消息传递，结合消费者组与ACK机制保证可靠性。
 
 **章节来源**
-- [application-dev.yml:633-634](file://graphiti-server/src/main/resources/application-dev.yml#L633-L634)
+- [application-dev.yml:633-634](file://ontograph-server/src/main/resources/application-dev.yml#L633-L634)
 
 ## 依赖分析
 - 版本统一：Redisson版本在根pom中集中管理，确保与Spring Boot版本兼容。
@@ -212,11 +212,11 @@ RS --> JACKSON["jackson-datatype-jsr310"]
 
 **图表来源**
 - [pom.xml:149-154](file://pom.xml#L149-L154)
-- [graphiti-spring-boot-starter-redis/pom.xml:20-36](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L20-L36)
+- [graphiti-spring-boot-starter-redis/pom.xml:20-36](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L20-L36)
 
 **章节来源**
 - [pom.xml:149-154](file://pom.xml#L149-L154)
-- [graphiti-spring-boot-starter-redis/pom.xml:20-36](file://graphiti-framework/graphiti-spring-boot-starter-redis/pom.xml#L20-L36)
+- [graphiti-spring-boot-starter-redis/pom.xml:20-36](file://ontograph-framework/graphiti-spring-boot-starter-redis/pom.xml#L20-L36)
 
 ## 性能考虑
 - 连接与序列化：复用连接、启用压缩、选择合适序列化器，降低CPU与网络开销。
@@ -233,7 +233,7 @@ RS --> JACKSON["jackson-datatype-jsr310"]
 - 性能瓶颈：使用慢查询日志与监控指标定位热点命令与慢接口。
 
 **章节来源**
-- [application-dev.yml:633-634](file://graphiti-server/src/main/resources/application-dev.yml#L633-L634)
+- [application-dev.yml:633-634](file://ontograph-server/src/main/resources/application-dev.yml#L633-L634)
 - [docker-compose.yml:93-104](file://docker-compose.yml#L93-L104)
 
 ## 结论
@@ -247,4 +247,4 @@ Graphiti的Redis集成以Redisson为核心，结合Spring Cache与Jackson JSR310
 
 **章节来源**
 - [pom.xml:40](file://pom.xml#L40)
-- [application-dev.yml:633-634](file://graphiti-server/src/main/resources/application-dev.yml#L633-L634)
+- [application-dev.yml:633-634](file://ontograph-server/src/main/resources/application-dev.yml#L633-L634)

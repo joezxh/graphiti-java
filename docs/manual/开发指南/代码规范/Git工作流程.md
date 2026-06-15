@@ -7,9 +7,9 @@
 - [README.md](file://README.md)
 - [README_CN.md](file://README_CN.md)
 - [pom.xml](file://pom.xml)
-- [graphiti-server/pom.xml](file://graphiti-server/pom.xml)
-- [graphiti-module-core/pom.xml](file://graphiti-module-core/pom.xml)
-- [graphiti-web/package.json](file://graphiti-web/package.json)
+- [ontograph-server/pom.xml](file://ontograph-server/pom.xml)
+- [ontograph-module-core/pom.xml](file://ontograph-module-core/pom.xml)
+- [ontograph-web/package.json](file://ontograph-web/package.json)
 </cite>-->
 
 ## 目录
@@ -25,17 +25,17 @@
 10. [附录](#附录)
 
 ## 简介
-本文件旨在为Graphiti-Java项目建立一套完整的Git工作流程与版本控制规范，覆盖分支管理策略、合并流程、提交消息规范、PR流程与代码审查标准、冲突解决策略、版本标签管理与发布流程、Git钩子与自动化工作流、备份与历史回滚、.gitignore配置、大型文件处理与敏感信息保护、团队协作规范与分支命名约定、以及提交频率建议。该规范以项目现有文档与配置为基础，结合实际工程实践制定，确保团队协作高效、可追溯、可审计。
+本文件旨在为OntoGraph项目建立一套完整的Git工作流程与版本控制规范，覆盖分支管理策略、合并流程、提交消息规范、PR流程与代码审查标准、冲突解决策略、版本标签管理与发布流程、Git钩子与自动化工作流、备份与历史回滚、.gitignore配置、大型文件处理与敏感信息保护、团队协作规范与分支命名约定、以及提交频率建议。该规范以项目现有文档与配置为基础，结合实际工程实践制定，确保团队协作高效、可追溯、可审计。
 
 ## 项目结构
 该项目采用多模块Maven聚合工程，包含后端框架、核心业务模块、系统管理模块与Spring Boot启动模块，同时集成前端Vue3应用。整体结构清晰，便于分模块开发与独立演进。
 
 ```mermaid
 graph TB
-A["根工程<br/>pom.xml"] --> B["graphiti-framework<br/>通用框架与Starter"]
-A --> C["graphiti-module-system<br/>系统管理模块"]
-A --> D["graphiti-module-core<br/>核心业务模块"]
-A --> E["graphiti-server<br/>Spring Boot启动模块"]
+A["根工程<br/>pom.xml"] --> B["ontograph-framework<br/>通用框架与Starter"]
+A --> C["ontograph-module-system<br/>系统管理模块"]
+A --> D["ontograph-module-core<br/>核心业务模块"]
+A --> E["ontograph-server<br/>Spring Boot启动模块"]
 E --> D
 E --> C
 D --> B
@@ -44,13 +44,13 @@ C --> B
 
 图表来源
 - [pom.xml:15-20](file://pom.xml#L15-L20)
-- [graphiti-server/pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
-- [graphiti-module-core/pom.xml:17-41](file://graphiti-module-core/pom.xml#L17-L41)
+- [ontograph-server/pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
+- [ontograph-module-core/pom.xml:17-41](file://ontograph-module-core/pom.xml#L17-L41)
 
 章节来源
 - [pom.xml:15-20](file://pom.xml#L15-L20)
-- [graphiti-server/pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
-- [graphiti-module-core/pom.xml:17-41](file://graphiti-module-core/pom.xml#L17-L41)
+- [ontograph-server/pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
+- [ontograph-module-core/pom.xml:17-41](file://ontograph-module-core/pom.xml#L17-L41)
 
 ## 核心组件
 - 多模块Maven工程：统一版本管理、依赖治理与构建流程。
@@ -61,9 +61,9 @@ C --> B
 
 章节来源
 - [pom.xml:15-20](file://pom.xml#L15-L20)
-- [graphiti-server/pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
-- [graphiti-module-core/pom.xml:17-41](file://graphiti-module-core/pom.xml#L17-L41)
-- [graphiti-web/package.json:1-32](file://graphiti-web/package.json#L1-L32)
+- [ontograph-server/pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
+- [ontograph-module-core/pom.xml:17-41](file://ontograph-module-core/pom.xml#L17-L41)
+- [ontograph-web/package.json:1-32](file://ontograph-web/package.json#L1-L32)
 
 ## 架构总览
 下图展示Git工作流在多模块工程中的落地方式：主分支用于稳定发布，开发分支承载迭代，功能分支隔离开发，PR驱动代码审查与合并，版本标签用于发布归档。
@@ -231,20 +231,20 @@ PR->>Develop : 合并至develop
 
 ```mermaid
 graph LR
-S["graphiti-server"] --> C["graphiti-module-core"]
-S --> SYS["graphiti-module-system"]
-C --> F["graphiti-framework"]
+S["ontograph-server"] --> C["ontograph-module-core"]
+S --> SYS["ontograph-module-system"]
+C --> F["ontograph-framework"]
 SYS --> F
 ```
 
 图表来源
-- [graphiti-server/pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
-- [graphiti-module-core/pom.xml:17-41](file://graphiti-module-core/pom.xml#L17-L41)
+- [ontograph-server/pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
+- [ontograph-module-core/pom.xml:17-41](file://ontograph-module-core/pom.xml#L17-L41)
 
 章节来源
 - [pom.xml:15-20](file://pom.xml#L15-L20)
-- [graphiti-server/pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)
-- [graphiti-module-core/pom.xml:17-41](file://graphiti-module-core/pom.xml#L17-L41)
+- [ontograph-server/pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)
+- [ontograph-module-core/pom.xml:17-41](file://ontograph-module-core/pom.xml#L17-L41)
 
 ## 性能考虑
 - 合理的分支策略与PR审查能显著降低合并冲突与回归风险，间接提升整体交付效率。
@@ -262,19 +262,19 @@ SYS --> F
   - 现象：PR无法自动合并。
   - 处理：在本地合并develop最新变更，解决冲突并测试通过后更新PR。
 - 前端构建失败
-  - 现象：graphiti-server打包缺失前端产物。
-  - 处理：确认graphiti-web依赖与构建产物拷贝步骤正常。
+  - 现象：ontograph-server打包缺失前端产物。
+  - 处理：确认ontograph-web依赖与构建产物拷贝步骤正常。
 
 章节来源
 - [commit-msg.txt:1-27](file://commit-msg.txt#L1-L27)
-- [graphiti-web/package.json:5-9](file://graphiti-web/package.json#L5-L9)
-- [graphiti-server/pom.xml:82-128](file://graphiti-server/pom.xml#L82-L128)
+- [ontograph-web/package.json:5-9](file://ontograph-web/package.json#L5-L9)
+- [ontograph-server/pom.xml:82-128](file://ontograph-server/pom.xml#L82-L128)
 
 ## 结论
-通过明确的分支策略、严格的PR与审查流程、规范化的提交消息与标签管理，以及完善的CI/CD与备份回滚机制，Graphiti-Java项目能够在保证质量的前提下高效推进迭代。建议团队在实践中持续优化流程，结合项目发展调整策略，确保长期可持续演进。
+通过明确的分支策略、严格的PR与审查流程、规范化的提交消息与标签管理，以及完善的CI/CD与备份回滚机制，OntoGraph项目能够在保证质量的前提下高效推进迭代。建议团队在实践中持续优化流程，结合项目发展调整策略，确保长期可持续演进。
 
 ## 附录
 - 提交消息示例参考：[commit-msg.txt:1-27](file://commit-msg.txt#L1-L27)
 - 分支与PR规范参考：[README.md:499-531](file://README.md#L499-L531)、[README_CN.md:499-531](file://README_CN.md#L499-L531)
-- 多模块工程结构参考：[pom.xml:15-20](file://pom.xml#L15-L20)、[graphiti-server/pom.xml:17-40](file://graphiti-server/pom.xml#L17-L40)、[graphiti-module-core/pom.xml:17-41](file://graphiti-module-core/pom.xml#L17-L41)
-- 前端构建与集成参考：[graphiti-web/package.json:5-9](file://graphiti-web/package.json#L5-L9)、[graphiti-server/pom.xml:82-128](file://graphiti-server/pom.xml#L82-L128)
+- 多模块工程结构参考：[pom.xml:15-20](file://pom.xml#L15-L20)、[ontograph-server/pom.xml:17-40](file://ontograph-server/pom.xml#L17-L40)、[ontograph-module-core/pom.xml:17-41](file://ontograph-module-core/pom.xml#L17-L41)
+- 前端构建与集成参考：[ontograph-web/package.json:5-9](file://ontograph-web/package.json#L5-L9)、[ontograph-server/pom.xml:82-128](file://ontograph-server/pom.xml#L82-L128)
