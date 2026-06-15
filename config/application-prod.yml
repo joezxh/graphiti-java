@@ -1,5 +1,5 @@
 # ============================================================
-# Graphiti 知识图谱后端服务 - 生产环境配置
+# OntoGraph 知识图谱后端服务 - 生产环境配置
 # ============================================================
 #
 # 【重要】此文件通过 docker-compose 挂载到容器内 /app/config/
@@ -9,7 +9,7 @@
 
 spring:
   application:
-    name: graphiti-java
+    name: ontograph-java
 
   # 数据源 (通过环境变量覆盖)
   datasource:
@@ -88,8 +88,8 @@ ai:
         model: ${SPRING_AI_OPENAI_EMBEDDING_MODEL:text-embedding-3-small}
         dimensions: ${SPRING_AI_OPENAI_EMBEDDING_DIMENSIONS:1536}
 
-# Graphiti AI Provider 选择配置
-graphiti:
+# OntoGraph AI Provider 选择配置
+ontograph:
   ai:
     # LLM 提供商: openai | qwen | ollama | anthropic | mistral | deepseek | groq | fireworks | nebius | hyperbolic | siliconflow
     llm-provider: ${GRAPHTI_AI_LLM_PROVIDER:openai}
@@ -198,7 +198,7 @@ logging:
   config: classpath:logback-prod.xml
   level:
     root: INFO
-    com.graphiti: INFO
+    com.ontograph: INFO
     org.springframework.web: INFO
     org.springframework.security: WARN
     org.neo4j.driver: WARN

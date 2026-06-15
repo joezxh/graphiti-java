@@ -599,13 +599,13 @@ graphiti:
   # Web 静态资源配置 (开发时 Vite 代理)
   web:
     resources:
-      static-locations: classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+      static-locations: classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:ontograph-web/dist/
   mvc:
     static-path-pattern: /**
   servlet:
     # 静态资源映射
     resources:
-      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:graphiti-web/dist/
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:src/main/resources/static/,file:ontograph-web/dist/
 
 # Neo4j 配置
 neo4j:
