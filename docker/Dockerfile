@@ -16,7 +16,7 @@ RUN addgroup -g 1001 -S graphiti && adduser -u 1001 -S graphiti -G graphiti
 WORKDIR /app
 
 # 从本地构建产物复制 JAR 文件
-COPY graphiti-server/target/*.jar app.jar
+COPY ontograph-backend/target/*.jar app.jar
 
 # 配置目录
 RUN mkdir -p /app/config /app/logs && chown -R graphiti:graphiti /app

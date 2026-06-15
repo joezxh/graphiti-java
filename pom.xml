@@ -13,10 +13,7 @@
     <description>OntoGraph知识图谱后端服务</description>
     
     <modules>
-        <module>ontograph-framework</module>
-        <module>ontograph-module-system</module>
-        <module>ontograph-module-core</module>
-        <module>ontograph-server</module>
+        <module>ontograph-backend</module>
         <module>ontograph-api-tester</module>
     </modules>
     
@@ -168,24 +165,7 @@
                 <version>3.1.8</version>
             </dependency>
 
-            <!-- OntoGraph Framework Module (统一模块) -->
-            <dependency>
-                <groupId>com.ontograph</groupId>
-                <artifactId>ontograph-framework</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
-            <!-- OntoGraph Business Modules -->
-            <dependency>
-                <groupId>com.ontograph</groupId>
-                <artifactId>ontograph-module-system</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ontograph</groupId>
-                <artifactId>ontograph-module-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
