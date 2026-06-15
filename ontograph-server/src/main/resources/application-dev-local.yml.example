@@ -1,0 +1,29 @@
+# 本地开发环境配置模板
+# 使用说明:
+# 1. 复制此文件为 application-dev-local.yml
+# 2. 修改为你自己的本地配置
+# 3. 在启动时添加 JVM 参数: --spring.profiles.include=dev-local
+#
+# ⚠️ 注意: 此文件不应提交到版本库!
+
+spring:
+  datasource:
+    dynamic:
+      datasource:
+        master:
+          url: jdbc:postgresql://localhost:5432/ontograph?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+          username: postgres
+          password: your_local_password
+          driver-class-name: org.postgresql.Driver
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+# Neo4j 配置
+neo4j:
+  uri: bolt://localhost:7687
+  username: neo4j
+  password: your_neo4j_password

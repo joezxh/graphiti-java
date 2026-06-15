@@ -4,6 +4,8 @@ target
 /.qoder/
 /data/
 /.env
+.env.local
+*.local.yml
 .qoder
 /ontograph-web/dist/
 /ontograph-web/node_modules/
