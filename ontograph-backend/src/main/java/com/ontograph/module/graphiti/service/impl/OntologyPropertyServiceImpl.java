@@ -1,0 +1,460 @@
+package com.ontograph.module.graphiti.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ontograph.common.exception.BusinessException;
+import com.ontograph.module.graphiti.dal.dataobject.ont.*;
+import com.ontograph.module.graphiti.dal.mysql.ont.*;
+import com.ontograph.module.graphiti.service.OntologyPropertyService;
+import com.ontograph.module.graphiti.service.OntologyReasoner;
+import com.ontograph.module.graphiti.vo.ontology.OntConstraintVO;
+import com.ontograph.module.graphiti.vo.ontology.OntPropertyVO;
+import com.ontograph.module.graphiti.vo.ontology.OntVersionHistoryVO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class OntologyPropertyServiceImpl implements OntologyPropertyService {
+
+    private final OntDefinitionMapper definitionMapper;
+    private final OntClassMapper classMapper;
+    private final OntPropertyMapper propertyMapper;
+    private final OntConstraintMapper constraintMapper;
+    private final OntVersionHistoryMapper versionHistoryMapper;
+    private final ObjectMapper objectMapper;
+    private final OntologyReasoner reasoner;
+
+    // ==================== 属性管理 ====================
+
+    @Override
+    @Transactional
+    public OntPropertyVO createProperty(String graphId, OntPropertyVO reqVO) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) throw new BusinessException(2002, "图谱未定义本体");
+
+        String propUri = reqVO.getPropertyUri();
+        if (propUri == null || propUri.isBlank()) {
+            propUri = "http://graphiti.io/" + reqVO.getLocalName();
+        }
+
+        if (reqVO.getDomainClassId() != null && classMapper.selectById(reqVO.getDomainClassId()) == null) {
+            throw new BusinessException(2004, "domainClassId 不存在: " + reqVO.getDomainClassId());
+        }
+        if (reqVO.getRangeClassId() != null && classMapper.selectById(reqVO.getRangeClassId()) == null) {
+            throw new BusinessException(2004, "rangeClassId 不存在: " + reqVO.getRangeClassId());
+        }
+
+        OntPropertyDO entity = toEntity(reqVO, defId, propUri);
+        propertyMapper.insert(entity);
+
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntPropertyVO result = toVO(entity);
+        
+        recordHistoryAsync(defId, "PROPERTY_ADDED", "PROPERTY", entity.getId(),
+            null, entity, "新增属性: " + reqVO.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public OntPropertyVO updateProperty(String graphId, Long propertyId, OntPropertyVO reqVO) {
+        OntPropertyDO existing = propertyMapper.selectById(propertyId);
+        if (existing == null) throw new BusinessException(1003, "属性不存在");
+
+        OntPropertyDO before = cloneDO(existing);
+        if (reqVO.getLocalName() != null) existing.setLocalName(reqVO.getLocalName());
+        if (reqVO.getPropertyUri() != null) existing.setPropertyUri(reqVO.getPropertyUri());
+        if (reqVO.getPropertyType() != null) existing.setPropertyType(reqVO.getPropertyType());
+        if (reqVO.getDomainClassId() != null) existing.setDomainClassId(reqVO.getDomainClassId());
+        if (reqVO.getRangeClassId() != null) existing.setRangeClassId(reqVO.getRangeClassId());
+        if (reqVO.getRangeDataType() != null) existing.setRangeDataType(reqVO.getRangeDataType());
+        if (reqVO.getIsRequired() != null) existing.setIsRequired(reqVO.getIsRequired());
+        if (reqVO.getIsMultiple() != null) existing.setIsMultiple(reqVO.getIsMultiple());
+        if (reqVO.getPattern() != null) existing.setPattern(reqVO.getPattern());
+        if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
+        if (reqVO.getExample() != null) existing.setExample(reqVO.getExample());
+        if (reqVO.getMinCardinality() != null) existing.setMinCardinality(reqVO.getMinCardinality());
+        if (reqVO.getMaxCardinality() != null) existing.setMaxCardinality(reqVO.getMaxCardinality());
+        if (reqVO.getDefaultValue() != null) existing.setDefaultValue(reqVO.getDefaultValue());
+        if (reqVO.getMinValue() != null) existing.setMinValue(reqVO.getMinValue());
+        if (reqVO.getMaxValue() != null) existing.setMaxValue(reqVO.getMaxValue());
+        if (reqVO.getParentPropertyId() != null) existing.setParentPropertyId(reqVO.getParentPropertyId());
+        if (reqVO.getInverseOfId() != null) existing.setInverseOfId(reqVO.getInverseOfId());
+        if (reqVO.getEquivalentTo() != null) {
+            try {
+                existing.setEquivalentTo(objectMapper.writeValueAsString(reqVO.getEquivalentTo()));
+            } catch (Exception e) {
+                log.warn("序列化 equivalentTo 失败", e);
+            }
+        }
+        if (reqVO.getAllowedValues() != null) {
+            try {
+                existing.setAllowedValues(objectMapper.writeValueAsString(reqVO.getAllowedValues()));
+            } catch (Exception e) {
+                log.warn("序列化 allowedValues 失败", e);
+            }
+        }
+
+        propertyMapper.updateById(existing);
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntPropertyVO result = toVO(existing);
+        
+        recordHistoryAsync(existing.getDefinitionId(), "PROPERTY_MODIFIED", "PROPERTY", propertyId,
+            before, existing, "更新属性: " + existing.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void deleteProperty(String graphId, Long propertyId) {
+        OntPropertyDO existing = propertyMapper.selectById(propertyId);
+        if (existing == null) return;
+
+        LambdaQueryWrapper<OntConstraintDO> cw = new LambdaQueryWrapper<>();
+        cw.eq(OntConstraintDO::getPropertyId, propertyId);
+        if (constraintMapper.selectCount(cw) > 0) {
+            throw new BusinessException(2005, "无法删除：存在约束引用此属性");
+        }
+
+        // 先执行删除，再记录历史，避免 recordHistory 失败导致事务 abort 后无法删除
+        propertyMapper.deleteById(propertyId);
+        recordHistoryAsync(existing.getDefinitionId(), "PROPERTY_DELETED", "PROPERTY", propertyId,
+            existing, null, "删除属性: " + existing.getLocalName(), null);
+        reasoner.shutdown(graphId); // 缓存失效
+    }
+
+    @Override
+    public OntPropertyVO getProperty(String graphId, Long propertyId) {
+        OntPropertyDO entity = propertyMapper.selectById(propertyId);
+        if (entity == null) throw new BusinessException(1003, "属性不存在");
+        return toVO(entity);
+    }
+
+    @Override
+    public List<OntPropertyVO> listProperties(String graphId) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return List.of();
+        return propertyMapper.selectByDefinitionId(defId).stream()
+            .map(this::toVO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OntPropertyVO> getPropertiesForClass(String graphId, Long classId) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return List.of();
+        return propertyMapper.selectByClassId(defId, classId).stream()
+            .map(this::toVO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getPropertyAncestors(String graphId, Long propertyId) {
+        List<String> ancestors = new ArrayList<>();
+        Set<Long> visited = new HashSet<>();
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return ancestors;
+        collectPropertyAncestors(propertyId, ancestors, visited);
+        return ancestors;
+    }
+
+    // ==================== 约束管理 ====================
+
+    @Override
+    public List<OntConstraintVO> listConstraints(String graphId) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return List.of();
+        return constraintMapper.selectByDefinitionId(defId).stream()
+            .map(this::toConstraintVO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public OntConstraintVO createConstraint(String graphId, OntConstraintVO reqVO) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) throw new BusinessException(2002, "图谱未定义本体");
+
+        OntConstraintDO entity = new OntConstraintDO();
+        entity.setDefinitionId(defId);
+        entity.setClassId(reqVO.getClassId());
+        entity.setPropertyId(reqVO.getPropertyId());
+        entity.setConstraintType(reqVO.getConstraintType());
+        entity.setValue(reqVO.getValue());
+        entity.setErrorMessage(reqVO.getErrorMessage());
+        entity.setSeverity(reqVO.getSeverity() != null ? reqVO.getSeverity() : "ERROR");
+        entity.setDescription(reqVO.getDescription());
+
+        constraintMapper.insert(entity);
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntConstraintVO result = toConstraintVO(entity);
+                
+        recordHistoryAsync(defId, "CONSTRAINT_ADDED", "CONSTRAINT", entity.getId(),
+            null, entity, "新增约束: " + reqVO.getConstraintType(), null);
+        
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public OntConstraintVO updateConstraint(String graphId, Long constraintId, OntConstraintVO reqVO) {
+        OntConstraintDO existing = constraintMapper.selectById(constraintId);
+        if (existing == null) throw new BusinessException(1003, "约束不存在");
+
+        OntConstraintDO before = cloneDO(existing);
+
+        if (reqVO.getClassId() != null) existing.setClassId(reqVO.getClassId());
+        if (reqVO.getPropertyId() != null) existing.setPropertyId(reqVO.getPropertyId());
+        if (reqVO.getConstraintType() != null) existing.setConstraintType(reqVO.getConstraintType());
+        if (reqVO.getValue() != null) existing.setValue(reqVO.getValue());
+        if (reqVO.getErrorMessage() != null) existing.setErrorMessage(reqVO.getErrorMessage());
+        if (reqVO.getSeverity() != null) existing.setSeverity(reqVO.getSeverity());
+        if (reqVO.getDescription() != null) existing.setDescription(reqVO.getDescription());
+
+        constraintMapper.updateById(existing);
+        
+        // 先转换为 VO，避免 recordHistory 失败导致事务 abort 后无法查询
+        OntConstraintVO result = toConstraintVO(existing);
+                
+        recordHistoryAsync(existing.getDefinitionId(), "CONSTRAINT_MODIFIED", "CONSTRAINT", constraintId,
+            before, existing, "更新约朿: " + existing.getConstraintType(), null);
+        
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void deleteConstraint(String graphId, Long constraintId) {
+        OntConstraintDO existing = constraintMapper.selectById(constraintId);
+        if (existing == null) return;
+    
+        // 先执行删除，再记录历史，避免 recordHistory 失败导致事务 abort 后无法删除
+        constraintMapper.deleteById(constraintId);
+    }
+
+    /**
+     * 异步记录版本历史（在独立事务中执行，不影响主事务）
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void recordHistoryAsync(Long defId, String changeType, String entityType,
+            Long entityId, Object before, Object after, String diffSummary, String changedBy) {
+        try {
+            recordHistory(defId, changeType, entityType, entityId, before, after, diffSummary, changedBy);
+        } catch (Exception e) {
+            log.warn("记录版本历史失败: {} - {}", changeType, entityType, e);
+        }
+    }
+
+    // ==================== 版本历史 ====================
+
+    @Override
+    public List<OntVersionHistoryVO> getVersionHistory(String graphId) {
+        Long defId = resolveDefinitionId(graphId);
+        if (defId == null) return List.of();
+        return versionHistoryMapper.selectByDefinitionId(defId).stream()
+            .map(this::toVersionHistoryVO).collect(Collectors.toList());
+    }
+
+    // ==================== 私有方法 ====================
+
+    private Long resolveDefinitionId(String graphId) {
+        LambdaQueryWrapper<OntDefinitionDO> w = new LambdaQueryWrapper<>();
+        w.eq(OntDefinitionDO::getGraphId, graphId);
+        w.eq(OntDefinitionDO::getStatus, "ACTIVE");
+        w.last("LIMIT 1");
+        OntDefinitionDO def = definitionMapper.selectOne(w);
+        return def != null ? def.getId() : null;
+    }
+
+    private void collectPropertyAncestors(Long propId, List<String> result, Set<Long> visited) {
+        if (visited.contains(propId)) return;
+        visited.add(propId);
+        OntPropertyDO prop = propertyMapper.selectById(propId);
+        if (prop != null && prop.getParentPropertyId() != null) {
+            OntPropertyDO parent = propertyMapper.selectById(prop.getParentPropertyId());
+            if (parent != null) {
+                result.add(parent.getLocalName());
+                collectPropertyAncestors(parent.getId(), result, visited);
+            }
+        }
+    }
+
+    private OntPropertyVO toVO(OntPropertyDO entity) {
+        OntPropertyVO vo = OntPropertyVO.builder()
+            .id(entity.getId())
+            .definitionId(entity.getDefinitionId())
+            .propertyUri(entity.getPropertyUri())
+            .localName(entity.getLocalName())
+            .propertyType(entity.getPropertyType())
+            .domainClassId(entity.getDomainClassId())
+            .rangeClassId(entity.getRangeClassId())
+            .rangeDataType(entity.getRangeDataType())
+            .minCardinality(entity.getMinCardinality())
+            .maxCardinality(entity.getMaxCardinality())
+            .defaultValue(entity.getDefaultValue())
+            .parentPropertyId(entity.getParentPropertyId())
+            .inverseOfId(entity.getInverseOfId())
+            .isRequired(entity.getIsRequired())
+            .isMultiple(entity.getIsMultiple())
+            .pattern(entity.getPattern())
+            .minValue(entity.getMinValue())
+            .maxValue(entity.getMaxValue())
+            .description(entity.getDescription())
+            .example(entity.getExample())
+            .metadata(entity.getMetadata())
+            .createdAt(entity.getCreatedAt())
+            .build();
+
+        if (entity.getAllowedValues() != null && !entity.getAllowedValues().isBlank()) {
+            try {
+                vo.setAllowedValues(objectMapper.readValue(entity.getAllowedValues(), List.class));
+            } catch (Exception e) {
+                log.warn("解析 allowedValues 失败", e);
+            }
+        }
+        if (entity.getEquivalentTo() != null && !entity.getEquivalentTo().isBlank()) {
+            try {
+                vo.setEquivalentTo(objectMapper.readValue(entity.getEquivalentTo(), List.class));
+            } catch (Exception e) {
+                log.warn("解析 equivalentTo 失败", e);
+            }
+        }
+
+        if (entity.getDomainClassId() != null) {
+            OntClassDO domain = classMapper.selectById(entity.getDomainClassId());
+            if (domain != null) vo.setDomainClassUri(domain.getClassUri());
+        }
+        if (entity.getRangeClassId() != null) {
+            OntClassDO range = classMapper.selectById(entity.getRangeClassId());
+            if (range != null) vo.setRangeClassUri(range.getClassUri());
+        }
+        if (entity.getParentPropertyId() != null) {
+            OntPropertyDO parent = propertyMapper.selectById(entity.getParentPropertyId());
+            if (parent != null) vo.setParentPropertyUri(parent.getPropertyUri());
+        }
+        if (entity.getInverseOfId() != null) {
+            OntPropertyDO inverse = propertyMapper.selectById(entity.getInverseOfId());
+            if (inverse != null) vo.setInverseOfUri(inverse.getPropertyUri());
+        }
+        return vo;
+    }
+
+    private OntConstraintVO toConstraintVO(OntConstraintDO entity) {
+        OntConstraintVO vo = new OntConstraintVO();
+        vo.setId(entity.getId());
+        vo.setDefinitionId(entity.getDefinitionId());
+        vo.setClassId(entity.getClassId());
+        vo.setPropertyId(entity.getPropertyId());
+        vo.setConstraintType(entity.getConstraintType());
+        vo.setValue(entity.getValue());
+        vo.setErrorMessage(entity.getErrorMessage());
+        vo.setSeverity(entity.getSeverity());
+        vo.setDescription(entity.getDescription());
+        vo.setCreatedAt(entity.getCreatedAt());
+        return vo;
+    }
+
+    private OntVersionHistoryVO toVersionHistoryVO(OntVersionHistoryDO entity) {
+        OntVersionHistoryVO vo = new OntVersionHistoryVO();
+        vo.setId(entity.getId());
+        vo.setDefinitionId(entity.getDefinitionId());
+        vo.setVersion(entity.getVersion());
+        vo.setChangeType(entity.getChangeType());
+        vo.setEntityType(entity.getEntityType());
+        vo.setEntityId(entity.getEntityId());
+        vo.setBeforeState(entity.getBeforeState());
+        vo.setAfterState(entity.getAfterState());
+        vo.setDiffSummary(entity.getDiffSummary());
+        vo.setChangedBy(entity.getChangedBy());
+        vo.setChangedAt(entity.getChangedAt());
+        return vo;
+    }
+
+    private OntPropertyDO toEntity(OntPropertyVO req, Long defId, String propUri) {
+        OntPropertyDO entity = new OntPropertyDO();
+        entity.setDefinitionId(defId);
+        entity.setPropertyUri(propUri);
+        entity.setLocalName(req.getLocalName());
+        entity.setPropertyType(req.getPropertyType() != null ? req.getPropertyType() : "DATATYPE");
+        entity.setDomainClassId(req.getDomainClassId());
+        entity.setRangeClassId(req.getRangeClassId());
+        entity.setRangeDataType(req.getRangeDataType());
+        entity.setMinCardinality(req.getMinCardinality());
+        entity.setMaxCardinality(req.getMaxCardinality());
+        entity.setDefaultValue(req.getDefaultValue());
+        if (req.getAllowedValues() != null) {
+            try {
+                entity.setAllowedValues(objectMapper.writeValueAsString(req.getAllowedValues()));
+            } catch (Exception e) {
+                log.warn("序列化 allowedValues 失败", e);
+            }
+        }
+        entity.setParentPropertyId(req.getParentPropertyId());
+        if (req.getEquivalentTo() != null) {
+            try {
+                entity.setEquivalentTo(objectMapper.writeValueAsString(req.getEquivalentTo()));
+            } catch (Exception e) {
+                log.warn("序列化 equivalentTo 失败", e);
+            }
+        }
+        entity.setInverseOfId(req.getInverseOfId());
+        entity.setIsRequired(req.getIsRequired() != null ? req.getIsRequired() : false);
+        entity.setIsMultiple(req.getIsMultiple() != null ? req.getIsMultiple() : false);
+        entity.setPattern(req.getPattern());
+        entity.setMinValue(req.getMinValue());
+        entity.setMaxValue(req.getMaxValue());
+        entity.setDescription(req.getDescription());
+        entity.setExample(req.getExample());
+        entity.setMetadata(req.getMetadata());
+        return entity;
+    }
+
+    private OntPropertyDO cloneDO(OntPropertyDO src) {
+        try {
+            return objectMapper.readValue(objectMapper.writeValueAsString(src), OntPropertyDO.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private OntConstraintDO cloneDO(OntConstraintDO src) {
+        try {
+            return objectMapper.readValue(objectMapper.writeValueAsString(src), OntConstraintDO.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void recordHistory(Long defId, String changeType, String entityType,
+            Long entityId, Object before, Object after, String diffSummary, String changedBy) {
+        try {
+            OntVersionHistoryDO history = new OntVersionHistoryDO();
+            history.setDefinitionId(defId);
+            history.setVersion("1.0.0");
+            history.setChangeType(changeType);
+            history.setEntityType(entityType);
+            history.setEntityId(entityId);
+            history.setBeforeState(before != null ? objectMapper.writeValueAsString(before) : null);
+            history.setAfterState(after != null ? objectMapper.writeValueAsString(after) : null);
+            history.setDiffSummary(diffSummary);
+            history.setChangedBy(changedBy);
+            versionHistoryMapper.insert(history);
+        } catch (Exception e) {
+            log.warn("记录版本历史失败", e);
+        }
+    }
+}
