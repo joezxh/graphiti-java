@@ -1,0 +1,121 @@
+# ============================================================
+# OntoGraph 生产环境 docker-compose 覆盖配置
+# ============================================================
+# 使用方式:
+#   docker-compose --profile prod up -d
+#   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ============================================================
+# 此文件需要配合 docker-compose.yml 使用
+# docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  ontograph-java:
+    profiles:
+      - prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    environment:
+      # 生产 Profile
+      - SPRING_PROFILES_ACTIVE=prod
+      # JVM 堆内存限制 (容器内存 2G 的 75%)
+      - JAVA_OPTS=-Xms512m -Xmx1536m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+      # 生产日志级别
+      - LOGGING_LEVEL_ROOT=INFO
+      - LOGGING_LEVEL_COM_GRAPHTI=INFO
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK=INFO
+      # 生产环境禁用 actuator 敏感端点
+      - SPRING_BOOT_ADMIN_CLIENT_URL=
+      # 连接池调优 (生产)
+      - SPRING_DATASOURCE_HIKARI_MAXIMUM-POOL-SIZE=20
+      - SPRING_DATASOURCE_HIKARI_MINIMUM-IDLE=5
+    volumes:
+      # 挂载外部配置目录
+      - ./config:/app/config:ro
+      # 挂载日志目录 (用于宿主机收集日志)
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health/liveness || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  postgres:
+    profiles:
+      - prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=graphiti
+      # PostgreSQL 生产调优参数
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=512MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c max_worker_processes=4
+    volumes:
+      # 数据持久化到宿主机
+      - ./data/postgres:/var/lib/postgresql/data
+      # 备份脚本挂载 (可选)
+      # - ./scripts:/scripts:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d graphiti"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    profiles:
+      - prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 384mb
+      --maxmemory-policy allkeys-lru
+      --maxmemory-samples 5
+      --lazyfree-lazy-eviction yes
+      --lazyfree-lazy-expire yes
+    volumes:
+      # 数据持久化到宿主机
+      - ./data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+# 注意: networks 已在上游 docker-compose.yml 中定义，无需重复定义
