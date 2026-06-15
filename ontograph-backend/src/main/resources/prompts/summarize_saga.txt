@@ -1,0 +1,15 @@
+Generate a summary for the following saga (long-running narrative) based on its episodes.
+
+Saga Title: {{sagaTitle}}
+Episode Count: {{episodeCount}}
+
+Episodes:
+{{episodes}}
+
+Requirements:
+1. The summary should capture the overall narrative arc.
+2. Include the beginning, key developments, and current state.
+3. Mention key entities involved throughout the saga.
+4. Keep the summary to 3-5 sentences.
+
+Output: Provide only the summary text, no JSON or markdown.

@@ -1,0 +1,18 @@
+Generate a summary for the following community of related entities in the knowledge graph.
+
+Community Name: {{communityName}}
+Member Count: {{memberCount}}
+
+Community Members:
+{{members}}
+
+Relationships within Community:
+{{relations}}
+
+Requirements:
+1. The summary should describe what unites these entities.
+2. Identify the central theme or topic of the community.
+3. Mention key members and their roles if relevant.
+4. Keep the summary to 2-4 sentences.
+
+Output: Provide only the summary text, no JSON or markdown.
