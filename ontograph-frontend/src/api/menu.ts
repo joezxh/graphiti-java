@@ -42,14 +42,14 @@ function mapMenuDO(menu: any): MenuItem {
     parentId: menu.parentId ?? 0,
     name: menu.name,
     code: menu.permission || '',
-    type: 2, // 后端 MenuDO 没有 type 字段，默认菜单
-    icon: '',
+    type: menu.type ?? 2,
+    icon: menu.icon || '',
     path: menu.url || '',
-    component: '',
+    component: menu.component || '',
     permission: menu.permission || '',
     sort: menu.sort ?? 0,
     status: menu.status ?? 1,
-    children: menu.children ? menu.children.map(mapMenuDO) : undefined
+    children: menu.children?.length ? menu.children.map(mapMenuDO) : undefined
   }
 }
 
@@ -99,17 +99,19 @@ export const menuApi = {
    * 后端: POST /admin/system/menu/create
    */
   async createMenu(data: MenuForm): Promise<{ id: number }> {
-    await request.post<{ id: number }>('/admin/system/menu/create', {
+    const resp = await request.post<{ id: number }>('/admin/system/menu/create', {
       name: data.name,
       permission: data.code,
       url: data.path,
+      component: data.component,
+      icon: data.icon,
       parentId: data.parentId,
+      type: data.type,
       sort: data.sort,
       status: data.status,
       deleted: false
     })
-    // POST 请求已执行，返回一个占位符 id
-    return { id: 0 }
+    return { id: (resp as any)?.id ?? 0 }
   },
 
   /**
@@ -122,7 +124,10 @@ export const menuApi = {
       name: data.name,
       permission: data.code,
       url: data.path,
+      component: data.component,
+      icon: data.icon,
       parentId: data.parentId,
+      type: data.type,
       sort: data.sort,
       status: data.status
     })

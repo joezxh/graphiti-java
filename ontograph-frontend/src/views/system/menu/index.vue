@@ -52,8 +52,18 @@
         :loading="loading"
         :pagination="false"
         row-key="id"
+        :scroll="{ x: 1200 }"
+        :children-column-name="'children'"
+        :default-expand-all-rows="false"
       >
         <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'name'">
+            <div class="menu-name-cell">
+              <component :is="record.icon" v-if="record.icon" class="menu-icon" />
+              <span>{{ record.name }}</span>
+            </div>
+          </template>
+
           <template v-if="column.dataIndex === 'type'">
             <a-tag :color="getTypeColor(record.type)">
               {{ getTypeText(record.type) }}
@@ -70,6 +80,10 @@
           <template v-if="column.dataIndex === 'icon'">
             <component :is="record.icon" v-if="record.icon" />
             <span v-else>-</span>
+          </template>
+
+          <template v-if="column.dataIndex === 'sort'">
+            {{ record.sort || 0 }}
           </template>
 
           <template v-if="column.dataIndex === 'action'">
@@ -173,7 +187,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, computed, onMounted } from "vue"
+import { useI18n } from "vue-i18n"
 import { message } from "ant-design-vue"
 import {
   PlusOutlined,
@@ -182,23 +197,30 @@ import {
 } from "@ant-design/icons-vue"
 import { menuApi, type MenuItem, type MenuQuery, type MenuForm } from "@/api/menu"
 
+const { t } = useI18n()
+
 const queryParams = reactive<MenuQuery>({
   name: undefined,
   status: undefined
 })
 
-const columns = [
-  { title: "common.id", dataIndex: "id", width: 60 },
-  { title: "system.menu.menuName", dataIndex: "name", width: 150 },
-  { title: "system.menu.menuCode", dataIndex: "code", width: 150 },
-  { title: "common.type", dataIndex: "type", width: 100 },
-  { title: "common.directory", dataIndex: "icon", width: 80 },
-  { title: "Path", dataIndex: "path", width: 150 },
-  { title: "system.menu.permission", dataIndex: "permission", width: 150 },
-  { title: "system.menu.sort", dataIndex: "sort", width: 80 },
-  { title: "common.status", dataIndex: "status", width: 100 },
-  { title: "common.action", dataIndex: "action", width: 250, fixed: "right" }
-]
+const columns = computed(() => [
+  {
+    title: t("system.menu.menuName"),
+    dataIndex: "name",
+    width: 220,
+    ellipsis: true
+  },
+  { title: t("common.id"), dataIndex: "id", width: 80 },
+  { title: t("system.menu.menuType"), dataIndex: "type", width: 100 },
+  { title: t("system.menu.menuCode"), dataIndex: "code", width: 160 },
+  { title: t("system.menu.menuIcon"), dataIndex: "icon", width: 100 },
+  { title: t("system.menu.menuPath"), dataIndex: "path", width: 180, ellipsis: true },
+  { title: t("system.menu.permission"), dataIndex: "permission", width: 180, ellipsis: true },
+  { title: t("system.menu.sort"), dataIndex: "sort", width: 80 },
+  { title: t("common.status"), dataIndex: "status", width: 100 },
+  { title: t("common.action"), dataIndex: "action", width: 280, fixed: "right" }
+])
 
 const menuList = ref<MenuItem[]>([])
 const loading = ref(false)
@@ -225,20 +247,21 @@ const formData = reactive<MenuForm>({
 })
 
 const formRules = {
-  parentId: [{ required: true, message: "system.menu.selectParentMenuRequired", trigger: "change" }],
-  name: [{ required: true, message: "system.menu.enterMenuName", trigger: "blur" }],
-  code: [{ required: true, message: "system.menu.enterMenuCode", trigger: "blur" }],
-  type: [{ required: true, message: "system.menu.selectMenuType", trigger: "change" }],
-  permission: [{ required: true, message: "system.menu.enterPermission", trigger: "blur" }]
+  parentId: [{ required: true, message: () => t("system.menu.selectParentMenuRequired"), trigger: "change" }],
+  name: [{ required: true, message: () => t("system.menu.enterMenuName"), trigger: "blur" }],
+  code: [{ required: true, message: () => t("system.menu.enterMenuCode"), trigger: "blur" }],
+  type: [{ required: true, message: () => t("system.menu.selectMenuType"), trigger: "change" }],
+  permission: [{ required: true, message: () => t("system.menu.enterPermission"), trigger: "blur" }]
 }
 
 const fetchMenus = async () => {
   loading.value = true
   try {
     const res = await menuApi.getMenus(queryParams)
-    menuList.value = res
+    // 将树形结构数据转换为适合表格显示的结构
+    menuList.value = res || []
   } catch (error) {
-    message.error("system.menu.loadFailed")
+    message.error(t("system.menu.loadFailed"))
   } finally {
     loading.value = false
   }
@@ -251,7 +274,7 @@ const fetchMenuOptions = async () => {
       {
         id: 0,
         parentId: -1,
-        name: "common.rootDirectory",
+        name: t("common.rootDirectory"),
         code: "",
         type: 0,
         icon: "",
@@ -264,7 +287,7 @@ const fetchMenuOptions = async () => {
       }
     ]
   } catch (error) {
-    console.error("system.menu.loadFailed", error)
+    console.error(t("system.menu.loadFailed"), error)
   }
 }
 
@@ -279,10 +302,10 @@ const getTypeColor = (type: number) => {
 
 const getTypeText = (type: number) => {
   switch (type) {
-    case 1: return "common.directory"
-    case 2: return "common.menu"
-    case 3: return "common.button"
-    default: return "common.unknown"
+    case 1: return t("common.directory")
+    case 2: return t("common.menu")
+    case 3: return t("common.button")
+    default: return t("common.unknown")
   }
 }
 
@@ -298,7 +321,7 @@ const handleReset = () => {
 
 const handleCreate = (parentId: number | null) => {
   isEdit.value = false
-  modalTitle.value = parentId ? "system.menu.newSubMenu" : "system.menu.newMenu"
+  modalTitle.value = parentId ? t("system.menu.newSubMenu") : t("system.menu.newMenu")
   resetForm()
   formData.parentId = parentId === null ? 0 : parentId
   modalVisible.value = true
@@ -306,7 +329,7 @@ const handleCreate = (parentId: number | null) => {
 
 const handleEdit = async (record: MenuItem) => {
   isEdit.value = true
-  modalTitle.value = "system.menu.editMenu"
+  modalTitle.value = t("system.menu.editMenu")
   resetForm()
 
   try {
@@ -315,7 +338,7 @@ const handleEdit = async (record: MenuItem) => {
     formData.parentId = menu.parentId
     formData.name = menu.name
     formData.code = menu.code
-    formData.type = menu.type
+    formData.type = menu.type ?? 2
     formData.icon = menu.icon
     formData.path = menu.path
     formData.component = menu.component
@@ -325,18 +348,18 @@ const handleEdit = async (record: MenuItem) => {
 
     modalVisible.value = true
   } catch (error) {
-    message.error("system.menu.getDetailFailed")
+    message.error(t("system.menu.getDetailFailed"))
   }
 }
 
 const handleDelete = async (id: number) => {
   try {
     await menuApi.deleteMenu(id)
-    message.success("system.menu.deleteSuccess")
+    message.success(t("system.menu.deleteSuccess"))
     fetchMenus()
     fetchMenuOptions()
   } catch (error: any) {
-    message.error(error.message || "system.menu.deleteSuccess")
+    message.error(error.message || t("system.menu.deleteSuccess"))
   }
 }
 
@@ -359,10 +382,10 @@ const handleSubmit = async () => {
         sort: formData.sort,
         status: formData.status
       })
-      message.success("system.menu.updateSuccess")
+      message.success(t("system.menu.updateSuccess"))
     } else {
       await menuApi.createMenu(formData)
-      message.success("system.menu.createSuccess")
+      message.success(t("system.menu.createSuccess"))
     }
 
     modalVisible.value = false
@@ -439,6 +462,45 @@ onMounted(() => {
         }
       }
     }
+
+    // 树形表格样式
+    :deep(.ant-table) {
+      .ant-table-tbody {
+        .ant-table-row {
+          &.ant-table-row-level-0 {
+            font-weight: 600;
+          }
+          
+          &.ant-table-row-level-1 {
+            font-weight: 500;
+          }
+        }
+      }
+      
+      // 展开/折叠图标
+      .ant-table-row-expand-icon {
+        margin-right: 8px;
+      }
+      
+      // 缩进线
+      .ant-table-row-indent {
+        border-left: 1px dashed #23252a;
+        margin-left: -8px;
+        padding-left: 8px;
+      }
+    }
+  }
+}
+
+// 菜单名称单元格
+.menu-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .menu-icon {
+    font-size: 16px;
+    color: #5e6ad2;
   }
 }
 </style>

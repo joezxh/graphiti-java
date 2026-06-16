@@ -146,6 +146,9 @@ CREATE TABLE sys_menu (
     url VARCHAR(200),
     parent_id BIGINT DEFAULT 0,
     sort INT DEFAULT 0,
+    type SMALLINT NOT NULL DEFAULT 2,
+    icon VARCHAR(100),
+    component VARCHAR(200),
     status SMALLINT NOT NULL DEFAULT 1,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -163,6 +166,9 @@ COMMENT ON COLUMN sys_menu.permission IS '权限标识';
 COMMENT ON COLUMN sys_menu.url IS '菜单URL';
 COMMENT ON COLUMN sys_menu.parent_id IS '父菜单ID';
 COMMENT ON COLUMN sys_menu.sort IS '排序';
+COMMENT ON COLUMN sys_menu.type IS '菜单类型（1-目录 2-菜单 3-按钮）';
+COMMENT ON COLUMN sys_menu.icon IS '菜单图标';
+COMMENT ON COLUMN sys_menu.component IS '前端组件路径';
 COMMENT ON COLUMN sys_menu.status IS '状态（0-禁用，1-启用）';
 COMMENT ON COLUMN sys_menu.create_time IS '创建时间';
 COMMENT ON COLUMN sys_menu.update_time IS '更新时间';

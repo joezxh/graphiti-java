@@ -41,17 +41,27 @@ END $$;
 
 -- 初始化系统菜单
 -- parent_id: 0 = 顶级菜单, >0 = 指向父菜单ID
-INSERT INTO sys_menu (name, permission, url, parent_id, sort, status) VALUES
-('系统管理', 'system:manage', '/system', 0, 2, 1),
-('用户管理', 'system:user:list', '/system/user', 0, 1, 1),
-('角色管理', 'system:role:list', '/system/role', 0, 2, 1),
-('菜单管理', 'system:menu:list', '/system/menu', 0, 3, 1),
-('图谱管理', 'graph:manage', '/graph', 0, 4, 1),
-('图谱列表', 'graph:list', '/graph/list', 0, 1, 1),
-('本体管理', 'ontology:manage', '/ontology', 0, 5, 1),
-('本体定义', 'ontology:definition:list', '/ontology/definition', 0, 1, 1),
-('提示词管理', 'prompt:manage', '/prompt', 0, 6, 1),
-('提示词模板', 'prompt:template:list', '/prompt/template', 0, 1, 1);
+-- type: 1-目录 2-菜单 3-按钮
+INSERT INTO sys_menu (name, permission, url, parent_id, sort, type, icon, status) VALUES
+('系统管理', 'system:manage', '/system', 0, 2, 1, 'SettingOutlined', 1),
+('用户管理', 'system:user:list', '/system/user', 0, 1, 2, 'UserOutlined', 1),
+('角色管理', 'system:role:list', '/system/role', 0, 2, 2, 'TeamOutlined', 1),
+('菜单管理', 'system:menu:list', '/system/menu', 0, 3, 2, 'MenuOutlined', 1),
+('图谱管理', 'graph:manage', '/graph', 0, 4, 1, 'NodeIndexOutlined', 1),
+('图谱列表', 'graph:list', '/graph/list', 0, 1, 2, 'UnorderedListOutlined', 1),
+('本体管理', 'ontology:manage', '/ontology', 0, 5, 1, 'ApartmentOutlined', 1),
+('本体定义', 'ontology:definition:list', '/ontology/definition', 0, 1, 2, 'ProfileOutlined', 1),
+('提示词管理', 'prompt:manage', '/prompt', 0, 6, 1, 'CommentOutlined', 1),
+('提示词模板', 'prompt:template:list', '/prompt/template', 0, 1, 2, 'FileTextOutlined', 1);
+
+-- 子菜单示例（用于演示树形结构）
+-- 注意：以下子菜单引用上面已存在的父菜单（依赖 ID 1 和 5）
+INSERT INTO sys_menu (name, permission, url, parent_id, sort, type, icon, status) VALUES
+('系统监控', 'system:monitor:list', '/system/monitor', 1, 1, 2, 'MonitorOutlined', 1),
+('操作日志', 'system:log:list', '/system/log', 1, 2, 2, 'FileTextOutlined', 1),
+('系统配置', 'system:config:list', '/system/config', 1, 3, 2, 'ToolOutlined', 1),
+('图谱导入', 'graph:import', '/graph/import', 5, 1, 2, 'ImportOutlined', 1),
+('图谱导出', 'graph:export', '/graph/export', 5, 2, 2, 'ExportOutlined', 1);
 
 -- 初始化角色菜单关联
 DO $$
@@ -89,7 +99,12 @@ BEGIN
     (super_admin_role_id, menu_id_7),
     (super_admin_role_id, menu_id_8),
     (super_admin_role_id, menu_id_9),
-    (super_admin_role_id, menu_id_10);
+    (super_admin_role_id, menu_id_10),
+    (super_admin_role_id, (SELECT id FROM sys_menu WHERE name='系统监控')),
+    (super_admin_role_id, (SELECT id FROM sys_menu WHERE name='操作日志')),
+    (super_admin_role_id, (SELECT id FROM sys_menu WHERE name='系统配置')),
+    (super_admin_role_id, (SELECT id FROM sys_menu WHERE name='图谱导入')),
+    (super_admin_role_id, (SELECT id FROM sys_menu WHERE name='图谱导出'));
 END $$;
 
 
