@@ -12,3 +12,5 @@ target
 /ontograph-server/src/main/resources/static/
 /node_modules/
 /package-lock.json
+/ontograph-frontend/node_modules/
+/ontograph-frontend/dist/

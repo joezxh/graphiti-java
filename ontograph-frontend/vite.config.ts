@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import { fileURLToPath, URL } from 'url'
 
 export default defineConfig({
   plugins: [
@@ -8,7 +8,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
   build: {
@@ -19,7 +19,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: process.env.VITE_PROXY_TARGET || 'http://localhost:8080',
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:9090',
         changeOrigin: true
       }
     }
@@ -33,7 +33,7 @@ export default defineConfig({
           'border-radius-base': '8px'
         },
         javascriptEnabled: true,
-        additionalData: `@import "${resolve(__dirname, 'src/assets/styles/dark.less').replace(/\\/g, '/')}";`
+        additionalData: `@import "${fileURLToPath(new URL('./src/assets/styles/dark.less', import.meta.url)).replace(/\\/g, '/')}";`
       }
     }
   }
