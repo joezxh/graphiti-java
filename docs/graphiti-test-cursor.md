@@ -135,7 +135,7 @@ $B url  # 期望: /login
 
 ## 0. 登录
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 登录 (Login) 测试
@@ -242,7 +242,7 @@ $B screenshot /tmp/login-issue.png
 
 ## 1. 仪表盘
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 仪表盘 (Dashboard) 测试
@@ -347,7 +347,7 @@ $B screenshot /tmp/dashboard-issue.png
 
 ### 2.1 图谱列表
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 图谱列表 (Graph List) 测试
@@ -457,7 +457,7 @@ $B screenshot /tmp/graphlist-issue.png
 
 ### 2.2 图谱 IDE
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 图谱 IDE (Graph IDE) 测试
@@ -627,7 +627,7 @@ $B screenshot /tmp/graphide-issue.png
 
 ### 2.3 图谱创建
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 图谱创建 (Graph Create) 测试
@@ -698,7 +698,7 @@ $B screenshot /tmp/graphcreate-issue.png
 
 ### 2.4 时序历史
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 时序历史 (Temporal History) 测试
@@ -795,7 +795,7 @@ $B screenshot /tmp/temporal-issue.png
 
 ### 3.1 类定义管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 类定义管理 (Data Classes) 测试
@@ -922,7 +922,7 @@ $B screenshot /tmp/classes-issue.png
 
 ### 3.2 属性管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 属性管理 (Data Properties) 测试
@@ -1061,7 +1061,7 @@ $B screenshot /tmp/properties-issue.png
 
 ### 3.3 约束管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 约束管理 (Data Constraints) 测试
@@ -1163,7 +1163,7 @@ $B screenshot /tmp/constraints-issue.png
 
 ### 3.4 实体管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 实体管理 (Data Entities) 测试
@@ -1325,7 +1325,7 @@ $B screenshot /tmp/entities-issue.png
 
 ### 3.5 边管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 边管理 (Data Edges) 测试
@@ -1475,7 +1475,7 @@ $B screenshot /tmp/edges-issue.png
 
 ### 3.6 社区管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 社区管理 (Data Communities) 测试
@@ -1596,7 +1596,7 @@ $B screenshot /tmp/communities-issue.png
 
 ### 3.7 Episode 管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## Episode 管理 (Data Episodes) 测试
@@ -1729,7 +1729,7 @@ $B screenshot /tmp/episodes-issue.png
 
 ### 3.8 社区-Episode 关联
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 社区-Episode 关联 (Community Episode) 测试
@@ -1796,7 +1796,7 @@ $B screenshot /tmp/community-episode-issue.png
 
 ### 3.9 数据导入
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 数据导入 (Data Import) 测试
@@ -1932,7 +1932,7 @@ $B screenshot /tmp/import-issue.png
 
 ### 3.10 数据导出
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 数据导出 (Data Export) 测试
@@ -2041,7 +2041,7 @@ $B screenshot /tmp/export-issue.png
 
 ### 3.11 法律知识图谱
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 法律知识图谱 (Legal Knowledge Graph) 测试
@@ -2186,7 +2186,7 @@ $B screenshot /tmp/legal-kg-issue.png
 
 ### 4.1 混合检索
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 混合检索 (Hybrid Search) 测试
@@ -2332,7 +2332,7 @@ $B screenshot /tmp/search-issue.png
 
 ### 4.2 自定义指令
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 自定义指令 (Custom Instructions) 测试
@@ -2434,7 +2434,7 @@ $B screenshot /tmp/instructions-issue.png
 
 ### 4.3 提示词管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 提示词管理 (Prompt Management) 测试
@@ -2553,7 +2553,7 @@ $B screenshot /tmp/prompt-issue.png
 
 ## 5. 个人中心
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 个人中心 (Profile) 测试
@@ -2683,7 +2683,7 @@ $B screenshot /tmp/profile-issue.png
 
 ## 6. 通知中心
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 通知中心 (Notification) 测试
@@ -2798,7 +2798,7 @@ $B screenshot /tmp/notification-issue.png
 
 ### 7.1 用户管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 用户管理 (System User) 测试
@@ -2932,7 +2932,7 @@ $B screenshot /tmp/users-issue.png
 
 ### 7.2 角色管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 角色管理 (System Role) 测试
@@ -3018,7 +3018,7 @@ $B screenshot /tmp/roles-issue.png
 
 ### 7.3 菜单管理
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 菜单管理 (System Menu) 测试
@@ -3114,7 +3114,7 @@ $B screenshot /tmp/menus-issue.png
 
 ### 7.4 系统配置
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 系统配置 (System Config) 测试
@@ -3195,7 +3195,7 @@ $B screenshot /tmp/config-issue.png
 
 ### 7.5 操作日志
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 操作日志 (System Log) 测试
@@ -3298,7 +3298,7 @@ $B screenshot /tmp/logs-issue.png
 
 ### 7.6 系统监控
 
-### 测试提示词
+#### 测试提示词
 
 ```
 ## 系统监控 (System Monitor) 测试
