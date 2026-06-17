@@ -135,8 +135,8 @@ const transformNodes = () => {
       itemStyle: {
         borderColor: isSelected ? '#58a6ff' : getNodeColor(node.type),
         borderWidth: isSelected ? 4 : 2,
-        borderCap: 'round',
-        borderJoin: 'round',
+        borderCap: 'round' as const,
+        borderJoin: 'round' as const,
         shadowBlur: isSelected ? 25 : 0,
         shadowColor: isSelected ? 'rgba(88, 166, 255, 0.8)' : 'transparent',
         color: isSelected ? 'rgba(88, 166, 255, 0.3)' : getNodeColor(node.type)
@@ -167,7 +167,8 @@ const generateOptions = () => {
   const nodes = transformNodes()
   const edges = transformEdges()
   
-  const baseOptions: echarts.EChartsOption = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const baseOptions: any = {
     backgroundColor: '#0d1117',
     animation: true,
     animationDuration: 300,
@@ -264,10 +265,6 @@ const generateOptions = () => {
           lineStyle: {
             width: 3,
             color: '#58a6ff'
-          },
-          nodeStyle: {
-            shadowBlur: 20,
-            shadowColor: 'rgba(88, 166, 255, 0.5)'
           }
         },
         
@@ -297,7 +294,7 @@ const generateOptions = () => {
       node.x = (index % cols) * 120 + 100
       node.y = Math.floor(index / cols) * 100 + 80
     })
-    baseOptions.series![0].layout = 'none'
+    baseOptions.series[0].layout = 'none'
   }
   
   // Apply dagre layout (hierarchical)
@@ -317,14 +314,15 @@ const generateOptions = () => {
       ;(children[nodeId] || []).forEach(child => assignLevel(child, level + 1))
     }
     
-    nodes.forEach((node, i) => {
+    nodes.forEach((node) => {
       if (!levels[node.id as string]) {
         assignLevel(node.id as string, 0)
       }
     })
     
     // Group by level
-    const levelGroups: Record<number, typeof nodes> = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const levelGroups: Record<number, any[]> = {}
     nodes.forEach(node => {
       const level = levels[node.id as string] || 0
       if (!levelGroups[level]) levelGroups[level] = []
@@ -348,7 +346,7 @@ const generateOptions = () => {
       })
     })
     
-    baseOptions.series![0].layout = 'none'
+    baseOptions.series[0].layout = 'none'
   }
   
   return baseOptions
@@ -403,9 +401,9 @@ const initChart = () => {
   
   // Track zoom level
   chartInstance.on('datazoom', () => {
-    const option = chartInstance!.getOption()
-    if (option.dataZoom && option.dataZoom[0]) {
-      zoom.value = (option.dataZoom[0] as any).end || 100
+    const option = chartInstance!.getOption() as any
+    if (option.dataZoom && (option.dataZoom as any[])[0]) {
+      zoom.value = (option.dataZoom as any[])[0].end || 100
     }
   })
   

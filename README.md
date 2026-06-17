@@ -715,6 +715,20 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 ### Quick Start Guide
 
 - **[User Guide (Quick Start)](docs/manual/快速开始.md)** - Complete installation and setup guide
+- **[Qoder 自动化流程快速入门](docs/qoder-quickstart.md)** - AI-driven automated pipeline from requirements to deployment
+
+### AI-Powered Automated Pipeline
+
+- **[Qoder 自动化流程架构](docs/qoder-pipeline-architecture.md)** - Complete architecture of the requirements → testing → development pipeline
+- **[Qoder 自动化流程详细文档](docs/qoder-automated-pipeline.md)** - Comprehensive guide to AI-powered development workflow
+- **[自动化流程脚本](scripts/run-automated-pipeline.sh)** - One-click automated pipeline execution
+
+**Quick Start:**
+```bash
+# Run the complete automated pipeline
+bash scripts/run-automated-pipeline.sh  # Linux/macOS
+.\scripts\run-automated-pipeline.ps1   # Windows PowerShell
+```
 
 ### Design & Architecture
 

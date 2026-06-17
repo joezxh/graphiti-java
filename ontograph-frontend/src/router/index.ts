@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { getToken, clearToken } from '@/utils/auth'
 import { authApi } from '@/api/auth'
 import { useUserStore } from '@/store/modules/user'
+import { usePermissionStore } from '@/store/modules/permission'
 import { message } from 'ant-design-vue'
 import { i18n } from '@/i18n'
 
@@ -14,6 +15,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
+    name: 'Layout',
     component: () => import('@/components/Layout/BasicLayout.vue'),
     children: [
       {
@@ -206,6 +208,7 @@ const router = createRouter({
 // 路由守卫
 let lastAuthCheck = 0
 const AUTH_CHECK_INTERVAL = 60000 // 1分钟
+let isFetchingMenus = false // 防止重复获取菜单
 
 router.beforeEach(async (to, _from) => {
   const requiresAuth = to.meta.requiresAuth === true
@@ -216,20 +219,20 @@ router.beforeEach(async (to, _from) => {
     return { name: 'Login', query: { redirect: to.fullPath } }
   }
 
-  // 需要认证且已登录，验证 token 有效性（带缓存）
+  // 需要认证且已登录
   if (requiresAuth && token) {
     const now = Date.now()
+
+    // 首次认证或缓存过期时验证 token
     if (now - lastAuthCheck > AUTH_CHECK_INTERVAL) {
       try {
         await authApi.getInfo()
         lastAuthCheck = now
       } catch (error: any) {
-        // Token 无效，清除并跳转登录页
         clearToken()
         const userStore = useUserStore()
         userStore.logout()
 
-        // 根据错误类型处理
         if (error.response?.status === 401) {
           message.error(i18n.global.t('login.sessionExpired'))
         } else {
@@ -237,6 +240,28 @@ router.beforeEach(async (to, _from) => {
         }
 
         return { name: 'Login', query: { redirect: to.fullPath } }
+      }
+    }
+
+    // 获取用户菜单并注册动态路由（首次加载时）
+    const permissionStore = usePermissionStore()
+    const userStore = useUserStore()
+    if (!permissionStore.isMenuLoaded && !isFetchingMenus) {
+      isFetchingMenus = true
+      try {
+        await userStore.fetchUserMenus()
+      } catch (error) {
+        console.error('获取用户菜单失败', error)
+      } finally {
+        isFetchingMenus = false
+      }
+    }
+
+    // 检查用户是否有权限访问该路径
+    if (to.path !== '/dashboard') {
+      const hasAccess = permissionStore.hasMenuPermission(to.path)
+      if (!hasAccess) {
+        console.warn(`[Router] 用户无权限访问: ${to.path}`)
       }
     }
   }

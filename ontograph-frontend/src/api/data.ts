@@ -105,8 +105,8 @@ export interface AddEntityNodeResp {
   type: string
 }
 
-// Mock 数据（用于历史记录展示）
-let mockImportTasks: ImportTask[] = [
+// Mock 数据（用于历史记录展示）- 保留作为参考示例
+const _mockImportTasks: ImportTask[] = [
   {
     id: 'imp-001',
     graphId: 'graph-001',
@@ -356,7 +356,8 @@ export const dataApi = {
           parsedParams = JSON.parse(log.params || '{}')
         } catch { /* ignore */ }
         const graphId = parsedParams.graphId || ''
-        const detail = parsedParams.detail || {}
+        // detail 可用于扩展导出详情展示
+        const _detail = parsedParams.detail || {}
         const status: ExportTask['status'] = log.status === 1 ? 'completed' : 'failed'
         return {
           id: `exp-${log.id}`,

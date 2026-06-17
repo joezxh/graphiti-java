@@ -11,9 +11,9 @@
         </a-button>
         <a-divider type="vertical" />
         <span style="color: #8b949e; font-size: 13px">选择要对比的版本:</span>
-        <a-select v-model:value="leftVersion" placeholder="版本A" style="width: 120px" :options="versionOptions" />
+        <a-select v-model:value="leftVersion" :placeholder="$t('version.versionA')" style="width: 120px" :options="versionOptions" />
         <span style="color: #6e7681">←→</span>
-        <a-select v-model:value="rightVersion" placeholder="版本B" style="width: 120px" :options="versionOptions" />
+        <a-select v-model:value="rightVersion" :placeholder="$t('version.versionB')" style="width: 120px" :options="versionOptions" />
         <a-button type="primary" :disabled="!leftVersion || !rightVersion" @click="handleCompare">
           对比
         </a-button>

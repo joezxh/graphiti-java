@@ -92,7 +92,7 @@
               :graph-id="effectiveGraphId"
               :ontology-mode="ontologyMode"
               @open-tab="handleOntologyOpenTab"
-              @class-selected="handleClassSelected"
+              @select-class="handleClassSelected"
               @open-episode="handleEpisodeNodeClick"
               @open-community="handleCommunityNodeClick"
             />
@@ -1310,7 +1310,7 @@ const loadCommunityTypes = async () => {
   if (!effectiveGraphId.value) return
   try {
     const res = await communityTypeApi.list(effectiveGraphId.value, 0)
-    communityTypes.value = res.data || []
+    communityTypes.value = res || []
   } catch (error) {
     console.error('加载社区类型失败:', error)
   }
@@ -1690,6 +1690,20 @@ const handleCommunityNodeClick = async (node?: any) => {
     console.error('加载社区数据失败:', error)
   } finally {
     loading.value = false
+  }
+}
+
+// 删除选中的社区
+const deleteSelectedCommunity = async () => {
+  if (!selectedCommunityDetail.value?.uuid) return
+  try {
+    await graphApi.deleteCommunity(effectiveGraphId.value, selectedCommunityDetail.value.uuid)
+    message.success(t('graphIde.deleteSuccess') || '删除成功')
+    selectedCommunityDetail.value = null
+    // 刷新社区列表
+    await handleCommunityNodeClick()
+  } catch (error) {
+    console.error('删除社区失败:', error)
   }
 }
 

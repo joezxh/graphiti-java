@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from './router'
 import { i18n } from './i18n'
 import './assets/styles/global.less'
+import { vPermission } from './directives/permission'
 
 console.log('[main.ts] 开始启动应用...')
 
@@ -16,6 +17,9 @@ app.use(pinia)
 app.use(router)
 app.use(Antd)
 app.use(i18n)
+
+// 注册权限指令
+app.directive('permission', vPermission)
 
 console.log('[main.ts] Vue 应用已创建，准备挂载...')
 

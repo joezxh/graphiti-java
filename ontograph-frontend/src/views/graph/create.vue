@@ -64,11 +64,12 @@ const formState = reactive({
 })
 
 const formRules = computed(() => {
-  const { proxy } = getCurrentInstance()!
+  const instance = getCurrentInstance()
+  const proxy = instance?.proxy
   return {
     name: [
-      { required: true, message: proxy.$t("graph.enterGraphName"), trigger: "blur" },
-      { min: 2, max: 50, message: proxy.$t("graph.graphNameLength"), trigger: "blur" }
+      { required: true, message: proxy?.$t("graph.enterGraphName") || '请输入图谱名称', trigger: "blur" },
+      { min: 2, max: 50, message: proxy?.$t("graph.graphNameLength") || '名称长度2-50字符', trigger: "blur" }
     ]
   }
 })
@@ -77,12 +78,12 @@ const handleSubmit = async () => {
   submitting.value = true
   try {
     await graphApi.create(formState as Graph)
-    const { proxy } = getCurrentInstance()!
-    message.success(proxy.$t("graph.createSuccess") as string)
+    const proxy = getCurrentInstance()?.proxy
+    message.success(proxy?.$t("graph.createSuccess") as string || '创建成功')
     router.push("/graph/list")
   } catch (err: any) {
-    const { proxy } = getCurrentInstance()!
-    message.error(err.message || proxy.$t("common.error") as string)
+    const proxy = getCurrentInstance()?.proxy
+    message.error(err.message || proxy?.$t("common.error") as string || '操作失败')
   } finally {
     submitting.value = false
   }

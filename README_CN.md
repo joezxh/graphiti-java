@@ -715,6 +715,20 @@ OPTIONS {indexConfig: {`vector.dimensions`: 1536, `vector.similarity_function`: 
 ### 快速入门
 
 - **[使用手册（快速开始）](docs/manual/快速开始.md)** - 完整的安装和配置指南
+- **[Qoder 自动化流程快速入门](docs/qoder-quickstart.md)** - AI 驱动的需求→测试→研发自动化流程
+
+### AI 驱动自动化流程
+
+- **[Qoder 自动化流程架构](docs/qoder-pipeline-architecture.md)** - 完整的自动化流程架构图
+- **[Qoder 自动化流程详细文档](docs/qoder-automated-pipeline.md)** - AI 辅助开发工作流完整指南
+- **[自动化流程脚本](scripts/run-automated-pipeline.sh)** - 一键执行自动化流程
+
+**快速开始：**
+```bash
+# 运行完整自动化流程
+bash scripts/run-automated-pipeline.sh  # Linux/macOS
+.\scripts\run-automated-pipeline.ps1   # Windows PowerShell
+```
 
 ### 设计与架构
 

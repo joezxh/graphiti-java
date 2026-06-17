@@ -149,7 +149,7 @@ watch(() => props.visible, (val) => {
       // Edit mode
       formState.name = props.node.name || ''
       formState.type = props.node.type || ''
-      formState.properties = { ...props.node.properties } || {}
+      formState.properties = props.node.properties ? { ...props.node.properties } : {}
     } else {
       // Create mode
       formState.name = ''

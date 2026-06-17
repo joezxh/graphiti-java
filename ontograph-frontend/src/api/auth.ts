@@ -1,5 +1,6 @@
 import request from './request'
 import type { LoginResult } from '@/utils/auth'
+import type { MenuItem } from './menu'
 
 /**
  * 登录表单
@@ -46,6 +47,14 @@ export const authApi = {
    */
   getInfo: (): Promise<UserInfo> => {
     return request.get('/auth/info')
+  },
+
+  /**
+   * 获取当前用户的菜单树
+   * GET /auth/menus
+   */
+  getMenus: (): Promise<MenuItem[]> => {
+    return request.get('/auth/menus')
   }
 }
 

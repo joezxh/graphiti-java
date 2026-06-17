@@ -1,4 +1,5 @@
 import request from './request'
+import { episodeApi } from './episode'
 
 // 类型定义（扩展自 api/graph.ts）
 export interface Graph {
@@ -57,6 +58,7 @@ export interface ClassInstance {
   summary?: string
   createdAt?: string
   updatedAt?: string
+  inCanvas?: boolean
 }
 
 export interface GraphMetadata {
@@ -302,6 +304,34 @@ export const graphApi = {
   // 删除 Episode
   async deleteEpisode(graphId: string, episodeUuid: string): Promise<void> {
     return request.delete(`/graph/episode/${graphId}/${episodeUuid}`)
+  },
+
+  // 更新 Episode
+  async updateEpisode(graphId: string, episodeUuid: string, data: {
+    name?: string
+    source?: string
+    sourceDescription?: string
+    content?: string
+    episodeType?: string
+    startTime?: string
+    endTime?: string
+    caseId?: string
+  }): Promise<any> {
+    return request.put(`/graph/episode/${graphId}/${episodeUuid}`, data)
+  },
+
+  // 创建 Episode
+  async createEpisode(graphId: string, data: {
+    name?: string
+    source?: string
+    sourceDescription?: string
+    content?: string
+    episodeType?: string
+    startTime?: string
+    endTime?: string
+    caseId?: string
+  }): Promise<any> {
+    return episodeApi.create(graphId, data as any)
   },
 
   // ===== Ontology 操作 =====

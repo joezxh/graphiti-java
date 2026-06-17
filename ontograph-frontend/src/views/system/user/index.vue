@@ -166,6 +166,9 @@ import {
 } from "@ant-design/icons-vue"
 import { userApi, type User, type UserQuery, type UserForm } from "@/api/user"
 import { roleApi, type Role } from "@/api/role"
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 
 const queryParams = reactive<UserQuery>({
   username: undefined,
@@ -176,14 +179,14 @@ const queryParams = reactive<UserQuery>({
 })
 
 const columns = [
-  { title: "common.id", dataIndex: "id", width: 60 },
-  { title: "system.user.username", dataIndex: "username", width: 120 },
-  { title: "system.user.nickname", dataIndex: "nickname", width: 120 },
-  { title: "system.user.email", dataIndex: "email", width: 180 },
-  { title: "system.user.phone", dataIndex: "phone", width: 130 },
-  { title: "common.status", dataIndex: "status", width: 100 },
-  { title: "common.createdAt", dataIndex: "createdAt", width: 170 },
-  { title: "common.action", dataIndex: "action", width: 220, fixed: "right" }
+  { title: t("common.id"), dataIndex: "id", width: 60 },
+  { title: t("system.user.username"), dataIndex: "username", width: 120 },
+  { title: t("system.user.nickname"), dataIndex: "nickname", width: 120 },
+  { title: t("system.user.email"), dataIndex: "email", width: 180 },
+  { title: t("system.user.phone"), dataIndex: "phone", width: 130 },
+  { title: t("common.status"), dataIndex: "status", width: 100 },
+  { title: t("common.createdAt"), dataIndex: "createdAt", width: 170 },
+  { title: t("common.action"), dataIndex: "action", width: 220, fixed: "right" }
 ]
 
 const userList = ref<User[]>([])
@@ -215,18 +218,18 @@ const formData = reactive<UserForm>({
 })
 
 const formRules = {
-  username: [{ required: true, message: "system.user.enterUsername", trigger: "blur" }],
-  nickname: [{ required: true, message: "system.user.enterNickname", trigger: "blur" }],
+  username: [{ required: true, message: t("system.user.enterUsername"), trigger: "blur" }],
+  nickname: [{ required: true, message: t("system.user.enterNickname"), trigger: "blur" }],
   password: [
-    { required: true, message: "system.user.enterPassword", trigger: "blur" },
-    { min: 6, message: "system.user.passwordMin", trigger: "blur" }
+    { required: true, message: t("system.user.enterPassword"), trigger: "blur" },
+    { min: 6, message: t("system.user.passwordMin"), trigger: "blur" }
   ],
   email: [
-    { required: true, message: "system.user.enterEmail", trigger: "blur" },
-    { type: "email", message: "system.user.invalidEmail", trigger: "blur" }
+    { required: true, message: t("system.user.enterEmail"), trigger: "blur" },
+    { type: "email", message: t("system.user.invalidEmail"), trigger: "blur" }
   ],
-  phone: [{ required: true, message: "system.user.enterPhone", trigger: "blur" }],
-  roleIds: [{ required: true, message: "system.user.selectRole", trigger: "change" }]
+  phone: [{ required: true, message: t("system.user.enterPhone"), trigger: "blur" }],
+  roleIds: [{ required: true, message: t("system.user.selectRole"), trigger: "change" }]
 }
 
 const fetchUsers = async () => {
@@ -238,7 +241,7 @@ const fetchUsers = async () => {
     pagination.pageSize = res.pageSize
     pagination.total = res.total
   } catch (error) {
-    message.error("system.user.loadFailed")
+    message.error(t("system.user.loadFailed"))
   } finally {
     loading.value = false
   }
@@ -274,14 +277,14 @@ const handleTableChange = (pag: any) => {
 
 const handleCreate = () => {
   isEdit.value = false
-  modalTitle.value = "system.user.newUser"
+  modalTitle.value = t("system.user.newUser")
   resetForm()
   modalVisible.value = true
 }
 
 const handleEdit = async (record: User) => {
   isEdit.value = true
-  modalTitle.value = "system.user.editUser"
+  modalTitle.value = t("system.user.editUser")
   resetForm()
 
   try {
@@ -295,26 +298,26 @@ const handleEdit = async (record: User) => {
 
     modalVisible.value = true
   } catch (error) {
-    message.error("system.user.getDetailFailed")
+    message.error(t("system.user.getDetailFailed"))
   }
 }
 
 const handleResetPassword = async (record: User) => {
   try {
     await userApi.resetPassword(record.id)
-    message.success("system.user.passwordResetSuccess")
+    message.success(t("system.user.passwordResetSuccess"))
   } catch (error) {
-    message.error("system.user.resetFailed")
+    message.error(t("system.user.resetFailed"))
   }
 }
 
 const handleDelete = async (id: number) => {
   try {
     await userApi.deleteUser(id)
-    message.success("system.user.deleteSuccess")
+    message.success(t("system.user.deleteSuccess"))
     fetchUsers()
   } catch (error) {
-    message.error("system.user.deleteSuccess")
+    message.error(t("system.user.deleteSuccess"))
   }
 }
 
@@ -332,10 +335,10 @@ const handleSubmit = async () => {
         status: formData.status,
         roleIds: formData.roleIds
       })
-      message.success("system.user.updateSuccess")
+      message.success(t("system.user.updateSuccess"))
     } else {
       await userApi.createUser(formData)
-      message.success("system.user.createSuccess")
+      message.success(t("system.user.createSuccess"))
     }
 
     modalVisible.value = false

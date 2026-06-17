@@ -19,23 +19,23 @@
           <a-divider type="vertical" />
           <a-button @click="importExportRef?.open()">
             <template #icon><UploadOutlined /></template>
-            导入
+            {{ $t('common.import') }}
           </a-button>
           <a-button @click="handleQuickExport">
             <template #icon><DownloadOutlined /></template>
-            导出
+            {{ $t('common.export') }}
           </a-button>
           <a-divider type="vertical" />
           <a-button :loading="refreshing" @click="handleRefresh">
             <template #icon><ReloadOutlined /></template>
-            刷新
+            {{ $t('common.refresh') }}
           </a-button>
         </a-space>
       </div>
       <div class="toolbar-right">
         <a-input-search
           v-model:value="keyword"
-          placeholder="搜索..."
+          :placeholder="$t('common.searchPlaceholder')"
           style="width: 200px"
           @search="loadData"
           @change="debouncedSearch"

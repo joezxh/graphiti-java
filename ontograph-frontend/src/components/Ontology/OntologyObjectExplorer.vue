@@ -5,7 +5,7 @@
   <div class="object-explorer">
     <!-- 全局搜索 + 工具栏 -->
     <div class="explorer-search-toolbar">
-      <a-input-search v-model:value="searchKeyword" placeholder="搜索本体..." size="small" allow-clear @search="handleSearch" @change="handleSearch" class="search-input"><template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template></a-input-search>
+      <a-input-search v-model:value="searchKeyword" :placeholder="$t('common.searchPlaceholder')" size="small" allow-clear @search="handleSearch" @change="handleSearch" class="search-input"><template #prefix><SearchOutlined style="color: #6e7681; font-size: 12px" /></template></a-input-search>
       <div class="toolbar-actions">
         <a-tooltip title="刷新">
           <a-button type="text" size="small" :loading="store.loading" @click="handleRefresh" class="toolbar-btn">
@@ -96,12 +96,23 @@ const props = defineProps<{
   ontologyMode?: 'class' | 'episodes' | 'communities'
 }>()
 
-const emit = defineEmits<{
-  (e: 'open-tab', payload: { type: string; title: string; classId?: number; propertyId?: number; constraintId?: number; classType?: string; schemaClass?: any }): void
-  (e: 'class-selected', classId: number): void
-  (e: 'open-episode', payload?: { stageNode?: any; processNode?: any }): void
-  (e: 'open-community', payload?: { node?: any }): void
-}>()
+// Event payloads
+interface OntologyOpenTabPayload {
+  type: string
+  title: string
+  classId?: number
+  propertyId?: number
+  constraintId?: number
+  classType?: string
+  schemaClass?: any
+}
+
+const emit = defineEmits({
+  'open-tab': (payload: OntologyOpenTabPayload) => true,
+  'select-class': (classId: number) => typeof classId === 'number',
+  'open-episode': (payload: any) => true,
+  'open-community': (payload: any) => true
+})
 
 const store = useOntologyStore()
 const searchKeyword = ref('')
@@ -196,7 +207,8 @@ function handleNodeSelect(keys: (string | number)[]) {
     case 'class': {
       const schemaClass = store.classes.find(c => c.id === node.classId)
       emit('open-tab', { type: 'class-instance-view', title: `实例: ${node.title}`, classId: node.classId, schemaClass })
-      emit('class-selected', node.classId)
+      // @ts-ignore
+      emit('select-class', node.classId)
       break
     }
     case 'property':

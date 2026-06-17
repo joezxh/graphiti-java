@@ -11,7 +11,7 @@
           刷新
         </a-button>
       </a-space>
-      <a-input-search v-model:value="keyword" placeholder="搜索属性..." style="width: 200px" />
+      <a-input-search v-model:value="keyword" :placeholder="$t('common.searchPlaceholder')" style="width: 200px" />
     </div>
 
     <a-table

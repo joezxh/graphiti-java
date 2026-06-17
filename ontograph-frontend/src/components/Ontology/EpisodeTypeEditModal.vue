@@ -16,46 +16,46 @@
       :label-col="{ span: 6 }"
       :wrapper-col="{ span: 18 }"
     >
-      <a-form-item label="类型代码" name="typeCode">
-        <a-input v-model:value="form.typeCode" placeholder="如: trial, appeal" :disabled="isEdit" />
+      <a-form-item :label="$t('episodeType.typeCode')" name="typeCode">
+        <a-input v-model:value="form.typeCode" :placeholder="$t('episodeType.placeholderTypeCode')" :disabled="isEdit" />
       </a-form-item>
 
-      <a-form-item label="类型名称" name="typeName">
-        <a-input v-model:value="form.typeName" placeholder="如: 一审庭审" />
+      <a-form-item :label="$t('episodeType.typeName')" name="typeName">
+        <a-input v-model:value="form.typeName" :placeholder="$t('episodeType.placeholderTypeName')" />
       </a-form-item>
 
-      <a-form-item label="英文名称" name="typeNameEn">
-        <a-input v-model:value="form.typeNameEn" placeholder="英文名称（可选）" />
+      <a-form-item :label="$t('episodeType.typeNameEn')" name="typeNameEn">
+        <a-input v-model:value="form.typeNameEn" :placeholder="$t('episodeType.placeholderTypeNameEn')" />
       </a-form-item>
 
-      <a-form-item label="父类型" name="parentTypeCode">
+      <a-form-item :label="$t('episodeType.parentType')" name="parentTypeCode">
         <a-tree-select
           v-model:value="form.parentTypeCode"
           :tree-data="parentOptions"
-          placeholder="选择父类型（可选）"
+          :placeholder="$t('episodeType.placeholderParentType')"
           allow-clear
           tree-default-expand-all
           @change="handleParentChange"
         />
       </a-form-item>
 
-      <a-form-item label="层级" name="level">
+      <a-form-item :label="$t('episodeType.level')" name="level">
         <a-input-number v-model:value="form.level" :min="1" :max="5" style="width: 100%" />
       </a-form-item>
 
-      <a-form-item label="流程类型" name="processType">
-        <a-input v-model:value="form.processType" placeholder="如: business_process" />
+      <a-form-item :label="$t('episodeType.processType')" name="processType">
+        <a-input v-model:value="form.processType" :placeholder="$t('episodeType.placeholderProcessType')" />
       </a-form-item>
 
-      <a-form-item label="阶段标签" name="stageLabel">
-        <a-input v-model:value="form.stageLabel" placeholder="如: 立案, 庭审" />
+      <a-form-item :label="$t('episodeType.stageLabel')" name="stageLabel">
+        <a-input v-model:value="form.stageLabel" :placeholder="$t('episodeType.placeholderStageLabel')" />
       </a-form-item>
 
-      <a-form-item label="阶段级别" name="stageLevel">
-        <a-input v-model:value="form.stageLevel" placeholder="如: 初级, 高级" />
+      <a-form-item :label="$t('episodeType.stageLevel')" name="stageLevel">
+        <a-input v-model:value="form.stageLevel" :placeholder="$t('episodeType.placeholderStageLevel')" />
       </a-form-item>
 
-      <a-form-item label="审查阶段" name="isReviewStage">
+      <a-form-item :label="$t('episodeType.isReviewStage')" name="isReviewStage">
         <a-switch v-model:checked="form.isReviewStage" />
       </a-form-item>
 

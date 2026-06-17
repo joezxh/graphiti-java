@@ -48,6 +48,7 @@ export interface EdgeListItem {
   uuid: string
   name: string | null
   fact: string
+  type?: string
   sourceNodeUuid: string
   targetNodeUuid: string
   groupId: string

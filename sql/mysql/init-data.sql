@@ -36,17 +36,17 @@ SET @super_admin_role_id = (SELECT id FROM sys_role WHERE code = 'SUPER_ADMIN');
 INSERT INTO sys_user_role (user_id, role_id) VALUES (@admin_user_id, @super_admin_role_id);
 
 -- 初始化系统菜单
-INSERT INTO sys_menu (name, permission, url, parent_id, sort, status) VALUES
-('系统管理', 'system:manage', '/system', 0, 1, 1),
-('用户管理', 'system:user:list', '/system/user', 1, 1, 1),
-('角色管理', 'system:role:list', '/system/role', 1, 2, 1),
-('菜单管理', 'system:menu:list', '/system/menu', 1, 3, 1),
-('图谱管理', 'graph:manage', '/graph', 0, 2, 1),
-('图谱列表', 'graph:list', '/graph/list', 5, 1, 1),
-('本体管理', 'ontology:manage', '/ontology', 0, 3, 1),
-('本体定义', 'ontology:definition:list', '/ontology/definition', 7, 1, 1),
-('提示词管理', 'prompt:manage', '/prompt', 0, 4, 1),
-('提示词模板', 'prompt:template:list', '/prompt/template', 9, 1, 1);
+INSERT INTO sys_menu (name, permission, url, parent_id, sort, type, icon, status) VALUES
+('系统管理', 'system:manage', '/system', 0, 1, 1, 'SettingOutlined', 1),
+('用户管理', 'system:user:list', '/system/user', 1, 1, 2, 'UserOutlined', 1),
+('角色管理', 'system:role:list', '/system/role', 1, 2, 2, 'TeamOutlined', 1),
+('菜单管理', 'system:menu:list', '/system/menu', 1, 3, 2, 'MenuOutlined', 1),
+('图谱管理', 'graph:manage', '/graph', 0, 2, 1, 'ShareAltOutlined', 1),
+('图谱列表', 'graph:list', '/graph/list', 5, 1, 2, 'UnorderedListOutlined', 1),
+('本体管理', 'ontology:manage', '/ontology', 0, 3, 1, 'ApartmentOutlined', 1),
+('本体定义', 'ontology:definition:list', '/ontology/definition', 7, 1, 2, 'BookOutlined', 1),
+('提示词管理', 'prompt:manage', '/prompt', 0, 4, 1, 'MessageOutlined', 1),
+('提示词模板', 'prompt:template:list', '/prompt/template', 9, 1, 2, 'FileTextOutlined', 1);
 
 -- 初始化角色菜单关联
 SET @super_admin_role_id = (SELECT id FROM sys_role WHERE code = 'SUPER_ADMIN');
