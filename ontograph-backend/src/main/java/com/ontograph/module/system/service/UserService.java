@@ -57,4 +57,11 @@ public interface UserService {
      * @return 分页结果 {list, total}
      */
     java.util.Map<String, Object> listUsers(Integer pageNo, Integer pageSize, String username, String nickname, Integer status);
+
+    /**
+     * 重置用户密码
+     * @param userId 用户ID
+     * @return 新密码（明文，仅此次返回）
+     */
+    String resetPassword(Long userId);
 }

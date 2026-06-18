@@ -1,6 +1,7 @@
 package com.ontograph.module.system.service;
 
 import com.ontograph.module.system.dal.dataobject.OperationLogDO;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +33,10 @@ public interface OperationLogService {
     void clearLogs();
 
     /**
-     * 导出所有日志
+     * 导出日志为 Excel 文件
      */
-    List<OperationLogDO> exportLogs(String username, String operation,
-                                      Integer status, String startTime, String endTime);
+    void exportLogs(String username, String operation, Integer status,
+                    String startTime, String endTime, HttpServletResponse response);
 
     /**
      * 记录日志（供 AOP 拦截器调用）

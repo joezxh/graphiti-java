@@ -123,8 +123,7 @@ export const systemApi = {
       configType: data.configType,
       groupName: data.groupName,
       sortNum: data.sortNum,
-      status: data.status,
-      deleted: false
+      status: data.status
     })
     return { id: 0 }
   },

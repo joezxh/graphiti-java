@@ -71,4 +71,13 @@ public class UserController {
             @RequestParam(required = false) @Parameter(description = "状态") Integer status) {
         return CommonResult.success(userService.listUsers(pageNo, pageSize, username, nickname, status));
     }
+
+    @PutMapping("/reset-password/{userId}")
+    @Operation(summary = "重置用户密码", description = "重置指定用户的密码为默认密码",
+               security = {@SecurityRequirement(name = "Bearer Authentication")})
+    public CommonResult<String> resetPassword(
+            @PathVariable @Parameter(description = "用户ID", required = true, example = "1") Long userId) {
+        String newPassword = userService.resetPassword(userId);
+        return CommonResult.success(newPassword);
+    }
 }

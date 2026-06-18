@@ -97,6 +97,8 @@
       v-model:open="modalVisible"
       :title="modalTitle"
       :confirm-loading="submitLoading"
+      :ok-text="$t('common.confirm')"
+      :cancel-text="$t('common.cancel')"
       width="600px"
       @ok="handleSubmit"
       @cancel="handleCancel"
@@ -142,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, onMounted, computed } from "vue"
 import { message } from "ant-design-vue"
 import {
   PlusOutlined,
@@ -151,6 +153,9 @@ import {
 } from "@ant-design/icons-vue"
 import { roleApi, type Role, type RoleQuery, type RoleForm } from "@/api/role"
 import { menuApi, type MenuItem } from "@/api/menu"
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 
 const queryParams = reactive<RoleQuery>({
   name: undefined,
@@ -160,15 +165,15 @@ const queryParams = reactive<RoleQuery>({
   pageSize: 10
 })
 
-const columns = [
-  { title: "common.id", dataIndex: "id", width: 60 },
-  { title: "system.role.roleName", dataIndex: "name", width: 120 },
-  { title: "system.role.roleCode", dataIndex: "code", width: 120 },
-  { title: "common.description", dataIndex: "description", width: 200 },
-  { title: "common.status", dataIndex: "status", width: 100 },
-  { title: "common.createdAt", dataIndex: "createdAt", width: 170 },
-  { title: "common.action", dataIndex: "action", width: 150, fixed: "right" }
-]
+const columns = computed(() => [
+  { title: t("common.id"), dataIndex: "id", width: 60 },
+  { title: t("system.role.roleName"), dataIndex: "name", width: 120 },
+  { title: t("system.role.roleCode"), dataIndex: "code", width: 120 },
+  { title: t("common.description"), dataIndex: "description", width: 200 },
+  { title: t("common.status"), dataIndex: "status", width: 100 },
+  { title: t("common.createdAt"), dataIndex: "createdAt", width: 170 },
+  { title: t("common.action"), dataIndex: "action", width: 150, fixed: "right" }
+])
 
 const roleList = ref<Role[]>([])
 const loading = ref(false)
@@ -197,9 +202,9 @@ const formData = reactive<RoleForm>({
 })
 
 const formRules = {
-  name: [{ required: true, message: "system.role.enterRoleName", trigger: "blur" }],
-  code: [{ required: true, message: "system.role.enterRoleCode", trigger: "blur" }],
-  menuIds: [{ required: true, message: "system.role.selectMenuPermission", trigger: "change" }]
+  name: [{ required: true, message: t("system.role.enterRoleName"), trigger: "blur" }],
+  code: [{ required: true, message: t("system.role.enterRoleCode"), trigger: "blur" }],
+  menuIds: [{ required: false, message: t("system.role.selectMenuPermission"), trigger: "change" }]
 }
 
 const fetchRoles = async () => {
@@ -211,7 +216,7 @@ const fetchRoles = async () => {
     pagination.pageSize = res.pageSize
     pagination.total = res.total
   } catch (error) {
-    message.error("system.role.loadFailed")
+    message.error(t("system.role.loadFailed"))
   } finally {
     loading.value = false
   }
@@ -247,14 +252,14 @@ const handleTableChange = (pag: any) => {
 
 const handleCreate = () => {
   isEdit.value = false
-  modalTitle.value = "system.role.newRole"
+  modalTitle.value = t("system.role.newRole")
   resetForm()
   modalVisible.value = true
 }
 
 const handleEdit = async (record: Role) => {
   isEdit.value = true
-  modalTitle.value = "system.role.editRole"
+  modalTitle.value = t("system.role.editRole")
   resetForm()
 
   try {
@@ -267,17 +272,17 @@ const handleEdit = async (record: Role) => {
 
     modalVisible.value = true
   } catch (error) {
-    message.error("system.role.getDetailFailed")
+    message.error(t("system.role.getDetailFailed"))
   }
 }
 
 const handleDelete = async (id: number) => {
   try {
     await roleApi.deleteRole(id)
-    message.success("system.role.deleteSuccess")
+    message.success(t("system.role.deleteSuccess"))
     fetchRoles()
   } catch (error) {
-    message.error("system.role.deleteSuccess")
+    message.error(t("system.role.deleteFailed"))
   }
 }
 
@@ -295,10 +300,10 @@ const handleSubmit = async () => {
         status: formData.status,
         menuIds: formData.menuIds
       })
-      message.success("system.role.updateSuccess")
+      message.success(t("system.role.updateSuccess"))
     } else {
       await roleApi.createRole(formData)
-      message.success("system.role.createSuccess")
+      message.success(t("system.role.createSuccess"))
     }
 
     modalVisible.value = false

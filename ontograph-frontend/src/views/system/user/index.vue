@@ -7,10 +7,21 @@
           <p class="page-description">{{ $t("system.user.titleDesc") }}</p>
         </div>
         <div class="header-actions">
-          <a-button type="primary" @click="handleCreate">
-            <template #icon><PlusOutlined /></template>
-            {{ $t("system.user.createUser") }}
-          </a-button>
+          <a-space>
+            <a-button
+              type="primary"
+              danger
+              :disabled="selectedRowKeys.length === 0"
+              @click="handleBatchDelete"
+            >
+              <template #icon><DeleteOutlined /></template>
+              {{ $t("system.user.batchDelete") }} ({{ selectedRowKeys.length }})
+            </a-button>
+            <a-button type="primary" @click="handleCreate">
+              <template #icon><PlusOutlined /></template>
+              {{ $t("system.user.createUser") }}
+            </a-button>
+          </a-space>
         </div>
       </div>
     </a-card>
@@ -59,15 +70,19 @@
         :data-source="userList"
         :loading="loading"
         :pagination="pagination"
+        :row-selection="rowSelection"
         @change="handleTableChange"
         row-key="id"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'status'">
-            <a-badge :status="record.status === 1 ? 'success' : 'error'" />
-            <span :style="{ color: record.status === 1 ? '#52c41a' : '#ff4d4f' }">
-              {{ record.status === 1 ? $t("common.enabled") : $t("common.disabled") }}
-            </span>
+            <a-switch
+              :checked="record.status === 1"
+              :checked-children="$t('common.enabled')"
+              :un-checked-children="$t('common.disabled')"
+              :loading="record.switchLoading"
+              @change="(checked: boolean) => handleStatusChange(record, checked)"
+            />
           </template>
 
           <template v-if="column.dataIndex === 'action'">
@@ -156,7 +171,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, computed, onMounted } from "vue"
 import { message } from "ant-design-vue"
 import {
   PlusOutlined,
@@ -178,7 +193,7 @@ const queryParams = reactive<UserQuery>({
   pageSize: 10
 })
 
-const columns = [
+const columns = computed(() => [
   { title: t("common.id"), dataIndex: "id", width: 60 },
   { title: t("system.user.username"), dataIndex: "username", width: 120 },
   { title: t("system.user.nickname"), dataIndex: "nickname", width: 120 },
@@ -187,10 +202,11 @@ const columns = [
   { title: t("common.status"), dataIndex: "status", width: 100 },
   { title: t("common.createdAt"), dataIndex: "createdAt", width: 170 },
   { title: t("common.action"), dataIndex: "action", width: 220, fixed: "right" }
-]
+])
 
 const userList = ref<User[]>([])
 const loading = ref(false)
+const selectedRowKeys = ref<number[]>([])
 const pagination = reactive({
   current: 1,
   pageSize: 10,
@@ -230,6 +246,14 @@ const formRules = {
   ],
   phone: [{ required: true, message: t("system.user.enterPhone"), trigger: "blur" }],
   roleIds: [{ required: true, message: t("system.user.selectRole"), trigger: "change" }]
+}
+
+// 表格行选择配置
+const rowSelection = {
+  selectedRowKeys: selectedRowKeys,
+  onChange: (selectedKeys: number[]) => {
+    selectedRowKeys.value = selectedKeys
+  }
 }
 
 const fetchUsers = async () => {
@@ -289,6 +313,7 @@ const handleEdit = async (record: User) => {
 
   try {
     const user = await userApi.getUser(record.id)
+    formData.id = user.id
     formData.username = user.username
     formData.nickname = user.nickname
     formData.email = user.email
@@ -304,8 +329,11 @@ const handleEdit = async (record: User) => {
 
 const handleResetPassword = async (record: User) => {
   try {
-    await userApi.resetPassword(record.id)
-    message.success(t("system.user.passwordResetSuccess"))
+    const result = await userApi.resetPassword(record.id)
+    message.success(
+      `${t("system.user.passwordResetSuccess")}: ${result.newPassword}`,
+      5
+    )
   } catch (error) {
     message.error(t("system.user.resetFailed"))
   }
@@ -317,7 +345,40 @@ const handleDelete = async (id: number) => {
     message.success(t("system.user.deleteSuccess"))
     fetchUsers()
   } catch (error) {
-    message.error(t("system.user.deleteSuccess"))
+    message.error(t("system.user.deleteFailed"))
+  }
+}
+
+// 状态切换
+const handleStatusChange = async (record: User, checked: boolean) => {
+  const newStatus = checked ? 1 : 0
+  record.switchLoading = true
+  
+  try {
+    await userApi.updateStatus(record.id, newStatus)
+    record.status = newStatus
+    message.success(t("system.user.statusUpdateSuccess"))
+  } catch (error) {
+    message.error(t("system.user.statusUpdateFailed"))
+  } finally {
+    record.switchLoading = false
+  }
+}
+
+// 批量删除
+const handleBatchDelete = async () => {
+  if (selectedRowKeys.value.length === 0) {
+    message.warning(t("system.user.selectUsersToDelete"))
+    return
+  }
+  
+  try {
+    await userApi.batchDeleteUsers(selectedRowKeys.value)
+    message.success(t("system.user.batchDeleteSuccess"))
+    selectedRowKeys.value = []
+    fetchUsers()
+  } catch (error) {
+    message.error(t("system.user.batchDeleteFailed"))
   }
 }
 

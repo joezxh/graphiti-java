@@ -34,7 +34,7 @@
               style="width: 160px"
             />
           </a-form-item>
-          <a-form-item label="Group">
+          <a-form-item :label="$t('system.config.groupName')">
             <a-select
               v-model:value="queryParams.groupName"
               :placeholder="$t('form.pleaseSelect')"
@@ -115,6 +115,8 @@
       v-model:open="modalVisible"
       :title="modalTitle"
       :confirm-loading="submitLoading"
+      :ok-text="$t('common.confirm')"
+      :cancel-text="$t('common.cancel')"
       width="600px"
       @ok="handleSubmit"
       @cancel="handleCancel"
@@ -154,7 +156,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="Group" name="groupName">
+        <a-form-item :label="$t('system.config.groupName')" name="groupName">
           <a-input v-model:value="formData.groupName" :placeholder="$t('system.config.enterGroupName')" />
         </a-form-item>
 
@@ -176,12 +178,15 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue"
 import { message } from "ant-design-vue"
+import { useI18n } from "vue-i18n"
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined
 } from "@ant-design/icons-vue"
 import { systemApi, type SystemConfig, type SystemConfigQuery, type SystemConfigForm } from "@/api/system"
+
+const { t } = useI18n()
 
 const queryParams = reactive<SystemConfigQuery>({
   configKey: undefined,
@@ -192,17 +197,17 @@ const queryParams = reactive<SystemConfigQuery>({
   pageSize: 10
 })
 
-const columns = [
-  { title: "common.id", dataIndex: "id", width: 60 },
-  { title: "system.config.configKey", dataIndex: "configKey", width: 150 },
-  { title: "system.config.configValue", dataIndex: "configValue", width: 150, ellipsis: true },
-  { title: "system.config.configName", dataIndex: "configName", width: 120 },
-  { title: "system.config.configDesc", dataIndex: "configDescription", width: 200, ellipsis: true },
-  { title: "system.config.configType", dataIndex: "configType", width: 100 },
-  { title: "Group", dataIndex: "groupName", width: 120 },
-  { title: "common.status", dataIndex: "status", width: 100 },
-  { title: "common.action", dataIndex: "action", width: 150, fixed: "right" }
-]
+const columns = computed(() => [
+  { title: t('common.id'), dataIndex: "id", width: 60 },
+  { title: t('system.config.configKey'), dataIndex: "configKey", width: 150 },
+  { title: t('system.config.configValue'), dataIndex: "configValue", width: 150, ellipsis: true },
+  { title: t('system.config.configName'), dataIndex: "configName", width: 120 },
+  { title: t('system.config.configDesc'), dataIndex: "configDescription", width: 200, ellipsis: true },
+  { title: t('system.config.configType'), dataIndex: "configType", width: 100 },
+  { title: t('system.config.groupName'), dataIndex: "groupName", width: 120 },
+  { title: t('common.status'), dataIndex: "status", width: 100 },
+  { title: t('common.action'), dataIndex: "action", width: 150, fixed: "right" }
+])
 
 const configList = ref<SystemConfig[]>([])
 const loading = ref(false)
@@ -240,13 +245,13 @@ const configValueBoolean = computed({
   }
 })
 
-const formRules = {
-  configKey: [{ required: true, message: "system.config.enterConfigKey", trigger: "blur" }],
-  configValue: [{ required: true, message: "system.config.enterConfigValue", trigger: "blur" }],
-  configName: [{ required: true, message: "system.config.enterConfigName", trigger: "blur" }],
-  configType: [{ required: true, message: "system.config.selectConfigType", trigger: "change" }],
-  groupName: [{ required: true, message: "system.config.enterGroupName", trigger: "blur" }]
-}
+const formRules = computed(() => ({
+  configKey: [{ required: true, message: t('system.config.enterConfigKey'), trigger: 'blur' }],
+  configValue: [{ required: true, message: t('system.config.enterConfigValue'), trigger: 'blur' }],
+  configName: [{ required: true, message: t('system.config.enterConfigName'), trigger: 'blur' }],
+  configType: [{ required: true, message: t('system.config.selectConfigType'), trigger: 'change' }],
+  groupName: [{ required: true, message: t('system.config.enterGroupName'), trigger: 'blur' }]
+}))
 
 const fetchConfigs = async () => {
   loading.value = true
@@ -257,7 +262,7 @@ const fetchConfigs = async () => {
     pagination.pageSize = res.pageSize
     pagination.total = res.total
   } catch (error) {
-    message.error("system.config.loadFailed")
+    message.error(t('system.config.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -284,11 +289,11 @@ const getConfigTypeColor = (type: number) => {
 
 const getConfigTypeText = (type: number) => {
   switch (type) {
-    case 1: return "system.config.text"
-    case 2: return "system.config.number"
-    case 3: return "system.config.boolean"
-    case 4: return "system.config.json"
-    default: return "common.unknown"
+    case 1: return t('system.config.text')
+    case 2: return t('system.config.number')
+    case 3: return t('system.config.boolean')
+    case 4: return t('system.config.json')
+    default: return t('common.unknown')
   }
 }
 
@@ -314,18 +319,19 @@ const handleTableChange = (pag: any) => {
 
 const handleCreate = () => {
   isEdit.value = false
-  modalTitle.value = "system.config.newConfig"
+  modalTitle.value = t('system.config.newConfig')
   resetForm()
   modalVisible.value = true
 }
 
 const handleEdit = async (record: SystemConfig) => {
   isEdit.value = true
-  modalTitle.value = "system.config.editConfig"
+  modalTitle.value = t('system.config.editConfig')
   resetForm()
 
   try {
     const config = await systemApi.getConfig(record.id)
+    formData.id = config.id
     formData.configKey = config.configKey
     formData.configValue = config.configValue
     formData.configName = config.configName
@@ -337,17 +343,17 @@ const handleEdit = async (record: SystemConfig) => {
 
     modalVisible.value = true
   } catch (error) {
-    message.error("system.config.getDetailFailed")
+    message.error(t('system.config.getDetailFailed'))
   }
 }
 
 const handleDelete = async (id: number) => {
   try {
     await systemApi.deleteConfig(id)
-    message.success("system.config.deleteSuccess")
+    message.success(t('system.config.deleteSuccess'))
     fetchConfigs()
   } catch (error) {
-    message.error("system.config.deleteSuccess")
+    message.error(t('system.config.deleteFailed'))
   }
 }
 
@@ -368,16 +374,36 @@ const handleSubmit = async () => {
         sortNum: formData.sortNum,
         status: formData.status
       })
-      message.success("system.config.updateSuccess")
+      message.success(t('system.config.updateSuccess'))
     } else {
       await systemApi.createConfig(formData)
-      message.success("system.config.createSuccess")
+      message.success(t('system.config.createSuccess'))
     }
 
     modalVisible.value = false
     fetchConfigs()
-  } catch (error) {
-    console.error("common.submitFailed", error)
+  } catch (error: any) {
+    // 表单验证失败
+    if (error && error.errorFields) {
+      return
+    }
+    
+    // 后端业务错误
+    const errorCode = error?.code
+    const errorMessage = error?.message
+    
+    if (errorCode === 2004) {
+      // configKey 唯一性校验失败，始终显示错误消息
+      message.error(errorMessage || t('system.config.configKeyExists'))
+    } else if (errorCode && errorCode !== 200) {
+      // 其他业务错误（拦截器可能已弹出消息，这里确保再次显示）
+      message.error(errorMessage || t('common.submitFailed'))
+    } else {
+      // 未知错误
+      message.error(t('common.submitFailed'))
+    }
+    
+    console.error('common.submitFailed', error)
   } finally {
     submitLoading.value = false
   }
@@ -389,7 +415,6 @@ const handleCancel = () => {
 }
 
 const resetForm = () => {
-  formData.id = undefined
   formData.configKey = ""
   formData.configValue = ""
   formData.configName = ""

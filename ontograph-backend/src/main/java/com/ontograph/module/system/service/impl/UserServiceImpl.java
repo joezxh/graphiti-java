@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 用户管理服务实现类
@@ -107,5 +108,62 @@ public class UserServiceImpl implements UserService {
         resp.put("pageNum", pageNo);
         resp.put("pageSize", pageSize);
         return resp;
+    }
+
+    @Override
+    public String resetPassword(Long userId) {
+        UserDO user = getUser(userId);
+        if (user == null || user.getDeleted()) {
+            throw new BusinessException(2004, "用户不存在");
+        }
+
+        // 生成 8 位随机密码
+        String newPassword = generateRandomPassword(8);
+        
+        // 加密并更新密码
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.updateById(user);
+        
+        log.info("重置用户密码成功：userId={}, username={}", userId, user.getUsername());
+        return newPassword;
+    }
+
+    /**
+     * 生成随机密码
+     * @param length 密码长度
+     * @return 随机密码
+     */
+    private String generateRandomPassword(int length) {
+        String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lower = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+        String special = "!@#$%^&*";
+        String all = upper + lower + digits + special;
+        
+        Random random = new Random();
+        StringBuilder password = new StringBuilder();
+        
+        // 确保至少包含一个大写字母、一个小写字母、一个数字和一个特殊字符
+        password.append(upper.charAt(random.nextInt(upper.length())));
+        password.append(lower.charAt(random.nextInt(lower.length())));
+        password.append(digits.charAt(random.nextInt(digits.length())));
+        password.append(special.charAt(random.nextInt(special.length())));
+        
+        // 剩余位随机
+        for (int i = password.length(); i < length; i++) {
+            password.append(all.charAt(random.nextInt(all.length())));
+        }
+        
+        // 打乱顺序
+        char[] chars = password.toString().toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            int j = random.nextInt(chars.length);
+            char temp = chars[i];
+            chars[i] = chars[j];
+            chars[j] = temp;
+        }
+        
+        return new String(chars);
     }
 }

@@ -5,26 +5,11 @@
       <span class="sidebar-title">{{ $t('nav.navigation') }}</span>
     </div>
 
-    <!-- 动态菜单 -->
-    <a-menu
-      v-model:selectedKeys="selectedKeys"
-      mode="inline"
-      class="sidebar-menu"
-      @click="handleMenuClick"
-    >
-      <a-menu-item key="/dashboard">
-        <template #icon>
-          <DashboardOutlined />
-        </template>
-        {{ $t('nav.dashboard') }}
-      </a-menu-item>
-    </a-menu>
-
     <!-- 动态菜单分组 -->
     <div v-for="section in menuSections" :key="String(section.id)" class="menu-section">
       <div class="menu-section-title" @click="toggleSection(String(section.id))">
         <component :is="getIcon(section.icon)" class="menu-section-icon" />
-        <span class="menu-section-text">{{ section.name }}</span>
+        <span class="menu-section-text">{{ translateMenuName(section.name) }}</span>
         <DownOutlined :class="['menu-section-arrow', { collapsed: !openSections.includes(String(section.id)) }]" />
       </div>
       <div v-show="openSections.includes(String(section.id))" class="menu-section-content">
@@ -35,252 +20,40 @@
           @click="handleMenuClick"
         >
           <template v-for="menu in section.children" :key="menu.path">
-            <a-menu-item v-if="!menu.children?.length" :key="menu.path">
+            <!-- type=2 或无子菜单：直接渲染为菜单项 -->
+            <a-menu-item v-if="menu.type === 2 || !menu.children?.length" :key="menu.path">
               <template #icon>
                 <component :is="getIcon(menu.icon)" />
               </template>
-              {{ menu.name }}
+              {{ translateMenuName(menu.name) }}
             </a-menu-item>
-            <!-- 子菜单分组 -->
+            <!-- type=1 且有子菜单：渲染为子菜单分组 -->
             <a-sub-menu v-else :key="menu.path">
               <template #title>
                 <span>
                   <component :is="getIcon(menu.icon)" />
-                  <span>{{ menu.name }}</span>
+                  <span>{{ translateMenuName(menu.name) }}</span>
                 </span>
               </template>
               <a-menu-item v-for="child in menu.children" :key="child.path">
                 <template #icon>
                   <component :is="getIcon(child.icon)" />
                 </template>
-                {{ child.name }}
+                {{ translateMenuName(child.name) }}
               </a-menu-item>
             </a-sub-menu>
           </template>
         </a-menu>
       </div>
     </div>
-
-    <!-- 备用: 静态菜单 (当动态菜单未加载时显示) -->
-    <template v-if="!hasDynamicMenus">
-      <!-- graph-management section -->
-      <div class="menu-section">
-        <div class="menu-section-title" @click="toggleSection('graph-management')">
-          <ShareAltOutlined class="menu-section-icon" />
-          <span class="menu-section-text">{{ $t('nav.graphManagement') }}</span>
-          <DownOutlined :class="['menu-section-arrow', { collapsed: !openSections.includes('graph-management') }]" />
-        </div>
-        <div v-show="openSections.includes('graph-management')" class="menu-section-content">
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            mode="inline"
-            class="sidebar-menu nested-menu"
-            @click="handleMenuClick"
-          >
-            <a-menu-item key="/graph/list">
-              <template #icon>
-                <UnorderedListOutlined />
-              </template>
-              {{ $t('nav.graphList') }}
-            </a-menu-item>
-            <a-menu-item key="/graph/ide">
-              <template #icon>
-                <CodeOutlined />
-              </template>
-              {{ $t('nav.graphIDE') }}
-            </a-menu-item>
-            <a-menu-item key="/graph/temporal">
-              <template #icon>
-                <HistoryOutlined />
-              </template>
-              {{ $t('nav.temporalHistory') }}
-            </a-menu-item>
-            <a-menu-item key="/data/communities">
-              <template #icon>
-                <ClusterOutlined />
-              </template>
-              {{ $t('nav.communityDetection') }}
-            </a-menu-item>
-          </a-menu>
-        </div>
-      </div>
-
-      <!-- data-management section -->
-      <div class="menu-section">
-        <div class="menu-section-title" @click="toggleSection('data-management')">
-          <DatabaseOutlined class="menu-section-icon" />
-          <span class="menu-section-text">{{ $t('nav.dataManagement') }}</span>
-          <DownOutlined :class="['menu-section-arrow', { collapsed: !openSections.includes('data-management') }]" />
-        </div>
-        <div v-show="openSections.includes('data-management')" class="menu-section-content">
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            mode="inline"
-            class="sidebar-menu nested-menu"
-            @click="handleMenuClick"
-          >
-            <a-menu-item key="/data/classes">
-              <template #icon>
-                <AppstoreOutlined />
-              </template>
-              {{ $t('nav.classManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/properties">
-              <template #icon>
-                <TagOutlined />
-              </template>
-              {{ $t('nav.propertyManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/constraints">
-              <template #icon>
-                <SafetyCertificateOutlined />
-              </template>
-              {{ $t('nav.constraintManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/entities">
-              <template #icon>
-                <NodeIndexOutlined />
-              </template>
-              {{ $t('nav.entityManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/edges">
-              <template #icon>
-                <LinkOutlined />
-              </template>
-              {{ $t('nav.edgeManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/community-episode">
-              <template #icon>
-                <ClusterOutlined />
-              </template>
-              {{ $t('nav.communityEpisodeManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/episodes">
-              <template #icon>
-                <FileTextOutlined />
-              </template>
-              {{ $t('nav.episodeManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/data/import">
-              <template #icon>
-                <ImportOutlined />
-              </template>
-              {{ $t('nav.dataImport') }}
-            </a-menu-item>
-            <a-menu-item key="/data/export">
-              <template #icon>
-                <ExportOutlined />
-              </template>
-              {{ $t('nav.dataExport') }}
-            </a-menu-item>
-            <a-menu-item key="/legal-kg">
-              <template #icon>
-                <AuditOutlined />
-              </template>
-              {{ $t('nav.legalKnowledgeGraph') }}
-            </a-menu-item>
-          </a-menu>
-        </div>
-      </div>
-
-      <!-- tools section -->
-      <div class="menu-section">
-        <div class="menu-section-title" @click="toggleSection('tools')">
-          <ToolOutlined class="menu-section-icon" />
-          <span class="menu-section-text">{{ $t('nav.tools') }}</span>
-          <DownOutlined :class="['menu-section-arrow', { collapsed: !openSections.includes('tools') }]" />
-        </div>
-        <div v-show="openSections.includes('tools')" class="menu-section-content">
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            mode="inline"
-            class="sidebar-menu nested-menu"
-            @click="handleMenuClick"
-          >
-            <a-menu-item key="/search">
-              <template #icon>
-                <SearchOutlined />
-              </template>
-              {{ $t('nav.hybridSearch') }}
-            </a-menu-item>
-            <a-menu-item key="/custom-instructions">
-              <template #icon>
-                <EditOutlined />
-              </template>
-              {{ $t('nav.customInstructions') }}
-            </a-menu-item>
-            <a-menu-item key="/prompt">
-              <template #icon>
-                <MessageOutlined />
-              </template>
-              {{ $t('nav.promptManagement') }}
-            </a-menu-item>
-          </a-menu>
-        </div>
-      </div>
-
-      <!-- system-management section -->
-      <div class="menu-section">
-        <div class="menu-section-title" @click="toggleSection('system-management')">
-          <SettingOutlined class="menu-section-icon" />
-          <span class="menu-section-text">{{ $t('nav.systemManagement') }}</span>
-          <DownOutlined :class="['menu-section-arrow', { collapsed: !openSections.includes('system-management') }]" />
-        </div>
-        <div v-show="openSections.includes('system-management')" class="menu-section-content">
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            mode="inline"
-            class="sidebar-menu nested-menu"
-            @click="handleMenuClick"
-          >
-            <a-menu-item key="/system/user">
-              <template #icon>
-                <UserOutlined />
-              </template>
-              {{ $t('nav.userManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/system/role">
-              <template #icon>
-                <TeamOutlined />
-              </template>
-              {{ $t('nav.roleManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/system/menu">
-              <template #icon>
-                <MenuOutlined />
-              </template>
-              {{ $t('nav.menuManagement') }}
-            </a-menu-item>
-            <a-menu-item key="/system/config">
-              <template #icon>
-                <ToolOutlined />
-              </template>
-              {{ $t('nav.systemConfig') }}
-            </a-menu-item>
-            <a-menu-item key="/system/log">
-              <template #icon>
-                <FileTextOutlined />
-              </template>
-              {{ $t('nav.operationLog') }}
-            </a-menu-item>
-            <a-menu-item key="/monitor">
-              <template #icon>
-                <MonitorOutlined />
-              </template>
-              {{ $t('nav.systemMonitor') }}
-            </a-menu-item>
-          </a-menu>
-        </div>
-      </div>
-    </template>
   </aside>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, markRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { usePermissionStore } from '@/store/modules/permission'
-import type { MenuItem } from '@/api/menu'
 import {
   DashboardOutlined,
   ShareAltOutlined,
@@ -312,10 +85,13 @@ import {
 
 const route = useRoute()
 const router = useRouter()
+const { t, te } = useI18n()
 const permissionStore = usePermissionStore()
 
 const selectedKeys = ref<string[]>([])
-const openSections = ref<string[]>(['graph-management', 'data-management', 'tools', 'system-management'])
+
+// 初始展开所有已有的菜单分组
+const openSections = ref<string[]>([])
 
 // 图标映射
 const iconMap: Record<string, any> = {
@@ -352,38 +128,33 @@ const getIcon = (iconName?: string) => {
   return iconMap[iconName] || AppstoreOutlined
 }
 
-// 判断是否有动态菜单
-const hasDynamicMenus = computed(() => {
-  return permissionStore.menuList.length > 0
-})
+// 翻译菜单名称：如果 name 是 i18n key 则翻译，否则原样显示
+const translateMenuName = (name: string): string => {
+  if (name && te(name)) {
+    return t(name)
+  }
+  return name || ''
+}
 
-// 将后端菜单树转换为侧边栏分组
+// 使用后端已构建好的树结构，直接使用根级菜单作为分组
 const menuSections = computed(() => {
   const menuList = permissionStore.menuList
-
-  // 按 parentId 分组
-  const sections: Map<string | number, MenuItem[]> = new Map()
-  const rootMenus: MenuItem[] = []
-
-  for (const menu of menuList) {
-    if (menu.parentId === 0 || menu.parentId === null) {
-      rootMenus.push(menu)
-    } else {
-      const existing = sections.get(menu.parentId) || []
-      existing.push(menu)
-      sections.set(menu.parentId, existing)
-    }
-  }
-
-  // 递归附加子菜单
-  const attachChildren = (menus: MenuItem[]): MenuItem[] => {
-    return menus.map(menu => ({
+  // 后端 buildMenuTree 已返回嵌套树结构，根级 items 即为分组
+  // 确保每个分组都有 children
+  const result = menuList
+    .filter(m => m.type === 1 || m.children?.length) // 仅显示目录类型或有子菜单的
+    .map(menu => ({
       ...menu,
-      children: sections.get(menu.id) ? attachChildren(sections.get(menu.id)!) : undefined
+      children: menu.children || []
     }))
+    .sort((a, b) => a.sort - b.sort)
+
+  // 首次加载时默认展开所有分组
+  if (openSections.value.length === 0 && result.length > 0) {
+    openSections.value = result.map(s => String(s.id))
   }
 
-  return attachChildren(rootMenus).sort((a, b) => a.sort - b.sort)
+  return result
 })
 
 const toggleSection = (sectionKey: string) => {

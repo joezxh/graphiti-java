@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { MenuItem } from '@/api/menu'
-import { menuApi } from '@/api/menu'
+import { menuApi, mapMenuDO } from '@/api/menu'
 
 export interface PermissionState {
   menuList: MenuItem[]
@@ -70,7 +70,8 @@ export const usePermissionStore = defineStore('permission', () => {
 
   // Actions
   const setMenuList = (menus: MenuItem[]) => {
-    menuList.value = menus
+    // 规范化菜单数据（确保 url→path 等字段映射，以及递归 children）
+    menuList.value = menus.map(mapMenuDO)
     isMenuLoaded.value = true
     // 从菜单中提取权限标识
     permissions.value = flatMenuPermissions.value

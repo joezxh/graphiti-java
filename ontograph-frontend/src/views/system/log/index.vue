@@ -31,7 +31,7 @@
     <a-card class="content-card" :bordered="false">
       <div class="table-operations">
         <a-form layout="inline" :model="queryParams" class="search-form">
-          <a-form-item label="Username">
+          <a-form-item :label="$t('system.log.username')">
             <a-input
               v-model:value="queryParams.username"
               :placeholder="$t('system.user.enterUsername')"
@@ -39,10 +39,10 @@
               style="width: 150px"
             />
           </a-form-item>
-          <a-form-item label="Operation">
+          <a-form-item :label="$t('system.log.operation')">
             <a-input
               v-model:value="queryParams.operation"
-              :placeholder="$t('system.log.title')"
+              :placeholder="$t('system.log.enterOperation')"
               allow-clear
               style="width: 150px"
             />
@@ -133,9 +133,9 @@
           <a-badge :status="currentLog.status === 1 ? 'success' : 'error'" />
           {{ currentLog.status === 1 ? ($t("common.success") || "Success") : "Failed" }}
         </a-descriptions-item>
-        <a-descriptions-item label="Username">{{ currentLog.username }}</a-descriptions-item>
-        <a-descriptions-item label="Nickname">{{ currentLog.nickname }}</a-descriptions-item>
-        <a-descriptions-item label="Operation">{{ currentLog.operation }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('system.log.username')">{{ currentLog.username }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('system.log.nickname')">{{ currentLog.nickname }}</a-descriptions-item>
+        <a-descriptions-item :label="$t('system.log.operation')">{{ currentLog.operation }}</a-descriptions-item>
         <a-descriptions-item label="system.log.duration">{{ currentLog.duration }} ms</a-descriptions-item>
         <a-descriptions-item :label="$t('system.log.method')" :span="2">{{ currentLog.method }}</a-descriptions-item>
         <a-descriptions-item :label="$t('system.log.logParams')" :span="2">
@@ -175,15 +175,15 @@ const queryParams = reactive<LogQuery>({
 const timeRange = ref<[any, any]>()
 
 const columns = [
-  { title: "common.id", dataIndex: "id", width: 60 },
-  { title: "Username", dataIndex: "username", width: 100 },
-  { title: "Operation", dataIndex: "operation", width: 120 },
-  { title: "system.log.method", dataIndex: "method", width: 200, ellipsis: true },
-  { title: "system.log.ip", dataIndex: "ip", width: 120 },
-  { title: "common.status", dataIndex: "status", width: 100 },
-  { title: "system.log.duration", dataIndex: "duration", width: 100 },
-  { title: "common.createdAt", dataIndex: "createdAt", width: 170 },
-  { title: "common.action", dataIndex: "action", width: 150, fixed: "right" }
+  { title: $t("common.id"), dataIndex: "id", width: 60 },
+  { title: $t("system.log.username"), dataIndex: "username", width: 100 },
+  { title: $t("system.log.operation"), dataIndex: "operation", width: 120 },
+  { title: $t("system.log.method"), dataIndex: "method", width: 200, ellipsis: true },
+  { title: $t("system.log.ip"), dataIndex: "ip", width: 120 },
+  { title: $t("common.status"), dataIndex: "status", width: 100 },
+  { title: $t("system.log.duration"), dataIndex: "duration", width: 100 },
+  { title: $t("common.createdAt"), dataIndex: "createTime", width: 170 },
+  { title: $t("common.action"), dataIndex: "action", width: 150, fixed: "right" }
 ]
 
 const logList = ref<OperationLog[]>([])

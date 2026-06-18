@@ -62,10 +62,14 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response?.status === 401) {
+    // 登录请求的 401 不走 token 刷新流程，直接显示错误
+    const isLoginRequest = error.config?.url?.includes('/auth/login')
+    if (error.response?.status === 401 && !isLoginRequest) {
       return handleTokenRefresh(error.config, 0)
     }
-    message.error(error.message || '网络错误')
+    // 优先使用后端返回的错误消息
+    const serverMessage = error.response?.data?.message
+    message.error(serverMessage || error.message || '网络错误')
     return Promise.reject(error)
   }
 )

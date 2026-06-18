@@ -4,6 +4,11 @@
     <div class="bg-grid" />
     <div class="bg-glow" />
 
+    <!-- 语言切换 -->
+    <div class="lang-switcher-wrapper">
+      <LanguageSwitcher />
+    </div>
+
     <!-- 登录卡片 -->
     <div class="login-card" :class="{ shake: shakeAnimation }">
       <!-- Logo 和标题 -->
@@ -85,8 +90,12 @@
 <script setup lang="ts">
 import { reactive, ref, nextTick, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { useUserStore } from '@/store/modules/user'
+import LanguageSwitcher from '@/components/LanguageSwitcher/index.vue'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const route = useRoute()
@@ -104,13 +113,13 @@ const form = reactive({
 
 const rules = {
   username: [
-    { required: true, message: 'login.enterUsername' },
-    { min: 3, max: 20, message: 'login.usernameLength' },
-    { pattern: /^[a-zA-Z0-9_]+$/, message: 'login.usernamePattern' }
+    { required: true, message: t('login.enterUsername') },
+    { min: 3, max: 20, message: t('login.usernameLength') },
+    { pattern: /^[a-zA-Z0-9_]+$/, message: t('login.usernamePattern') }
   ],
   password: [
-    { required: true, message: 'login.enterPassword' },
-    { min: 6, message: 'login.passwordMin' }
+    { required: true, message: t('login.enterPassword') },
+    { min: 6, message: t('login.passwordMin') }
   ]
 }
 
@@ -164,6 +173,14 @@ const handleLogin = async () => {
     linear-gradient(90deg, rgba(94, 106, 210, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
+}
+
+// 语言切换位置
+.lang-switcher-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 10;
 }
 
 // 背景光晕

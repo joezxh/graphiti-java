@@ -56,7 +56,7 @@
 
 | 项目 | 值 |
 |------|------|
-| 前端地址 | `http://localhost:5173` |
+| 前端地址 | `http://localhost:3000` |
 | 后端服务名 | `ontograph-java` |
 | 后端端口 | `9090` |
 | Neo4j | `bolt://localhost:7687` (user: `neo4j` / password: `password123`) |
@@ -170,7 +170,7 @@ Graph IDE 类模块额外遵循 **可视化测试循环**:
 ### 3.1 方式一:使用 gstack /qa Skill(推荐)
 
 ```bash
-/qa --tier standard --url http://localhost:5173
+/qa --tier standard --url http://localhost:3000
 ```
 
 ### 3.2 方式二:使用 gstack /open-gstack-browser
@@ -189,7 +189,7 @@ Graph IDE 类模块额外遵循 **可视化测试循环**:
 
 ```bash
 # 启动浏览器
-$B goto http://localhost:5173/login
+$B goto http://localhost:3000/login
 $B screenshot "login-page.png"
 
 # 登录
@@ -202,7 +202,7 @@ $B wait-for-url "**/dashboard"
 $B screenshot "after-login.png"
 
 # 进入 Graphiti 模块
-$B goto http://localhost:5173/graph/list
+$B goto http://localhost:3000/graph/list
 $B screenshot "graph-list.png"
 ```
 
@@ -4178,7 +4178,7 @@ $B screenshot "graph-list.png"
 
 ### SYS-00 登录注销与首页
 
-**页面路径**: `http://localhost:5173/login`、首页 `/dashboard`  
+**页面路径**: `http://localhost:3000/login`、首页 `/dashboard`  
 **前端布局文件**: `ontograph-frontend/src/components/Layout/BasicLayout.vue`, `Header.vue`, `Sidebar.vue`  
 **API 文件**: `ontograph-frontend/src/api/auth.ts` (`authApi`)  
 **后端控制器**: `ontograph-backend/src/main/java/com/ontograph/module/auth/controller/AuthController.java`
@@ -4209,7 +4209,7 @@ $B screenshot "graph-list.png"
 ---
 
 【测试场景 1:登录页渲染】
-1. 打开 http://localhost:5173/login
+1. 打开 http://localhost:3000/login
 2. 验证页面正常渲染,无白屏、无 JS 错误
 3. 验证包含以下元素:
    - Logo 区域(OntoGraph Console 标题)
@@ -4335,7 +4335,7 @@ $B screenshot "graph-list.png"
 
 【测试场景 8:未登录访问受限页(重定向)】
 1. 清除浏览器 Cookie 和 Token
-2. 直接访问 http://localhost:5173/dashboard
+2. 直接访问 http://localhost:3000/dashboard
 3. 验证页面自动重定向到 /login
 4. 登录后验证正确跳转回 /dashboard
 
@@ -4373,7 +4373,7 @@ $B screenshot "graph-list.png"
 
 【模块信息】
 - 服务: ontograph-java(:9090)
-- 前端入口: http://localhost:5173
+- 前端入口: http://localhost:3000
 - 路由: /login, /dashboard
 - 权限前缀: 无(登录/注销属公共接口)
 
@@ -4469,6 +4469,7 @@ $B screenshot "graph-list.png"
 }
 ```
 
+```
 【UI 规范】
 - UI 库: ant-design-vue
 - 登录页:居中卡片布局,含 Logo、用户名、密码、登录按钮
@@ -5833,7 +5834,7 @@ $B screenshot "graph-list.png"
 
 **测试日期**: 2026-06-17
 **测试人员**: AI Agent (gstack /qa)
-**测试环境**: http://localhost:5173
+**测试环境**: http://localhost:3000
 **Graphiti 服务**: http://localhost:9090
 **System 服务**: http://localhost:9090
 
@@ -5985,7 +5986,7 @@ $B screenshot "graph-list.png"
 | 项目 | 值 |
 |------|------|
 | 适用服务 | Graphiti(知识图谱,:9090)+ System(系统管理,:9090) |
-| 前端入口 | http://localhost:5173 |
+| 前端入口 | http://localhost:3000 |
 | 默认账号 | admin / admin123 |
 | 默认租户 ID | 1 |
 | 测试 Skill | `/qa`, `/qa-only`, `/open-gstack-browser`, MCP Playwright |

@@ -36,7 +36,7 @@ export interface MenuForm {
 }
 
 // 后端 MenuDO 映射
-function mapMenuDO(menu: any): MenuItem {
+export function mapMenuDO(menu: any): MenuItem {
   return {
     id: menu.id,
     parentId: menu.parentId ?? 0,

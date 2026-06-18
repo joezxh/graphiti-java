@@ -48,10 +48,24 @@ public class AuthServiceImpl implements AuthService {
         // 生成 JWT Token
         String token = jwtTokenProvider.generateToken(auth);
         
+        // 查询用户详细信息
+        UserDO user = userMapper.selectList(
+            new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<UserDO>()
+                .eq(UserDO::getUsername, request.getUsername())
+                .eq(UserDO::getDeleted, false)
+        ).stream().findFirst().orElse(null);
+        
         // 构造响应
         LoginResponse response = new LoginResponse();
         response.setToken(token);
         response.setExpiresIn(86400L); // 24小时
+        if (user != null) {
+            LoginResponse.UserInfo userInfo = new LoginResponse.UserInfo();
+            userInfo.setUsername(user.getUsername());
+            userInfo.setNickname(user.getNickname());
+            userInfo.setEmail(user.getEmail());
+            response.setUserInfo(userInfo);
+        }
         return response;
     }
     
@@ -67,6 +81,17 @@ public class AuthServiceImpl implements AuthService {
         // 构造用户信息
         LoginResponse.UserInfo info = new LoginResponse.UserInfo();
         info.setUsername(auth.getName());
+        
+        // 查询数据库补充昵称等信息
+        UserDO user = userMapper.selectList(
+            new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<UserDO>()
+                .eq(UserDO::getUsername, auth.getName())
+                .eq(UserDO::getDeleted, false)
+        ).stream().findFirst().orElse(null);
+        if (user != null) {
+            info.setNickname(user.getNickname());
+            info.setEmail(user.getEmail());
+        }
         return info;
     }
     

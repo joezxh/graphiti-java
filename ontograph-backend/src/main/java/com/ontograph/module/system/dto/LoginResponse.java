@@ -1,6 +1,7 @@
 package com.ontograph.module.system.dto;
 
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 /**
@@ -17,6 +18,7 @@ public class LoginResponse implements Serializable {
     private Long expiresIn;
     
     /** 用户信息 */
+    @JsonProperty("user")
     private UserInfo userInfo;
     
     /**

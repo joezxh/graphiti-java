@@ -2,6 +2,7 @@ package com.ontograph.module.system.dal.dataobject;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.io.Serializable;
@@ -44,6 +45,7 @@ public class MenuDO implements Serializable {
 
     private LocalDateTime updateTime;
 
+    @TableLogic(value = "false", delval = "true")
     private Boolean deleted;
 
     @TableField(exist = false)

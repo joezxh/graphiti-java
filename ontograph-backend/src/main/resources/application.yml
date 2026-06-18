@@ -18,6 +18,9 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: true
+      logic-not-delete-value: false
 
 # Spring AI 配置（根据 Provider 选择配置）
 # OpenAI: spring.ai.openai.api-key + spring.ai.openai.base-url

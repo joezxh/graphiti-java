@@ -73,12 +73,12 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         if (existing != null) {
             throw new BusinessException(2004, "配置键已存在: " + configDO.getConfigKey());
         }
-        configDO.setCreateTime(LocalDateTime.now());
-        configDO.setUpdateTime(LocalDateTime.now());
-        configDO.setDeleted(false);
+        // 设置默认值
         if (configDO.getStatus() == null) configDO.setStatus(1);
         if (configDO.getConfigType() == null) configDO.setConfigType(1);
         if (configDO.getSortNum() == null) configDO.setSortNum(0);
+        if (configDO.getDeleted() == null) configDO.setDeleted(false);
+        
         systemConfigMapper.insert(configDO);
         log.info("创建系统配置：id={}, key={}", configDO.getId(), configDO.getConfigKey());
         return configDO.getId();
@@ -86,18 +86,30 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
     @Override
     public void updateConfig(SystemConfigDO configDO) {
-        configDO.setUpdateTime(LocalDateTime.now());
+        // 验证配置是否存在
+        SystemConfigDO existing = systemConfigMapper.selectById(configDO.getId());
+        if (existing == null) {
+            throw new BusinessException(404, "配置不存在");
+        }
+        
+        // 不允许修改 configKey
+        configDO.setConfigKey(null);
+        configDO.setCreateTime(null);
+        
         systemConfigMapper.updateById(configDO);
         log.info("更新系统配置：id={}", configDO.getId());
     }
 
     @Override
     public void deleteConfig(Long id) {
-        SystemConfigDO config = new SystemConfigDO();
-        config.setId(id);
-        config.setDeleted(true);
-        config.setUpdateTime(LocalDateTime.now());
-        systemConfigMapper.updateById(config);
+        // 验证配置是否存在
+        SystemConfigDO existing = systemConfigMapper.selectById(id);
+        if (existing == null) {
+            throw new BusinessException(404, "配置不存在");
+        }
+        
+        // 逻辑删除
+        systemConfigMapper.deleteById(id);
         log.info("删除系统配置：id={}", id);
     }
 

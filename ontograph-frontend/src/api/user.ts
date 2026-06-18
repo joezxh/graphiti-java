@@ -12,6 +12,7 @@ export interface User {
   roleIds: number[]
   createdAt: string
   updatedAt: string
+  switchLoading?: boolean // 状态切换加载状态
 }
 
 export interface UserQuery {
@@ -139,11 +140,11 @@ export const userApi = {
 
   /**
    * 重置密码
-   * 后端: 无此接口，抛出错误提示
+   * 后端: PUT /admin/system/user/reset-password/{userId}
    */
-  async resetPassword(id: number): Promise<{ message: string }> {
-    // 后端无此接口，提示用户手动处理
-    throw new Error(`密码重置功能后端尚未实现，请联系管理员处理用户 ${id}`)
+  async resetPassword(id: number): Promise<{ newPassword: string }> {
+    const resp = await request.put(`/admin/system/user/reset-password/${id}`)
+    return { newPassword: resp }
   }
 }
 

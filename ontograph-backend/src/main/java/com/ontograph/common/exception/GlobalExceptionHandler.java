@@ -3,6 +3,8 @@ package com.ontograph.common.exception;
 import com.ontograph.common.response.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +19,30 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * 处理认证失败异常（用户名或密码错误）
+     * @param e BadCredentialsException
+     * @return CommonResult<?>
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public CommonResult<?> handleBadCredentialsException(BadCredentialsException e) {
+        log.warn("认证失败: {}", e.getMessage());
+        return CommonResult.error(401, "用户名或密码错误");
+    }
+
+    /**
+     * 处理其他认证异常
+     * @param e AuthenticationException
+     * @return CommonResult<?>
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public CommonResult<?> handleAuthenticationException(AuthenticationException e) {
+        log.warn("认证异常: {}", e.getMessage());
+        return CommonResult.error(401, "认证失败，请重新登录");
+    }
 
     /**
      * 处理业务异常

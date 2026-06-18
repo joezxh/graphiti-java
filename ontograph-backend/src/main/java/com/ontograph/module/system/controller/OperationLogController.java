@@ -59,14 +59,14 @@ public class OperationLogController {
     }
 
     @GetMapping("/export")
-    @Operation(summary = "导出日志")
-    public CommonResult<List<OperationLogDO>> exportLogs(
+    @Operation(summary = "导出日志为 Excel 文件")
+    public void exportLogs(
             @RequestParam(required = false) @Parameter(description = "用户名") String username,
             @RequestParam(required = false) @Parameter(description = "操作名称") String operation,
             @RequestParam(required = false) @Parameter(description = "状态") Integer status,
             @RequestParam(required = false) @Parameter(description = "开始时间") String startTime,
-            @RequestParam(required = false) @Parameter(description = "结束时间") String endTime) {
-        return CommonResult.success(
-            operationLogService.exportLogs(username, operation, status, startTime, endTime));
+            @RequestParam(required = false) @Parameter(description = "结束时间") String endTime,
+            jakarta.servlet.http.HttpServletResponse response) {
+        operationLogService.exportLogs(username, operation, status, startTime, endTime, response);
     }
 }

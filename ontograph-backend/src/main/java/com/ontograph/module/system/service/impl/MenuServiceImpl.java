@@ -47,12 +47,21 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void deleteMenu(Long menuId) {
-        MenuDO menuDO = new MenuDO();
-        menuDO.setId(menuId);
-        menuDO.setDeleted(true);
-        menuDO.setUpdateTime(LocalDateTime.now());
-        menuMapper.updateById(menuDO);
-        log.info("删除菜单成功：menuId={}", menuId);
+        // 检查菜单是否存在
+        MenuDO menu = menuMapper.selectById(menuId);
+        if (menu == null) {
+            throw new BusinessException(3001, "菜单不存在");
+        }
+        
+        // P0 修复: 检查是否有子菜单
+        long childCount = menuMapper.countByParentId(menuId);
+        if (childCount > 0) {
+            throw new BusinessException(3002, "该菜单下存在 " + childCount + " 个子菜单，无法删除");
+        }
+        
+        // 使用 MyBatis-Plus 的逻辑删除(会自动设置 deleted=true)
+        menuMapper.deleteById(menuId);
+        log.info("删除菜单成功：menuId={}, name={}", menuId, menu.getName());
     }
 
     @Override

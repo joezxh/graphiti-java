@@ -30,7 +30,7 @@ export const useUserStore = defineStore('user', () => {
       message.success('登录成功')
       return result
     } catch (error: any) {
-      message.error(error.message || '登录失败')
+      // 请求拦截器已显示错误消息，这里只抛出异常
       throw error
     }
   }
