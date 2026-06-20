@@ -30,6 +30,7 @@
         :loading="loading"
         row-key="graphId"
         :pagination="{ pageSize: 10, showSizeChanger: true }"
+        :scroll="{ x: 900 }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'name'">
@@ -44,15 +45,23 @@
             <a-tag color="green">{{ record.edgeCount || 0 }}</a-tag>
           </template>
 
+          <template v-if="column.key === 'episodeCount'">
+            <a-tag color="orange">{{ record.episodeCount || 0 }}</a-tag>
+          </template>
+
           <template v-if="column.key === 'createdAt'">
             {{ formatDate(record.createdAt) }}
           </template>
 
           <template v-if="column.key === 'action'">
-            <a-space>
+            <a-space :size="4" class="action-links">
               <a @click="viewGraphDetail(record)">{{ $t('common.view') }}</a>
               <a-divider type="vertical" />
               <a @click="editGraph(record)">{{ $t('common.edit') }}</a>
+              <a-divider type="vertical" />
+              <a @click="handleClone(record)">{{ $t('graph.clone') }}</a>
+              <a-divider type="vertical" />
+              <a @click="handleExport(record)">{{ $t('graph.export') }}</a>
               <a-divider type="vertical" />
               <a class="danger-link" @click="handleDeleteClick(record.graphId)">{{ $t('common.delete') }}</a>
             </a-space>
@@ -230,10 +239,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { PlusOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, CopyOutlined, ExportOutlined } from '@ant-design/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { graphApi, type Graph, type GraphDeletePreview } from '@/api/graph'
 
@@ -275,39 +284,53 @@ const formRules = computed(() => {
 // 表格列定义
 const columns = computed(() => [
   {
+    title: t('graph.graphId'),
+    key: 'graphId',
+    dataIndex: 'graphId',
+    width: 100,
+    ellipsis: true,
+    customRender: ({ text }: any) => text ? text.substring(0, 8) + '...' : '-'
+  },
+  {
     title: t('graph.graphName'),
     key: 'name',
     dataIndex: 'name',
-    width: '25%'
+    width: '15%'
   },
   {
     title: t('common.description'),
     key: 'description',
     dataIndex: 'description',
-    width: '35%',
     ellipsis: true
   },
   {
     title: t('graph.nodeCount'),
     key: 'nodeCount',
-    width: '10%',
+    width: 80,
     align: 'center'
   },
   {
     title: t('graph.edgeCount'),
     key: 'edgeCount',
-    width: '10%',
+    width: 70,
+    align: 'center'
+  },
+  {
+    title: t('graph.episodeCount'),
+    key: 'episodeCount',
+    width: 80,
     align: 'center'
   },
   {
     title: t('graph.createTime'),
     key: 'createdAt',
-    width: '15%'
+    width: 160
   },
   {
     title: t('common.action'),
     key: 'action',
-    width: '15%'
+    width: 240,
+    fixed: 'right' as const
   }
 ])
 
@@ -436,6 +459,35 @@ const handleModalCancel = () => {
   formRef.value?.resetFields()
 }
 
+// 克隆图谱
+const handleClone = async (record: Graph) => {
+  try {
+    await graphApi.clone(record.graphId)
+    message.success(t('graph.cloneSuccess'))
+    loadGraphs()
+  } catch (error: any) {
+    message.error(error?.message || t('graph.cloneFailed'))
+  }
+}
+
+// 导出图谱
+const handleExport = async (record: Graph) => {
+  try {
+    const blob = await graphApi.exportData(record.graphId)
+    const url = window.URL.createObjectURL(new Blob([blob]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `${record.name || record.graphId}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+    message.success(t('graph.exportSuccess'))
+  } catch (error: any) {
+    message.error(error?.message || t('graph.exportFailed'))
+  }
+}
+
 // 格式化日期
 const formatDate = (date: string): string => {
   if (!date) return '-'
@@ -443,7 +495,9 @@ const formatDate = (date: string): string => {
 }
 
 onMounted(() => {
-  loadGraphs()
+  nextTick(() => {
+    loadGraphs()
+  })
 })
 </script>
 
@@ -521,6 +575,19 @@ onMounted(() => {
       
       &:hover {
         color: #ff8a8a;
+      }
+    }
+
+    .action-links {
+      white-space: nowrap;
+      flex-wrap: nowrap !important;
+
+      .ant-space-item {
+        flex-shrink: 0;
+      }
+
+      .ant-divider-vertical {
+        margin: 0 2px;
       }
     }
   }

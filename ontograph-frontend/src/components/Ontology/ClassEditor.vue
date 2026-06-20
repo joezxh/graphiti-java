@@ -272,6 +272,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'saved'): void
+  (e: 'deleted'): void
 }>()
 
 const store = useOntologyStore()
@@ -458,6 +459,7 @@ async function handleDelete() {
         message.success(t('classEditor.classDeleted'))
         store.loadFullOntology(props.graphId)
         emit('saved')
+        emit('deleted')
       } catch (e: any) {
         message.error(e.message || t('common.deleteFailed'))
       } finally {

@@ -515,12 +515,12 @@ export const graphApi = {
 
   // 获取类列表
   async getSchemaClasses(graphId: string): Promise<SchemaClass[]> {
-    return request.get(`/graph/${graphId}/ontology/classes`)
+    return request.get(`/ontology/${graphId}/classes`)
   },
 
   // 获取类详情
   async getSchemaClassDetail(graphId: string, classId: number): Promise<SchemaClass> {
-    return request.get(`/graph/${graphId}/ontology/classes/${classId}`)
+    return request.get(`/ontology/${graphId}/classes/${classId}`)
   },
 
   // 获取类的实例数据列表
@@ -539,7 +539,7 @@ export const graphApi = {
     graphId: string,
     data: { localName: string; description?: string; parentClassIds?: number[] }
   ): Promise<SchemaClass> {
-    return request.post(`/graph/${graphId}/ontology/classes`, data)
+    return request.post(`/ontology/${graphId}/classes`, data)
   },
 
   // 更新类
@@ -548,17 +548,17 @@ export const graphApi = {
     classId: number,
     data: { localName?: string; description?: string; parentClassIds?: number[] }
   ): Promise<SchemaClass> {
-    return request.put(`/graph/${graphId}/ontology/classes/${classId}`, data)
+    return request.put(`/ontology/${graphId}/classes/${classId}`, data)
   },
 
   // 删除类
   async deleteSchemaClass(graphId: string, classId: number): Promise<void> {
-    return request.delete(`/graph/${graphId}/ontology/classes/${classId}`)
+    return request.delete(`/ontology/${graphId}/classes/${classId}`)
   },
 
   // 获取类属性列表
   async getClassProperties(graphId: string, classId: number): Promise<SchemaProperty[]> {
-    return request.get(`/graph/${graphId}/ontology/classes/${classId}/properties`)
+    return request.get(`/ontology/${graphId}/classes/${classId}/properties`)
   },
 
   // 创建属性
@@ -577,7 +577,7 @@ export const graphApi = {
       maxValue?: number
     }
   ): Promise<SchemaProperty> {
-    return request.post(`/graph/${graphId}/ontology/classes/${classId}/properties`, data)
+    return request.post(`/ontology/${graphId}/classes/${classId}/properties`, data)
   },
 
   // 更新属性
@@ -587,12 +587,12 @@ export const graphApi = {
     propertyId: number,
     data: Partial<SchemaProperty>
   ): Promise<SchemaProperty> {
-    return request.put(`/graph/${graphId}/ontology/classes/${classId}/properties/${propertyId}`, data)
+    return request.put(`/ontology/${graphId}/classes/${classId}/properties/${propertyId}`, data)
   },
 
   // 删除属性
   async deleteClassProperty(graphId: string, classId: number, propertyId: number): Promise<void> {
-    return request.delete(`/graph/${graphId}/ontology/classes/${classId}/properties/${propertyId}`)
+    return request.delete(`/ontology/${graphId}/classes/${classId}/properties/${propertyId}`)
   },
 
   // ===== Cascade Edit API =====

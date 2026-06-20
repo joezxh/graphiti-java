@@ -319,6 +319,8 @@ $B screenshot "graph-list.png"
 
 ```
 /browser 或 /open-gstack-browser
+前端  http://localhost:3000  后端:  http://localhost:9090
+
 打开图谱列表页面,执行完整的图谱管理 CRUD 测试。
 
 【前置操作】
@@ -334,6 +336,7 @@ $B screenshot "graph-list.png"
 3. 验证分页功能正常
 4. 验证操作列按钮(编辑/克隆/删除预览/删除/导出)
 5. 验证顶部「创建图谱」按钮可点击
+6. 操作列按钮不要换行
 
 预期结果:
 ✅ 表格多列完整
@@ -368,7 +371,13 @@ $B screenshot "graph-list.png"
 2. 验证弹窗/抽屉弹出
 3. 验证数据回填(图谱名称、描述)
 4. 修改图谱名称为「测试图谱_001_modified」
-5. 提交并验证:
+5. 显示统计信息:
+   - 实体节点数(Neo4j)
+   - 边数(Neo4j)
+   - 剧集数
+   - 社区节点数
+   - 本体元数据(类/属性/约束数)
+6. 提交并验证:
    - API PUT /api/v1/graph/{graphId}
    - 列表中数据更新
 
@@ -415,7 +424,13 @@ $B screenshot "graph-list.png"
 【测试场景 6:清空图谱数据】
 1. 在图谱详情或列表中点击「清空数据」按钮
 2. 验证确认弹窗
-3. 确认后:
+3. 验证显示统计信息:
+   - 实体节点数(Neo4j)
+   - 边数(Neo4j)
+   - 剧集数
+   - 社区节点数
+   - 本体元数据(类/属性/约束数)
+4. 确认后:
    - API POST /api/v1/graph/{graphId}/clear
    - 弹窗提示成功
    - 画布/列表中数据清空,但元数据保留
@@ -429,7 +444,14 @@ $B screenshot "graph-list.png"
 【测试场景 7:克隆图谱】
 1. 点击某个图谱的「克隆」按钮
 2. 验证确认弹窗
-3. 确认后:
+3. 验证显示统计信息:
+   - 实体节点数(Neo4j)
+   - 边数(Neo4j)
+   - 剧集数
+   - 社区节点数
+   - 本体元数据(类/属性/约束数)
+4. 确认弹窗里可以预览图谱的数据量，参考删除预览
+5. 确认后:
    - API POST /api/v1/graph/{graphId}/clone
    - 列表中出现新图谱(命名为「xxx_copy」)
    - 跳转到新图谱的 IDE
@@ -443,7 +465,13 @@ $B screenshot "graph-list.png"
 【测试场景 8:导出图谱】
 1. 点击「导出」按钮
 2. 验证触发下载 JSON 文件
-3. 验证 JSON 内容包含 nodes、edges、metadata
+3. 验证显示统计信息:
+   - 实体节点数(Neo4j)
+   - 边数(Neo4j)
+   - 剧集数
+   - 社区节点数
+   - 本体元数据(类/属性/约束数)
+4. 验证 JSON 内容包含 nodes、edges、metadata
 
 预期结果:
 ✅ JSON 文件下载成功
@@ -677,6 +705,9 @@ $B screenshot "graph-list.png"
 
 ```
 /browser 或 /open-gstack-browser
+前端  http://localhost:3000  后端:  http://localhost:9090
+
+前端  http://localhost:3000  后端:  http://localhost:9090
 打开 Graph IDE 页面,执行完整的可视化与画布交互测试。
 
 【前置操作】

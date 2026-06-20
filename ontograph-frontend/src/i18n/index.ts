@@ -21,7 +21,7 @@ function getDefaultLocale(): LocaleKey {
   if (stored && SUPPORTED_LOCALES.some(l => l.key === stored)) {
     return stored as LocaleKey
   }
-  return 'en-US'
+  return 'zh-CN'
 }
 
 export const i18n = createI18n({

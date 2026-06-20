@@ -436,6 +436,7 @@
               :class-id="selectedClassId"
               :graph-id="effectiveGraphId"
               @saved="ontologyStore.loadFullOntology(effectiveGraphId)"
+              @deleted="handleClassDeleted"
             />
           </div>
         </template>
@@ -452,6 +453,7 @@
               :class-id="ontologyStore.activeTab.classId"
               :graph-id="effectiveGraphId"
               @saved="ontologyStore.loadFullOntology(effectiveGraphId)"
+              @deleted="handleClassDeleted"
             />
           </div>
         </template>
@@ -859,8 +861,8 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-// Route params
-const graphId = computed(() => route.params.id as string)
+// Route params - 支持 params.id 和 query.graphId 两种方式
+const graphId = computed(() => (route.params.id as string) || (route.query.graphId as string))
 const selectedGraphId = ref<string>('')
 const graphList = ref<Array<{ graphId: string; name: string }>>([])
 const loadingGraphs = ref(false)
@@ -1447,6 +1449,18 @@ const handleOntologyOpenTab = (payload: { type: string; title: string; classId?:
 const handleClassSelected = (classId: number) => {
   selectedClassId.value = classId
   panelCollapsed.value = false  // 自动展开右侧面板
+}
+
+// 类删除后清理：关闭右侧编辑面板 + 中间实例标签页
+const handleClassDeleted = () => {
+  const classId = selectedClassId.value || ontologyStore.activeTab?.classId
+  if (classId) {
+    ontologyStore.closeTab(`class-instance-${classId}`)
+  }
+  selectedClassId.value = null
+  if (ontologyStore.activeTab?.type === 'class-editor') {
+    ontologyStore.closeTab(ontologyStore.activeTabId!)
+  }
 }
 
 // OntologyClassView 事件处理
