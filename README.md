@@ -220,8 +220,6 @@ ontograph-java/
 | Alibaba Qwen | `spring-ai-starter-model-openai` (compatible) | ✅ |
 | Ollama | `spring-ai-starter-model-ollama` | ✅ |
 | Mistral AI | `spring-ai-starter-model-mistral-ai` | ✅ |
-| Azure OpenAI | `spring-ai-starter-model-azure-openai` | ✅ |
-| AWS Bedrock | `spring-ai-starter-model-bedrock` | ✅ |
 
 ---
 
@@ -271,6 +269,9 @@ Edit `ontograph-server/src/main/resources/application-dev.yml`:
 ```yaml
 spring:
   ai:
+    model:
+      chat: openai
+      embedding: openai
     openai:
       api-key: your-api-key
       base-url: http://your-llm-deployment:8000/v1  # Private deployment
@@ -286,9 +287,9 @@ spring:
       host: localhost
       port: 6379
 
-ontograph:
+graphiti:
   ai:
-    llm-provider: openai        # openai | anthropic | qwen | ollama | mistral
+    llm-provider: openai        # Must match spring.ai.model.chat (Qwen uses openai)
     embedding-provider: openai
 
 neo4j:
@@ -386,9 +387,11 @@ NEO4J_PASSWORD=your_neo4j_password
 
 #### LLM Provider Configuration
 ```bash
-# Select LLM provider: openai | qwen | ollama | anthropic | mistral
-GRAPHTI_AI_LLM_PROVIDER=openai
-GRAPHTI_AI_EMBEDDING_PROVIDER=openai
+# Select the Spring AI model and the Graphiti adapter together.
+SPRING_AI_MODEL_CHAT=openai
+SPRING_AI_MODEL_EMBEDDING=openai
+GRAPHITI_AI_LLM_PROVIDER=openai
+GRAPHITI_AI_EMBEDDING_PROVIDER=openai
 
 # OpenAI configuration
 SPRING_AI_OPENAI_API_KEY=your_openai_api_key_here
@@ -407,7 +410,7 @@ JWT_EXPIRATION=86400
 #### Logging
 ```bash
 LOGGING_LEVEL_ROOT=INFO
-LOGGING_LEVEL_COM_GRAPHTI=DEBUG
+LOGGING_LEVEL_COM_ONTOGRAPH=DEBUG
 ```
 
 ### Database Initialization
@@ -662,7 +665,9 @@ graphiti:
     embedding-provider: openai
 ```
 
-Available providers: `openai`, `anthropic`, `qwen`, `ollama`, `mistral`
+Spring AI 2 selects models independently of Graphiti's adapters. Keep these values aligned: `spring.ai.model.chat` with `graphiti.ai.llm-provider`, and `spring.ai.model.embedding` with `graphiti.ai.embedding-provider`. Qwen uses `openai` for both Spring AI selectors because it is OpenAI-compatible. Anthropic supplies chat only, so pair it with another embedding provider.
+
+Available Graphiti adapters: `openai`, `anthropic`, `qwen`, `ollama`, `mistral`.
 
 ### Private Deployment Examples
 

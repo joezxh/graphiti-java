@@ -1,8 +1,5 @@
 package com.ontograph;
 
-import org.springframework.ai.model.anthropic.autoconfigure.AnthropicChatAutoConfiguration;
-import org.springframework.ai.model.mistralai.autoconfigure.MistralAiChatAutoConfiguration;
-import org.springframework.ai.model.mistralai.autoconfigure.MistralAiEmbeddingAutoConfiguration;
 import org.springframework.ai.model.mistralai.autoconfigure.MistralAiModerationAutoConfiguration;
 import org.springframework.ai.model.mistralai.autoconfigure.MistralAiOcrAutoConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -14,13 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(
         scanBasePackages = "com.ontograph",
         exclude = {
-                // Anthropic
-                AnthropicChatAutoConfiguration.class,
-                // Mistral AI
+                // No Graphiti adapter exposes these capabilities yet. Their auto-configurations
+                // default to Mistral and require an API key even when chat/embedding use OpenAI.
                 MistralAiModerationAutoConfiguration.class,
-                MistralAiOcrAutoConfiguration.class,
-                MistralAiChatAutoConfiguration.class,
-                MistralAiEmbeddingAutoConfiguration.class
+                MistralAiOcrAutoConfiguration.class
         }
 )
 public class OntoGraphApplication {

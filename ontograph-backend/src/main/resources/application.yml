@@ -7,6 +7,12 @@ spring:
     name: ontograph-java
   profiles:
     active: dev
+  ai:
+    model:
+      # Spring AI 2 requires explicit selection when multiple model starters are present.
+      # Keep these aligned with graphiti.ai.*-provider; Qwen uses the OpenAI-compatible path.
+      chat: openai
+      embedding: openai
 
 
 

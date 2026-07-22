@@ -220,8 +220,6 @@ ontograph-java/
 | 阿里云通义千问 | `spring-ai-starter-model-openai`（兼容） | ✅ |
 | Ollama | `spring-ai-starter-model-ollama` | ✅ |
 | Mistral AI | `spring-ai-starter-model-mistral-ai` | ✅ |
-| Azure OpenAI | `spring-ai-starter-model-azure-openai` | ✅ |
-| AWS Bedrock | `spring-ai-starter-model-bedrock` | ✅ |
 
 ---
 
@@ -271,6 +269,9 @@ mysql -u root -p graphiti < sql/mysql/init-data.sql
 ```yaml
 spring:
   ai:
+    model:
+      chat: openai
+      embedding: openai
     openai:
       api-key: your-api-key
       base-url: http://your-llm-deployment:8000/v1  # 私有化部署地址
@@ -288,7 +289,7 @@ spring:
 
 graphiti:
   ai:
-    llm-provider: openai        # openai | anthropic | qwen | ollama | mistral
+    llm-provider: openai        # 必须与 spring.ai.model.chat 对齐（Qwen 使用 openai）
     embedding-provider: openai
 
 neo4j:
@@ -386,9 +387,11 @@ NEO4J_PASSWORD=your_neo4j_password
 
 #### LLM 提供商配置
 ```bash
-# 选择 LLM 提供商：openai | qwen | ollama | anthropic | mistral
-GRAPHTI_AI_LLM_PROVIDER=openai
-GRAPHTI_AI_EMBEDDING_PROVIDER=openai
+# 同时选择 Spring AI 模型与 Graphiti 适配器
+SPRING_AI_MODEL_CHAT=openai
+SPRING_AI_MODEL_EMBEDDING=openai
+GRAPHITI_AI_LLM_PROVIDER=openai
+GRAPHITI_AI_EMBEDDING_PROVIDER=openai
 
 # OpenAI 配置
 SPRING_AI_OPENAI_API_KEY=your_openai_api_key_here
@@ -407,7 +410,7 @@ JWT_EXPIRATION=86400
 #### 日志配置
 ```bash
 LOGGING_LEVEL_ROOT=INFO
-LOGGING_LEVEL_COM_GRAPHTI=DEBUG
+LOGGING_LEVEL_COM_ONTOGRAPH=DEBUG
 ```
 
 ### 数据库初始化
@@ -656,13 +659,15 @@ curl -X POST http://localhost:8080/api/v1/graph/your-graph-id/communities/build 
 在 `application-dev.yml` 中设置：
 
 ```yaml
-ontograph:
+graphiti:
   ai:
-    llm-provider: openai      # 在此切换厂商
+    llm-provider: openai
     embedding-provider: openai
 ```
 
-可选厂商：`openai`、`anthropic`、`qwen`、`ollama`、`mistral`
+Spring AI 2 的模型选择与 Graphiti 适配器选择相互独立：`spring.ai.model.chat` 必须与 `graphiti.ai.llm-provider` 对齐，`spring.ai.model.embedding` 必须与 `graphiti.ai.embedding-provider` 对齐。Qwen 走 OpenAI 兼容协议，因此两个 Spring AI 选择器都使用 `openai`。Anthropic 仅提供聊天能力，必须搭配其他嵌入提供商。
+
+可用的 Graphiti 适配器：`openai`、`anthropic`、`qwen`、`ollama`、`mistral`。
 
 ### 私有化部署示例
 
