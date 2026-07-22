@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -108,7 +109,7 @@ class SearchResultCacheServiceImplTest {
 
             assertNotNull(result);
             assertEquals(99, result.getTotalCount());
-            verify(valueOperations).set(anyString(), eq(computed), any());
+            verify(valueOperations).set(anyString(), eq(computed), any(Duration.class));
         }
     }
 

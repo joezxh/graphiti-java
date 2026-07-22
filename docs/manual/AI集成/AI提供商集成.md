@@ -213,9 +213,14 @@ Text --> Done
 - [AnthropicLlmClientServiceImpl.java:15-32](file://ontograph-module-core/src/main/java/com/graphiti/module/graphiti/service/impl/ai/AnthropicLlmClientServiceImpl.java#L15-L32)
 - [application-dev.yml:88-103](file://ontograph-server/src/main/resources/application-dev.yml#L88-L103)
 
-### 其他Provider（概览）
-- Mistral、DeepSeek、Groq、Fireworks、Nebius、Hyperbolic、Together、SiliconFlow、Voyage等均在application-dev.yml中提供完整配置模板，可通过graphiti.ai.*与spring.ai.*配置项启用。
-- 建议遵循相同命名与结构，实现对应的LlmClientService/EmbedderService实现类，并使用@ConditionalOnProperty按graphiti.ai.llm-provider或embedding-provider进行装配。
+### Mistral 提供商集成
+- LLM/Embedding：分别通过 `MistralAiChatModel` 与 `MistralAiEmbeddingModel` 调用；二者均有 Graphiti 适配器。
+- 配置要点：将 `spring.ai.model.chat`、`spring.ai.model.embedding`、`graphiti.ai.llm-provider` 与 `graphiti.ai.embedding-provider` 都设为 `mistral`，并填写 `spring.ai.mistralai.api-key`。
+- 运行时不会根据 `graphiti.ai.*` 自动推导 Spring AI 的模型选择器；这两组配置必须保持一致。
+
+### 能力边界
+- 当前具备 Graphiti 适配器的提供商是 OpenAI（含 Qwen 兼容路径）、Anthropic、Ollama 和 Mistral。
+- `application-dev.yml` 中的其他厂商模板不是可直接选择的 Graphiti 适配器；在声明支持前必须实现对应的 `LlmClientService` / `EmbedderService` 并添加契约测试。
 
 **章节来源**
 - [application-dev.yml:13-461](file://ontograph-server/src/main/resources/application-dev.yml#L13-L461)

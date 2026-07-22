@@ -18,15 +18,13 @@ spring:
       base-url: http://localhost:1234
       # Chat 配置
       chat:
-        options:
-          model: google/gemma-4-e4b
-          temperature: 0.2
+        model: google/gemma-4-e4b
+        temperature: 0.2
       # Embedding 配置
       # 注意: LM Studio 的 embedding 模型需要在 "Embedding" 模式下加载，不能用 reranker 模型
       # 推荐模型: nomic-embed-text, bge-m3, all-MiniLM-L6-v2 等
       embedding:
-        options:
-          model: text-embedding-qwen3-embedding-0.6b
+        model: text-embedding-qwen3-embedding-0.6b
       rerank:
         options:
           model: text-embedding-bge-reranker-v2-m3

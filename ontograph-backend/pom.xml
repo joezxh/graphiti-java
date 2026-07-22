@@ -20,19 +20,19 @@
         <project.version>1.0.0-SNAPSHOT</project.version>
 
         <!-- Dependency Versions -->
-        <spring.boot.version>3.5.5</spring.boot.version>
-        <spring.ai.version>1.1.2</spring.ai.version>
-        <mybatis-plus.version>3.5.12</mybatis-plus.version>
-        <neo4j.version>5.26.0</neo4j.version>
-        <jjwt.version>0.12.3</jjwt.version>
-        <lombok.version>1.18.38</lombok.version>
+        <spring.boot.version>4.1.0</spring.boot.version>
+        <spring.ai.version>2.0.0</spring.ai.version>
+        <mybatis-plus.version>3.5.17</mybatis-plus.version>
+        <neo4j.version>6.2.0</neo4j.version>
+        <jjwt.version>0.13.0</jjwt.version>
+        <lombok.version>1.18.46</lombok.version>
         <mapstruct.version>1.6.0</mapstruct.version>
-        <hutool.version>5.8.37</hutool.version>
-        <springdoc.version>2.8.5</springdoc.version>
-        <postgresql.version>42.7.4</postgresql.version>
-        <redisson.version>3.37.0</redisson.version>
-        <druid.version>1.2.24</druid.version>
-        <dynamic.datasource.version>4.3.0</dynamic.datasource.version>
+        <hutool.version>5.8.47</hutool.version>
+        <springdoc.version>3.0.3</springdoc.version>
+        <postgresql.version>42.7.13</postgresql.version>
+        <redisson.version>4.6.1</redisson.version>
+        <druid.version>1.2.28</druid.version>
+        <dynamic.datasource.version>4.5.0</dynamic.datasource.version>
     </properties>
 
     <dependencyManagement>
@@ -58,17 +58,12 @@
             <!-- MyBatis-Plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+                <artifactId>dynamic-datasource-spring-boot4-starter</artifactId>
                 <version>${dynamic.datasource.version}</version>
             </dependency>
 
@@ -149,7 +144,7 @@
             <!-- Druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-3-starter</artifactId>
+                <artifactId>druid-spring-boot-4-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
 
@@ -157,7 +152,7 @@
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
-                <version>3.1.8</version>
+                <version>3.2.4</version>
             </dependency>
 
             <!-- Apache POI for Excel export -->
@@ -182,7 +177,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -208,7 +203,7 @@
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -217,7 +212,12 @@
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot4-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -225,7 +225,7 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-3-starter</artifactId>
+            <artifactId>druid-spring-boot-4-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.redisson</groupId>
@@ -242,6 +242,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson2</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
@@ -271,10 +275,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-azure-openai</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-bedrock</artifactId>
         </dependency>
         <dependency>
@@ -291,7 +291,7 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>apache-jena-libs</artifactId>
-            <version>4.9.0</version>
+            <version>6.1.0</version>
             <type>pom</type>
         </dependency>
         <dependency>
@@ -301,27 +301,27 @@
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-model</artifactId>
-            <version>3.7.7</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-turtle</artifactId>
-            <version>3.7.7</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-rdfxml</artifactId>
-            <version>3.7.7</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-jsonld</artifactId>
-            <version>3.7.7</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-sail</artifactId>
-            <version>3.7.7</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
