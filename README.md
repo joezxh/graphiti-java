@@ -86,7 +86,7 @@ OntoGraph is a production-ready knowledge graph backend system that brings the p
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              ontograph-server                                │
-│                        Spring Boot 3.5.5 (Entry)                             │
+│                        Spring Boot 4.1.0 (Entry)                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
             ┌─────────────────────────┼─────────────────────────┐
@@ -181,8 +181,8 @@ ontograph-java/
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Language | Java | 21 |
-| Framework | Spring Boot | 3.5.5 |
-| AI Framework | Spring AI | 1.1.2 |
+| Framework | Spring Boot | 4.1.0 |
+| AI Framework | Spring AI | 2.0.0 |
 | Data Access | MyBatis-Plus | 3.5.12 |
 | Graph Database | Neo4j Java Driver | 5.26.0 |
 | Security | Spring Security + JWT | - |
